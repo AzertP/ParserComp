@@ -1,0 +1,30 @@
+{
+  "name": "tinyc",
+  "start": "<program>",
+  "rules": {
+    "<program>": [["<statement>"]],
+    "<statement_list>": [[], ["<statement>", "<statement_list>"]],
+    "<statement>": [
+      ["<if>", "<paren_expr>", "<statement>"],
+      ["<if>", "<paren_expr>", "<statement>", "<else>", "<statement>"],
+      ["<while>", "<paren_expr>", "<statement>"],
+      ["<do>", "<statement>", "<while>", "<paren_expr>", ";"],
+      ["{", "<statement_list>", "}"],
+      ["<expr>", ";"],
+      [";"]
+    ],
+    "<paren_expr>": [["(", "<expr>", ")"]],
+    "<expr>": [["<test>"], ["<id>", "=", "<expr>"]],
+    "<test>": [["<sum>"], ["<sum>", "<", "<sum>"]],
+    "<sum>": [["<term>"], ["<sum>", "+", "<term>"], ["<sum>", "-", "<term>"]],
+    "<term>": [["<id>"], ["<int>"], ["<paren_expr>"]],
+    "<int>": [["<int>", "<digit>"], ["<digit>"]],
+    "<id>": {"letters": true},
+    "<digit>": {"digits": true},
+    "<if>": [["i", "f"]],
+    "<else>": [["e", "l", "s", "e"]],
+    "<while>": [["w", "h", "i", "l", "e"]],
+    "<do>": [["d", "o"]]
+  },
+  "tests": ["{i=1;}", "{i=125;j=100;while(i-j)if(i<j)j=j-i;elsei=i-j;}", "{if(i)j;if(i);elsei;}"]
+}

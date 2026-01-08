@@ -1,0 +1,31 @@
+{
+  "name": "sexp",
+  "start": "<sexp>",
+  "rules": {
+    "<sexp>": [["<item>"]],
+    "<item>": [
+      ["<atom>"],
+      ["<list_>"],
+      ["(", "<item>", "<dot>", "<item>", ")"]
+    ],
+    "<list_>": [["(", "<item_list>", ")"]],
+    "<item_list>": [[], ["<item>", "<more_items>"]],
+    "<more_items>": [[], [" ", "<item>", "<more_items>"]],
+    "<atom>": [["<number>"], ["<symbol>"], ["<string>"], ["<dot>"]],
+    "<number>": [["<prefix>", "<digit_list>", "<decimal>"]],
+    "<prefix>": [["+"], ["-"], []],
+    "<digit_list>": [["<digit>"], ["<digit>", "<digit_list>"]],
+    "<decimal>": [[], [".", "<digit_list>"]],
+    "<string>": [["\"", "<string_content>", "\""]],
+    "<string_content>": [["<string_char>"], ["<string_char>", "<string_content>"]],
+    "<string_char>": {"char_range": [32, 127], "exclude": [34, 92]},
+    "<symbol>": [["<symbol_start>", "<symbol_rest>"]],
+    "<symbol_start>": [["<letter>"], ["<operator>"]],
+    "<symbol_rest>": [[], ["<digit>"], ["<symbol_start>"]],
+    "<letter>": {"letters": true},
+    "<operator>": [["+"], ["-"], ["*"], ["/"], ["."]],
+    "<digit>": {"digits": true},
+    "<dot>": [["."]]
+  },
+  "tests": ["(a b c)", "(((S)(NP VP)))"]
+}

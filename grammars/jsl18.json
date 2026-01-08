@@ -1,0 +1,2906 @@
+{
+  "name": "jsl18",
+  "start": "<CompilationUnit>",
+  "rules": {
+    "<UnicodeEscape>": [
+      ["\\\\", "<UnicodeMarker>", "<HexDigit>", "<HexDigit>", "<HexDigit>", "<HexDigit>"]
+    ],
+    "<UnicodeMarker>": [
+      ["u", "<UnicodeMarker_pattern_0>"]
+    ],
+    "<HexDigit>": [
+      ["0"],
+      ["1"],
+      ["2"],
+      ["3"],
+      ["4"],
+      ["5"],
+      ["6"],
+      ["7"],
+      ["8"],
+      ["9"],
+      ["a"],
+      ["b"],
+      ["c"],
+      ["d"],
+      ["e"],
+      ["f"],
+      ["A"],
+      ["B"],
+      ["C"],
+      ["D"],
+      ["E"],
+      ["F"]
+    ],
+    "<Comment>": [
+      ["<TraditionalComment>"],
+      ["<EndOfLineComment>"]
+    ],
+    "<TraditionalComment>": [
+      ["/", "*", "<CommentTail>"]
+    ],
+    "<CommentTail>": [
+      ["*", "<CommentTailStar>"],
+      ["<NotStar>", "<CommentTail>"]
+    ],
+    "<CommentTailStar>": [
+      ["/"],
+      ["*", "<CommentTailStar>"],
+      ["<NotStarNotSlash>", "<CommentTail>"]
+    ],
+    "<EndOfLineComment>": [
+      ["/", "/", "<EndOfLineComment_pattern_1>"]
+    ],
+    "<Identifier>": [
+      ["<IdentifierChars>"]
+    ],
+    "<IdentifierChars>": [
+      ["<JavaLetter>", "<IdentifierChars_pattern_2>"]
+    ],
+    "<TypeIdentifier>": [
+      ["<IdentifierChars>"]
+    ],
+    "<UnqualifiedMethodIdentifier>": [
+      ["<IdentifierChars>"]
+    ],
+    "<Keyword>": [
+      ["<ReservedKeyword>"],
+      ["<ContextualKeyword>"]
+    ],
+    "<ReservedKeyword>": [
+      ["a", "b", "s", "t", "r", "a", "c", "t"],
+      ["c", "o", "n", "t", "i", "n", "u", "e"],
+      ["f", "o", "r"],
+      ["n", "e", "w"],
+      ["s", "w", "i", "t", "c", "h"],
+      ["a", "s", "s", "e", "r", "t"],
+      ["d", "e", "f", "a", "u", "l", "t"],
+      ["i", "f"],
+      ["p", "a", "c", "k", "a", "g", "e"],
+      ["s", "y", "n", "c", "h", "r", "o", "n", "i", "z", "e", "d"],
+      ["b", "o", "o", "l", "e", "a", "n"],
+      ["d", "o"],
+      ["g", "o", "t", "o"],
+      ["p", "r", "i", "v", "a", "t", "e"],
+      ["t", "h", "i", "s"],
+      ["b", "r", "e", "a", "k"],
+      ["d", "o", "u", "b", "l", "e"],
+      ["i", "m", "p", "l", "e", "m", "e", "n", "t", "s"],
+      ["p", "r", "o", "t", "e", "c", "t", "e", "d"],
+      ["t", "h", "r", "o", "w"],
+      ["b", "y", "t", "e"],
+      ["e", "l", "s", "e"],
+      ["i", "m", "p", "o", "r", "t"],
+      ["p", "u", "b", "l", "i", "c"],
+      ["t", "h", "r", "o", "w", "s"],
+      ["c", "a", "s", "e"],
+      ["e", "n", "u", "m"],
+      ["i", "n", "s", "t", "a", "n", "c", "e", "o", "f"],
+      ["r", "e", "t", "u", "r", "n"],
+      ["t", "r", "a", "n", "s", "i", "e", "n", "t"],
+      ["c", "a", "t", "c", "h"],
+      ["e", "x", "t", "e", "n", "d", "s"],
+      ["i", "n", "t"],
+      ["s", "h", "o", "r", "t"],
+      ["t", "r", "y"],
+      ["c", "h", "a", "r"],
+      ["f", "i", "n", "a", "l"],
+      ["i", "n", "t", "e", "r", "f", "a", "c", "e"],
+      ["s", "t", "a", "t", "i", "c"],
+      ["v", "o", "i", "d"],
+      ["c", "l", "a", "s", "s"],
+      ["f", "i", "n", "a", "l", "l", "y"],
+      ["l", "o", "n", "g"],
+      ["s", "t", "r", "i", "c", "t", "f", "p"],
+      ["v", "o", "l", "a", "t", "i", "l", "e"],
+      ["c", "o", "n", "s", "t"],
+      ["f", "l", "o", "a", "t"],
+      ["n", "a", "t", "i", "v", "e"],
+      ["s", "u", "p", "e", "r"],
+      ["w", "h", "i", "l", "e"],
+      ["_"]
+    ],
+    "<ContextualKeyword>": [
+      ["e", "x", "p", "o", "r", "t", "s"],
+      ["o", "p", "e", "n", "s"],
+      ["r", "e", "q", "u", "i", "r", "e", "s"],
+      ["u", "s", "e", "s"],
+      ["m", "o", "d", "u", "l", "e"],
+      ["p", "e", "r", "m", "i", "t", "s"],
+      ["s", "e", "a", "l", "e", "d"],
+      ["v", "a", "r"],
+      ["n", "o", "n", "-", "s", "e", "a", "l", "e", "d"],
+      ["p", "r", "o", "v", "i", "d", "e", "s"],
+      ["t", "o"],
+      ["w", "i", "t", "h"],
+      ["o", "p", "e", "n"],
+      ["r", "e", "c", "o", "r", "d"],
+      ["t", "r", "a", "n", "s", "i", "t", "i", "v", "e"],
+      ["y", "i", "e", "l", "d"]
+    ],
+    "<IntegerLiteral>": [
+      ["<DecimalIntegerLiteral>"],
+      ["<HexIntegerLiteral>"],
+      ["<OctalIntegerLiteral>"],
+      ["<BinaryIntegerLiteral>"]
+    ],
+    "<DecimalIntegerLiteral>": [
+      ["<DecimalNumeral>", "<DecimalIntegerLiteral_pattern_3>"]
+    ],
+    "<HexIntegerLiteral>": [
+      ["<HexNumeral>", "<HexIntegerLiteral_pattern_4>"]
+    ],
+    "<OctalIntegerLiteral>": [
+      ["<OctalNumeral>", "<OctalIntegerLiteral_pattern_5>"]
+    ],
+    "<BinaryIntegerLiteral>": [
+      ["<BinaryNumeral>", "<BinaryIntegerLiteral_pattern_6>"]
+    ],
+    "<IntegerTypeSuffix>": [
+      ["l"],
+      ["L"]
+    ],
+    "<DecimalNumeral>": [
+      ["0"],
+      ["<NonZeroDigit>", "<DecimalNumeral_pattern_7>"],
+      ["<NonZeroDigit>", "<Underscores>", "<Digits>"]
+    ],
+    "<NonZeroDigit>": [
+      ["1"],
+      ["2"],
+      ["3"],
+      ["4"],
+      ["5"],
+      ["6"],
+      ["7"],
+      ["8"],
+      ["9"]
+    ],
+    "<Digits>": [
+      ["<Digit>"],
+      ["<Digit>", "<Digits_pattern_8>", "<Digit>"]
+    ],
+    "<Digit>": [
+      ["0"],
+      ["<NonZeroDigit>"]
+    ],
+    "<DigitsAndUnderscores>": [
+      ["<DigitOrUnderscore>", "<DigitsAndUnderscores_pattern_9>"]
+    ],
+    "<DigitOrUnderscore>": [
+      ["<Digit>"],
+      ["_"]
+    ],
+    "<Underscores>": [
+      ["_", "<Underscores_pattern_10>"]
+    ],
+    "<HexNumeral>": [
+      ["0", "x", "<HexDigits>"],
+      ["0", "X", "<HexDigits>"]
+    ],
+    "<HexDigits>": [
+      ["<HexDigit>"],
+      ["<HexDigit>", "<HexDigits_pattern_11>", "<HexDigit>"]
+    ],
+    "<HexDigitsAndUnderscores>": [
+      ["<HexDigitOrUnderscore>", "<HexDigitsAndUnderscores_pattern_12>"]
+    ],
+    "<HexDigitOrUnderscore>": [
+      ["<HexDigit>"],
+      ["_"]
+    ],
+    "<OctalNumeral>": [
+      ["0", "<OctalDigits>"],
+      ["0", "<Underscores>", "<OctalDigits>"]
+    ],
+    "<OctalDigits>": [
+      ["<OctalDigit>"],
+      ["<OctalDigit>", "<OctalDigits_pattern_13>", "<OctalDigit>"]
+    ],
+    "<OctalDigit>": [
+      ["0"],
+      ["1"],
+      ["2"],
+      ["3"],
+      ["4"],
+      ["5"],
+      ["6"],
+      ["7"]
+    ],
+    "<OctalDigitsAndUnderscores>": [
+      ["<OctalDigitOrUnderscore>", "<OctalDigitsAndUnderscores_pattern_14>"]
+    ],
+    "<OctalDigitOrUnderscore>": [
+      ["<OctalDigit>"],
+      ["_"]
+    ],
+    "<BinaryNumeral>": [
+      ["0", "b", "<BinaryDigits>"],
+      ["0", "B", "<BinaryDigits>"]
+    ],
+    "<BinaryDigits>": [
+      ["<BinaryDigit>"],
+      ["<BinaryDigit>", "<BinaryDigits_pattern_15>", "<BinaryDigit>"]
+    ],
+    "<BinaryDigit>": [
+      ["0"],
+      ["1"]
+    ],
+    "<BinaryDigitsAndUnderscores>": [
+      ["<BinaryDigitOrUnderscore>", "<BinaryDigitsAndUnderscores_pattern_16>"]
+    ],
+    "<BinaryDigitOrUnderscore>": [
+      ["<BinaryDigit>"],
+      ["_"]
+    ],
+    "<FloatingPointLiteral>": [
+      ["<DecimalFloatingPointLiteral>"],
+      ["<HexadecimalFloatingPointLiteral>"]
+    ],
+    "<DecimalFloatingPointLiteral>": [
+      ["<Digits>", ".", "<DecimalFloatingPointLiteral_pattern_17>", "<DecimalFloatingPointLiteral_pattern_18>", "<DecimalFloatingPointLiteral_pattern_19>"],
+      [".", "<Digits>", "<DecimalFloatingPointLiteral_pattern_20>", "<DecimalFloatingPointLiteral_pattern_21>"],
+      ["<Digits>", "<ExponentPart>", "<DecimalFloatingPointLiteral_pattern_22>"],
+      ["<Digits>", "<DecimalFloatingPointLiteral_pattern_23>", "<FloatTypeSuffix>"]
+    ],
+    "<ExponentPart>": [
+      ["<ExponentIndicator>", "<SignedInteger>"]
+    ],
+    "<ExponentIndicator>": [
+      ["e"],
+      ["E"]
+    ],
+    "<SignedInteger>": [
+      ["<SignedInteger_pattern_24>", "<Digits>"]
+    ],
+    "<Sign>": [
+      ["+"],
+      ["-"]
+    ],
+    "<FloatTypeSuffix>": [
+      ["f"],
+      ["F"],
+      ["d"],
+      ["D"]
+    ],
+    "<HexadecimalFloatingPointLiteral>": [
+      ["<HexSignificand>", "<BinaryExponent>", "<HexadecimalFloatingPointLiteral_pattern_25>"]
+    ],
+    "<HexSignificand>": [
+      ["<HexNumeral>", "<HexSignificand_pattern_26>"],
+      ["0", "x", "<HexSignificand_pattern_27>", ".", "<HexDigits>"],
+      ["0", "X", "<HexSignificand_pattern_28>", ".", "<HexDigits>"]
+    ],
+    "<BinaryExponent>": [
+      ["<BinaryExponentIndicator>", "<SignedInteger>"]
+    ],
+    "<BinaryExponentIndicator>": [
+      ["p"],
+      ["P"]
+    ],
+    "<BooleanLiteral>": [
+      ["t", "r", "u", "e"],
+      ["f", "a", "l", "s", "e"]
+    ],
+    "<CharacterLiteral>": [
+      ["'", "<SingleCharacter>", "'"],
+      ["'", "<EscapeSequence>", "'"]
+    ],
+    "<StringLiteral>": [
+      ["\"", "<StringLiteral_pattern_29>", "\""]
+    ],
+    "<TextBlock>": [
+      ["\"", "\"", "\"", "<TextBlock_pattern_30>", "<LineTerminator>", "<TextBlock_pattern_31>", "\"", "\"", "\""]
+    ],
+    "<TextBlockWhiteSpace>": [
+      ["<WhiteSpace>"]
+    ],
+    "<EscapeSequence>": [
+      ["\\\\", "b"],
+      ["\\\\", "s"],
+      ["\\\\", "t"],
+      ["\\\\", "n"],
+      ["\\\\", "f"],
+      ["\\\\", "r"],
+      ["\\\\", "<LineTerminator>"],
+      ["\\\\", "\""],
+      ["\\\\", "'"],
+      ["\\\\", "\\\\"],
+      ["<OctalEscape>"]
+    ],
+    "<OctalEscape>": [
+      ["\\\\", "<OctalDigit>"],
+      ["\\\\", "<OctalDigit>", "<OctalDigit>"],
+      ["\\\\", "<ZeroToThree>", "<OctalDigit>", "<OctalDigit>"]
+    ],
+    "<ZeroToThree>": [
+      ["0"],
+      ["1"],
+      ["2"],
+      ["3"]
+    ],
+    "<NullLiteral>": [
+      ["n", "u", "l", "l"]
+    ],
+    "<Separator>": [
+      ["("],
+      [")"],
+      ["{"],
+      ["}"],
+      ["["],
+      ["]"],
+      [";"],
+      [","],
+      ["."],
+      [".", ".", "."],
+      ["@"],
+      [":", ":"]
+    ],
+    "<Operator>": [
+      ["="],
+      [">"],
+      ["<"],
+      ["!"],
+      ["~"],
+      ["?"],
+      [":"],
+      ["-", ">"],
+      ["=", "="],
+      [">", "="],
+      ["<", "="],
+      ["!", "="],
+      ["&", "&"],
+      ["|", "|"],
+      ["+", "+"],
+      ["-", "-"],
+      ["+"],
+      ["-"],
+      ["*"],
+      ["/"],
+      ["&"],
+      ["|"],
+      ["^"],
+      ["%"],
+      ["<", "<"],
+      [">", ">"],
+      [">", ">", ">"],
+      ["+", "="],
+      ["-", "="],
+      ["*", "="],
+      ["/", "="],
+      ["&", "="],
+      ["|", "="],
+      ["^", "="],
+      ["%", "="],
+      ["<", "<", "="],
+      [">", ">", "="],
+      [">", ">", ">", "="]
+    ],
+    "<Literal>": [
+      ["<IntegerLiteral>"],
+      ["<FloatingPointLiteral>"],
+      ["<BooleanLiteral>"],
+      ["<CharacterLiteral>"],
+      ["<StringLiteral>"],
+      ["<TextBlock>"],
+      ["<NullLiteral>"]
+    ],
+    "<Type>": [
+      ["<PrimitiveType>"],
+      ["<ReferenceType>"]
+    ],
+    "<PrimitiveType>": [
+      ["<PrimitiveType_pattern_32>", "<NumericType>"],
+      ["<PrimitiveType_pattern_33>", "b", "o", "o", "l", "e", "a", "n"]
+    ],
+    "<NumericType>": [
+      ["<IntegralType>"],
+      ["<FloatingPointType>"]
+    ],
+    "<IntegralType>": [
+      ["b", "y", "t", "e"],
+      ["s", "h", "o", "r", "t"],
+      ["i", "n", "t"],
+      ["l", "o", "n", "g"],
+      ["c", "h", "a", "r"]
+    ],
+    "<FloatingPointType>": [
+      ["f", "l", "o", "a", "t"],
+      ["d", "o", "u", "b", "l", "e"]
+    ],
+    "<ReferenceType>": [
+      ["<ClassOrInterfaceType>"],
+      ["<TypeVariable>"],
+      ["<ArrayType>"]
+    ],
+    "<ClassOrInterfaceType>": [
+      ["<ClassType>"],
+      ["<InterfaceType>"]
+    ],
+    "<ClassType>": [
+      ["<ClassType_pattern_34>", "<TypeIdentifier>", "<ClassType_pattern_35>"],
+      ["<PackageName>", ".", "<ClassType_pattern_36>", "<TypeIdentifier>", "<ClassType_pattern_37>"],
+      ["<ClassOrInterfaceType>", ".", "<ClassType_pattern_38>", "<TypeIdentifier>", "<ClassType_pattern_39>"]
+    ],
+    "<InterfaceType>": [
+      ["<ClassType>"]
+    ],
+    "<TypeVariable>": [
+      ["<TypeVariable_pattern_40>", "<TypeIdentifier>"]
+    ],
+    "<ArrayType>": [
+      ["<PrimitiveType>", "<Dims>"],
+      ["<ClassOrInterfaceType>", "<Dims>"],
+      ["<TypeVariable>", "<Dims>"]
+    ],
+    "<Dims>": [
+      ["<Dims_pattern_41>", "[", "]", "<Dims_pattern_42>"]
+    ],
+    "<TypeParameter>": [
+      ["<TypeParameter_pattern_44>", "<TypeIdentifier>", "<TypeParameter_pattern_45>"]
+    ],
+    "<TypeParameterModifier>": [
+      ["<Annotation>"]
+    ],
+    "<TypeBound>": [
+      ["e", "x", "t", "e", "n", "d", "s", "<TypeVariable>"],
+      ["e", "x", "t", "e", "n", "d", "s", "<ClassOrInterfaceType>", "<TypeBound_pattern_46>"]
+    ],
+    "<AdditionalBound>": [
+      ["&", "<InterfaceType>"]
+    ],
+    "<TypeArguments>": [
+      ["<", "<TypeArgumentList>", ">"]
+    ],
+    "<TypeArgumentList>": [
+      ["<TypeArgument>", "<TypeArgumentList_pattern_47>"]
+    ],
+    "<TypeArgument>": [
+      ["<ReferenceType>"],
+      ["<Wildcard>"]
+    ],
+    "<Wildcard>": [
+      ["<Wildcard_pattern_48>", "?", "<Wildcard_pattern_49>"]
+    ],
+    "<WildcardBounds>": [
+      ["e", "x", "t", "e", "n", "d", "s", "<ReferenceType>"],
+      ["s", "u", "p", "e", "r", "<ReferenceType>"]
+    ],
+    "<ModuleName>": [
+      ["<Identifier>"],
+      ["<ModuleName>", ".", "<Identifier>"]
+    ],
+    "<PackageName>": [
+      ["<Identifier>"],
+      ["<PackageName>", ".", "<Identifier>"]
+    ],
+    "<TypeName>": [
+      ["<TypeIdentifier>"],
+      ["<PackageOrTypeName>", ".", "<TypeIdentifier>"]
+    ],
+    "<ExpressionName>": [
+      ["<Identifier>"],
+      ["<AmbiguousName>", ".", "<Identifier>"]
+    ],
+    "<MethodName>": [
+      ["<UnqualifiedMethodIdentifier>"]
+    ],
+    "<PackageOrTypeName>": [
+      ["<Identifier>"],
+      ["<PackageOrTypeName>", ".", "<Identifier>"]
+    ],
+    "<AmbiguousName>": [
+      ["<Identifier>"],
+      ["<AmbiguousName>", ".", "<Identifier>"]
+    ],
+    "<CompilationUnit>": [
+      ["<OrdinaryCompilationUnit>"],
+      ["<ModularCompilationUnit>"]
+    ],
+    "<OrdinaryCompilationUnit>": [
+      ["<OrdinaryCompilationUnit_pattern_50>", "<OrdinaryCompilationUnit_pattern_51>", "<OrdinaryCompilationUnit_pattern_52>"]
+    ],
+    "<ModularCompilationUnit>": [
+      ["<ModularCompilationUnit_pattern_53>", "<ModuleDeclaration>"]
+    ],
+    "<PackageDeclaration>": [
+      ["<PackageDeclaration_pattern_54>", "p", "a", "c", "k", "a", "g", "e", "<Identifier>", "<PackageDeclaration_pattern_55>", ";"]
+    ],
+    "<PackageModifier>": [
+      ["<Annotation>"]
+    ],
+    "<ImportDeclaration>": [
+      ["<SingleTypeImportDeclaration>"],
+      ["<TypeImportOnDemandDeclaration>"],
+      ["<SingleStaticImportDeclaration>"],
+      ["<StaticImportOnDemandDeclaration>"]
+    ],
+    "<SingleTypeImportDeclaration>": [
+      ["i", "m", "p", "o", "r", "t", "<TypeName>", ";"]
+    ],
+    "<TypeImportOnDemandDeclaration>": [
+      ["i", "m", "p", "o", "r", "t", "<PackageOrTypeName>", ".", "*", ";"]
+    ],
+    "<SingleStaticImportDeclaration>": [
+      ["i", "m", "p", "o", "r", "t", "s", "t", "a", "t", "i", "c", "<TypeName>", ".", "<Identifier>", ";"]
+    ],
+    "<StaticImportOnDemandDeclaration>": [
+      ["i", "m", "p", "o", "r", "t", "s", "t", "a", "t", "i", "c", "<TypeName>", ".", "*", ";"]
+    ],
+    "<TopLevelClassOrInterfaceDeclaration>": [
+      ["<ClassDeclaration>"],
+      ["<InterfaceDeclaration>"],
+      [";"]
+    ],
+    "<ModuleDeclaration>": [
+      ["<ModuleDeclaration_pattern_56>", "<ModuleDeclaration_pattern_57>", "m", "o", "d", "u", "l", "e", "<Identifier>", "<ModuleDeclaration_pattern_58>", "{", "<ModuleDeclaration_pattern_59>", "}"]
+    ],
+    "<ModuleDirective>": [
+      ["r", "e", "q", "u", "i", "r", "e", "s", "<ModuleDirective_pattern_60>", "<ModuleName>", ";"],
+      ["e", "x", "p", "o", "r", "t", "s", "<PackageName>", "<ModuleDirective_pattern_61>", ";"],
+      ["o", "p", "e", "n", "s", "<PackageName>", "<ModuleDirective_pattern_63>", ";"],
+      ["u", "s", "e", "s", "<TypeName>", ";"],
+      ["p", "r", "o", "v", "i", "d", "e", "s", "<TypeName>", "w", "i", "t", "h", "<TypeName>", "<ModuleDirective_pattern_65>", ";"]
+    ],
+    "<RequiresModifier>": [
+      ["t", "r", "a", "n", "s", "i", "t", "i", "v", "e"],
+      ["s", "t", "a", "t", "i", "c"]
+    ],
+    "<ClassDeclaration>": [
+      ["<NormalClassDeclaration>"],
+      ["<EnumDeclaration>"],
+      ["<RecordDeclaration>"]
+    ],
+    "<NormalClassDeclaration>": [
+      ["<NormalClassDeclaration_pattern_66>", "c", "l", "a", "s", "s", "<TypeIdentifier>", "<NormalClassDeclaration_pattern_67>", "<NormalClassDeclaration_pattern_68>", "<NormalClassDeclaration_pattern_69>", "<NormalClassDeclaration_pattern_70>", "<ClassBody>"]
+    ],
+    "<ClassModifier>": [
+      ["<Annotation>"],
+      ["p", "u", "b", "l", "i", "c"],
+      ["p", "r", "o", "t", "e", "c", "t", "e", "d"],
+      ["p", "r", "i", "v", "a", "t", "e"],
+      ["a", "b", "s", "t", "r", "a", "c", "t"],
+      ["s", "t", "a", "t", "i", "c"],
+      ["f", "i", "n", "a", "l"],
+      ["s", "e", "a", "l", "e", "d"],
+      ["n", "o", "n", "-", "s", "e", "a", "l", "e", "d"],
+      ["s", "t", "r", "i", "c", "t", "f", "p"]
+    ],
+    "<TypeParameters>": [
+      ["<", "<TypeParameterList>", ">"]
+    ],
+    "<TypeParameterList>": [
+      ["<TypeParameter>", "<TypeParameterList_pattern_71>"]
+    ],
+    "<ClassExtends>": [
+      ["e", "x", "t", "e", "n", "d", "s", "<ClassType>"]
+    ],
+    "<ClassImplements>": [
+      ["i", "m", "p", "l", "e", "m", "e", "n", "t", "s", "<InterfaceTypeList>"]
+    ],
+    "<InterfaceTypeList>": [
+      ["<InterfaceType>", "<InterfaceTypeList_pattern_72>"]
+    ],
+    "<ClassPermits>": [
+      ["p", "e", "r", "m", "i", "t", "s", "<TypeName>", "<ClassPermits_pattern_73>"]
+    ],
+    "<ClassBody>": [
+      ["{", "<ClassBody_pattern_74>", "}"]
+    ],
+    "<ClassBodyDeclaration>": [
+      ["<ClassMemberDeclaration>"],
+      ["<InstanceInitializer>"],
+      ["<StaticInitializer>"],
+      ["<ConstructorDeclaration>"]
+    ],
+    "<ClassMemberDeclaration>": [
+      ["<FieldDeclaration>"],
+      ["<MethodDeclaration>"],
+      ["<ClassDeclaration>"],
+      ["<InterfaceDeclaration>"],
+      [";"]
+    ],
+    "<FieldDeclaration>": [
+      ["<FieldDeclaration_pattern_75>", "<UnannType>", "<VariableDeclaratorList>", ";"]
+    ],
+    "<FieldModifier>": [
+      ["<Annotation>"],
+      ["p", "u", "b", "l", "i", "c"],
+      ["p", "r", "o", "t", "e", "c", "t", "e", "d"],
+      ["p", "r", "i", "v", "a", "t", "e"],
+      ["s", "t", "a", "t", "i", "c"],
+      ["f", "i", "n", "a", "l"],
+      ["t", "r", "a", "n", "s", "i", "e", "n", "t"],
+      ["v", "o", "l", "a", "t", "i", "l", "e"]
+    ],
+    "<VariableDeclaratorList>": [
+      ["<VariableDeclarator>", "<VariableDeclaratorList_pattern_76>"]
+    ],
+    "<VariableDeclarator>": [
+      ["<VariableDeclaratorId>", "<VariableDeclarator_pattern_77>"]
+    ],
+    "<VariableDeclaratorId>": [
+      ["<Identifier>", "<VariableDeclaratorId_pattern_78>"]
+    ],
+    "<VariableInitializer>": [
+      ["<Expression>"],
+      ["<ArrayInitializer>"]
+    ],
+    "<UnannType>": [
+      ["<UnannPrimitiveType>"],
+      ["<UnannReferenceType>"]
+    ],
+    "<UnannPrimitiveType>": [
+      ["<NumericType>"],
+      ["b", "o", "o", "l", "e", "a", "n"]
+    ],
+    "<UnannReferenceType>": [
+      ["<UnannClassOrInterfaceType>"],
+      ["<UnannTypeVariable>"],
+      ["<UnannArrayType>"]
+    ],
+    "<UnannClassOrInterfaceType>": [
+      ["<UnannClassType>"],
+      ["<UnannInterfaceType>"]
+    ],
+    "<UnannClassType>": [
+      ["<TypeIdentifier>", "<UnannClassType_pattern_79>"],
+      ["<PackageName>", ".", "<UnannClassType_pattern_80>", "<TypeIdentifier>", "<UnannClassType_pattern_81>"],
+      ["<UnannClassOrInterfaceType>", ".", "<UnannClassType_pattern_82>", "<TypeIdentifier>", "<UnannClassType_pattern_83>"]
+    ],
+    "<UnannInterfaceType>": [
+      ["<UnannClassType>"]
+    ],
+    "<UnannTypeVariable>": [
+      ["<TypeIdentifier>"]
+    ],
+    "<UnannArrayType>": [
+      ["<UnannPrimitiveType>", "<Dims>"],
+      ["<UnannClassOrInterfaceType>", "<Dims>"],
+      ["<UnannTypeVariable>", "<Dims>"]
+    ],
+    "<MethodDeclaration>": [
+      ["<MethodDeclaration_pattern_84>", "<MethodHeader>", "<MethodBody>"]
+    ],
+    "<MethodModifier>": [
+      ["<Annotation>"],
+      ["p", "u", "b", "l", "i", "c"],
+      ["p", "r", "o", "t", "e", "c", "t", "e", "d"],
+      ["p", "r", "i", "v", "a", "t", "e"],
+      ["a", "b", "s", "t", "r", "a", "c", "t"],
+      ["s", "t", "a", "t", "i", "c"],
+      ["f", "i", "n", "a", "l"],
+      ["s", "y", "n", "c", "h", "r", "o", "n", "i", "z", "e", "d"],
+      ["n", "a", "t", "i", "v", "e"],
+      ["s", "t", "r", "i", "c", "t", "f", "p"]
+    ],
+    "<MethodHeader>": [
+      ["<Result>", "<MethodDeclarator>", "<MethodHeader_pattern_85>"],
+      ["<TypeParameters>", "<MethodHeader_pattern_86>", "<Result>", "<MethodDeclarator>", "<MethodHeader_pattern_87>"]
+    ],
+    "<Result>": [
+      ["<UnannType>"],
+      ["v", "o", "i", "d"]
+    ],
+    "<MethodDeclarator>": [
+      ["<Identifier>", "(", "<MethodDeclarator_pattern_88>", "<MethodDeclarator_pattern_89>", ")", "<MethodDeclarator_pattern_90>"]
+    ],
+    "<ReceiverParameter>": [
+      ["<ReceiverParameter_pattern_91>", "<UnannType>", "<ReceiverParameter_pattern_92>", "t", "h", "i", "s"]
+    ],
+    "<FormalParameterList>": [
+      ["<FormalParameter>", "<FormalParameterList_pattern_93>"]
+    ],
+    "<FormalParameter>": [
+      ["<FormalParameter_pattern_94>", "<UnannType>", "<VariableDeclaratorId>"],
+      ["<VariableArityParameter>"]
+    ],
+    "<VariableArityParameter>": [
+      ["<VariableArityParameter_pattern_95>", "<UnannType>", "<VariableArityParameter_pattern_96>", ".", ".", ".", "<Identifier>"]
+    ],
+    "<VariableModifier>": [
+      ["<Annotation>"],
+      ["f", "i", "n", "a", "l"]
+    ],
+    "<Throws>": [
+      ["t", "h", "r", "o", "w", "s", "<ExceptionTypeList>"]
+    ],
+    "<ExceptionTypeList>": [
+      ["<ExceptionType>", "<ExceptionTypeList_pattern_97>"]
+    ],
+    "<ExceptionType>": [
+      ["<ClassType>"],
+      ["<TypeVariable>"]
+    ],
+    "<MethodBody>": [
+      ["<Block>"],
+      [";"]
+    ],
+    "<InstanceInitializer>": [
+      ["<Block>"]
+    ],
+    "<StaticInitializer>": [
+      ["s", "t", "a", "t", "i", "c", "<Block>"]
+    ],
+    "<ConstructorDeclaration>": [
+      ["<ConstructorDeclaration_pattern_98>", "<ConstructorDeclarator>", "<ConstructorDeclaration_pattern_99>", "<ConstructorBody>"]
+    ],
+    "<ConstructorModifier>": [
+      ["<Annotation>"],
+      ["p", "u", "b", "l", "i", "c"],
+      ["p", "r", "o", "t", "e", "c", "t", "e", "d"],
+      ["p", "r", "i", "v", "a", "t", "e"]
+    ],
+    "<ConstructorDeclarator>": [
+      ["<ConstructorDeclarator_pattern_100>", "<SimpleTypeName>", "(", "<ConstructorDeclarator_pattern_101>", "<ConstructorDeclarator_pattern_102>", ")"]
+    ],
+    "<SimpleTypeName>": [
+      ["<TypeIdentifier>"]
+    ],
+    "<ConstructorBody>": [
+      ["{", "<ConstructorBody_pattern_103>", "<ConstructorBody_pattern_104>", "}"]
+    ],
+    "<ExplicitConstructorInvocation>": [
+      ["<ExplicitConstructorInvocation_pattern_105>", "t", "h", "i", "s", "(", "<ExplicitConstructorInvocation_pattern_106>", ")", ";"],
+      ["<ExplicitConstructorInvocation_pattern_107>", "s", "u", "p", "e", "r", "(", "<ExplicitConstructorInvocation_pattern_108>", ")", ";"],
+      ["<ExpressionName>", ".", "<ExplicitConstructorInvocation_pattern_109>", "s", "u", "p", "e", "r", "(", "<ExplicitConstructorInvocation_pattern_110>", ")", ";"],
+      ["<Primary>", ".", "<ExplicitConstructorInvocation_pattern_111>", "s", "u", "p", "e", "r", "(", "<ExplicitConstructorInvocation_pattern_112>", ")", ";"]
+    ],
+    "<EnumDeclaration>": [
+      ["<EnumDeclaration_pattern_113>", "e", "n", "u", "m", "<TypeIdentifier>", "<EnumDeclaration_pattern_114>", "<EnumBody>"]
+    ],
+    "<EnumBody>": [
+      ["{", "<EnumBody_pattern_115>", "<EnumBody_pattern_116>", "<EnumBody_pattern_117>", "}"]
+    ],
+    "<EnumConstantList>": [
+      ["<EnumConstant>", "<EnumConstantList_pattern_118>"]
+    ],
+    "<EnumConstant>": [
+      ["<EnumConstant_pattern_119>", "<Identifier>", "<EnumConstant_pattern_120>", "<EnumConstant_pattern_122>"]
+    ],
+    "<EnumConstantModifier>": [
+      ["<Annotation>"]
+    ],
+    "<EnumBodyDeclarations>": [
+      [";", "<EnumBodyDeclarations_pattern_123>"]
+    ],
+    "<RecordDeclaration>": [
+      ["<RecordDeclaration_pattern_124>", "r", "e", "c", "o", "r", "d", "<TypeIdentifier>", "<RecordDeclaration_pattern_125>", "<RecordHeader>", "<RecordDeclaration_pattern_126>", "<RecordBody>"]
+    ],
+    "<RecordHeader>": [
+      ["(", "<RecordHeader_pattern_127>", ")"]
+    ],
+    "<RecordComponentList>": [
+      ["<RecordComponent>", "<RecordComponentList_pattern_128>"]
+    ],
+    "<RecordComponent>": [
+      ["<RecordComponent_pattern_129>", "<UnannType>", "<Identifier>"],
+      ["<VariableArityRecordComponent>"]
+    ],
+    "<VariableArityRecordComponent>": [
+      ["<VariableArityRecordComponent_pattern_130>", "<UnannType>", "<VariableArityRecordComponent_pattern_131>", ".", ".", ".", "<Identifier>"]
+    ],
+    "<RecordComponentModifier>": [
+      ["<Annotation>"]
+    ],
+    "<RecordBody>": [
+      ["{", "<RecordBody_pattern_132>", "}"]
+    ],
+    "<RecordBodyDeclaration>": [
+      ["<ClassBodyDeclaration>"],
+      ["<CompactConstructorDeclaration>"]
+    ],
+    "<CompactConstructorDeclaration>": [
+      ["<CompactConstructorDeclaration_pattern_133>", "<SimpleTypeName>", "<ConstructorBody>"]
+    ],
+    "<InterfaceDeclaration>": [
+      ["<NormalInterfaceDeclaration>"],
+      ["<AnnotationInterfaceDeclaration>"]
+    ],
+    "<NormalInterfaceDeclaration>": [
+      ["<NormalInterfaceDeclaration_pattern_134>", "i", "n", "t", "e", "r", "f", "a", "c", "e", "<TypeIdentifier>", "<NormalInterfaceDeclaration_pattern_135>", "<NormalInterfaceDeclaration_pattern_136>", "<NormalInterfaceDeclaration_pattern_137>", "<InterfaceBody>"]
+    ],
+    "<InterfaceModifier>": [
+      ["<Annotation>"],
+      ["p", "u", "b", "l", "i", "c"],
+      ["p", "r", "o", "t", "e", "c", "t", "e", "d"],
+      ["p", "r", "i", "v", "a", "t", "e"],
+      ["a", "b", "s", "t", "r", "a", "c", "t"],
+      ["s", "t", "a", "t", "i", "c"],
+      ["s", "e", "a", "l", "e", "d"],
+      ["n", "o", "n", "-", "s", "e", "a", "l", "e", "d"],
+      ["s", "t", "r", "i", "c", "t", "f", "p"]
+    ],
+    "<InterfaceExtends>": [
+      ["e", "x", "t", "e", "n", "d", "s", "<InterfaceTypeList>"]
+    ],
+    "<InterfacePermits>": [
+      ["p", "e", "r", "m", "i", "t", "s", "<TypeName>", "<InterfacePermits_pattern_138>"]
+    ],
+    "<InterfaceBody>": [
+      ["{", "<InterfaceBody_pattern_139>", "}"]
+    ],
+    "<InterfaceMemberDeclaration>": [
+      ["<ConstantDeclaration>"],
+      ["<InterfaceMethodDeclaration>"],
+      ["<ClassDeclaration>"],
+      ["<InterfaceDeclaration>"],
+      [";"]
+    ],
+    "<ConstantDeclaration>": [
+      ["<ConstantDeclaration_pattern_140>", "<UnannType>", "<VariableDeclaratorList>", ";"]
+    ],
+    "<ConstantModifier>": [
+      ["<Annotation>"],
+      ["p", "u", "b", "l", "i", "c"],
+      ["s", "t", "a", "t", "i", "c"],
+      ["f", "i", "n", "a", "l"]
+    ],
+    "<InterfaceMethodDeclaration>": [
+      ["<InterfaceMethodDeclaration_pattern_141>", "<MethodHeader>", "<MethodBody>"]
+    ],
+    "<InterfaceMethodModifier>": [
+      ["<Annotation>"],
+      ["p", "u", "b", "l", "i", "c"],
+      ["p", "r", "i", "v", "a", "t", "e"],
+      ["a", "b", "s", "t", "r", "a", "c", "t"],
+      ["d", "e", "f", "a", "u", "l", "t"],
+      ["s", "t", "a", "t", "i", "c"],
+      ["s", "t", "r", "i", "c", "t", "f", "p"]
+    ],
+    "<AnnotationInterfaceDeclaration>": [
+      ["<AnnotationInterfaceDeclaration_pattern_142>", "@", "i", "n", "t", "e", "r", "f", "a", "c", "e", "<TypeIdentifier>", "<AnnotationInterfaceBody>"]
+    ],
+    "<AnnotationInterfaceBody>": [
+      ["{", "<AnnotationInterfaceBody_pattern_143>", "}"]
+    ],
+    "<AnnotationInterfaceMemberDeclaration>": [
+      ["<AnnotationInterfaceElementDeclaration>"],
+      ["<ConstantDeclaration>"],
+      ["<ClassDeclaration>"],
+      ["<InterfaceDeclaration>"],
+      [";"]
+    ],
+    "<AnnotationInterfaceElementDeclaration>": [
+      ["<AnnotationInterfaceElementDeclaration_pattern_144>", "<UnannType>", "<Identifier>", "(", ")", "<AnnotationInterfaceElementDeclaration_pattern_145>", "<AnnotationInterfaceElementDeclaration_pattern_146>", ";"]
+    ],
+    "<AnnotationInterfaceElementModifier>": [
+      ["<Annotation>"],
+      ["p", "u", "b", "l", "i", "c"],
+      ["a", "b", "s", "t", "r", "a", "c", "t"]
+    ],
+    "<DefaultValue>": [
+      ["d", "e", "f", "a", "u", "l", "t", "<ElementValue>"]
+    ],
+    "<Annotation>": [
+      ["<NormalAnnotation>"],
+      ["<MarkerAnnotation>"],
+      ["<SingleElementAnnotation>"]
+    ],
+    "<NormalAnnotation>": [
+      ["@", "<TypeName>", "(", "<NormalAnnotation_pattern_147>", ")"]
+    ],
+    "<ElementValuePairList>": [
+      ["<ElementValuePair>", "<ElementValuePairList_pattern_148>"]
+    ],
+    "<ElementValuePair>": [
+      ["<Identifier>", "=", "<ElementValue>"]
+    ],
+    "<ElementValue>": [
+      ["<ConditionalExpression>"],
+      ["<ElementValueArrayInitializer>"],
+      ["<Annotation>"]
+    ],
+    "<ElementValueArrayInitializer>": [
+      ["{", "<ElementValueArrayInitializer_pattern_149>", "<ElementValueArrayInitializer_pattern_150>", "}"]
+    ],
+    "<ElementValueList>": [
+      ["<ElementValue>", "<ElementValueList_pattern_151>"]
+    ],
+    "<MarkerAnnotation>": [
+      ["@", "<TypeName>"]
+    ],
+    "<SingleElementAnnotation>": [
+      ["@", "<TypeName>", "(", "<ElementValue>", ")"]
+    ],
+    "<ArrayInitializer>": [
+      ["{", "<ArrayInitializer_pattern_152>", "<ArrayInitializer_pattern_153>", "}"]
+    ],
+    "<VariableInitializerList>": [
+      ["<VariableInitializer>", "<VariableInitializerList_pattern_154>"]
+    ],
+    "<Block>": [
+      ["{", "<Block_pattern_155>", "}"]
+    ],
+    "<BlockStatements>": [
+      ["<BlockStatement>", "<BlockStatements_pattern_156>"]
+    ],
+    "<BlockStatement>": [
+      ["<LocalClassOrInterfaceDeclaration>"],
+      ["<LocalVariableDeclarationStatement>"],
+      ["<Statement>"]
+    ],
+    "<LocalClassOrInterfaceDeclaration>": [
+      ["<ClassDeclaration>"],
+      ["<NormalInterfaceDeclaration>"]
+    ],
+    "<LocalVariableDeclarationStatement>": [
+      ["<LocalVariableDeclaration>", ";"]
+    ],
+    "<LocalVariableDeclaration>": [
+      ["<LocalVariableDeclaration_pattern_157>", "<LocalVariableType>", "<VariableDeclaratorList>"]
+    ],
+    "<LocalVariableType>": [
+      ["<UnannType>"],
+      ["v", "a", "r"]
+    ],
+    "<Statement>": [
+      ["<StatementWithoutTrailingSubstatement>"],
+      ["<LabeledStatement>"],
+      ["<IfThenStatement>"],
+      ["<IfThenElseStatement>"],
+      ["<WhileStatement>"],
+      ["<ForStatement>"]
+    ],
+    "<StatementNoShortIf>": [
+      ["<StatementWithoutTrailingSubstatement>"],
+      ["<LabeledStatementNoShortIf>"],
+      ["<IfThenElseStatementNoShortIf>"],
+      ["<WhileStatementNoShortIf>"],
+      ["<ForStatementNoShortIf>"]
+    ],
+    "<StatementWithoutTrailingSubstatement>": [
+      ["<Block>"],
+      ["<EmptyStatement>"],
+      ["<ExpressionStatement>"],
+      ["<AssertStatement>"],
+      ["<SwitchStatement>"],
+      ["<DoStatement>"],
+      ["<BreakStatement>"],
+      ["<ContinueStatement>"],
+      ["<ReturnStatement>"],
+      ["<SynchronizedStatement>"],
+      ["<ThrowStatement>"],
+      ["<TryStatement>"],
+      ["<YieldStatement>"]
+    ],
+    "<EmptyStatement>": [
+      [";"]
+    ],
+    "<LabeledStatement>": [
+      ["<Identifier>", ":", "<Statement>"]
+    ],
+    "<LabeledStatementNoShortIf>": [
+      ["<Identifier>", ":", "<StatementNoShortIf>"]
+    ],
+    "<ExpressionStatement>": [
+      ["<StatementExpression>", ";"]
+    ],
+    "<StatementExpression>": [
+      ["<Assignment>"],
+      ["<PreIncrementExpression>"],
+      ["<PreDecrementExpression>"],
+      ["<PostIncrementExpression>"],
+      ["<PostDecrementExpression>"],
+      ["<MethodInvocation>"],
+      ["<ClassInstanceCreationExpression>"]
+    ],
+    "<IfThenStatement>": [
+      ["i", "f", "(", "<Expression>", ")", "<Statement>"]
+    ],
+    "<IfThenElseStatement>": [
+      ["i", "f", "(", "<Expression>", ")", "<StatementNoShortIf>", "e", "l", "s", "e", "<Statement>"]
+    ],
+    "<IfThenElseStatementNoShortIf>": [
+      ["i", "f", "(", "<Expression>", ")", "<StatementNoShortIf>", "e", "l", "s", "e", "<StatementNoShortIf>"]
+    ],
+    "<AssertStatement>": [
+      ["a", "s", "s", "e", "r", "t", "<Expression>", ";"],
+      ["a", "s", "s", "e", "r", "t", "<Expression>", ":", "<Expression>", ";"]
+    ],
+    "<SwitchStatement>": [
+      ["s", "w", "i", "t", "c", "h", "(", "<Expression>", ")", "<SwitchBlock>"]
+    ],
+    "<SwitchBlock>": [
+      ["{", "<SwitchRule>", "<SwitchBlock_pattern_158>", "}"],
+      ["{", "<SwitchBlock_pattern_159>", "<SwitchBlock_pattern_160>", "}"]
+    ],
+    "<SwitchRule>": [
+      ["<SwitchLabel>", "-", ">", "<Expression>", ";"],
+      ["<SwitchLabel>", "-", ">", "<Block>"],
+      ["<SwitchLabel>", "-", ">", "<ThrowStatement>"]
+    ],
+    "<SwitchBlockStatementGroup>": [
+      ["<SwitchLabel>", ":", "<SwitchBlockStatementGroup_pattern_161>", "<BlockStatements>"]
+    ],
+    "<SwitchLabel>": [
+      ["c", "a", "s", "e", "<CaseConstant>", "<SwitchLabel_pattern_162>"],
+      ["d", "e", "f", "a", "u", "l", "t"]
+    ],
+    "<CaseConstant>": [
+      ["<ConditionalExpression>"]
+    ],
+    "<WhileStatement>": [
+      ["w", "h", "i", "l", "e", "(", "<Expression>", ")", "<Statement>"]
+    ],
+    "<WhileStatementNoShortIf>": [
+      ["w", "h", "i", "l", "e", "(", "<Expression>", ")", "<StatementNoShortIf>"]
+    ],
+    "<DoStatement>": [
+      ["d", "o", "<Statement>", "w", "h", "i", "l", "e", "(", "<Expression>", ")", ";"]
+    ],
+    "<ForStatement>": [
+      ["<BasicForStatement>"],
+      ["<EnhancedForStatement>"]
+    ],
+    "<ForStatementNoShortIf>": [
+      ["<BasicForStatementNoShortIf>"],
+      ["<EnhancedForStatementNoShortIf>"]
+    ],
+    "<BasicForStatement>": [
+      ["f", "o", "r", "(", "<BasicForStatement_pattern_163>", ";", "<BasicForStatement_pattern_164>", ";", "<BasicForStatement_pattern_165>", ")", "<Statement>"]
+    ],
+    "<BasicForStatementNoShortIf>": [
+      ["f", "o", "r", "(", "<BasicForStatementNoShortIf_pattern_166>", ";", "<BasicForStatementNoShortIf_pattern_167>", ";", "<BasicForStatementNoShortIf_pattern_168>", ")", "<StatementNoShortIf>"]
+    ],
+    "<ForInit>": [
+      ["<StatementExpressionList>"],
+      ["<LocalVariableDeclaration>"]
+    ],
+    "<ForUpdate>": [
+      ["<StatementExpressionList>"]
+    ],
+    "<StatementExpressionList>": [
+      ["<StatementExpression>", "<StatementExpressionList_pattern_169>"]
+    ],
+    "<EnhancedForStatement>": [
+      ["f", "o", "r", "(", "<LocalVariableDeclaration>", ":", "<Expression>", ")", "<Statement>"]
+    ],
+    "<EnhancedForStatementNoShortIf>": [
+      ["f", "o", "r", "(", "<LocalVariableDeclaration>", ":", "<Expression>", ")", "<StatementNoShortIf>"]
+    ],
+    "<BreakStatement>": [
+      ["b", "r", "e", "a", "k", "<BreakStatement_pattern_170>", ";"]
+    ],
+    "<YieldStatement>": [
+      ["y", "i", "e", "l", "d", "<Expression>", ";"]
+    ],
+    "<ContinueStatement>": [
+      ["c", "o", "n", "t", "i", "n", "u", "e", "<ContinueStatement_pattern_171>", ";"]
+    ],
+    "<ReturnStatement>": [
+      ["r", "e", "t", "u", "r", "n", "<ReturnStatement_pattern_172>", ";"]
+    ],
+    "<ThrowStatement>": [
+      ["t", "h", "r", "o", "w", "<Expression>", ";"]
+    ],
+    "<SynchronizedStatement>": [
+      ["s", "y", "n", "c", "h", "r", "o", "n", "i", "z", "e", "d", "(", "<Expression>", ")", "<Block>"]
+    ],
+    "<TryStatement>": [
+      ["t", "r", "y", "<Block>", "<Catches>"],
+      ["t", "r", "y", "<Block>", "<TryStatement_pattern_173>", "<Finally>"],
+      ["<TryWithResourcesStatement>"]
+    ],
+    "<Catches>": [
+      ["<CatchClause>", "<Catches_pattern_174>"]
+    ],
+    "<CatchClause>": [
+      ["c", "a", "t", "c", "h", "(", "<CatchFormalParameter>", ")", "<Block>"]
+    ],
+    "<CatchFormalParameter>": [
+      ["<CatchFormalParameter_pattern_175>", "<CatchType>", "<VariableDeclaratorId>"]
+    ],
+    "<CatchType>": [
+      ["<UnannClassType>", "<CatchType_pattern_176>"]
+    ],
+    "<Finally>": [
+      ["f", "i", "n", "a", "l", "l", "y", "<Block>"]
+    ],
+    "<TryWithResourcesStatement>": [
+      ["t", "r", "y", "<ResourceSpecification>", "<Block>", "<TryWithResourcesStatement_pattern_177>", "<TryWithResourcesStatement_pattern_178>"]
+    ],
+    "<ResourceSpecification>": [
+      ["(", "<ResourceList>", "<ResourceSpecification_pattern_179>", ")"]
+    ],
+    "<ResourceList>": [
+      ["<Resource>", "<ResourceList_pattern_180>"]
+    ],
+    "<Resource>": [
+      ["<LocalVariableDeclaration>"],
+      ["V", "a", "r", "i", "a", "b", "l", "e", "A", "c", "c", "e", "s", "s"]
+    ],
+    "<Pattern>": [
+      ["<TypePattern>"]
+    ],
+    "<TypePattern>": [
+      ["<LocalVariableDeclaration>"]
+    ],
+    "<Primary>": [
+      ["<PrimaryNoNewArray>"],
+      ["<ArrayCreationExpression>"]
+    ],
+    "<PrimaryNoNewArray>": [
+      ["<Literal>"],
+      ["<ClassLiteral>"],
+      ["t", "h", "i", "s"],
+      ["<TypeName>", ".", "t", "h", "i", "s"],
+      ["(", "<Expression>", ")"],
+      ["<ClassInstanceCreationExpression>"],
+      ["<FieldAccess>"],
+      ["<ArrayAccess>"],
+      ["<MethodInvocation>"],
+      ["<MethodReference>"]
+    ],
+    "<ClassLiteral>": [
+      ["<TypeName>", "<ClassLiteral_pattern_181>", ".", "c", "l", "a", "s", "s"],
+      ["<NumericType>", "<ClassLiteral_pattern_182>", ".", "c", "l", "a", "s", "s"],
+      ["b", "o", "o", "l", "e", "a", "n", "<ClassLiteral_pattern_183>", ".", "c", "l", "a", "s", "s"],
+      ["v", "o", "i", "d", ".", "c", "l", "a", "s", "s"]
+    ],
+    "<ClassInstanceCreationExpression>": [
+      ["<UnqualifiedClassInstanceCreationExpression>"],
+      ["<ExpressionName>", ".", "<UnqualifiedClassInstanceCreationExpression>"],
+      ["<Primary>", ".", "<UnqualifiedClassInstanceCreationExpression>"]
+    ],
+    "<UnqualifiedClassInstanceCreationExpression>": [
+      ["n", "e", "w", "<UnqualifiedClassInstanceCreationExpression_pattern_184>", "<ClassOrInterfaceTypeToInstantiate>", "(", "<UnqualifiedClassInstanceCreationExpression_pattern_185>", ")", "<UnqualifiedClassInstanceCreationExpression_pattern_186>"]
+    ],
+    "<ClassOrInterfaceTypeToInstantiate>": [
+      ["<ClassOrInterfaceTypeToInstantiate_pattern_187>", "<Identifier>", "<ClassOrInterfaceTypeToInstantiate_pattern_188>", "<ClassOrInterfaceTypeToInstantiate_pattern_190>"]
+    ],
+    "<TypeArgumentsOrDiamond>": [
+      ["<TypeArguments>"],
+      ["<", ">"]
+    ],
+    "<ArrayCreationExpression>": [
+      ["<ArrayCreationExpressionWithoutInitializer>"],
+      ["<ArrayCreationExpressionWithInitializer>"]
+    ],
+    "<ArrayCreationExpressionWithoutInitializer>": [
+      ["n", "e", "w", "<PrimitiveType>", "<DimExprs>", "<ArrayCreationExpressionWithoutInitializer_pattern_191>"],
+      ["n", "e", "w", "<ClassOrInterfaceType>", "<DimExprs>", "<ArrayCreationExpressionWithoutInitializer_pattern_192>"]
+    ],
+    "<ArrayCreationExpressionWithInitializer>": [
+      ["n", "e", "w", "<PrimitiveType>", "<Dims>", "<ArrayInitializer>"],
+      ["n", "e", "w", "<ClassOrInterfaceType>", "<Dims>", "<ArrayInitializer>"]
+    ],
+    "<DimExprs>": [
+      ["<DimExpr>", "<DimExprs_pattern_193>"]
+    ],
+    "<DimExpr>": [
+      ["<DimExpr_pattern_194>", "[", "<Expression>", "]"]
+    ],
+    "<ArrayAccess>": [
+      ["<ExpressionName>", "[", "<Expression>", "]"],
+      ["<PrimaryNoNewArray>", "[", "<Expression>", "]"],
+      ["<ArrayCreationExpressionWithInitializer>", "[", "<Expression>", "]"]
+    ],
+    "<FieldAccess>": [
+      ["<Primary>", ".", "<Identifier>"],
+      ["s", "u", "p", "e", "r", ".", "<Identifier>"],
+      ["<TypeName>", ".", "s", "u", "p", "e", "r", ".", "<Identifier>"]
+    ],
+    "<MethodInvocation>": [
+      ["<MethodName>", "(", "<MethodInvocation_pattern_195>", ")"],
+      ["<TypeName>", ".", "<MethodInvocation_pattern_196>", "<Identifier>", "(", "<MethodInvocation_pattern_197>", ")"],
+      ["<ExpressionName>", ".", "<MethodInvocation_pattern_198>", "<Identifier>", "(", "<MethodInvocation_pattern_199>", ")"],
+      ["<Primary>", ".", "<MethodInvocation_pattern_200>", "<Identifier>", "(", "<MethodInvocation_pattern_201>", ")"],
+      ["s", "u", "p", "e", "r", ".", "<MethodInvocation_pattern_202>", "<Identifier>", "(", "<MethodInvocation_pattern_203>", ")"],
+      ["<TypeName>", ".", "s", "u", "p", "e", "r", ".", "<MethodInvocation_pattern_204>", "<Identifier>", "(", "<MethodInvocation_pattern_205>", ")"]
+    ],
+    "<ArgumentList>": [
+      ["<Expression>", "<ArgumentList_pattern_206>"]
+    ],
+    "<MethodReference>": [
+      ["<ExpressionName>", ":", ":", "<MethodReference_pattern_207>", "<Identifier>"],
+      ["<Primary>", ":", ":", "<MethodReference_pattern_208>", "<Identifier>"],
+      ["<ReferenceType>", ":", ":", "<MethodReference_pattern_209>", "<Identifier>"],
+      ["s", "u", "p", "e", "r", ":", ":", "<MethodReference_pattern_210>", "<Identifier>"],
+      ["<TypeName>", ".", "s", "u", "p", "e", "r", ":", ":", "<MethodReference_pattern_211>", "<Identifier>"],
+      ["<ClassType>", ":", ":", "<MethodReference_pattern_212>", "n", "e", "w"],
+      ["<ArrayType>", ":", ":", "n", "e", "w"]
+    ],
+    "<Expression>": [
+      ["<LambdaExpression>"],
+      ["<AssignmentExpression>"]
+    ],
+    "<LambdaExpression>": [
+      ["<LambdaParameters>", "-", ">", "<LambdaBody>"]
+    ],
+    "<LambdaParameters>": [
+      ["(", "<LambdaParameters_pattern_213>", ")"],
+      ["<Identifier>"]
+    ],
+    "<LambdaParameterList>": [
+      ["<LambdaParameter>", "<LambdaParameterList_pattern_214>"],
+      ["<Identifier>", "<LambdaParameterList_pattern_215>"]
+    ],
+    "<LambdaParameter>": [
+      ["<LambdaParameter_pattern_216>", "<LambdaParameterType>", "<VariableDeclaratorId>"],
+      ["<VariableArityParameter>"]
+    ],
+    "<LambdaParameterType>": [
+      ["<UnannType>"],
+      ["v", "a", "r"]
+    ],
+    "<LambdaBody>": [
+      ["<Expression>"],
+      ["<Block>"]
+    ],
+    "<AssignmentExpression>": [
+      ["<ConditionalExpression>"],
+      ["<Assignment>"]
+    ],
+    "<Assignment>": [
+      ["<LeftHandSide>", "<AssignmentOperator>", "<Expression>"]
+    ],
+    "<LeftHandSide>": [
+      ["<ExpressionName>"],
+      ["<FieldAccess>"],
+      ["<ArrayAccess>"]
+    ],
+    "<AssignmentOperator>": [
+      ["="],
+      ["*", "="],
+      ["/", "="],
+      ["%", "="],
+      ["+", "="],
+      ["-", "="],
+      ["<", "<", "="],
+      [">", ">", "="],
+      [">", ">", ">", "="],
+      ["&", "="],
+      ["^", "="],
+      [],
+      []
+    ],
+    "<ConditionalExpression>": [
+      ["<ConditionalOrExpression>"],
+      ["<ConditionalOrExpression>", "?", "<Expression>", ":", "<ConditionalExpression>"],
+      ["<ConditionalOrExpression>", "?", "<Expression>", ":", "<LambdaExpression>"]
+    ],
+    "<ConditionalOrExpression>": [
+      ["<ConditionalAndExpression>"],
+      ["<ConditionalOrExpression>"],
+      ["<ConditionalAndExpression>"]
+    ],
+    "<ConditionalAndExpression>": [
+      ["<InclusiveOrExpression>"],
+      ["<ConditionalAndExpression>", "&", "&", "<InclusiveOrExpression>"]
+    ],
+    "<InclusiveOrExpression>": [
+      ["<ExclusiveOrExpression>"],
+      ["<InclusiveOrExpression>"],
+      ["<ExclusiveOrExpression>"]
+    ],
+    "<ExclusiveOrExpression>": [
+      ["<AndExpression>"],
+      ["<ExclusiveOrExpression>", "^", "<AndExpression>"]
+    ],
+    "<AndExpression>": [
+      ["<EqualityExpression>"],
+      ["<AndExpression>", "&", "<EqualityExpression>"]
+    ],
+    "<EqualityExpression>": [
+      ["<RelationalExpression>"],
+      ["<EqualityExpression>", "=", "=", "<RelationalExpression>"],
+      ["<EqualityExpression>", "!", "=", "<RelationalExpression>"]
+    ],
+    "<RelationalExpression>": [
+      ["<ShiftExpression>"],
+      ["<RelationalExpression>", "<", "<ShiftExpression>"],
+      ["<RelationalExpression>", ">", "<ShiftExpression>"],
+      ["<RelationalExpression>", "<", "=", "<ShiftExpression>"],
+      ["<RelationalExpression>", ">", "=", "<ShiftExpression>"],
+      ["<InstanceofExpression>"]
+    ],
+    "<InstanceofExpression>": [
+      ["<RelationalExpression>", "i", "n", "s", "t", "a", "n", "c", "e", "o", "f", "<ReferenceType>"],
+      ["<RelationalExpression>", "i", "n", "s", "t", "a", "n", "c", "e", "o", "f", "<Pattern>"]
+    ],
+    "<ShiftExpression>": [
+      ["<AdditiveExpression>"],
+      ["<ShiftExpression>", "<", "<", "<AdditiveExpression>"],
+      ["<ShiftExpression>", ">", ">", "<AdditiveExpression>"],
+      ["<ShiftExpression>", ">", ">", ">", "<AdditiveExpression>"]
+    ],
+    "<AdditiveExpression>": [
+      ["<MultiplicativeExpression>"],
+      ["<AdditiveExpression>", "+", "<MultiplicativeExpression>"],
+      ["<AdditiveExpression>", "-", "<MultiplicativeExpression>"]
+    ],
+    "<MultiplicativeExpression>": [
+      ["<UnaryExpression>"],
+      ["<MultiplicativeExpression>", "*", "<UnaryExpression>"],
+      ["<MultiplicativeExpression>", "/", "<UnaryExpression>"],
+      ["<MultiplicativeExpression>", "%", "<UnaryExpression>"]
+    ],
+    "<UnaryExpression>": [
+      ["<PreIncrementExpression>"],
+      ["<PreDecrementExpression>"],
+      ["+", "<UnaryExpression>"],
+      ["-", "<UnaryExpression>"],
+      ["<UnaryExpressionNotPlusMinus>"]
+    ],
+    "<PreIncrementExpression>": [
+      ["+", "+", "<UnaryExpression>"]
+    ],
+    "<PreDecrementExpression>": [
+      ["-", "-", "<UnaryExpression>"]
+    ],
+    "<UnaryExpressionNotPlusMinus>": [
+      ["<PostfixExpression>"],
+      ["~", "<UnaryExpression>"],
+      ["!", "<UnaryExpression>"],
+      ["<CastExpression>"],
+      ["<SwitchExpression>"]
+    ],
+    "<PostfixExpression>": [
+      ["<Primary>"],
+      ["<ExpressionName>"],
+      ["<PostIncrementExpression>"],
+      ["<PostDecrementExpression>"]
+    ],
+    "<PostIncrementExpression>": [
+      ["<PostfixExpression>", "+", "+"]
+    ],
+    "<PostDecrementExpression>": [
+      ["<PostfixExpression>", "-", "-"]
+    ],
+    "<CastExpression>": [
+      ["(", "<PrimitiveType>", ")", "<UnaryExpression>"],
+      ["(", "<ReferenceType>", "<CastExpression_pattern_217>", ")", "<UnaryExpressionNotPlusMinus>"],
+      ["(", "<ReferenceType>", "<CastExpression_pattern_218>", ")", "<LambdaExpression>"]
+    ],
+    "<SwitchExpression>": [
+      ["s", "w", "i", "t", "c", "h", "(", "<Expression>", ")", "<SwitchBlock>"]
+    ],
+    "<ConstantExpression>": [
+      ["<Expression>"]
+    ],
+    "<UnicodeMarker_pattern_0>": [
+      [],
+      ["u", "<UnicodeMarker_pattern_0>"]
+    ],
+    "<EndOfLineComment_pattern_1>": [
+      [],
+      ["<InputCharacter>", "<EndOfLineComment_pattern_1>"]
+    ],
+    "<IdentifierChars_pattern_2>": [
+      [],
+      ["<JavaLetterOrDigit>", "<IdentifierChars_pattern_2>"]
+    ],
+    "<DecimalIntegerLiteral_pattern_3>": [
+      [],
+      ["<IntegerTypeSuffix>"]
+    ],
+    "<HexIntegerLiteral_pattern_4>": [
+      [],
+      ["<IntegerTypeSuffix>"]
+    ],
+    "<OctalIntegerLiteral_pattern_5>": [
+      [],
+      ["<IntegerTypeSuffix>"]
+    ],
+    "<BinaryIntegerLiteral_pattern_6>": [
+      [],
+      ["<IntegerTypeSuffix>"]
+    ],
+    "<DecimalNumeral_pattern_7>": [
+      [],
+      ["<Digits>"]
+    ],
+    "<Digits_pattern_8>": [
+      [],
+      ["<DigitsAndUnderscores>"]
+    ],
+    "<DigitsAndUnderscores_pattern_9>": [
+      [],
+      ["<DigitOrUnderscore>", "<DigitsAndUnderscores_pattern_9>"]
+    ],
+    "<Underscores_pattern_10>": [
+      [],
+      ["_", "<Underscores_pattern_10>"]
+    ],
+    "<HexDigits_pattern_11>": [
+      [],
+      ["<HexDigitsAndUnderscores>"]
+    ],
+    "<HexDigitsAndUnderscores_pattern_12>": [
+      [],
+      ["<HexDigitOrUnderscore>", "<HexDigitsAndUnderscores_pattern_12>"]
+    ],
+    "<OctalDigits_pattern_13>": [
+      [],
+      ["<OctalDigitsAndUnderscores>"]
+    ],
+    "<OctalDigitsAndUnderscores_pattern_14>": [
+      [],
+      ["<OctalDigitOrUnderscore>", "<OctalDigitsAndUnderscores_pattern_14>"]
+    ],
+    "<BinaryDigits_pattern_15>": [
+      [],
+      ["<BinaryDigitsAndUnderscores>"]
+    ],
+    "<BinaryDigitsAndUnderscores_pattern_16>": [
+      [],
+      ["<BinaryDigitOrUnderscore>", "<BinaryDigitsAndUnderscores_pattern_16>"]
+    ],
+    "<DecimalFloatingPointLiteral_pattern_17>": [
+      [],
+      ["<Digits>"]
+    ],
+    "<DecimalFloatingPointLiteral_pattern_18>": [
+      [],
+      ["<ExponentPart>"]
+    ],
+    "<DecimalFloatingPointLiteral_pattern_19>": [
+      [],
+      ["<FloatTypeSuffix>"]
+    ],
+    "<DecimalFloatingPointLiteral_pattern_20>": [
+      [],
+      ["<ExponentPart>"]
+    ],
+    "<DecimalFloatingPointLiteral_pattern_21>": [
+      [],
+      ["<FloatTypeSuffix>"]
+    ],
+    "<DecimalFloatingPointLiteral_pattern_22>": [
+      [],
+      ["<FloatTypeSuffix>"]
+    ],
+    "<DecimalFloatingPointLiteral_pattern_23>": [
+      [],
+      ["<ExponentPart>"]
+    ],
+    "<SignedInteger_pattern_24>": [
+      [],
+      ["<Sign>"]
+    ],
+    "<HexadecimalFloatingPointLiteral_pattern_25>": [
+      [],
+      ["<FloatTypeSuffix>"]
+    ],
+    "<HexSignificand_pattern_26>": [
+      [],
+      ["."]
+    ],
+    "<HexSignificand_pattern_27>": [
+      [],
+      ["<HexDigits>"]
+    ],
+    "<HexSignificand_pattern_28>": [
+      [],
+      ["<HexDigits>"]
+    ],
+    "<StringLiteral_pattern_29>": [
+      [],
+      ["<StringCharacter>", "<StringLiteral_pattern_29>"]
+    ],
+    "<TextBlock_pattern_30>": [
+      [],
+      ["<TextBlockWhiteSpace>", "<TextBlock_pattern_30>"]
+    ],
+    "<TextBlock_pattern_31>": [
+      [],
+      ["<TextBlockCharacter>", "<TextBlock_pattern_31>"]
+    ],
+    "<PrimitiveType_pattern_32>": [
+      [],
+      ["<Annotation>", "<PrimitiveType_pattern_32>"]
+    ],
+    "<PrimitiveType_pattern_33>": [
+      [],
+      ["<Annotation>", "<PrimitiveType_pattern_33>"]
+    ],
+    "<ClassType_pattern_34>": [
+      [],
+      ["<Annotation>", "<ClassType_pattern_34>"]
+    ],
+    "<ClassType_pattern_35>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<ClassType_pattern_36>": [
+      [],
+      ["<Annotation>", "<ClassType_pattern_36>"]
+    ],
+    "<ClassType_pattern_37>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<ClassType_pattern_38>": [
+      [],
+      ["<Annotation>", "<ClassType_pattern_38>"]
+    ],
+    "<ClassType_pattern_39>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<TypeVariable_pattern_40>": [
+      [],
+      ["<Annotation>", "<TypeVariable_pattern_40>"]
+    ],
+    "<Dims_pattern_41>": [
+      [],
+      ["<Annotation>", "<Dims_pattern_41>"]
+    ],
+    "<Dims_pattern_43>": [
+      [],
+      ["<Annotation>", "<Dims_pattern_43>"]
+    ],
+    "<Dims_pattern_42>": [
+      [],
+      ["<Dims_pattern_43>", "[", "]", "<Dims_pattern_42>"]
+    ],
+    "<TypeParameter_pattern_44>": [
+      [],
+      ["<TypeParameterModifier>", "<TypeParameter_pattern_44>"]
+    ],
+    "<TypeParameter_pattern_45>": [
+      [],
+      ["<TypeBound>"]
+    ],
+    "<TypeBound_pattern_46>": [
+      [],
+      ["<AdditionalBound>", "<TypeBound_pattern_46>"]
+    ],
+    "<TypeArgumentList_pattern_47>": [
+      [],
+      [",", "<TypeArgument>", "<TypeArgumentList_pattern_47>"]
+    ],
+    "<Wildcard_pattern_48>": [
+      [],
+      ["<Annotation>", "<Wildcard_pattern_48>"]
+    ],
+    "<Wildcard_pattern_49>": [
+      [],
+      ["<WildcardBounds>"]
+    ],
+    "<OrdinaryCompilationUnit_pattern_50>": [
+      [],
+      ["<PackageDeclaration>"]
+    ],
+    "<OrdinaryCompilationUnit_pattern_51>": [
+      [],
+      ["<ImportDeclaration>", "<OrdinaryCompilationUnit_pattern_51>"]
+    ],
+    "<OrdinaryCompilationUnit_pattern_52>": [
+      [],
+      ["<TopLevelClassOrInterfaceDeclaration>", "<OrdinaryCompilationUnit_pattern_52>"]
+    ],
+    "<ModularCompilationUnit_pattern_53>": [
+      [],
+      ["<ImportDeclaration>", "<ModularCompilationUnit_pattern_53>"]
+    ],
+    "<PackageDeclaration_pattern_54>": [
+      [],
+      ["<PackageModifier>", "<PackageDeclaration_pattern_54>"]
+    ],
+    "<PackageDeclaration_pattern_55>": [
+      [],
+      [".", "<Identifier>", "<PackageDeclaration_pattern_55>"]
+    ],
+    "<ModuleDeclaration_pattern_56>": [
+      [],
+      ["<Annotation>", "<ModuleDeclaration_pattern_56>"]
+    ],
+    "<ModuleDeclaration_pattern_57>": [
+      [],
+      ["o", "p", "e", "n"]
+    ],
+    "<ModuleDeclaration_pattern_58>": [
+      [],
+      [".", "<Identifier>", "<ModuleDeclaration_pattern_58>"]
+    ],
+    "<ModuleDeclaration_pattern_59>": [
+      [],
+      ["<ModuleDirective>", "<ModuleDeclaration_pattern_59>"]
+    ],
+    "<ModuleDirective_pattern_60>": [
+      [],
+      ["<RequiresModifier>", "<ModuleDirective_pattern_60>"]
+    ],
+    "<ModuleDirective_pattern_62>": [
+      [],
+      [",", "<ModuleName>"]
+    ],
+    "<ModuleDirective_pattern_61>": [
+      [],
+      ["t", "o", "<ModuleName>", "<ModuleDirective_pattern_62>", "<ModuleDirective_pattern_61>"]
+    ],
+    "<ModuleDirective_pattern_64>": [
+      [],
+      [",", "<ModuleName>"]
+    ],
+    "<ModuleDirective_pattern_63>": [
+      [],
+      ["t", "o", "<ModuleName>", "<ModuleDirective_pattern_64>", "<ModuleDirective_pattern_63>"]
+    ],
+    "<ModuleDirective_pattern_65>": [
+      [],
+      [",", "<TypeName>", "<ModuleDirective_pattern_65>"]
+    ],
+    "<NormalClassDeclaration_pattern_66>": [
+      [],
+      ["<ClassModifier>", "<NormalClassDeclaration_pattern_66>"]
+    ],
+    "<NormalClassDeclaration_pattern_67>": [
+      [],
+      ["<TypeParameters>"]
+    ],
+    "<NormalClassDeclaration_pattern_68>": [
+      [],
+      ["<ClassExtends>"]
+    ],
+    "<NormalClassDeclaration_pattern_69>": [
+      [],
+      ["<ClassImplements>"]
+    ],
+    "<NormalClassDeclaration_pattern_70>": [
+      [],
+      ["<ClassPermits>"]
+    ],
+    "<TypeParameterList_pattern_71>": [
+      [],
+      [",", "<TypeParameter>", "<TypeParameterList_pattern_71>"]
+    ],
+    "<InterfaceTypeList_pattern_72>": [
+      [],
+      [",", "<InterfaceType>", "<InterfaceTypeList_pattern_72>"]
+    ],
+    "<ClassPermits_pattern_73>": [
+      [],
+      [",", "<TypeName>", "<ClassPermits_pattern_73>"]
+    ],
+    "<ClassBody_pattern_74>": [
+      [],
+      ["<ClassBodyDeclaration>", "<ClassBody_pattern_74>"]
+    ],
+    "<FieldDeclaration_pattern_75>": [
+      [],
+      ["<FieldModifier>", "<FieldDeclaration_pattern_75>"]
+    ],
+    "<VariableDeclaratorList_pattern_76>": [
+      [],
+      [",", "<VariableDeclarator>", "<VariableDeclaratorList_pattern_76>"]
+    ],
+    "<VariableDeclarator_pattern_77>": [
+      [],
+      ["=", "<VariableInitializer>"]
+    ],
+    "<VariableDeclaratorId_pattern_78>": [
+      [],
+      ["<Dims>"]
+    ],
+    "<UnannClassType_pattern_79>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<UnannClassType_pattern_80>": [
+      [],
+      ["<Annotation>", "<UnannClassType_pattern_80>"]
+    ],
+    "<UnannClassType_pattern_81>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<UnannClassType_pattern_82>": [
+      [],
+      ["<Annotation>", "<UnannClassType_pattern_82>"]
+    ],
+    "<UnannClassType_pattern_83>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<MethodDeclaration_pattern_84>": [
+      [],
+      ["<MethodModifier>", "<MethodDeclaration_pattern_84>"]
+    ],
+    "<MethodHeader_pattern_85>": [
+      [],
+      ["<Throws>"]
+    ],
+    "<MethodHeader_pattern_86>": [
+      [],
+      ["<Annotation>", "<MethodHeader_pattern_86>"]
+    ],
+    "<MethodHeader_pattern_87>": [
+      [],
+      ["<Throws>"]
+    ],
+    "<MethodDeclarator_pattern_88>": [
+      [],
+      ["<ReceiverParameter>", ","]
+    ],
+    "<MethodDeclarator_pattern_89>": [
+      [],
+      ["<FormalParameterList>"]
+    ],
+    "<MethodDeclarator_pattern_90>": [
+      [],
+      ["<Dims>"]
+    ],
+    "<ReceiverParameter_pattern_91>": [
+      [],
+      ["<Annotation>", "<ReceiverParameter_pattern_91>"]
+    ],
+    "<ReceiverParameter_pattern_92>": [
+      [],
+      ["<Identifier>", "."]
+    ],
+    "<FormalParameterList_pattern_93>": [
+      [],
+      [",", "<FormalParameter>", "<FormalParameterList_pattern_93>"]
+    ],
+    "<FormalParameter_pattern_94>": [
+      [],
+      ["<VariableModifier>", "<FormalParameter_pattern_94>"]
+    ],
+    "<VariableArityParameter_pattern_95>": [
+      [],
+      ["<VariableModifier>", "<VariableArityParameter_pattern_95>"]
+    ],
+    "<VariableArityParameter_pattern_96>": [
+      [],
+      ["<Annotation>", "<VariableArityParameter_pattern_96>"]
+    ],
+    "<ExceptionTypeList_pattern_97>": [
+      [],
+      [",", "<ExceptionType>", "<ExceptionTypeList_pattern_97>"]
+    ],
+    "<ConstructorDeclaration_pattern_98>": [
+      [],
+      ["<ConstructorModifier>", "<ConstructorDeclaration_pattern_98>"]
+    ],
+    "<ConstructorDeclaration_pattern_99>": [
+      [],
+      ["<Throws>"]
+    ],
+    "<ConstructorDeclarator_pattern_100>": [
+      [],
+      ["<TypeParameters>"]
+    ],
+    "<ConstructorDeclarator_pattern_101>": [
+      [],
+      ["<ReceiverParameter>", ","]
+    ],
+    "<ConstructorDeclarator_pattern_102>": [
+      [],
+      ["<FormalParameterList>"]
+    ],
+    "<ConstructorBody_pattern_103>": [
+      [],
+      ["<ExplicitConstructorInvocation>"]
+    ],
+    "<ConstructorBody_pattern_104>": [
+      [],
+      ["<BlockStatements>"]
+    ],
+    "<ExplicitConstructorInvocation_pattern_105>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<ExplicitConstructorInvocation_pattern_106>": [
+      [],
+      ["<ArgumentList>"]
+    ],
+    "<ExplicitConstructorInvocation_pattern_107>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<ExplicitConstructorInvocation_pattern_108>": [
+      [],
+      ["<ArgumentList>"]
+    ],
+    "<ExplicitConstructorInvocation_pattern_109>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<ExplicitConstructorInvocation_pattern_110>": [
+      [],
+      ["<ArgumentList>"]
+    ],
+    "<ExplicitConstructorInvocation_pattern_111>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<ExplicitConstructorInvocation_pattern_112>": [
+      [],
+      ["<ArgumentList>"]
+    ],
+    "<EnumDeclaration_pattern_113>": [
+      [],
+      ["<ClassModifier>", "<EnumDeclaration_pattern_113>"]
+    ],
+    "<EnumDeclaration_pattern_114>": [
+      [],
+      ["<ClassImplements>"]
+    ],
+    "<EnumBody_pattern_115>": [
+      [],
+      ["<EnumConstantList>"]
+    ],
+    "<EnumBody_pattern_116>": [
+      [],
+      [","]
+    ],
+    "<EnumBody_pattern_117>": [
+      [],
+      ["<EnumBodyDeclarations>"]
+    ],
+    "<EnumConstantList_pattern_118>": [
+      [],
+      [",", "<EnumConstant>", "<EnumConstantList_pattern_118>"]
+    ],
+    "<EnumConstant_pattern_119>": [
+      [],
+      ["<EnumConstantModifier>", "<EnumConstant_pattern_119>"]
+    ],
+    "<EnumConstant_pattern_121>": [
+      [],
+      ["<ArgumentList>"]
+    ],
+    "<EnumConstant_pattern_120>": [
+      [],
+      ["(", "<EnumConstant_pattern_121>", ")"]
+    ],
+    "<EnumConstant_pattern_122>": [
+      [],
+      ["<ClassBody>"]
+    ],
+    "<EnumBodyDeclarations_pattern_123>": [
+      [],
+      ["<ClassBodyDeclaration>", "<EnumBodyDeclarations_pattern_123>"]
+    ],
+    "<RecordDeclaration_pattern_124>": [
+      [],
+      ["<ClassModifier>", "<RecordDeclaration_pattern_124>"]
+    ],
+    "<RecordDeclaration_pattern_125>": [
+      [],
+      ["<TypeParameters>"]
+    ],
+    "<RecordDeclaration_pattern_126>": [
+      [],
+      ["<ClassImplements>"]
+    ],
+    "<RecordHeader_pattern_127>": [
+      [],
+      ["<RecordComponentList>"]
+    ],
+    "<RecordComponentList_pattern_128>": [
+      [],
+      [",", "<RecordComponent>", "<RecordComponentList_pattern_128>"]
+    ],
+    "<RecordComponent_pattern_129>": [
+      [],
+      ["<RecordComponentModifier>", "<RecordComponent_pattern_129>"]
+    ],
+    "<VariableArityRecordComponent_pattern_130>": [
+      [],
+      ["<RecordComponentModifier>", "<VariableArityRecordComponent_pattern_130>"]
+    ],
+    "<VariableArityRecordComponent_pattern_131>": [
+      [],
+      ["<Annotation>", "<VariableArityRecordComponent_pattern_131>"]
+    ],
+    "<RecordBody_pattern_132>": [
+      [],
+      ["<RecordBodyDeclaration>", "<RecordBody_pattern_132>"]
+    ],
+    "<CompactConstructorDeclaration_pattern_133>": [
+      [],
+      ["<ConstructorModifier>", "<CompactConstructorDeclaration_pattern_133>"]
+    ],
+    "<NormalInterfaceDeclaration_pattern_134>": [
+      [],
+      ["<InterfaceModifier>", "<NormalInterfaceDeclaration_pattern_134>"]
+    ],
+    "<NormalInterfaceDeclaration_pattern_135>": [
+      [],
+      ["<TypeParameters>"]
+    ],
+    "<NormalInterfaceDeclaration_pattern_136>": [
+      [],
+      ["<InterfaceExtends>"]
+    ],
+    "<NormalInterfaceDeclaration_pattern_137>": [
+      [],
+      ["<InterfacePermits>"]
+    ],
+    "<InterfacePermits_pattern_138>": [
+      [],
+      [",", "<TypeName>", "<InterfacePermits_pattern_138>"]
+    ],
+    "<InterfaceBody_pattern_139>": [
+      [],
+      ["<InterfaceMemberDeclaration>", "<InterfaceBody_pattern_139>"]
+    ],
+    "<ConstantDeclaration_pattern_140>": [
+      [],
+      ["<ConstantModifier>", "<ConstantDeclaration_pattern_140>"]
+    ],
+    "<InterfaceMethodDeclaration_pattern_141>": [
+      [],
+      ["<InterfaceMethodModifier>", "<InterfaceMethodDeclaration_pattern_141>"]
+    ],
+    "<AnnotationInterfaceDeclaration_pattern_142>": [
+      [],
+      ["<InterfaceModifier>", "<AnnotationInterfaceDeclaration_pattern_142>"]
+    ],
+    "<AnnotationInterfaceBody_pattern_143>": [
+      [],
+      ["<AnnotationInterfaceMemberDeclaration>", "<AnnotationInterfaceBody_pattern_143>"]
+    ],
+    "<AnnotationInterfaceElementDeclaration_pattern_144>": [
+      [],
+      ["<AnnotationInterfaceElementModifier>", "<AnnotationInterfaceElementDeclaration_pattern_144>"]
+    ],
+    "<AnnotationInterfaceElementDeclaration_pattern_145>": [
+      [],
+      ["<Dims>"]
+    ],
+    "<AnnotationInterfaceElementDeclaration_pattern_146>": [
+      [],
+      ["<DefaultValue>"]
+    ],
+    "<NormalAnnotation_pattern_147>": [
+      [],
+      ["<ElementValuePairList>"]
+    ],
+    "<ElementValuePairList_pattern_148>": [
+      [],
+      [",", "<ElementValuePair>", "<ElementValuePairList_pattern_148>"]
+    ],
+    "<ElementValueArrayInitializer_pattern_149>": [
+      [],
+      ["<ElementValueList>"]
+    ],
+    "<ElementValueArrayInitializer_pattern_150>": [
+      [],
+      [","]
+    ],
+    "<ElementValueList_pattern_151>": [
+      [],
+      [",", "<ElementValue>", "<ElementValueList_pattern_151>"]
+    ],
+    "<ArrayInitializer_pattern_152>": [
+      [],
+      ["<VariableInitializerList>"]
+    ],
+    "<ArrayInitializer_pattern_153>": [
+      [],
+      [","]
+    ],
+    "<VariableInitializerList_pattern_154>": [
+      [],
+      [",", "<VariableInitializer>", "<VariableInitializerList_pattern_154>"]
+    ],
+    "<Block_pattern_155>": [
+      [],
+      ["<BlockStatements>"]
+    ],
+    "<BlockStatements_pattern_156>": [
+      [],
+      ["<BlockStatement>", "<BlockStatements_pattern_156>"]
+    ],
+    "<LocalVariableDeclaration_pattern_157>": [
+      [],
+      ["<VariableModifier>", "<LocalVariableDeclaration_pattern_157>"]
+    ],
+    "<SwitchBlock_pattern_158>": [
+      [],
+      ["<SwitchRule>", "<SwitchBlock_pattern_158>"]
+    ],
+    "<SwitchBlock_pattern_159>": [
+      [],
+      ["<SwitchBlockStatementGroup>", "<SwitchBlock_pattern_159>"]
+    ],
+    "<SwitchBlock_pattern_160>": [
+      [],
+      ["<SwitchLabel>", ":", "<SwitchBlock_pattern_160>"]
+    ],
+    "<SwitchBlockStatementGroup_pattern_161>": [
+      [],
+      ["<SwitchLabel>", ":", "<SwitchBlockStatementGroup_pattern_161>"]
+    ],
+    "<SwitchLabel_pattern_162>": [
+      [],
+      [",", "<CaseConstant>", "<SwitchLabel_pattern_162>"]
+    ],
+    "<BasicForStatement_pattern_163>": [
+      [],
+      ["<ForInit>"]
+    ],
+    "<BasicForStatement_pattern_164>": [
+      [],
+      ["<Expression>"]
+    ],
+    "<BasicForStatement_pattern_165>": [
+      [],
+      ["<ForUpdate>"]
+    ],
+    "<BasicForStatementNoShortIf_pattern_166>": [
+      [],
+      ["<ForInit>"]
+    ],
+    "<BasicForStatementNoShortIf_pattern_167>": [
+      [],
+      ["<Expression>"]
+    ],
+    "<BasicForStatementNoShortIf_pattern_168>": [
+      [],
+      ["<ForUpdate>"]
+    ],
+    "<StatementExpressionList_pattern_169>": [
+      [],
+      [",", "<StatementExpression>", "<StatementExpressionList_pattern_169>"]
+    ],
+    "<BreakStatement_pattern_170>": [
+      [],
+      ["<Identifier>"]
+    ],
+    "<ContinueStatement_pattern_171>": [
+      [],
+      ["<Identifier>"]
+    ],
+    "<ReturnStatement_pattern_172>": [
+      [],
+      ["<Expression>"]
+    ],
+    "<TryStatement_pattern_173>": [
+      [],
+      ["<Catches>"]
+    ],
+    "<Catches_pattern_174>": [
+      [],
+      ["<CatchClause>", "<Catches_pattern_174>"]
+    ],
+    "<CatchFormalParameter_pattern_175>": [
+      [],
+      ["<VariableModifier>", "<CatchFormalParameter_pattern_175>"]
+    ],
+    "<CatchType_pattern_176>": [
+      [],
+      ["|", "<ClassType>", "<CatchType_pattern_176>"]
+    ],
+    "<TryWithResourcesStatement_pattern_177>": [
+      [],
+      ["<Catches>"]
+    ],
+    "<TryWithResourcesStatement_pattern_178>": [
+      [],
+      ["<Finally>"]
+    ],
+    "<ResourceSpecification_pattern_179>": [
+      [],
+      [";"]
+    ],
+    "<ResourceList_pattern_180>": [
+      [],
+      [";", "<Resource>", "<ResourceList_pattern_180>"]
+    ],
+    "<ClassLiteral_pattern_181>": [
+      [],
+      ["[", "]", "<ClassLiteral_pattern_181>"]
+    ],
+    "<ClassLiteral_pattern_182>": [
+      [],
+      ["[", "]", "<ClassLiteral_pattern_182>"]
+    ],
+    "<ClassLiteral_pattern_183>": [
+      [],
+      ["[", "]", "<ClassLiteral_pattern_183>"]
+    ],
+    "<UnqualifiedClassInstanceCreationExpression_pattern_184>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<UnqualifiedClassInstanceCreationExpression_pattern_185>": [
+      [],
+      ["<ArgumentList>"]
+    ],
+    "<UnqualifiedClassInstanceCreationExpression_pattern_186>": [
+      [],
+      ["<ClassBody>"]
+    ],
+    "<ClassOrInterfaceTypeToInstantiate_pattern_187>": [
+      [],
+      ["<Annotation>", "<ClassOrInterfaceTypeToInstantiate_pattern_187>"]
+    ],
+    "<ClassOrInterfaceTypeToInstantiate_pattern_189>": [
+      [],
+      ["<Annotation>", "<ClassOrInterfaceTypeToInstantiate_pattern_189>"]
+    ],
+    "<ClassOrInterfaceTypeToInstantiate_pattern_188>": [
+      [],
+      [".", "<ClassOrInterfaceTypeToInstantiate_pattern_189>", "<Identifier>", "<ClassOrInterfaceTypeToInstantiate_pattern_188>"]
+    ],
+    "<ClassOrInterfaceTypeToInstantiate_pattern_190>": [
+      [],
+      ["<TypeArgumentsOrDiamond>"]
+    ],
+    "<ArrayCreationExpressionWithoutInitializer_pattern_191>": [
+      [],
+      ["<Dims>"]
+    ],
+    "<ArrayCreationExpressionWithoutInitializer_pattern_192>": [
+      [],
+      ["<Dims>"]
+    ],
+    "<DimExprs_pattern_193>": [
+      [],
+      ["<DimExpr>", "<DimExprs_pattern_193>"]
+    ],
+    "<DimExpr_pattern_194>": [
+      [],
+      ["<Annotation>", "<DimExpr_pattern_194>"]
+    ],
+    "<MethodInvocation_pattern_195>": [
+      [],
+      ["<ArgumentList>"]
+    ],
+    "<MethodInvocation_pattern_196>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<MethodInvocation_pattern_197>": [
+      [],
+      ["<ArgumentList>"]
+    ],
+    "<MethodInvocation_pattern_198>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<MethodInvocation_pattern_199>": [
+      [],
+      ["<ArgumentList>"]
+    ],
+    "<MethodInvocation_pattern_200>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<MethodInvocation_pattern_201>": [
+      [],
+      ["<ArgumentList>"]
+    ],
+    "<MethodInvocation_pattern_202>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<MethodInvocation_pattern_203>": [
+      [],
+      ["<ArgumentList>"]
+    ],
+    "<MethodInvocation_pattern_204>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<MethodInvocation_pattern_205>": [
+      [],
+      ["<ArgumentList>"]
+    ],
+    "<ArgumentList_pattern_206>": [
+      [],
+      [",", "<Expression>", "<ArgumentList_pattern_206>"]
+    ],
+    "<MethodReference_pattern_207>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<MethodReference_pattern_208>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<MethodReference_pattern_209>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<MethodReference_pattern_210>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<MethodReference_pattern_211>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<MethodReference_pattern_212>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<LambdaParameters_pattern_213>": [
+      [],
+      ["<LambdaParameterList>"]
+    ],
+    "<LambdaParameterList_pattern_214>": [
+      [],
+      [",", "<LambdaParameter>", "<LambdaParameterList_pattern_214>"]
+    ],
+    "<LambdaParameterList_pattern_215>": [
+      [],
+      [",", "<Identifier>", "<LambdaParameterList_pattern_215>"]
+    ],
+    "<LambdaParameter_pattern_216>": [
+      [],
+      ["<VariableModifier>", "<LambdaParameter_pattern_216>"]
+    ],
+    "<CastExpression_pattern_217>": [
+      [],
+      ["<AdditionalBound>", "<CastExpression_pattern_217>"]
+    ],
+    "<CastExpression_pattern_218>": [
+      [],
+      ["<AdditionalBound>", "<CastExpression_pattern_218>"]
+    ],
+    "<JavaLetter>": [
+      ["a"],
+      ["b"],
+      ["c"],
+      ["d"],
+      ["e"],
+      ["f"],
+      ["g"],
+      ["h"],
+      ["i"],
+      ["j"],
+      ["k"],
+      ["l"],
+      ["m"],
+      ["n"],
+      ["o"],
+      ["p"],
+      ["q"],
+      ["r"],
+      ["s"],
+      ["t"],
+      ["u"],
+      ["v"],
+      ["w"],
+      ["x"],
+      ["y"],
+      ["z"],
+      ["A"],
+      ["B"],
+      ["C"],
+      ["D"],
+      ["E"],
+      ["F"],
+      ["G"],
+      ["H"],
+      ["I"],
+      ["J"],
+      ["K"],
+      ["L"],
+      ["M"],
+      ["N"],
+      ["O"],
+      ["P"],
+      ["Q"],
+      ["R"],
+      ["S"],
+      ["T"],
+      ["U"],
+      ["V"],
+      ["W"],
+      ["X"],
+      ["Y"],
+      ["Z"],
+      ["_"],
+      ["$"]
+    ],
+    "<JavaLetterOrDigit>": [
+      ["<JavaLetter>"],
+      ["<Digit>"]
+    ],
+    "<InputCharacter>": [
+      [" "],
+      ["!"],
+      ["\""],
+      ["#"],
+      ["$"],
+      ["%"],
+      ["&"],
+      ["'"],
+      ["("],
+      [")"],
+      ["*"],
+      ["+"],
+      [","],
+      ["-"],
+      ["."],
+      ["/"],
+      ["0"],
+      ["1"],
+      ["2"],
+      ["3"],
+      ["4"],
+      ["5"],
+      ["6"],
+      ["7"],
+      ["8"],
+      ["9"],
+      [":"],
+      [";"],
+      ["<"],
+      ["="],
+      [">"],
+      ["?"],
+      ["@"],
+      ["A"],
+      ["B"],
+      ["C"],
+      ["D"],
+      ["E"],
+      ["F"],
+      ["G"],
+      ["H"],
+      ["I"],
+      ["J"],
+      ["K"],
+      ["L"],
+      ["M"],
+      ["N"],
+      ["O"],
+      ["P"],
+      ["Q"],
+      ["R"],
+      ["S"],
+      ["T"],
+      ["U"],
+      ["V"],
+      ["W"],
+      ["X"],
+      ["Y"],
+      ["Z"],
+      ["["],
+      ["\\"],
+      ["]"],
+      ["^"],
+      ["_"],
+      ["`"],
+      ["a"],
+      ["b"],
+      ["c"],
+      ["d"],
+      ["e"],
+      ["f"],
+      ["g"],
+      ["h"],
+      ["i"],
+      ["j"],
+      ["k"],
+      ["l"],
+      ["m"],
+      ["n"],
+      ["o"],
+      ["p"],
+      ["q"],
+      ["r"],
+      ["s"],
+      ["t"],
+      ["u"],
+      ["v"],
+      ["w"],
+      ["x"],
+      ["y"],
+      ["z"],
+      ["{"],
+      ["|"],
+      ["}"],
+      ["~"]
+    ],
+    "<LineTerminator>": [
+      ["\n"],
+      ["\r"],
+      ["\r", "\n"]
+    ],
+    "<WhiteSpace>": [
+      [" "],
+      ["\t"],
+      ["\n"],
+      ["\r"]
+    ],
+    "<NotStar>": [
+      [" "],
+      ["!"],
+      ["\""],
+      ["#"],
+      ["$"],
+      ["%"],
+      ["&"],
+      ["'"],
+      ["("],
+      [")"],
+      ["+"],
+      [","],
+      ["-"],
+      ["."],
+      ["/"],
+      ["0"],
+      ["1"],
+      ["2"],
+      ["3"],
+      ["4"],
+      ["5"],
+      ["6"],
+      ["7"],
+      ["8"],
+      ["9"],
+      [":"],
+      [";"],
+      ["<"],
+      ["="],
+      [">"],
+      ["?"],
+      ["@"],
+      ["A"],
+      ["B"],
+      ["C"],
+      ["D"],
+      ["E"],
+      ["F"],
+      ["G"],
+      ["H"],
+      ["I"],
+      ["J"],
+      ["K"],
+      ["L"],
+      ["M"],
+      ["N"],
+      ["O"],
+      ["P"],
+      ["Q"],
+      ["R"],
+      ["S"],
+      ["T"],
+      ["U"],
+      ["V"],
+      ["W"],
+      ["X"],
+      ["Y"],
+      ["Z"],
+      ["["],
+      ["\\"],
+      ["]"],
+      ["^"],
+      ["_"],
+      ["`"],
+      ["a"],
+      ["b"],
+      ["c"],
+      ["d"],
+      ["e"],
+      ["f"],
+      ["g"],
+      ["h"],
+      ["i"],
+      ["j"],
+      ["k"],
+      ["l"],
+      ["m"],
+      ["n"],
+      ["o"],
+      ["p"],
+      ["q"],
+      ["r"],
+      ["s"],
+      ["t"],
+      ["u"],
+      ["v"],
+      ["w"],
+      ["x"],
+      ["y"],
+      ["z"],
+      ["{"],
+      ["|"],
+      ["}"],
+      ["~"]
+    ],
+    "<NotStarNotSlash>": [
+      [" "],
+      ["!"],
+      ["\""],
+      ["#"],
+      ["$"],
+      ["%"],
+      ["&"],
+      ["'"],
+      ["("],
+      [")"],
+      ["+"],
+      [","],
+      ["-"],
+      ["."],
+      ["0"],
+      ["1"],
+      ["2"],
+      ["3"],
+      ["4"],
+      ["5"],
+      ["6"],
+      ["7"],
+      ["8"],
+      ["9"],
+      [":"],
+      [";"],
+      ["<"],
+      ["="],
+      [">"],
+      ["?"],
+      ["@"],
+      ["A"],
+      ["B"],
+      ["C"],
+      ["D"],
+      ["E"],
+      ["F"],
+      ["G"],
+      ["H"],
+      ["I"],
+      ["J"],
+      ["K"],
+      ["L"],
+      ["M"],
+      ["N"],
+      ["O"],
+      ["P"],
+      ["Q"],
+      ["R"],
+      ["S"],
+      ["T"],
+      ["U"],
+      ["V"],
+      ["W"],
+      ["X"],
+      ["Y"],
+      ["Z"],
+      ["["],
+      ["\\"],
+      ["]"],
+      ["^"],
+      ["_"],
+      ["`"],
+      ["a"],
+      ["b"],
+      ["c"],
+      ["d"],
+      ["e"],
+      ["f"],
+      ["g"],
+      ["h"],
+      ["i"],
+      ["j"],
+      ["k"],
+      ["l"],
+      ["m"],
+      ["n"],
+      ["o"],
+      ["p"],
+      ["q"],
+      ["r"],
+      ["s"],
+      ["t"],
+      ["u"],
+      ["v"],
+      ["w"],
+      ["x"],
+      ["y"],
+      ["z"],
+      ["{"],
+      ["|"],
+      ["}"],
+      ["~"]
+    ],
+    "<SingleCharacter>": [
+      [" "],
+      ["!"],
+      ["\""],
+      ["#"],
+      ["$"],
+      ["%"],
+      ["&"],
+      ["("],
+      [")"],
+      ["*"],
+      ["+"],
+      [","],
+      ["-"],
+      ["."],
+      ["/"],
+      ["0"],
+      ["1"],
+      ["2"],
+      ["3"],
+      ["4"],
+      ["5"],
+      ["6"],
+      ["7"],
+      ["8"],
+      ["9"],
+      [":"],
+      [";"],
+      ["<"],
+      ["="],
+      [">"],
+      ["?"],
+      ["@"],
+      ["A"],
+      ["B"],
+      ["C"],
+      ["D"],
+      ["E"],
+      ["F"],
+      ["G"],
+      ["H"],
+      ["I"],
+      ["J"],
+      ["K"],
+      ["L"],
+      ["M"],
+      ["N"],
+      ["O"],
+      ["P"],
+      ["Q"],
+      ["R"],
+      ["S"],
+      ["T"],
+      ["U"],
+      ["V"],
+      ["W"],
+      ["X"],
+      ["Y"],
+      ["Z"],
+      ["["],
+      ["]"],
+      ["^"],
+      ["_"],
+      ["`"],
+      ["a"],
+      ["b"],
+      ["c"],
+      ["d"],
+      ["e"],
+      ["f"],
+      ["g"],
+      ["h"],
+      ["i"],
+      ["j"],
+      ["k"],
+      ["l"],
+      ["m"],
+      ["n"],
+      ["o"],
+      ["p"],
+      ["q"],
+      ["r"],
+      ["s"],
+      ["t"],
+      ["u"],
+      ["v"],
+      ["w"],
+      ["x"],
+      ["y"],
+      ["z"],
+      ["{"],
+      ["|"],
+      ["}"],
+      ["~"]
+    ],
+    "<StringCharacter>": [
+      [" "],
+      ["!"],
+      ["#"],
+      ["$"],
+      ["%"],
+      ["&"],
+      ["'"],
+      ["("],
+      [")"],
+      ["*"],
+      ["+"],
+      [","],
+      ["-"],
+      ["."],
+      ["/"],
+      ["0"],
+      ["1"],
+      ["2"],
+      ["3"],
+      ["4"],
+      ["5"],
+      ["6"],
+      ["7"],
+      ["8"],
+      ["9"],
+      [":"],
+      [";"],
+      ["<"],
+      ["="],
+      [">"],
+      ["?"],
+      ["@"],
+      ["A"],
+      ["B"],
+      ["C"],
+      ["D"],
+      ["E"],
+      ["F"],
+      ["G"],
+      ["H"],
+      ["I"],
+      ["J"],
+      ["K"],
+      ["L"],
+      ["M"],
+      ["N"],
+      ["O"],
+      ["P"],
+      ["Q"],
+      ["R"],
+      ["S"],
+      ["T"],
+      ["U"],
+      ["V"],
+      ["W"],
+      ["X"],
+      ["Y"],
+      ["Z"],
+      ["["],
+      ["]"],
+      ["^"],
+      ["_"],
+      ["`"],
+      ["a"],
+      ["b"],
+      ["c"],
+      ["d"],
+      ["e"],
+      ["f"],
+      ["g"],
+      ["h"],
+      ["i"],
+      ["j"],
+      ["k"],
+      ["l"],
+      ["m"],
+      ["n"],
+      ["o"],
+      ["p"],
+      ["q"],
+      ["r"],
+      ["s"],
+      ["t"],
+      ["u"],
+      ["v"],
+      ["w"],
+      ["x"],
+      ["y"],
+      ["z"],
+      ["{"],
+      ["|"],
+      ["}"],
+      ["~"]
+    ],
+    "<TextBlockCharacter>": [
+      [" "],
+      ["!"],
+      ["\""],
+      ["#"],
+      ["$"],
+      ["%"],
+      ["&"],
+      ["'"],
+      ["("],
+      [")"],
+      ["*"],
+      ["+"],
+      [","],
+      ["-"],
+      ["."],
+      ["/"],
+      ["0"],
+      ["1"],
+      ["2"],
+      ["3"],
+      ["4"],
+      ["5"],
+      ["6"],
+      ["7"],
+      ["8"],
+      ["9"],
+      [":"],
+      [";"],
+      ["<"],
+      ["="],
+      [">"],
+      ["?"],
+      ["@"],
+      ["A"],
+      ["B"],
+      ["C"],
+      ["D"],
+      ["E"],
+      ["F"],
+      ["G"],
+      ["H"],
+      ["I"],
+      ["J"],
+      ["K"],
+      ["L"],
+      ["M"],
+      ["N"],
+      ["O"],
+      ["P"],
+      ["Q"],
+      ["R"],
+      ["S"],
+      ["T"],
+      ["U"],
+      ["V"],
+      ["W"],
+      ["X"],
+      ["Y"],
+      ["Z"],
+      ["["],
+      ["\\"],
+      ["]"],
+      ["^"],
+      ["_"],
+      ["`"],
+      ["a"],
+      ["b"],
+      ["c"],
+      ["d"],
+      ["e"],
+      ["f"],
+      ["g"],
+      ["h"],
+      ["i"],
+      ["j"],
+      ["k"],
+      ["l"],
+      ["m"],
+      ["n"],
+      ["o"],
+      ["p"],
+      ["q"],
+      ["r"],
+      ["s"],
+      ["t"],
+      ["u"],
+      ["v"],
+      ["w"],
+      ["x"],
+      ["y"],
+      ["z"],
+      ["{"],
+      ["|"],
+      ["}"],
+      ["~"]
+    ]
+  },
+  "tests": []
+}

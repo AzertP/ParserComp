@@ -9,4 +9,4 @@ A collection of generalised parsing algorithms for context-free grammars, implem
 The grammars used in this project are stored in the `grammars` folder in JSON format. Some of the grammars were adapted from the [referenceLanguageCorpora](https://github.com/AJohnstone2007/referenceLanguageCorpora) repository.
 
 #### License
-This project is licensed under the MIT License.
+This project is licensed under CC BY 4.0.

@@ -308,6 +308,8 @@ impl SPPF {
     }
 }
 
+
+
 // ----------------------------------
 // GLL Parser
 // --------------------------------
@@ -333,11 +335,20 @@ pub struct GLLParser {
     sn: GSSNodeId,
     /// SPPF node index
     dn: Option<SPPFNodeId>,
+    
+    // First, Follow, and Nullable sets
+    first: HashMap<u32, HashSet<u32>>,
+    follow: HashMap<u32, HashSet<u32>>,
+    nullable: HashSet<u32>,
+
+    alt_first_cache: HashMap<GIndex, (HashSet<u32>, bool)>,
 }
 
 impl GLLParser {
     pub fn new(grammar: &NumericGrammar) -> Self {
-        GLLParser {
+        let (first, follow, nullable) = Self::compute_first_follow_nullable(grammar);
+        
+        let mut parser = GLLParser {
             grammar: grammar.clone(),
             gn: 0,
             sn: 0,
@@ -351,6 +362,171 @@ impl GLLParser {
             g_grammar: GrammarGraph::from_numeric(grammar),
             accepting: false,
             input: Vec::new(),
+            first,
+            follow,
+            nullable,
+            alt_first_cache: HashMap::new(),
+        };
+
+        parser.compute_alt_lookahead();
+        
+        parser
+    }
+
+    fn compute_alt_lookahead(&mut self) {
+        let mut cache = HashMap::new();
+
+        // Iterate over all nodes to find ALT nodes
+        for (idx, node) in self.g_grammar.nodes.iter().enumerate() {
+            if let GKind::Alt = node.kind {
+                let (first_set, is_nullable) = self.compute_sequence_lookahead(node.seq);
+                cache.insert(idx, (first_set, is_nullable));
+            }
+        }
+        self.alt_first_cache = cache;
+    }
+
+    fn compute_sequence_lookahead(&self, start_node_idx: GIndex) -> (HashSet<u32>, bool) {
+        let mut result_first = HashSet::new();
+        let mut is_seq_nullable = true;
+        let mut curr_idx = start_node_idx;
+
+        // Walk the linked list of sequence nodes (seq -> seq -> ...)
+        while curr_idx != 0 {
+            let node = self.g_grammar.get(curr_idx);
+            match node.kind {
+                GKind::Terminal(t_id) => {
+                    result_first.insert(t_id);
+                    is_seq_nullable = false;
+                    break; // Terminal found, sequence cannot be nullable beyond this
+                }
+                GKind::NonTerminal(nt_id) => {
+                    // Add FIRST(NT) to our result
+                    if let Some(nt_first) = self.first.get(&nt_id) {
+                        result_first.extend(nt_first);
+                    }
+                    
+                    // If NT is not nullable, the lookahead stops here
+                    if !self.nullable.contains(&nt_id) {
+                        is_seq_nullable = false;
+                        break;
+                    }
+                    // If NT IS nullable, we continue to the next symbol (union logic)
+                }
+                GKind::Epsilon => {
+                    // Epsilon doesn't add symbols, just continue
+                }
+                GKind::End => {
+                    // End of production
+                    break;
+                }
+                _ => { /* Should not happen in a valid sequence */ }
+            }
+            curr_idx = node.seq;
+        }
+
+        (result_first, is_seq_nullable)
+    }
+
+    /// Compute FIRST, FOLLOW, and NULLABLE sets
+    fn compute_first_follow_nullable(
+        grammar: &NumericGrammar,
+    ) -> (HashMap<u32, HashSet<u32>>, HashMap<u32, HashSet<u32>>, HashSet<u32>) {
+        let mut first: HashMap<u32, HashSet<u32>> = HashMap::new();
+        let mut follow: HashMap<u32, HashSet<u32>> = HashMap::new();
+        let mut nullable: HashSet<u32> = HashSet::new();
+
+        // Initialize FIRST sets
+        for &nt in grammar.rules.keys() {
+            first.insert(nt, HashSet::new());
+            follow.insert(nt, HashSet::new());
+        }
+
+        // Fixed-point iteration
+        loop {
+            let mut changed = false;
+
+            for (&nt, rules) in &grammar.rules {
+                for rule in rules {
+                    // Check if rule is nullable
+                    let mut can_be_empty = true;
+                    for sym in rule {
+                        match sym {
+                            NumSymbol::Terminal(t) => {
+                                // Add terminal to FIRST
+                                if first.entry(nt).or_default().insert(*t) {
+                                    changed = true;
+                                }
+                                can_be_empty = false;
+                                break;
+                            }
+                            NumSymbol::NonTerminal(nt2) => {
+                                // Add FIRST(nt2) to FIRST(nt)
+                                let first_nt2 = first.get(nt2).cloned().unwrap_or_default();
+                                for t in first_nt2 {
+                                    if first.entry(nt).or_default().insert(t) {
+                                        changed = true;
+                                    }
+                                }
+                                if !nullable.contains(nt2) {
+                                    can_be_empty = false;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if can_be_empty {
+                        if nullable.insert(nt) {
+                            changed = true;
+                        }
+                    }
+
+                    // Compute FOLLOW
+                    let mut follow_set = follow.get(&nt).cloned().unwrap_or_default();
+                    for sym in rule.iter().rev() {
+                        match sym {
+                            NumSymbol::Terminal(t) => {
+                                follow_set = HashSet::new();
+                                follow_set.insert(*t);
+                            }
+                            NumSymbol::NonTerminal(nt2) => {
+                                let follow_nt2 = follow.entry(*nt2).or_default();
+                                for t in &follow_set {
+                                    if follow_nt2.insert(*t) {
+                                        changed = true;
+                                    }
+                                }
+                                if nullable.contains(nt2) {
+                                    let first_nt2 = first.get(nt2).cloned().unwrap_or_default();
+                                    follow_set = follow_set.union(&first_nt2).cloned().collect();
+                                } else {
+                                    follow_set = first.get(nt2).cloned().unwrap_or_default();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if !changed {
+                break;
+            }
+        }
+
+        (first, follow, nullable)
+    }
+
+    /// Helper function to check if alpha is non-nullable
+    fn is_non_nullable_alpha(&self, alpha: &[NumSymbol]) -> bool {
+        if alpha.is_empty() {
+            return false;
+        }
+        if alpha.len() != 1 {
+            return false;
+        }
+        match &alpha[0] {
+            NumSymbol::Terminal(_) => true,
+            NumSymbol::NonTerminal(nt) => !self.nullable.contains(nt),
         }
     }
 
@@ -430,6 +606,7 @@ impl GLLParser {
     }
 
     fn call(&mut self, gn: GIndex) {
+        let mut pending_descriptors = Vec::new();
         let return_gn = self.g_grammar.get(gn).seq;
         let gss_n: GSSNodeId = self.gss.find(return_gn, self.i);
         let gss_e = GSSEdge {
@@ -461,28 +638,72 @@ impl GLLParser {
             GKind::NonTerminal(id) => id,
             _ => panic!("call() invoked on non-NonTerminal node"),
         };
-        let lhs_idx = *self
-            .g_grammar
-            .headers
-            .get(&nt_id)
-            .expect("NonTerminal not found in headers");
+        let lhs_idx = *self.g_grammar.headers.get(&nt_id).unwrap();
         let mut current_alt = self.g_grammar.get(lhs_idx).seq;
 
-        // Loop through all alternatives (productions) for this Non-Terminal
-        // Paper: "for (GNode p = prules(gn).alt; p != null; p = p.alt)"
-        while current_alt != 0 {
-            // Assuming 0 is null/invalid in your GIndex
-            let (production_start, next_alt) = {
-                let alt_node = self.g_grammar.get(current_alt);
-                (alt_node.seq, alt_node.alt)
-            };
-            self.queue_descriptor(production_start, self.i, gss_n, None);
+        // --- LOOKAHEAD IMPLEMENTATION ---
+        
+        // 1. Determine the lookahead token (I[i])
+        // If i is out of bounds, we use a sentinel (e.g., 0 or a specific EOS ID)
+        // Ensure this matches your tokenizer's End Of String ID.
+        let current_token = if (self.i as usize) < self.input.len() {
+            Some(self.input[self.i as usize])
+        } else {
+            None 
+        };
 
-            if let Some(next) = next_alt {
+        while current_alt != 0 {
+            let alt_node = self.g_grammar.get(current_alt);
+            let production_start = alt_node.seq;
+            
+            // 2. Retrieve pre-computed FIRST set for this alternative
+            let (alpha_first, alpha_nullable) = self.alt_first_cache
+                .get(&current_alt)
+                .expect("Cache missing for alt");
+
+            // 3. The TEST predicate
+            let mut matches = false;
+
+            match current_token {
+                Some(token) => {
+                    // Condition A: token in FIRST(alpha)
+                    if alpha_first.contains(&token) {
+                        matches = true;
+                    }
+                    // Condition B: alpha is nullable AND token in FOLLOW(A)
+                    else if *alpha_nullable {
+                        if let Some(follow_set) = self.follow.get(&nt_id) {
+                            if follow_set.contains(&token) {
+                                matches = true;
+                            }
+                        }
+                    }
+                },
+                None => { // End of Input
+                    // If we are at EOF, we only match if alpha is nullable 
+                    // and EOF is in FOLLOW(A) (or if your grammar treats EOF as a token)
+                    if *alpha_nullable {
+                        // Check if FOLLOW contains EOF (usually implicitly yes if nullable)
+                         matches = true; 
+                    }
+                }
+            }
+
+            // Only queue if the test passed
+            if matches {
+                pending_descriptors.push((production_start, self.i, gss_n, None));
+            }
+
+            // Move to next alternative
+            if let Some(next) = alt_node.alt {
                 current_alt = next;
             } else {
                 break;
             }
+        }
+
+        for (gn, i, sn, dn) in pending_descriptors {
+            self.queue_descriptor(gn, i, sn, dn);
         }
     }
 
@@ -547,6 +768,25 @@ impl GLLParser {
             }
         }
 
+        let lhs_node_idx = self.g_grammar.get(self.gn).alt.expect("END node must have LHS");
+        let lhs_node = self.g_grammar.get(lhs_node_idx);
+        
+        // Extract the NonTerminal ID from the LHS node
+        let nt_id = match lhs_node.kind {
+            GKind::LHS(id) => id,
+            _ => panic!("LHS node kind mismatch"),
+        };
+        
+        // LOOKAHEAD check before popping (only if not at end of input)
+        if (self.i as usize) < self.input.len() {
+            let current_token = self.input[self.i as usize];
+            if let Some(follow_set) = self.follow.get(&nt_id) {
+                if !follow_set.contains(&current_token) {
+                    return; 
+                }
+            }
+        }
+
         {
             let gss_node = self.gss.get_mut(self.sn);
             gss_node.pops.insert(result_node);
@@ -607,7 +847,97 @@ impl GLLParser {
 
     fn sppf_to_tree(&self, root_id: SPPFNodeId) -> Option<ParseTree> {
         let mut visited = HashSet::new();
-        self.flatten_tree(root_id, &mut visited).into_iter().next()
+        self.flatten_tree_first(root_id, &mut visited)
+    }
+
+    /// Optimized version that returns only the first parse tree
+    fn flatten_tree_first(&self, node_id: SPPFNodeId, visited: &mut HashSet<SPPFNodeId>) -> Option<ParseTree> {
+        // Check for cycles to prevent infinite recursion
+        if visited.contains(&node_id) {
+            return None;
+        }
+        visited.insert(node_id);
+        
+        let node = self.sppf.get(node_id);
+        let g_node = self.g_grammar.get(node.gn);
+
+        // --- Base Case: Leaf Node (Terminal or Epsilon) ---
+        if node.pack_ns.is_empty() {
+            return match g_node.kind {
+                GKind::Terminal(t_id) => {
+                    let name = self.grammar.terminal_str(t_id).unwrap_or("?").to_string();
+                    Some(ParseTree::leaf(&name))
+                }
+                GKind::Epsilon => {
+                    Some(ParseTree::leaf("ε"))
+                }
+                _ => None,
+            };
+        }
+
+        // Take only the first packed node (first parse alternative)
+        if let Some(pack_id) = node.pack_ns.iter().next() {
+            let pack = &self.sppf.pack_nodes[pack_id.0];
+
+            // Collect children from Left and Right subtrees
+            let mut children = Vec::new();
+
+            // The Left child (if it exists) represents the prefix of the rule
+            if let Some(left_id) = pack.left_c {
+                if let Some(left_tree) = self.flatten_tree_first(left_id, visited) {
+                    // Flatten: extend children if it's a node with children
+                    if !left_tree.children.is_empty() {
+                        children.extend(left_tree.children);
+                    } else {
+                        children.push(left_tree);
+                    }
+                }
+            }
+
+            // The Right child is the symbol just parsed
+            if let Some(right_tree) = self.flatten_tree_first(pack.right_c, visited) {
+                children.push(right_tree);
+            }
+
+            // Determine if we Wrap or Flatten
+            // ONLY wrap for LHS nodes, NOT for NonTerminal nodes (which are RHS references)
+            match g_node.kind {
+                GKind::LHS(nt_id) => {
+                    let name = self
+                        .grammar
+                        .non_terminal_str(nt_id)
+                        .unwrap_or("?")
+                        .to_string();
+                    Some(ParseTree::new(ParseSymbol::NonTerminal(name), children))
+                }
+                GKind::NonTerminal(_nt_id) => {
+                    // NonTerminal references should pass through their single child
+                    // (which is the result of calling that non-terminal)
+                    if children.len() == 1 {
+                        children.into_iter().next()
+                    } else if !children.is_empty() {
+                        // Intermediate sequence node - wrap children to preserve structure
+                        Some(ParseTree::new(ParseSymbol::NonTerminal("_seq".to_string()), children))
+                    } else {
+                        None
+                    }
+                }
+                _ => {
+                    // For intermediate sequencing nodes (Terminal, Alt, End, Epsilon)
+                    // We need to return all children properly
+                    if children.len() == 1 {
+                        children.into_iter().next()
+                    } else if !children.is_empty() {
+                        // Intermediate sequence node - wrap children to preserve structure
+                        Some(ParseTree::new(ParseSymbol::NonTerminal("_seq".to_string()), children))
+                    } else {
+                        None
+                    }
+                }
+            }
+        } else {
+            None
+        }
     }
 
     /// Recursive helper to flatten binary SPPF nodes into N-ary lists

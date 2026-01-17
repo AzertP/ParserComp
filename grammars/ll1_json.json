@@ -1,0 +1,67 @@
+{
+  "name": "json",
+  "start": "<json>",
+  "rules": {
+    "<json>": [
+      ["{", "<object_tail>"], 
+      ["[", "<array_tail>"]
+    ],
+
+    "<object_tail>": [
+        ["\"", "<characters>", "\"", ":", "<value>", "<members_rest>", "}"], 
+        ["}"]
+    ],
+
+    "<members_rest>": [
+        [",", "\"", "<characters>", "\"", ":", "<value>", "<members_rest>"], 
+        []
+    ],
+
+    "<array_tail>": [
+        ["<value>", "<elements_rest>", "]"], 
+        ["]"]
+    ],
+
+    "<elements_rest>": [
+        [",", "<value>", "<elements_rest>"], 
+        []
+    ],
+
+    "<value>": [
+      ["\"", "<characters>", "\""],
+      ["-", "<digits>", "<fraction>", "<exponent>"],
+      ["<digits>", "<fraction>", "<exponent>"],
+      ["{", "<object_tail>"],
+      ["[", "<array_tail>"],
+      ["t", "r", "u", "e"],
+      ["f", "a", "l", "s", "e"],
+      ["n", "u", "l", "l"]
+    ],
+
+    "<characters>": [
+      ["<character>", "<characters_rest>"]
+    ],
+
+    "<characters_rest>": [
+      ["<characters>"],
+      []
+    ],
+
+    "<character>": {"char_range": [32, 127], "exclude": [34, 92]},
+    
+    "<digits>": [
+      ["<digit>", "<digits_rest>"]
+    ],
+
+    "<digits_rest>": [
+      ["<digits>"],
+      []
+    ],
+
+    "<digit>": {"digits": true},
+
+    "<fraction>": [[".", "<digits>"], []],
+    "<exponent>": [["e", "<sign>", "<digits>"], ["E", "<sign>", "<digits>"], []],
+    "<sign>": [["+"], ["-"], []]
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "name": "sexp_ll1",
+  "start": "<s_expression>",
+  "rules": {
+    "<s_expression>": [
+      ["<atomic_symbol>"],
+      ["(", "<list_body>"]
+    ],
+
+    "<list_body>": [
+      [")"],
+      ["<s_expression>", "<list_rest>"]
+    ],
+
+    "<list_rest>": [
+      [")"],
+      ["<ws>", "<after_space>"]
+    ],
+
+    "<after_space>": [
+      [".", "<ws>", "<s_expression>", ")"],
+      ["<s_expression>", "<list_rest>"]
+    ],
+
+    "<atomic_symbol>": [
+      ["<letter>", "<atom_part>"]
+    ],
+
+    "<atom_part>": [
+      ["<empty>"],
+      ["<letter>", "<atom_part>"],
+      ["<number>", "<atom_part>"]
+    ],
+
+    "<ws>": [
+      [" "]
+    ],
+
+    "<empty>": [
+      []
+    ],
+
+    "<letter>": [
+      ["a"], ["b"], ["c"], ["d"], ["e"], ["f"], ["g"], ["h"], ["i"], ["j"],
+      ["k"], ["l"], ["m"], ["n"], ["o"], ["p"], ["q"], ["r"], ["s"], ["t"],
+      ["u"], ["v"], ["w"], ["x"], ["y"], ["z"]
+    ],
+
+    "<number>": [
+      ["1"], ["2"], ["3"], ["4"], ["5"], ["6"], ["7"], ["8"], ["9"]
+    ]
+  },
+  "tests": ["(a b c)", "(a . b)", "abc", "a123"]
+}

@@ -1,0 +1,47 @@
+{
+  "name": "json_tokenized",
+  "start": "<json>",
+  "rules": {
+    "<json>": [
+      ["{", "<object_tail>"], 
+      ["[", "<array_tail>"]
+    ],
+
+    "<object_tail>": [
+        ["\"", "<string>", "\"", ":", "<value>", "<members_rest>", "}"], 
+        ["}"]
+    ],
+
+    "<members_rest>": [
+        [",", "\"", "<string>", "\"", ":", "<value>", "<members_rest>"], 
+        []
+    ],
+
+    "<array_tail>": [
+        ["<value>", "<elements_rest>", "]"], 
+        ["]"]
+    ],
+
+    "<elements_rest>": [
+        [",", "<value>", "<elements_rest>"], 
+        []
+    ],
+
+    "<value>": [
+      ["\"", "<string>", "\""],
+      ["-", "<number>", "<fraction>", "<exponent>"],
+      ["<number>", "<fraction>", "<exponent>"],
+      ["{", "<object_tail>"],
+      ["[", "<array_tail>"],
+      ["t", "r", "u", "e"],
+      ["f", "a", "l", "s", "e"],
+      ["n", "u", "l", "l"]
+    ],
+
+    "<string>": [["s"]],
+    "<number>": [["1"]],
+    "<fraction>": [[".", "<number>"], []],
+    "<exponent>": [["e", "<sign>", "<number>"], ["E", "<sign>", "<number>"], []],
+    "<sign>": [["+"], ["-"], []]
+  }
+}

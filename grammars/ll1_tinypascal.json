@@ -1,0 +1,86 @@
+{
+  "name": "tinypascal_ll1",
+  "start": "<program>",
+  "rules": {
+    "<program>": [
+      ["p", "r", "o", "g", "r", "a", "m", "<id>", ";", "<var_decl_section>", "<compound_stmt>", "."]
+    ],
+
+    "<var_decl_section>": [
+      ["v", "a", "r", "<var_decls>"],
+      []
+    ],
+
+    "<var_decls>": [
+      ["<id>", ":", "i", "n", "t", "e", "g", "e", "r", ";", "<var_decls>"],
+      []
+    ],
+
+    "<compound_stmt>": [
+      ["b", "e", "g", "i", "n", "<stmt_list>", "s", "t", "o", "p"]
+    ],
+
+    "<stmt_list>": [
+      ["<statement>", "<stmt_tail>"]
+    ],
+
+    "<stmt_tail>": [
+      [";", "<statement>", "<stmt_tail>"],
+      []
+    ],
+
+    "<statement>": [
+      ["<id>", ":", "=", "<expr>"],
+      ["i", "f", "<expr>", "t", "h", "e", "n", "<compound_stmt>", "<else_part>"],
+      ["w", "h", "i", "l", "e", "<expr>", "d", "o", "<compound_stmt>"],
+      ["<compound_stmt>"],
+      []
+    ],
+
+    "<else_part>": [
+      ["e", "l", "s", "e", "<compound_stmt>"],
+      []
+    ],
+
+    "<expr>": [["<term>", "<expr_prime>"]],
+    "<expr_prime>": [
+      ["+", "<term>", "<expr_prime>"],
+      ["-", "<term>", "<expr_prime>"],
+      ["=", "<term>", "<expr_prime>"],
+      ["<", "<term>", "<expr_prime>"],
+      []
+    ],
+
+    "<term>": [
+      ["<id>"],
+      ["<number>"],
+      ["(", "<expr>", ")"]
+    ],
+
+    "<id>": [["<upper_char>", "<id_tail>"]],
+    "<id_tail>": [
+      ["<upper_char>", "<id_tail>"],
+      ["<digit>", "<id_tail>"],
+      []
+    ],
+    
+    "<number>": [["<digit>", "<number_tail>"]],
+    "<number_tail>": [
+      ["<digit>", "<number_tail>"],
+      []
+    ],
+
+    "<upper_char>": [
+      ["A"], ["B"], ["C"], ["D"], ["E"], ["F"], ["G"], ["H"], ["I"], ["J"], 
+      ["K"], ["L"], ["M"], ["N"], ["O"], ["P"], ["Q"], ["R"], ["S"], ["T"], 
+      ["U"], ["V"], ["W"], ["X"], ["Y"], ["Z"]
+    ],
+    "<digit>": [
+      ["0"], ["1"], ["2"], ["3"], ["4"], ["5"], ["6"], ["7"], ["8"], ["9"]
+    ]
+  },
+  "tests": [
+    "program MYAPP; var X: integer; begin X := 10 stop.",
+    "program TEST; var A: integer; SUM: integer; begin A := 5; if A < 10 then begin SUM := A + 1 stop else begin SUM := 0 stop stop."
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "name": "lr_json",
+  "start": "<json>",
+  "rules": {
+    "<json>": [["<object>"], ["<array>"]],
+    "<object>": [["{", "<members>", "}"], ["{", "}"]],
+    "<members>": [["<pair>"], ["<members>", ",", "<pair>"]],
+    "<pair>": [["<string>", ":", "<value>"]],
+    "<array>": [["[", "<elements>", "]"], ["[", "]"]],
+    "<elements>": [["<value>"], ["<elements>", ",", "<value>"]],
+    "<value>": [
+      ["<string>"],
+      ["<number>"],
+      ["<object>"],
+      ["<array>"],
+      ["<true>"],
+      ["<false>"],
+      ["<null>"]
+    ],
+    "<string>": [["\"", "<characters>", "\""]],
+    "<characters>": [["<characters>", "<character>"], []],
+    "<character>": {"char_range": [32, 127], "exclude": [34, 92]},
+    "<number>": [["<integer>", "<fraction>", "<exponent>"]],
+    "<integer>": [["-", "<digit>", "<digits>"], ["<digit>", "<digits>"]],
+    "<fraction>": [[".", "<digit>", "<digits>"], []],
+    "<exponent>": [["e", "<sign>", "<digit>", "<digits>"], ["E", "<sign>", "<digit>", "<digits>"], []],
+    "<sign>": [["+"], ["-"], []],
+    "<digits>": [["<digits>", "<digit>"], []],
+    "<digit>": {"digits": true},
+    "<true>": [["t", "r", "u", "e"]],
+    "<false>": [["f", "a", "l", "s", "e"]],
+    "<null>": [["n", "u", "l", "l"]]
+  },
+  "tests": ["{\"name\":\"John\",\"age\":30,\"city\":\"New York\"}"]
+}

@@ -572,6 +572,118 @@ impl<'a> TableGenerator<'a> {
         table
     }
 
+    /// Generate a standard LR(1) parse table (without Right-Nulled items)
+    ///
+    /// This is simplified to omit SPPF handling (uses 0 as placeholder)
+    pub fn generate_lr1_table(&self) -> HashMap<usize, HashMap<NumSymbol, Vec<Action>>> {
+        let (states, goto_map) = self.generate_states();
+
+        let mut table: HashMap<usize, HashMap<NumSymbol, Vec<Action>>> = HashMap::default();
+
+        // Initialize table
+        for (state_id, _) in &states {
+            table.insert(*state_id, HashMap::default());
+        }
+
+        // Add shift and goto actions
+        for ((state_id, symbol), next_state) in &goto_map {
+            let actions = table
+                .get_mut(state_id)
+                .unwrap()
+                .entry(*symbol)
+                .or_insert_with(Vec::new);
+            
+            // Check for shift/reduce conflict
+            if !actions.is_empty() {
+                eprintln!("🚨🚨🚨 CONFLICT DETECTED! 🚨🚨🚨");
+                eprintln!("State {}: Shift/Reduce conflict on symbol '{}'", state_id, self.format_symbol(symbol));
+                eprint!("  Existing actions: ");
+                for (i, action) in actions.iter().enumerate() {
+                    if i > 0 { eprint!(", "); }
+                    eprint!("{}", self.format_action(action));
+                }
+                eprintln!();
+                eprintln!("  New action: Shift to state {}", next_state);
+                eprintln!("🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨");
+            }
+            
+            actions.push(Action::Shift(*next_state));
+        }
+
+        // Add reduce actions
+        for (state_id, state_items) in &states {
+            for item in state_items {
+                // Dot at the end -> reduce action
+                if item.is_complete() {
+                    if item.lhs == self.augmented_start {
+                        // Accept action for augmented start symbol (S' -> S·)
+                        let actions = table
+                            .get_mut(state_id)
+                            .unwrap()
+                            .entry(NumSymbol::Terminal(END_OF_INPUT))
+                            .or_insert_with(Vec::new);
+                        
+                        if !actions.is_empty() {
+                            eprintln!("🚨🚨🚨 CONFLICT DETECTED! 🚨🚨🚨");
+                            eprintln!("State {}: Accept conflict on END_OF_INPUT", state_id);
+                            eprint!("  Existing actions: ");
+                            for (i, action) in actions.iter().enumerate() {
+                                if i > 0 { eprint!(", "); }
+                                eprint!("{}", self.format_action(action));
+                            }
+                            eprintln!();
+                            eprintln!("🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨");
+                        }
+                        
+                        actions.push(Action::Accept);
+                    } else {
+                        // Reduce action with dummy SPPF label (0)
+                        let action = Action::Reduce(item.lhs, item.dot, 0);
+                        let actions = table
+                            .get_mut(state_id)
+                            .unwrap()
+                            .entry(item.look_ahead)
+                            .or_insert_with(Vec::new);
+                        
+                        // Check for reduce/reduce or shift/reduce conflict
+                        if !actions.is_empty() {
+                            let conflict_type = if actions.iter().any(|a| matches!(a, Action::Shift(_))) {
+                                "Shift/Reduce"
+                            } else {
+                                "Reduce/Reduce"
+                            };
+                            
+                            // Format the reduction for display
+                            let lhs_name = self.grammar.non_terminals
+                                .get_str(item.lhs)
+                                .unwrap_or("?");
+                            let rhs_strs: Vec<String> = item.rhs.iter()
+                                .map(|s| self.format_symbol(s))
+                                .collect();
+                            
+                            eprintln!("🚨🚨🚨 CONFLICT DETECTED! 🚨🚨🚨");
+                            eprintln!("State {}: {} conflict on symbol '{}'", 
+                                     state_id, conflict_type, self.format_symbol(&item.look_ahead));
+                            eprint!("  Existing actions: ");
+                            for (i, a) in actions.iter().enumerate() {
+                                if i > 0 { eprint!(", "); }
+                                eprint!("{}", self.format_action(a));
+                            }
+                            eprintln!();
+                            eprintln!("  New action: Reduce using rule {} -> {}", 
+                                     lhs_name, rhs_strs.join(" "));
+                            eprintln!("🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨");
+                        }
+                        
+                        actions.push(action);
+                    }
+                }
+            }
+        }
+
+        table
+    }
+
     /// Get the number of states in the automaton
     pub fn state_count(&self) -> usize {
         self.generate_states().0.len()
@@ -661,6 +773,58 @@ impl<'a> TableGenerator<'a> {
     /// - Actions use dot-separated format: "p.{state}", "r.{lhs}.{dot}.{label}", "acc"
     pub fn export_to_csv_numeric<P: AsRef<Path>>(&self, path: P) -> io::Result<()> {
         let table = self.generate_parse_table();
+
+        // Collect and sort state IDs
+        let mut state_ids: Vec<usize> = table.keys().copied().collect();
+        state_ids.sort();
+
+        // Collect all symbols from the table
+        let mut all_symbols: HashSet<NumSymbol> = HashSet::default();
+        for actions in table.values() {
+            for &symbol in actions.keys() {
+                all_symbols.insert(symbol);
+            }
+        }
+
+        // Sort symbols for consistent column ordering
+        let mut symbols: Vec<NumSymbol> = all_symbols.into_iter().collect();
+        symbols.sort_by(|a, b| symbol_to_ord(a).cmp(&symbol_to_ord(b)));
+
+        // Create file and buffered writer
+        let file = File::create(path)?;
+        let mut writer = BufWriter::new(file);
+
+        // Write header row with numeric symbols
+        write!(writer, "state")?;
+        for symbol in &symbols {
+            write!(writer, ",{}", self.format_symbol_numeric(symbol))?;
+        }
+        writeln!(writer)?;
+
+        // Write data rows
+        for state_id in state_ids {
+            write!(writer, "{}", state_id)?;
+
+            if let Some(state_actions) = table.get(&state_id) {
+                for symbol in &symbols {
+                    write!(writer, ",")?;
+                    if let Some(actions) = state_actions.get(symbol) {
+                        let action_strs: Vec<String> =
+                            actions.iter().map(|a| self.format_action(a)).collect();
+                        write!(writer, "{}", action_strs.join("/"))?;
+                    }
+                }
+            }
+            writeln!(writer)?;
+        }
+
+        writer.flush()?;
+        Ok(())
+    }
+
+    /// Export the LR(1) parse table to a CSV file in numeric format
+    pub fn export_lr1_to_csv<P: AsRef<Path>>(&self, path: P) -> io::Result<()> {
+        let table = self.generate_lr1_table();
 
         // Collect and sort state IDs
         let mut state_ids: Vec<usize> = table.keys().copied().collect();

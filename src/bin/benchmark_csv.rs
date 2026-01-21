@@ -13,6 +13,7 @@ use parser_comparison::parsers::gll::ll;
 use parser_comparison::parsers::glr::lr;
 use parser_comparison::parsers::glr::table_generator;
 use parser_comparison::parsers::{cyk, earley, gll, glr, valiant};
+use std::collections::HashSet;
 use std::fs::{self, File};
 use std::hint::black_box;
 use std::io::Write;
@@ -47,15 +48,17 @@ const GENERAL_PLUS_LLLR: &[&str] = &["Earley", "GLL", "RNGLR", "BRNGLR", "LL", "
 const NO_EARLEY_LLLR: &[&str] = &["GLL", "RNGLR", "BRNGLR", "LL", "LR"];
 
 const CONFIGS: &[GrammarConfig] = &[
-    GrammarConfig {
-        name: "ambi_stress",
-        grammar_path: "grammars/ambi.json",
-        input_path: "input/ambi_stress.txt",
-        table_path: "table/ambi_glr_table.csv",
-        lr_table_path: "table/ambi_lr_table.csv",
-        generate_table: true,
-        parsers: GENERAL_PARSERS,
-    },
+    // GrammarConfig {
+    //     name: "ambi_stress",
+    //     grammar_path: "grammars/ambi.json",
+    //     input_path: "input/ambi_stress.txt",
+    //     table_path: "table/ambi_glr_table.csv",
+    //     lr_table_path: "table/ambi_lr_table.csv",
+    //     generate_table: true,
+    //     parsers: GENERAL_PARSERS,
+    // },
+
+    // // ----- LR suit ----------
     // GrammarConfig {
     //     name: "lr_json_large",
     //     grammar_path: "grammars/lr_json.json",
@@ -74,15 +77,211 @@ const CONFIGS: &[GrammarConfig] = &[
     //     generate_table: true,
     //     parsers: GENERAL_PLUS_LR,
     // },
+    // // ----- LLLR suit ----------
+    // GrammarConfig {
+    //     name: "json_with_lllr_large",
+    //     grammar_path: "grammars/ll1_json.json",
+    //     input_path: "input/json_large.txt",
+    //     table_path: "table/json_ll1_table.csv",
+    //     lr_table_path: "table/json_ll1_lr_table.csv",
+    //     generate_table: true,
+    //     parsers: NO_EARLEY_LLLR,
+    // },
+    // GrammarConfig {
+    //     name: "json_with_lllr_earley",
+    //     grammar_path: "grammars/ll1_json.json",
+    //     input_path: "input/json_medium.txt",
+    //     table_path: "table/json_ll1_table.csv",
+    //     lr_table_path: "table/json_ll1_lr_table.csv",
+    //     generate_table: true,
+    //     parsers: &["Earley"],
+    // },
+    // GrammarConfig {
+    //     name: "calc_with_lllr_large",
+    //     grammar_path: "grammars/ll1_calc.json",
+    //     input_path: "input/calc_large.txt",
+    //     table_path: "table/calc_ll1_table.csv",
+    //     lr_table_path: "table/calc_ll1_lr_table.csv",
+    //     generate_table: true,
+    //     parsers: GENERAL_PLUS_LLLR,
+    // },
+    // GrammarConfig {
+    //     name: "sexp_with_lllr_large",
+    //     grammar_path: "grammars/ll1_sexp.json",
+    //     input_path: "input/sexp_ll1.txt",
+    //     table_path: "table/sexp_ll1_table.csv",
+    //     lr_table_path: "table/sexp_ll1_lr_table.csv",
+    //     generate_table: true,
+    //     parsers: GENERAL_PLUS_LLLR,
+    // },
+    // GrammarConfig {
+    //     name: "tinypascal_with_lllr_large",
+    //     grammar_path: "grammars/ll1_tinypascal.json",
+    //     input_path: "input/tinypascal_large.txt",
+    //     table_path: "table/tinypascal_ll1_table.csv",
+    //     lr_table_path: "table/tinypascal_ll1_lr_table.csv",
+    //     generate_table: true,
+    //     parsers: GENERAL_PLUS_LLLR,
+    // },
+
+    // // ----- General large suit ----------
+    // GrammarConfig {
+    //     name: "json_large",
+    //     grammar_path: "grammars/json.json",
+    //     input_path: "input/json_large.txt",
+    //     table_path: "table/json_glr_table.csv",
+    //     lr_table_path: "table/json_lr_table.csv",
+    //     generate_table: true,
+    //     parsers: GLL_GLR_PARSERS,
+    // },
+    // GrammarConfig {
+    //     name: "json_earley",
+    //     grammar_path: "grammars/json.json",
+    //     input_path: "input/json_medium.txt",
+    //     table_path: "table/json_glr_table.csv",
+    //     lr_table_path: "table/json_lr_table.csv",
+    //     generate_table: true,
+    //     parsers: &["Earley"],
+    // },
+    // GrammarConfig {
+    //     name: "sexp_large",
+    //     grammar_path: "grammars/sexp.json",
+    //     input_path: "input/sexp_large.txt",
+    //     table_path: "table/sexp_glr_table.csv",
+    //     lr_table_path: "table/sexp_lr_table.csv",
+    //     generate_table: true,
+    //     parsers: FAST_PARSERS,
+    // },
+    // GrammarConfig {
+    //     name: "calc_large",
+    //     grammar_path: "grammars/calc.json",
+    //     input_path: "input/calc_large.txt",
+    //     table_path: "table/calc_glr_table.csv",
+    //     lr_table_path: "table/calc_lr_table.csv",
+    //     generate_table: true,
+    //     parsers: FAST_PARSERS,
+    // },
+    // GrammarConfig {
+    //     name: "tinyc_large",
+    //     grammar_path: "grammars/tinyc.json",
+    //     input_path: "input/tinyc_large.txt",
+    //     table_path: "table/tinyc_glr_table.csv",
+    //     lr_table_path: "table/tinyc_lr_table.csv",
+    //     generate_table: true,
+    //     parsers: FAST_PARSERS,
+    // },
+    // GrammarConfig {
+    //     name: "ansi_c_large",
+    //     grammar_path: "grammars/ansi_c.json",
+    //     input_path: "input/ansi_c_large.txt",
+    //     table_path: "table/ansi_c_glr_table.csv",
+    //     lr_table_path: "table/ansi_c_lr_table.csv",
+    //     generate_table: false,
+    //     parsers: FAST_PARSERS,
+    // },
+    // GrammarConfig {
+    //     name: "pascal_large",
+    //     grammar_path: "grammars/pascal.json",
+    //     input_path: "input/pascal_large.txt",
+    //     table_path: "table/pascal_glr_table.csv",
+    //     lr_table_path: "table/pascal_lr_table.csv",
+    //     generate_table: false,
+    //     parsers: FAST_PARSERS,
+    // },
+    // GrammarConfig {
+    //     name: "java_large",
+    //     grammar_path: "grammars/jsl18.json",
+    //     input_path: "input/java_large.txt",
+    //     table_path: "table/java_glr_table.csv",
+    //     lr_table_path: "table/java_lr_table.csv",
+    //     generate_table: false,
+    //     parsers: FAST_PARSERS,
+    // },
+    // GrammarConfig {
+    //     name: "cpp_large",
+    //     grammar_path: "grammars/cpp.json",
+    //     input_path: "input/cpp_large.txt",
+    //     table_path: "table/cpp_glr_table.csv",
+    //     lr_table_path: "table/cpp_lr_table.csv",
+    //     generate_table: false,
+    //     parsers: FAST_PARSERS,
+    // },
+
+    // // -------- General small suit --------
     GrammarConfig {
-        name: "json_with_lllr_large",
-        grammar_path: "grammars/ll1_json.json",
-        input_path: "input/json_ultra.txt",
-        table_path: "table/json_ll1_table.csv",
-        lr_table_path: "table/json_ll1_lr_table.csv",
+        name: "json_small",
+        grammar_path: "grammars/json.json",
+        input_path: "input/json_small.txt",
+        table_path: "table/json_glr_table.csv",
+        lr_table_path: "table/json_lr_table.csv",
         generate_table: true,
-        parsers: NO_EARLEY_LLLR,
+        parsers: GENERAL_PARSERS,
     },
+    GrammarConfig {
+        name: "sexp_small",
+        grammar_path: "grammars/sexp.json",
+        input_path: "input/sexp_small.txt",
+        table_path: "table/sexp_glr_table.csv",
+        lr_table_path: "table/sexp_lr_table.csv",
+        generate_table: true,
+        parsers: GENERAL_PARSERS,
+    },
+    GrammarConfig {
+        name: "calc_small",
+        grammar_path: "grammars/calc.json",
+        input_path: "input/calc_small.txt",
+        table_path: "table/calc_glr_table.csv",
+        lr_table_path: "table/calc_lr_table.csv",
+        generate_table: true,
+        parsers: GENERAL_PARSERS,
+    },
+    GrammarConfig {
+        name: "tinyc_small",
+        grammar_path: "grammars/tinyc.json",
+        input_path: "input/tinyc_small.txt",
+        table_path: "table/tinyc_glr_table.csv",
+        lr_table_path: "table/tinyc_lr_table.csv",
+        generate_table: true,
+        parsers: GENERAL_PARSERS,
+    },
+    // Ingored test for now
+    // GrammarConfig {
+    //     name: "ansi_c_small",
+    //     grammar_path: "grammars/ansi_c.json",
+    //     input_path: "input/ansi_c_small.txt",
+    //     table_path: "table/ansi_c_glr_table.csv",
+    //     lr_table_path: "table/ansi_c_lr_table.csv",
+    //     generate_table: false,
+    //     parsers: GENERAL_PARSERS,
+    // },
+    // GrammarConfig {
+    //     name: "pascal_small",
+    //     grammar_path: "grammars/pascal.json",
+    //     input_path: "input/pascal_small.txt",
+    //     table_path: "table/pascal_glr_table.csv",
+    //     lr_table_path: "table/pascal_lr_table.csv",
+    //     generate_table: false,
+    //     parsers: &["CYK"],
+    // },
+    // GrammarConfig {
+    //     name: "java_small",
+    //     grammar_path: "grammars/jsl18.json",
+    //     input_path: "input/java_small.txt",
+    //     table_path: "table/java_glr_table.csv",
+    //     lr_table_path: "table/java_lr_table.csv",
+    //     generate_table: false,
+    //     parsers: &["CYK"],
+    // },
+    // GrammarConfig {
+    //     name: "cpp_small",
+    //     grammar_path: "grammars/cpp.json",
+    //     input_path: "input/cpp_small.txt",
+    //     table_path: "table/cpp_glr_table.csv",
+    //     lr_table_path: "table/cpp_lr_table.csv",
+    //     generate_table: false,
+    //     parsers: &["CYK"],
+    // },
+
     // GrammarConfig{
     //     name: "json_tokenized_with_lllr_large",
     //     grammar_path: "grammars/json_tokenized.json",
@@ -91,33 +290,6 @@ const CONFIGS: &[GrammarConfig] = &[
     //     lr_table_path: "table/json_tokenized_lr_table.csv",
     //     generate_table: true,
     // },
-    GrammarConfig {
-        name: "calc_with_lllr_large",
-        grammar_path: "grammars/ll1_calc.json",
-        input_path: "input/calc_large.txt",
-        table_path: "table/calc_ll1_table.csv",
-        lr_table_path: "table/calc_ll1_lr_table.csv",
-        generate_table: true,
-        parsers: GENERAL_PLUS_LLLR,
-    },
-    GrammarConfig {
-        name: "sexp_with_lllr_large",
-        grammar_path: "grammars/ll1_sexp.json",
-        input_path: "input/sexp_ll1.txt",
-        table_path: "table/sexp_ll1_table.csv",
-        lr_table_path: "table/sexp_ll1_lr_table.csv",
-        generate_table: true,
-        parsers: GENERAL_PLUS_LLLR,
-    },
-    GrammarConfig {
-        name: "tinypascal_with_lllr_large",
-        grammar_path: "grammars/ll1_tinypascal.json",
-        input_path: "input/tinypascal_large.txt",
-        table_path: "table/tinypascal_ll1_table.csv",
-        lr_table_path: "table/tinypascal_ll1_lr_table.csv",
-        generate_table: true,
-        parsers: GENERAL_PLUS_LLLR,
-    },
     // GrammarConfig {
     //     name: "json_tokenized",
     //     grammar_path: "grammars/json_tokenized.json",
@@ -127,76 +299,13 @@ const CONFIGS: &[GrammarConfig] = &[
     //     generate_table: true,
     // }
     // GrammarConfig {
-    //     name: "json_large",
-    //     grammar_path: "grammars/json.json",
-    //     input_path: "input/json_medium.txt",
-    //     table_path: "table/json_glr_table.csv",
-    //     lr_table_path: "table/json_lr_table.csv",
-    //     generate_table: true,
-    // },
-    // GrammarConfig {
-    //     name: "sexp_large",
-    //     grammar_path: "grammars/sexp.json",
-    //     input_path: "input/sexp_large.txt",
-    //     table_path: "table/sexp_glr_table.csv",
-    //     lr_table_path: "table/sexp_lr_table.csv",
-    //     generate_table: true,
-    // },
-    // GrammarConfig {
-    //     name: "calc_large",
-    //     grammar_path: "grammars/calc.json",
-    //     input_path: "input/calc_large.txt",
-    //     table_path: "table/calc_glr_table.csv",
-    //     lr_table_path: "table/calc_lr_table.csv",
-    //     generate_table: true,
-    // },
-    // GrammarConfig {
-    //     name: "tinyc_large",
-    //     grammar_path: "grammars/tinyc.json",
-    //     input_path: "input/tinyc_large.txt",
-    //     table_path: "table/tinyc_glr_table.csv",
-    //     lr_table_path: "table/tinyc_lr_table.csv",
-    //     generate_table: true,
-    // },
-    // GrammarConfig {
     //     name: "css_small",
     //     grammar_path: "grammars/css.json",
     //     input_path: "input/css_small.txt",
     //     table_path: "table/css_glr_table.csv",
     //     lr_table_path: "table/css_lr_table.csv",
     //     generate_table: true,
-    // },
-    // GrammarConfig {
-    //     name: "ansi_c_large",
-    //     grammar_path: "grammars/ansi_c.json",
-    //     input_path: "input/ansi_c_large.txt",
-    //     table_path: "table/ansi_c_glr_table.csv",
-    //     lr_table_path: "table/ansi_c_lr_table.csv",
-    //     generate_table: false,
-    // },
-    // GrammarConfig {
-    //     name: "pascal_large",
-    //     grammar_path: "grammars/pascal.json",
-    //     input_path: "input/pascal_large.txt",
-    //     table_path: "table/pascal_glr_table.csv",
-    //     lr_table_path: "table/pascal_lr_table.csv",
-    //     generate_table: false,
-    // },
-    // GrammarConfig {
-    //     name: "java_large",
-    //     grammar_path: "grammars/jsl18.json",
-    //     input_path: "input/java_large.txt",
-    //     table_path: "table/java_glr_table.csv",
-    //     lr_table_path: "table/java_lr_table.csv",
-    //     generate_table: false,
-    // },
-    // GrammarConfig {
-    //     name: "cpp_large",
-    //     grammar_path: "grammars/cpp.json",
-    //     input_path: "input/cpp_large.txt",
-    //     table_path: "table/cpp_glr_table.csv",
-    //     lr_table_path: "table/cpp_lr_table.csv",
-    //     generate_table: false,
+    //     parsers: FAST_PARSERS,
     // },
 ];
 
@@ -204,6 +313,7 @@ const WARMUP_ITERATIONS: u32 = 1;
 const MIN_ITERATIONS: u32 = 5;
 const MAX_ITERATIONS: u32 = 20;
 const TARGET_TIME: Duration = Duration::from_millis(500);
+const TIMEOUT_THRESHOLD: f64 = 1_000_000_000.0; // 1 seconds in ns
 
 #[derive(Clone)]
 struct BenchmarkResult {
@@ -390,7 +500,7 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
     let mut brnglr = glr::BrnglrParser::import_table_from_csv(config.table_path)
         .expect("Failed to load BRNGLR table");
     let mut gll_parser = gll::GLLParser::new(&grammar);
-    let mut earley = earley::LeoParser::new(grammar.clone());
+    let mut earley = earley::EarleyParser::new(grammar.clone());
     let ll_parser = if config.parsers.contains(&"LL") {
         Some(ll::LLParser::new(&grammar))
     } else {
@@ -426,6 +536,8 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
         lines.last().map(|l| l.len()).unwrap_or(0)
     );
 
+    let mut failed_parsers: HashSet<String> = HashSet::new();
+
     for (idx, line) in lines.iter().enumerate() {
         let input_len = line.len();
 
@@ -448,8 +560,12 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
             token_count
         );
         println!("{}", &line[..std::cmp::min(50, line.len())].trim());
-        println!("{}", &line[..std::cmp::min(50, line.len())].trim());
         for parser_name in config.parsers {
+            if failed_parsers.contains(*parser_name) {
+                // println!("    [SKIP] {} (previously timed out)", parser_name);
+                continue;
+            }
+
             let result = match *parser_name {
                 "Earley" => {
                     let success = check_success(|| earley.parse(tokens.clone()));
@@ -590,9 +706,25 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
                 status, result.parser, result.median_time_ns, result.mad_ns, result.iterations
             );
 
+            if !result.success {
+                panic!(
+                    "Parser {} failed on input with length {} ({} tokens)",
+                    result.parser, result.input_length, result.token_count
+                );
+            }
+
             // Write result to CSV immediately
             writeln!(csv_file, "{}", result.to_csv_row())?;
             csv_file.flush()?; // Ensure data is written to disk immediately
+
+            // If parser took too long, mark it as failed for future iterations
+            if result.median_time_ns > TIMEOUT_THRESHOLD {
+                println!(
+                    "    [TIMEOUT] {} exceeded 5s threshold, skipping larger inputs",
+                    result.parser
+                );
+                failed_parsers.insert(result.parser);
+            }
         }
     }
 

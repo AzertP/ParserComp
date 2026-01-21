@@ -2,12 +2,177 @@
   "name": "json",
   "start": "<json>",
   "rules": {
-    "<json>": [["<object>"], ["<array>"]],
-    "<object>": [["{", "<members>", "}"], ["{", "}"]],
-    "<members>": [["<pair>"], ["<pair>", ",", "<members>"]],
-    "<pair>": [["<string>", ":", "<value>"]],
-    "<array>": [["[", "<elements>", "]"], ["[", "]"]],
-    "<elements>": [["<value>"], ["<value>", ",", "<elements>"]],
+    "<array>": [
+      ["[", "<elements>", "]"],
+      ["[", "]"]
+    ],
+    "<character>": [
+      [" "],
+      ["!"],
+      ["#"],
+      ["$"],
+      ["%"],
+      ["&"],
+      ["'"],
+      ["("],
+      [")"],
+      ["*"],
+      ["+"],
+      [","],
+      ["-"],
+      ["."],
+      ["/"],
+      ["0"],
+      ["1"],
+      ["2"],
+      ["3"],
+      ["4"],
+      ["5"],
+      ["6"],
+      ["7"],
+      ["8"],
+      ["9"],
+      [":"],
+      [";"],
+      ["<"],
+      ["="],
+      [">"],
+      ["?"],
+      ["@"],
+      ["A"],
+      ["B"],
+      ["C"],
+      ["D"],
+      ["E"],
+      ["F"],
+      ["G"],
+      ["H"],
+      ["I"],
+      ["J"],
+      ["K"],
+      ["L"],
+      ["M"],
+      ["N"],
+      ["O"],
+      ["P"],
+      ["Q"],
+      ["R"],
+      ["S"],
+      ["T"],
+      ["U"],
+      ["V"],
+      ["W"],
+      ["X"],
+      ["Y"],
+      ["Z"],
+      ["["],
+      ["]"],
+      ["^"],
+      ["_"],
+      ["`"],
+      ["a"],
+      ["b"],
+      ["c"],
+      ["d"],
+      ["e"],
+      ["f"],
+      ["g"],
+      ["h"],
+      ["i"],
+      ["j"],
+      ["k"],
+      ["l"],
+      ["m"],
+      ["n"],
+      ["o"],
+      ["p"],
+      ["q"],
+      ["r"],
+      ["s"],
+      ["t"],
+      ["u"],
+      ["v"],
+      ["w"],
+      ["x"],
+      ["y"],
+      ["z"],
+      ["{"],
+      ["|"],
+      ["}"],
+      ["~"]
+    ],
+    "<characters>": [
+      ["<character>", "<characters>"],
+      []
+    ],
+    "<digit>": [
+      ["0"],
+      ["1"],
+      ["2"],
+      ["3"],
+      ["4"],
+      ["5"],
+      ["6"],
+      ["7"],
+      ["8"],
+      ["9"]
+    ],
+    "<digits>": [
+      ["<digit>", "<digits>"],
+      []
+    ],
+    "<elements>": [
+      ["<value>"],
+      ["<value>", ",", "<elements>"]
+    ],
+    "<exponent>": [
+      ["e", "<sign>", "<digit>", "<digits>"],
+      ["E", "<sign>", "<digit>", "<digits>"],
+      []
+    ],
+    "<false>": [
+      ["f", "a", "l", "s", "e"]
+    ],
+    "<fraction>": [
+      [".", "<digit>", "<digits>"],
+      []
+    ],
+    "<integer>": [
+      ["-", "<digit>", "<digits>"],
+      ["<digit>", "<digits>"]
+    ],
+    "<json>": [
+      ["<object>"],
+      ["<array>"]
+    ],
+    "<members>": [
+      ["<pair>"],
+      ["<pair>", ",", "<members>"]
+    ],
+    "<null>": [
+      ["n", "u", "l", "l"]
+    ],
+    "<number>": [
+      ["<integer>", "<fraction>", "<exponent>"]
+    ],
+    "<object>": [
+      ["{", "<members>", "}"],
+      ["{", "}"]
+    ],
+    "<pair>": [
+      ["<string>", ":", "<value>"]
+    ],
+    "<sign>": [
+      ["+"],
+      ["-"],
+      []
+    ],
+    "<string>": [
+      ["\"", "<characters>", "\""]
+    ],
+    "<true>": [
+      ["t", "r", "u", "e"]
+    ],
     "<value>": [
       ["<string>"],
       ["<number>"],
@@ -16,20 +181,7 @@
       ["<true>"],
       ["<false>"],
       ["<null>"]
-    ],
-    "<string>": [["\"", "<characters>", "\""]],
-    "<characters>": [["<character>", "<characters>"], []],
-    "<character>": {"char_range": [32, 127], "exclude": [34, 92]},
-    "<number>": [["<integer>", "<fraction>", "<exponent>"]],
-    "<integer>": [["-", "<digit>", "<digits>"], ["<digit>", "<digits>"]],
-    "<fraction>": [[".", "<digit>", "<digits>"], []],
-    "<exponent>": [["e", "<sign>", "<digit>", "<digits>"], ["E", "<sign>", "<digit>", "<digits>"], []],
-    "<sign>": [["+"], ["-"], []],
-    "<digits>": [["<digit>", "<digits>"], []],
-    "<digit>": {"digits": true},
-    "<true>": [["t", "r", "u", "e"]],
-    "<false>": [["f", "a", "l", "s", "e"]],
-    "<null>": [["n", "u", "l", "l"]]
+    ]
   },
   "tests": ["{\"name\":\"John\",\"age\":30,\"city\":\"New York\"}"]
 }

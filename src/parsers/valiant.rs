@@ -4,31 +4,9 @@ use crate::grammars::{Grammar, NumProduction, NumSymbol};
 use crate::parse_tree::{ParseSymbol, ParseTree};
 use std::collections::{HashMap, HashSet};
 
-pub type ForestNode = Vec<(u32, Vec<ForestRef>)>;
-
-/// Reference to a forest node in the table, or a terminal leaf
-#[derive(Clone, Debug)]
-pub enum ForestRef {
-    /// Reference to table[row][col][nt]
-    TableRef { row: usize, col: usize, nt: u32 },
-    /// Terminal leaf node
-    Terminal(u32),
-}
-
-/// Valiant Parse Table: table[s][e] maps non-terminal -> list of (nt, children) derivations
-pub type ValiantTable = Vec<Vec<HashMap<u32, ForestNode>>>;
-
-/// A matrix of non-terminal sets (used in Valiant's algorithm)
-/// matrix[i][j] = set of non-terminals that can derive input[i..j]
 pub type NTMatrix = Vec<Vec<HashSet<u32>>>;
-
-/// A boolean matrix for a single non-terminal
 pub type BoolMatrix = Vec<Vec<bool>>;
-
-/// Maps non-terminal ID -> boolean matrix
 pub type BoolMatrices = HashMap<u32, BoolMatrix>;
-
-/// Result of multiplying boolean matrix pairs: r[nt1][nt2] = bool matrix
 pub type PairProduct = HashMap<u32, HashMap<u32, BoolMatrix>>;
 
 pub struct ValiantParser {
@@ -82,25 +60,7 @@ impl ValiantParser {
         }
     }
 
-    fn init_table(&self, length: usize) -> ValiantTable {
-        // We need table[s][e] for 0 <= s <= e <= length
-        // Using length+1 for both dimensions
-        vec![vec![HashMap::new(); length + 1]; length + 1]
-    }
-
-    fn parse_1(&self, text: &[u32], length: usize, table: &mut ValiantTable) {
-        for s in 0..length {
-            for &(key, terminal) in &self.terminal_productions {
-                if text[s] == terminal {
-                    let entry = table[s][s + 1].entry(key).or_insert_with(Vec::new);
-                    entry.push((key, vec![ForestRef::Terminal(text[s])]));
-                }
-            }
-        }
-    }
-
     /// Compute a hash for a matrix (used as cache key)
-    /// Python uses str(A) but we need something hashable in Rust
     fn matrix_hash(&self, a: &NTMatrix) -> u64 {
         use std::collections::hash_map::DefaultHasher;
         use std::hash::{Hash, Hasher};
@@ -121,38 +81,7 @@ impl ValiantParser {
         hasher.finish()
     }
 
-    /// Multiply two subsets of non-terminals using grammar productions
-    /// Python: def multiply_subsets(N1, N2, P):
-    ///     return {Ai:True for Ai, (Aj,Ak) in P if Aj in N1 and Ak in N2}
-    // fn multiply_subsets(&self, n1: &HashSet<u32>, n2: &HashSet<u32>) -> HashSet<u32> {
-    //     let mut result = HashSet::new();
-    //     for &(ai, (aj, ak)) in &self.nonterminal_productions {
-    //         if n1.contains(&aj) && n2.contains(&ak) {
-    //             result.insert(ai);
-    //         }
-    //     }
-    //     result
-    // }
-
-    // /// Multiply two matrices of non-terminal sets
-    // /// Python: def multiply_matrices(A, B, P):
-    // fn multiply_matrices(&self, a: &NTMatrix, b: &NTMatrix) -> NTMatrix {
-    //     let m = a.len();
-    //     let mut c: NTMatrix = vec![vec![HashSet::new(); m]; m];
-
-    //     for i in 0..m {
-    //         for j in 0..m {
-    //             for k in 0..m {
-    //                 let product = self.multiply_subsets(&a[i][k], &b[k][j]);
-    //                 c[i][j].extend(product);
-    //             }
-    //         }
-    //     }
-    //     c
-    // }
-
     /// Convert a matrix of non-terminal sets to boolean matrices (one per non-terminal)
-    /// Python: def bool_matrices(A, nonterminals):
     fn bool_matrices(&self, a: &NTMatrix) -> BoolMatrices {
         let m = a.len();
         let mut m_ks: BoolMatrices = HashMap::new();
@@ -177,7 +106,6 @@ impl ValiantParser {
     }
 
     /// Multiply two boolean matrices
-    /// Python: def multiply_bool_matrices(A, B):
     fn multiply_bool_matrices(&self, a: &BoolMatrix, b: &BoolMatrix) -> BoolMatrix {
         let m = a.len();
         let mut c: BoolMatrix = vec![vec![false; m]; m];
@@ -196,7 +124,6 @@ impl ValiantParser {
     }
 
     /// Multiply all pairs of boolean matrices
-    /// Python: def multiply_pairs(bool_As, bool_Bs):
     fn multiply_pairs(&self, bool_as: &BoolMatrices, bool_bs: &BoolMatrices) -> PairProduct {
         let mut r: PairProduct = HashMap::new();
 
@@ -230,7 +157,6 @@ impl ValiantParser {
     }
 
     /// Multiply matrices using boolean matrix decomposition (Valiant's optimization)
-    /// Python: def multiply_matrices_b(A, B, P, nonterminals):
     fn multiply_matrices_b(&self, a: &NTMatrix, b: &NTMatrix) -> NTMatrix {
         let length = a.len();
         let bool_as = self.bool_matrices(a);
@@ -240,7 +166,6 @@ impl ValiantParser {
     }
 
     /// Union of two matrices
-    /// Python: def union_matrices(A, B):
     fn union_matrices(&self, a: &NTMatrix, b: &NTMatrix) -> NTMatrix {
         let m = a.len();
         let mut c: NTMatrix = vec![vec![HashSet::new(); m]; m];
@@ -331,95 +256,142 @@ impl ValiantParser {
     }
 
     // ========================================================================
-    // Parse Tree Construction
+    // Parse Tree Extraction
     // ========================================================================
 
-    /// Extract a parse tree from the parse table
-    fn trees(&self, table: &ValiantTable, forest_ref: &ForestRef) -> Option<ParseTree> {
-        match forest_ref {
-            ForestRef::Terminal(t) => Some(ParseTree::new(
-                ParseSymbol::Terminal(self.grammar.terminals.get_str(*t).unwrap().to_string()),
-                vec![],
-            )),
+    fn find_breaks(
+        &self,
+        table: &NTMatrix,
+        sym: u32,
+        start_col: usize,
+        end_col: usize,
+    ) -> Vec<(usize, u32, u32)> {
+        // Find productions sym -> left right
+        let productions_for_sym: Vec<_> = self
+            .nonterminal_productions
+            .iter()
+            .filter(|(lhs, _)| *lhs == sym)
+            .collect();
 
-            ForestRef::TableRef { row, col, nt } => {
-                let forest_node = table[*row][*col].get(nt)?;
-                if forest_node.is_empty() {
-                    return None;
+        let mut breaks = Vec::new();
+
+        // table[i][j] stores set of nonterminals deriving text[i..j]
+        // We are looking for split point k such that:
+        // sym -> left right
+        // left in table[start_col][k]
+        // right in table[k][end_col]
+
+        for k in (start_col + 1)..end_col {
+            for &(_, (left_nt, right_nt)) in &productions_for_sym {
+                let has_left = table[start_col][k].contains(&left_nt);
+                let has_right = table[k][end_col].contains(&right_nt);
+
+                if has_left && has_right {
+                    breaks.push((k, *left_nt, *right_nt));
                 }
-
-                let (key, children) = &forest_node[0];
-
-                let mut child_trees = Vec::new();
-                for child_ref in children {
-                    if let Some(child_tree) = self.trees(table, child_ref) {
-                        child_trees.push(child_tree);
-                    }
-                }
-
-                Some(ParseTree {
-                    name: ParseSymbol::NonTerminal(
-                        self.grammar.non_terminal_str(*key).unwrap().to_string(),
-                    ),
-                    children: child_trees,
-                })
             }
         }
+
+        breaks
+    }
+
+    fn extract_tree(
+        &self,
+        table: &NTMatrix,
+        sym: u32,
+        text: &[u32],
+        start: usize,
+        end: usize,
+    ) -> Option<ParseTree> {
+        let name_str = self.grammar.non_terminal_str(sym).unwrap().to_string();
+
+        // Base case: Leaf node (length 1)
+        if end - start == 1 {
+            // Check for terminal production sym -> text[start]
+            let terminal_val = text[start];
+            // Verify this terminal derivation is valid (it should be if passed correctly)
+            let is_valid = self
+                .terminal_productions
+                .iter()
+                .any(|(lhs, t)| *lhs == sym && *t == terminal_val);
+
+            if is_valid {
+                return Some(ParseTree::new(
+                    ParseSymbol::NonTerminal(name_str),
+                    vec![ParseTree::new(
+                        ParseSymbol::Terminal(
+                            self.grammar
+                                .terminals
+                                .get_str(terminal_val)
+                                .unwrap()
+                                .to_string(),
+                        ),
+                        vec![],
+                    )],
+                ));
+            }
+        }
+
+        // Recursive step: Find split
+        let breaks = self.find_breaks(table, sym, start, end);
+
+        if breaks.is_empty() {
+            // Note: This might happen if there's only terminal production but we are length > 1 (impossible in CNF)
+            // or if the logic flow is wrong. In strict CNF, length 1 -> terminal, length > 1 -> 2 non-terminals.
+            return None;
+        }
+
+        // Deterministically pick the first valid break
+        let (split, left_nt, right_nt) = breaks[0];
+
+        let left_tree = self.extract_tree(table, left_nt, text, start, split)?;
+        let right_tree = self.extract_tree(table, right_nt, text, split, end)?;
+
+        Some(ParseTree {
+            name: ParseSymbol::NonTerminal(name_str),
+            children: vec![left_tree, right_tree],
+        })
     }
 
     /// Main parsing function
-    pub fn parse_on(&self, text: &[u32], start_symbol: u32) -> Option<ParseTree> {
+    pub fn parse_on(&mut self, text: &[u32], start_symbol: u32) -> Option<ParseTree> {
         let length = text.len();
         if length == 0 {
             return None;
         }
 
-        let mut table = self.init_table(length);
-        self.parse_1(text, length, &mut table);
+        // Initialize and fill the base table (terminals)
+        let mut table = self.init_nt_matrix(length);
+        self.fill_terminals(text, length, &mut table);
 
-        // TODO: Implement full Valiant parsing with matrix multiplication
-        // For now, fall back to CYK-style parsing
-        for n in 2..=length {
-            self.parse_n(n, length, &mut table);
-        }
+        let n = length;
+        // Compute transitive closure
+        let closure = self.transitive_closure(&table, n);
 
-        if table[0][length].contains_key(&start_symbol) {
-            let root_ref = ForestRef::TableRef {
-                row: 0,
-                col: length,
-                nt: start_symbol,
-            };
-            return self.trees(&table, &root_ref);
+        if closure[0][n].contains(&start_symbol) {
+            return self.extract_tree(&closure, start_symbol, text, 0, n);
         }
 
         None
     }
+}
 
-    /// CYK-style parsing for spans of length n (fallback)
-    fn parse_n(&self, n: usize, length: usize, table: &mut ValiantTable) {
-        for s in 0..=length - n {
-            for p in 1..n {
-                for &(k, (r_b, r_c)) in &self.nonterminal_productions {
-                    let has_left = table[s][s + p].contains_key(&r_b);
-                    let has_right = table[s + p][s + n].contains_key(&r_c);
+// Helper requires `Clone` on `ValiantParser` if I use the `..self.clone()` trick,
+// but `ValiantParser` fields (`Grammar`, `Vec`) are cloneable.
+// Except I haven't derived Clone for ValiantParser.
+// I should probably derive Clone or just change `parse_on` to `&mut self`.
+// Let's modify `parse_on` to `&mut self` and update the usage in `parse`.
 
-                    if has_left && has_right {
-                        let left_ref = ForestRef::TableRef {
-                            row: s,
-                            col: s + p,
-                            nt: r_b,
-                        };
-                        let right_ref = ForestRef::TableRef {
-                            row: s + p,
-                            col: s + n,
-                            nt: r_c,
-                        };
-
-                        let entry = table[s][s + n].entry(k).or_insert_with(Vec::new);
-                        entry.push((k, vec![left_ref, right_ref]));
-                    }
-                }
-            }
+impl Clone for ValiantParser {
+    fn clone(&self) -> Self {
+        ValiantParser {
+            cache: self.cache.clone(),
+            cell_width: self.cell_width,
+            grammar: self.grammar.clone(),
+            productions: self.productions.clone(),
+            terminal_productions: self.terminal_productions.clone(),
+            nonterminal_productions: self.nonterminal_productions.clone(),
+            nonterminals: self.nonterminals.clone(),
         }
     }
 }
@@ -453,7 +425,7 @@ mod tests {
 
         println!("Input tokens: {:?} (a={}, b={})", input, token_a, token_b);
 
-        let parser = ValiantParser::new(cnf);
+        let mut parser = ValiantParser::new(cnf);
         let result = parser.parse_on(&input, parser.grammar.start);
 
         match &result {
@@ -494,7 +466,7 @@ mod tests {
 
         println!("Input tokens: {:?}", input);
 
-        let parser = ValiantParser::new(cnf);
+        let mut parser = ValiantParser::new(cnf);
         let result = parser.parse_on(&input, parser.grammar.start);
 
         match &result {
@@ -532,7 +504,7 @@ mod tests {
         println!("\n=== Testing Valiant Parser (invalid input) ===");
         println!("Input tokens: {:?} (should be rejected)", input);
 
-        let parser = ValiantParser::new(cnf);
+        let mut parser = ValiantParser::new(cnf);
         let result = parser.parse_on(&input, parser.grammar.start);
 
         assert!(result.is_none(), "Should reject 'a a'");
@@ -543,6 +515,6 @@ mod tests {
 /// Parse input using Valiant algorithm
 /// Returns true if the input (as numeric token IDs) is accepted by the grammar
 pub fn parse(grammar: &Grammar, input: &[u32]) -> Option<ParseTree> {
-    let parser = ValiantParser::new(grammar.clone());
+    let mut parser = ValiantParser::new(grammar.clone());
     parser.parse_on(input, grammar.start)
 }

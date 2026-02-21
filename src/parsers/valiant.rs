@@ -2,6 +2,7 @@
 
 use crate::grammars::{Grammar, NumProduction, NumSymbol};
 use crate::parse_tree::{ParseSymbol, ParseTree};
+use m4ri_rust::friendly::BinMatrix;
 use std::collections::{HashMap, HashSet};
 
 pub type NTMatrix = Vec<Vec<HashSet<u32>>>;
@@ -105,22 +106,47 @@ impl ValiantParser {
         m_ks
     }
 
-    /// Multiply two boolean matrices
-    fn multiply_bool_matrices(&self, a: &BoolMatrix, b: &BoolMatrix) -> BoolMatrix {
+    /// Convert a BoolMatrix to an m4ri BinMatrix for fast multiplication
+    fn bool_to_bin(&self, a: &BoolMatrix) -> BinMatrix {
         let m = a.len();
-        let mut c: BoolMatrix = vec![vec![false; m]; m];
+        // Each row is packed into u64 words
+        let words_per_row = (m + 63) / 64;
+        let mut rows: Vec<Vec<u64>> = Vec::with_capacity(m);
+        for i in 0..m {
+            let mut row_words = vec![0u64; words_per_row];
+            for j in 0..m {
+                if a[i][j] {
+                    row_words[j / 64] |= 1u64 << (j % 64);
+                }
+            }
+            rows.push(row_words);
+        }
+        BinMatrix::from_slices(&rows, m)
+    }
 
+    /// Convert an m4ri BinMatrix back to a BoolMatrix
+    fn bin_to_bool(&self, bin: &BinMatrix, m: usize) -> BoolMatrix {
+        let mut result = vec![vec![false; m]; m];
         for i in 0..m {
             for j in 0..m {
-                for k in 0..m {
-                    if a[i][k] && b[k][j] {
-                        c[i][j] = true;
-                        break;
-                    }
+                if bin.bit(i, j) {
+                    result[i][j] = true;
                 }
             }
         }
-        c
+        result
+    }
+
+    /// Multiply two boolean matrices using m4ri Strassen multiplication
+    fn multiply_bool_matrices(&self, a: &BoolMatrix, b: &BoolMatrix) -> BoolMatrix {
+        let m = a.len();
+        if m == 0 {
+            return vec![];
+        }
+        let bin_a = self.bool_to_bin(a);
+        let bin_b = self.bool_to_bin(b);
+        let bin_c = &bin_a * &bin_b;
+        self.bin_to_bool(&bin_c, m)
     }
 
     /// Multiply all pairs of boolean matrices

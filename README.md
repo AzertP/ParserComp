@@ -1,8 +1,8 @@
-# Replication Package — Generalised Parser Comparison
+# Generalised Parser Comparison
 
-Replication package for the ASE paper submission. Contains the full implementation of five generalised parsing algorithms (CYK, Valiant, Earley, GLL, RNGLR, BRNGLR) benchmarked against eight context-free grammars, together with the pre-computed results and plotting scripts needed to reproduce all paper figures.
+Contains the full implementation of five generalised parsing algorithms (CYK, Valiant, Earley, GLL, RNGLR, BRNGLR) benchmarked against eight context-free grammars, together with results and plotting scripts needed to reproduce all paper figures.
 
-## Quick start (pre-computed results → figures)
+## Quick start
 
 ```bash
 # 1. Install prerequisites (see INSTALL.md)
@@ -13,7 +13,7 @@ python3 plotter.py
 # Figures are written to plot/
 ```
 
-## Full reproduction (build → benchmark → plot)
+## Full reproduction
 
 ```bash
 bash reproduce.sh
@@ -33,25 +33,25 @@ See [CLAIMS.md](CLAIMS.md) for a figure-to-script/data mapping.
 ## Repository structure
 
 ```
-├── src/                          Rust source
+├── src/                          
 │   ├── bin/benchmark_csv.rs      Benchmark driver (CLI entry point)
-│   ├── parsers/                  Six parser implementations
-│   │   ├── earley.rs             Earley
-│   │   ├── cyk.rs                CYK
-│   │   ├── valiant.rs            Valiant
-│   │   ├── gll/                  GLL + LL
-│   │   └── glr/                  RNGLR, BRNGLR + LR
-│   ├── grammars.rs               Grammar loader (JSON → internal repr.)
-│   └── parse_tree.rs             Shared parse-tree type
+│   ├── parsers/                  
+│   │   ├── earley.rs             
+│   │   ├── cyk.rs                
+│   │   ├── valiant.rs            
+│   │   ├── gll/                  
+│   │   └── glr/                  
+│   ├── grammars.rs               
+│   └── parse_tree.rs             
 ├── grammars/                     Grammar files in JSON format
 ├── input/                        Benchmark input files (generated corpora)
 ├── table/                        Pre-generated GLR/LR parse tables
-├── results/                      Pre-computed benchmark CSVs (included)
-├── plotter.py                    Generates all paper figures from results/
-├── reproduce.sh                  End-to-end reproduction script
-├── requirements.txt              Python dependencies
-├── rust-toolchain.toml           Pins Rust stable toolchain
-├── INSTALL.md                    Prerequisite installation guide
+├── results/                      Experiment results (CSV files)
+├── plotter.py                   
+├── reproduce.sh                  
+├── requirements.txt              Python dependencies for plotter
+├── rust-toolchain.toml           
+├── INSTALL.md                    Installation guide
 └── CLAIMS.md                     Maps paper figures to data and scripts
 ```
 
@@ -64,9 +64,9 @@ See [CLAIMS.md](CLAIMS.md) for a figure-to-script/data mapping.
 | **RNGLR** | Right-Nulled GLR | Economopoulos 2006 — [PhD dissertation](https://www.researchgate.net/publication/242287349_Generalised_LR_Parsing_Algorithms) |
 | **BRNGLR** | Binarised RNGLR | same |
 | **CYK** | Cocke–Younger–Kasami | standard CNF-based algorithm |
-| **Valiant** | Matrix multiplication | Valiant 1975, using m4ri for GF(2) multiplication |
-| **LL** | LL(1) via GLL framework | driven by LL(1) parse table |
-| **LR** | LR(1) via GLR framework | driven by LR(1) parse table |
+| **Valiant** | Matrix multiplication | Valiant 1975, using m4ri for fast multiplication |
+| **LL** | LL(1) via GLL framework | standard implementation |
+| **LR** | LR(1) via GLR framework | standard implementation |
 
 ## Grammars
 
@@ -91,8 +91,8 @@ The benchmark driver (`src/bin/benchmark_csv.rs`) runs each parser on increasing
 
 1. Performs one warmup iteration (excluded from timing).
 2. Runs between 5 and 20 timed iterations, stopping early if 500 ms of wall time have been accumulated.
-3. Reports **median time** (ns) and **MAD** over the timed iterations.
-4. Samples **peak memory** via a 1 ms polling thread.
+3. Reports median time (ns) and median absolute deviation (MAD) over the timed iterations.
+4. Samples peak memory via a 1 ms polling thread.
 
 Results are written to `results/benchmark_<config>.csv`.  Pre-computed CSVs for all configurations are included in the repository so reviewers can reproduce the figures without re-running the full benchmark (which takes 10–60 minutes depending on hardware).
 

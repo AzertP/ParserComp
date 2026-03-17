@@ -1,9 +1,8 @@
 // Earley parser implementation - new version
-use crate::grammars::{NumericGrammar, NumSymbol};
+use crate::grammars::{NumSymbol, NumericGrammar};
+use crate::parse_tree::{ParseSymbol, ParseTree};
 use std::collections::{HashMap, HashSet};
 use std::rc::Rc;
-use crate::parse_tree::{ParseTree, ParseSymbol};
-
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 struct RuleID(usize);
@@ -21,7 +20,7 @@ struct Grammar {
 impl Grammar {
     fn from_numeric(grammar: &NumericGrammar) -> Self {
         let mut rules = Vec::new();
-        
+
         let mut lhs_keys: Vec<_> = grammar.rules.keys().collect();
         let mut lookup: HashMap<NumSymbol, Vec<RuleID>> = HashMap::new();
         lhs_keys.sort();
@@ -37,7 +36,6 @@ impl Grammar {
                 let rule_id = RuleID(rules.len());
                 rule_ids.push(rule_id);
                 rules.push(rule);
-                
             }
             lookup.insert(NumSymbol::NonTerminal(*lhs), rule_ids);
         }
@@ -59,11 +57,9 @@ impl Grammar {
                 }
 
                 // A rule is nullable if all symbols on the RHS are nullable
-                let is_nullable = rule.rhs.iter().all(|sym| {
-                    match sym {
-                        NumSymbol::Terminal(_) => false,
-                        NumSymbol::NonTerminal(_) => nullables.contains(sym),
-                    }
+                let is_nullable = rule.rhs.iter().all(|sym| match sym {
+                    NumSymbol::Terminal(_) => false,
+                    NumSymbol::NonTerminal(_) => nullables.contains(sym),
                 });
 
                 if is_nullable {
@@ -85,10 +81,33 @@ struct State {
     // e_col removed
 }
 
+/// Transitive state for Leo optimization
+/// Tracks the constraint that led to this state
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+struct TState {
+    state: State,
+    back: Option<Box<TState>>,
+}
+
+impl TState {
+    fn new(state: State, back: Option<Box<TState>>) -> Self {
+        TState { state, back }
+    }
+
+    #[allow(dead_code)]
+    fn from_state(state: State) -> Self {
+        TState { state, back: None }
+    }
+}
+
 impl State {
     // "Constructor" just creates the data
     fn new(rule_id: RuleID, dot: usize, s_col: ColumnID) -> Self {
-        State { rule_id, dot, s_col }
+        State {
+            rule_id,
+            dot,
+            s_col,
+        }
     }
 
     fn is_complete(&self, grammar: &Grammar) -> bool {
@@ -108,13 +127,22 @@ impl State {
             s_col: self.s_col,
         }
     }
+
+    #[allow(dead_code)]
+    fn back(&self) -> Self {
+        State {
+            rule_id: self.rule_id,
+            dot: self.dot.saturating_sub(1),
+            s_col: self.s_col,
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 struct ColumnID(usize);
 
 struct Column {
-    id: ColumnID,
+    _id: ColumnID,
     token: Option<NumSymbol>, // Letter in the Python code
     states: Vec<State>,
     lookup: HashMap<State, usize>,
@@ -123,7 +151,7 @@ struct Column {
 impl Column {
     fn new(id: ColumnID, token: Option<NumSymbol>) -> Self {
         Column {
-            id,
+            _id: id,
             token,
             states: Vec::new(),
             lookup: HashMap::new(),
@@ -156,7 +184,6 @@ impl Chart {
     }
 }
 
-
 pub struct EarleyParser {
     grammar: Grammar,
     num_grammar: NumericGrammar,
@@ -171,9 +198,9 @@ impl EarleyParser {
         let num_grammar = grammar.clone();
         let grammar_converted = Grammar::from_numeric(&grammar);
         let nullables = grammar_converted.calculate_nullables();
-        
-        EarleyParser { 
-            grammar: grammar_converted, 
+
+        EarleyParser {
+            grammar: grammar_converted,
             num_grammar,
             start_symbol: NumSymbol::NonTerminal(grammar.start),
             nullables,
@@ -231,8 +258,8 @@ impl EarleyParser {
         while i < self.chart.columns.len() {
             let mut j = 0;
             while j < self.chart.columns[i].states.len() {
-                let state = self.chart.columns[i].states[j]; 
-                
+                let state = self.chart.columns[i].states[j];
+
                 if state.is_complete(&self.grammar) {
                     self.complete(i, &state);
                 } else {
@@ -255,7 +282,7 @@ impl EarleyParser {
             i += 1;
         }
     }
-    
+
     fn predict(&mut self, col_idx: usize, sym: NumSymbol, state: &State) {
         // Implementation here
         let nt_symbol = match sym {
@@ -311,7 +338,6 @@ impl EarleyParser {
     }
 }
 
-
 /// A node in the Shared Packed Parse Forest.
 /// - `Packed`: Ambiguous derivations are stored in `derivations`.
 /// - `Shared`: Nodes are referenced by Rc to form a DAG, not a tree.
@@ -334,7 +360,7 @@ impl SPPFNode {
             derivations: Vec::new(),
         }
     }
-    
+
     fn add_derivation(&mut self, children: Vec<Rc<SPPFNode>>) {
         self.derivations.push(children);
     }
@@ -373,7 +399,7 @@ impl<'a> ForestBuilder<'a> {
 
     fn find_node(&mut self, sym: NumSymbol, start: usize, end: usize) -> Option<Rc<SPPFNode>> {
         let key = (sym.id(), sym.is_terminal(), start, end);
-        
+
         // Check if already memoized
         if let Some(node) = self.memo.get(&key) {
             return Some(node.clone());
@@ -391,12 +417,12 @@ impl<'a> ForestBuilder<'a> {
 
         // 1. Resolve String Representation using NumericGrammar
         let parse_sym = match sym {
-            NumSymbol::Terminal(id) => ParseSymbol::Terminal(
-                self.numeric_grammar.terminal_str(id)?.to_string()
-            ),
-            NumSymbol::NonTerminal(id) => ParseSymbol::NonTerminal(
-                self.numeric_grammar.non_terminal_str(id)?.to_string()
-            ),
+            NumSymbol::Terminal(id) => {
+                ParseSymbol::Terminal(self.numeric_grammar.terminal_str(id)?.to_string())
+            }
+            NumSymbol::NonTerminal(id) => {
+                ParseSymbol::NonTerminal(self.numeric_grammar.non_terminal_str(id)?.to_string())
+            }
         };
 
         let mut node = SPPFNode::new(parse_sym, start, end);
@@ -406,7 +432,7 @@ impl<'a> ForestBuilder<'a> {
             NumSymbol::Terminal(_) => {
                 // Terminals are leaf nodes; verified against input
                 if start + 1 == end && self.input.get(start) == Some(&sym) {
-                    node.add_derivation(vec![]); 
+                    node.add_derivation(vec![]);
                     added = true;
                 }
             }
@@ -416,8 +442,9 @@ impl<'a> ForestBuilder<'a> {
                 let col = &self.chart.columns[end];
                 for state in &col.states {
                     let rule = &self.grammar.rules[state.rule_id.0];
-                    
-                    if rule.lhs == sym && state.s_col.0 == start && state.is_complete(self.grammar) {
+
+                    if rule.lhs == sym && state.s_col.0 == start && state.is_complete(self.grammar)
+                    {
                         // Reconstruct children for this rule
                         let paths = self.walk_back(state.rule_id, rule.rhs.len(), end, start);
                         for children in paths {
@@ -442,9 +469,19 @@ impl<'a> ForestBuilder<'a> {
     }
 
     /// Recursively reconstructs the RHS children of a rule
-    fn walk_back(&mut self, rule_id: RuleID, dot: usize, current_end: usize, target_start: usize) -> Vec<Vec<Rc<SPPFNode>>> {
+    fn walk_back(
+        &mut self,
+        rule_id: RuleID,
+        dot: usize,
+        current_end: usize,
+        target_start: usize,
+    ) -> Vec<Vec<Rc<SPPFNode>>> {
         if dot == 0 {
-            return if current_end == target_start { vec![vec![]] } else { vec![] };
+            return if current_end == target_start {
+                vec![vec![]]
+            } else {
+                vec![]
+            };
         }
 
         let rule = &self.grammar.rules[rule_id.0];
@@ -454,14 +491,14 @@ impl<'a> ForestBuilder<'a> {
         // Potential split points (k) where child_sym could have started
         // For Terminals: k must be current_end - 1
         // For NonTerminals: k comes from completed states in column [current_end]
-        
+
         let candidates: Box<dyn Iterator<Item = usize>> = match child_sym {
             NumSymbol::Terminal(_) => Box::new(std::iter::once(current_end.saturating_sub(1))),
             NumSymbol::NonTerminal(_) => {
                 let mut splits = HashSet::new();
                 for st in &self.chart.columns[current_end].states {
-                    if st.is_complete(self.grammar) 
-                       && self.grammar.rules[st.rule_id.0].lhs == child_sym 
+                    if st.is_complete(self.grammar)
+                        && self.grammar.rules[st.rule_id.0].lhs == child_sym
                     {
                         splits.insert(st.s_col.0);
                     }
@@ -471,12 +508,14 @@ impl<'a> ForestBuilder<'a> {
         };
 
         for k in candidates {
-            if k < target_start { continue; }
+            if k < target_start {
+                continue;
+            }
 
             // Ensure the Prefix (Everything before dot-1) exists ending at k
             // This is the check: Does State(rule, dot-1) exist at k with s_col == target_start?
             let pred_state = State::new(rule_id, dot - 1, ColumnID(target_start));
-            
+
             // Fast lookup using the hashmap we built in the column
             if self.chart.columns[k].lookup.contains_key(&pred_state) {
                 // If prefix is valid, get the node for the current child
@@ -496,20 +535,23 @@ impl<'a> ForestBuilder<'a> {
 }
 
 impl EarleyParser {
-
     /// 1. Build SPPF
     pub fn build_sppf(&self) -> Option<Rc<SPPFNode>> {
-        if self.chart.columns.is_empty() { return None; }
-        
+        if self.chart.columns.is_empty() {
+            return None;
+        }
+
         // Find if start symbol completed successfully
         let last_col = self.chart.columns.len() - 1;
-        let success = self.chart.columns[last_col].states.iter().any(|s| 
-            s.is_complete(&self.grammar) 
-            && self.grammar.rules[s.rule_id.0].lhs == self.start_symbol
-            && s.s_col.0 == 0
-        );
+        let success = self.chart.columns[last_col].states.iter().any(|s| {
+            s.is_complete(&self.grammar)
+                && self.grammar.rules[s.rule_id.0].lhs == self.start_symbol
+                && s.s_col.0 == 0
+        });
 
-        if !success { return None; }
+        if !success {
+            return None;
+        }
 
         let mut builder = ForestBuilder::new(self);
         builder.build(self.start_symbol)
@@ -537,7 +579,8 @@ impl EarleyParser {
             ParseTree::leaf(&node.symbol.to_string().trim_matches('\''))
         } else {
             // Take the first derivation found
-            let children = node.derivations[0].iter()
+            let children = node.derivations[0]
+                .iter()
                 .map(|c| self.sppf_to_tree_single(c))
                 .collect();
             ParseTree::new(node.symbol.clone(), children)
@@ -548,7 +591,7 @@ impl EarleyParser {
         if node.derivations.is_empty() {
             return vec![ParseTree::leaf(&node.symbol.to_string().trim_matches('\''))];
         }
-        
+
         let mut trees = Vec::new();
         for deriv in &node.derivations {
             let child_lists = self.cartesian_product(deriv);
@@ -560,11 +603,13 @@ impl EarleyParser {
     }
 
     fn cartesian_product(&self, nodes: &[Rc<SPPFNode>]) -> Vec<Vec<ParseTree>> {
-        if nodes.is_empty() { return vec![vec![]]; }
-        
+        if nodes.is_empty() {
+            return vec![vec![]];
+        }
+
         let first_trees = self.sppf_to_trees_all(&nodes[0]);
         let rest_lists = self.cartesian_product(&nodes[1..]);
-        
+
         let mut result = Vec::new();
         for t in &first_trees {
             for l in &rest_lists {
@@ -577,9 +622,7 @@ impl EarleyParser {
     }
 
     pub fn parse(&mut self, input: Vec<u32>) -> Option<ParseTree> {
-        let symbols: Vec<NumSymbol> = input.iter()
-            .map(|&id| NumSymbol::Terminal(id))
-            .collect();
+        let symbols: Vec<NumSymbol> = input.iter().map(|&id| NumSymbol::Terminal(id)).collect();
         if self.recognize_on(symbols) {
             self.extract_one_tree()
         } else {
@@ -588,9 +631,7 @@ impl EarleyParser {
     }
 
     pub fn parse_all(&mut self, input: Vec<u32>) -> Vec<ParseTree> {
-        let symbols: Vec<NumSymbol> = input.iter()
-            .map(|&id| NumSymbol::Terminal(id))
-            .collect();
+        let symbols: Vec<NumSymbol> = input.iter().map(|&id| NumSymbol::Terminal(id)).collect();
         if self.recognize_on(symbols) {
             self.extract_all_trees()
         } else {
@@ -600,16 +641,6 @@ impl EarleyParser {
 }
 
 // --------------------------------- End of Code ---------------------------------
-
-
-
-
-
-
-
-
-
-
 
 // -------------------------------- Test Module -------------------------------
 
@@ -627,10 +658,10 @@ mod tests {
         println!("Grammar name: {}", numeric_grammar.name);
         println!("Start symbol: {}", numeric_grammar.start);
         println!("\nConverted rules:");
-        
+
         for (idx, rule) in grammar.rules.iter().enumerate() {
             print!("Rule {}: ", idx);
-            
+
             // Print LHS
             match rule.lhs {
                 NumSymbol::NonTerminal(id) => {
@@ -648,7 +679,7 @@ mod tests {
                     }
                 }
             }
-            
+
             // Print RHS
             for (i, sym) in rule.rhs.iter().enumerate() {
                 if i > 0 {
@@ -673,7 +704,7 @@ mod tests {
             }
             println!();
         }
-        
+
         println!("\nTotal rules: {}", grammar.rules.len());
         println!("=== End Test ===\n");
     }
@@ -682,15 +713,19 @@ mod tests {
     fn test_parse_simple() {
         let numeric_grammar = simple_grammar();
         let mut parser = EarleyParser::new(numeric_grammar);
-        
+
         // Get terminal IDs for simple grammar
         // Simple grammar typically has terminals like 'a', 'b', '(', ')'
-        let a_id = parser.num_grammar.terminals.get_id("a").expect("Terminal 'a' not found");
-        
+        let a_id = parser
+            .num_grammar
+            .terminals
+            .get_id("a")
+            .expect("Terminal 'a' not found");
+
         // Test: parse a single 'a'
         let input = vec![a_id];
         let result = parser.parse(input);
-        
+
         match result {
             Some(tree) => {
                 println!("Parse successful for [a]");
@@ -709,17 +744,24 @@ mod tests {
     fn test_parse_all_simple() {
         let numeric_grammar = ambi_grammar();
         let mut parser = EarleyParser::new(numeric_grammar);
-        
-        let a_id = parser.num_grammar.terminals.get_id("a").expect("Terminal 'a' not found");
-        
+
+        let a_id = parser
+            .num_grammar
+            .terminals
+            .get_id("a")
+            .expect("Terminal 'a' not found");
+
         let input = vec![a_id, a_id, a_id];
         let results = parser.parse_all(input);
-        
-        println!("parse_all results for [a, a, a]: {} trees found", results.len());
+
+        println!(
+            "parse_all results for [a, a, a]: {} trees found",
+            results.len()
+        );
         for (i, tree) in results.iter().enumerate() {
             println!("  Tree {}: {:}", i, tree.display());
         }
-        
+
         // Either no results or some valid trees
         assert!(results.is_empty() || results.len() > 0);
     }
@@ -728,7 +770,7 @@ mod tests {
     fn test_parse_empty_input() {
         let numeric_grammar = simple_grammar();
         let mut parser = EarleyParser::new(numeric_grammar);
-        
+
         let empty_input = vec![];
         let result = parser.parse(empty_input);
         println!("Parse result for empty input: {:?}", result);
@@ -740,7 +782,7 @@ mod tests {
     fn test_parse_invalid_sequence() {
         let numeric_grammar = simple_grammar();
         let mut parser = EarleyParser::new(numeric_grammar);
-        
+
         // Try to use the first two terminals in the table
         let mut count = 0;
         let mut term_ids = vec![];
@@ -751,51 +793,62 @@ mod tests {
                 break;
             }
         }
-        
+
         if term_ids.is_empty() {
             println!("Skipping test: no terminals found in grammar");
             return;
         }
-        
+
         // An invalid sequence (depends on grammar, but this should be unlikely to parse)
         let result = parser.parse(term_ids.clone());
-        
-        println!("Parse result for term sequence {:?}: {:?}", term_ids, result);
+
+        println!(
+            "Parse result for term sequence {:?}: {:?}",
+            term_ids, result
+        );
         // Result is undefined; just verify it returns an Option
     }
 
     #[test]
     fn test_parse_and_parse_all_consistency() {
         let numeric_grammar = simple_grammar();
-        
+
         // Get some terminals
         let a_id = match numeric_grammar.terminals.get_id("a") {
             Some(id) => id,
             None => return, // Skip if grammar doesn't have 'a'
         };
-        
+
         let input = vec![a_id];
-        
+
         // Test parse()
         let mut parser1 = EarleyParser::new(numeric_grammar.clone());
         let single_tree = parser1.parse(input.clone());
-        
+
         // Test parse_all()
         let mut parser2 = EarleyParser::new(numeric_grammar.clone());
         let all_trees = parser2.parse_all(input.clone());
-        
+
         // If parse() returns Some(tree), parse_all() should return at least one tree
         match single_tree {
             Some(_) => {
-                assert!(!all_trees.is_empty(), 
-                    "parse_all should return at least one tree if parse returns Some");
-                println!("Consistency check passed: parse() returned a tree, parse_all() has {} trees",
-                    all_trees.len());
+                assert!(
+                    !all_trees.is_empty(),
+                    "parse_all should return at least one tree if parse returns Some"
+                );
+                println!(
+                    "Consistency check passed: parse() returned a tree, parse_all() has {} trees",
+                    all_trees.len()
+                );
             }
             None => {
-                assert!(all_trees.is_empty(), 
-                    "parse_all should return empty if parse returns None");
-                println!("Consistency check passed: both parse() and parse_all() indicate no parse");
+                assert!(
+                    all_trees.is_empty(),
+                    "parse_all should return empty if parse returns None"
+                );
+                println!(
+                    "Consistency check passed: both parse() and parse_all() indicate no parse"
+                );
             }
         }
     }

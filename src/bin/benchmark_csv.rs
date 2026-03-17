@@ -48,16 +48,6 @@ const GENERAL_PLUS_LLLR: &[&str] = &["Earley", "GLL", "RNGLR", "BRNGLR", "LL", "
 const NO_EARLEY_LLLR: &[&str] = &["GLL", "RNGLR", "BRNGLR", "LL", "LR"];
 
 const CONFIGS: &[GrammarConfig] = &[
-    // GrammarConfig {
-    //     name: "ambi_stress",
-    //     grammar_path: "grammars/ambi.json",
-    //     input_path: "input/ambi_stress.txt",
-    //     table_path: "table/ambi_glr_table.csv",
-    //     lr_table_path: "table/ambi_lr_table.csv",
-    //     generate_table: true,
-    //     parsers: GENERAL_PARSERS,
-    // },
-
     // // ----- LR suit ----------
     // GrammarConfig {
     //     name: "lr_json_large",
@@ -206,7 +196,6 @@ const CONFIGS: &[GrammarConfig] = &[
     //     generate_table: false,
     //     parsers: FAST_PARSERS,
     // },
-
     // // -------- General small suit --------
     GrammarConfig {
         name: "json_small",
@@ -244,69 +233,6 @@ const CONFIGS: &[GrammarConfig] = &[
         generate_table: true,
         parsers: GENERAL_PARSERS,
     },
-    // Ingored test for now
-    // GrammarConfig {
-    //     name: "ansi_c_small",
-    //     grammar_path: "grammars/ansi_c.json",
-    //     input_path: "input/ansi_c_small.txt",
-    //     table_path: "table/ansi_c_glr_table.csv",
-    //     lr_table_path: "table/ansi_c_lr_table.csv",
-    //     generate_table: false,
-    //     parsers: GENERAL_PARSERS,
-    // },
-    // GrammarConfig {
-    //     name: "pascal_small",
-    //     grammar_path: "grammars/pascal.json",
-    //     input_path: "input/pascal_small.txt",
-    //     table_path: "table/pascal_glr_table.csv",
-    //     lr_table_path: "table/pascal_lr_table.csv",
-    //     generate_table: false,
-    //     parsers: &["CYK"],
-    // },
-    // GrammarConfig {
-    //     name: "java_small",
-    //     grammar_path: "grammars/jsl18.json",
-    //     input_path: "input/java_small.txt",
-    //     table_path: "table/java_glr_table.csv",
-    //     lr_table_path: "table/java_lr_table.csv",
-    //     generate_table: false,
-    //     parsers: &["CYK"],
-    // },
-    // GrammarConfig {
-    //     name: "cpp_small",
-    //     grammar_path: "grammars/cpp.json",
-    //     input_path: "input/cpp_small.txt",
-    //     table_path: "table/cpp_glr_table.csv",
-    //     lr_table_path: "table/cpp_lr_table.csv",
-    //     generate_table: false,
-    //     parsers: &["CYK"],
-    // },
-
-    // GrammarConfig{
-    //     name: "json_tokenized_with_lllr_large",
-    //     grammar_path: "grammars/json_tokenized.json",
-    //     input_path: "input/json_tokenized_large.txt",
-    //     table_path: "table/json_tokenized_table.csv",
-    //     lr_table_path: "table/json_tokenized_lr_table.csv",
-    //     generate_table: true,
-    // },
-    // GrammarConfig {
-    //     name: "json_tokenized",
-    //     grammar_path: "grammars/json_tokenized.json",
-    //     input_path: "input/json_tokenized_large.txt",
-    //     table_path: "table/json_tokenized_glr_table.csv",
-    //     lr_table_path: "table/json_tokenized_lr_table.csv",
-    //     generate_table: true,
-    // }
-    // GrammarConfig {
-    //     name: "css_small",
-    //     grammar_path: "grammars/css.json",
-    //     input_path: "input/css_small.txt",
-    //     table_path: "table/css_glr_table.csv",
-    //     lr_table_path: "table/css_lr_table.csv",
-    //     generate_table: true,
-    //     parsers: FAST_PARSERS,
-    // },
 ];
 
 const WARMUP_ITERATIONS: u32 = 1;

@@ -321,7 +321,7 @@ impl ParserSPPF {
                         NumSymbol::NonTerminal(nt_id) => nullable.contains(nt_id),
                         NumSymbol::Terminal(_) => false,
                     });
-                    
+
                     if all_nullable {
                         let nt_ids: Vec<u32> = rhs
                             .iter()
@@ -532,10 +532,6 @@ use std::io::BufRead;
 /// Parse table type: state -> symbol -> list of actions
 pub type ParseTable = HashMap<usize, HashMap<i32, Vec<ParsedAction>>>;
 
-/// RNGLR Parser implementation
-///
-/// This implements the Right-Nulled GLR parsing algorithm based on
-/// the pseudocode by Giorgios Robert Economopoulos
 pub struct RnglrParser {
     table: ParseTable,
     pub grammar: Option<Grammar>,
@@ -575,7 +571,7 @@ impl RnglrParser {
     fn compute_i_map(grammar: &Grammar) -> HashMap<NullableLabel, usize> {
         // Compute nullable set
         let nullable = TableGenerator::compute_nullable(grammar);
-        
+
         // Build epsilon-SPPF and get i_map
         let sppf = SPPF::new(grammar, &nullable);
         // Convert from standard HashMap to FxHashMap
@@ -677,14 +673,6 @@ impl RnglrParser {
             .unwrap_or(&[])
     }
 
-    /// Parse input tokens (as i32 symbol IDs)
-    ///
-    /// Returns:
-    /// Parse input and return a parse tree
-    ///
-    /// # Returns
-    /// * `Some(tree)` if parsing succeeds
-    /// * `None` if parsing fails
     pub fn parse(&self, input: &[i32]) -> Option<ParseTree> {
         // Handle empty input
         if input.is_empty() {
@@ -773,7 +761,7 @@ impl RnglrParser {
             );
         }
 
-        // Check for acceptance
+        // Check acceptance
         for &accept_state in &self.accept_states {
             if let Some(node_id) = gss.find_node(accept_state, input_with_end.len() - 1) {
                 // Find SPPF root
@@ -781,7 +769,6 @@ impl RnglrParser {
                 for &(child_id, edge_id) in &node.children {
                     let child = gss.get_node(child_id);
                     if child.label == 0 {
-                        // Found the root edge - convert SPPF to ParseTree
                         return Some(self.sppf_to_parse_tree(&sppf, edge_id));
                     }
                 }
@@ -956,26 +943,25 @@ impl RnglrParser {
     pub(crate) fn sppf_to_parse_tree(&self, sppf: &ParserSPPF, root_node_id: usize) -> ParseTree {
         // Estimate capacity based on SPPF size to reduce allocations
         let estimated_size = sppf.nodes.len().min(256);
-        
-        // Track ALL visited nodes to prevent re-processing (like GLL/Earley)
-        // Once visited, we skip the node entirely - this prevents infinite loops on cycles
-        let mut visited: HashSet<usize> = HashSet::with_capacity_and_hasher(estimated_size, Default::default());
-        
+
+        let mut visited: HashSet<usize> =
+            HashSet::with_capacity_and_hasher(estimated_size, Default::default());
+
         // Stack holds: (NodeID, num_children, current_child_idx, first_child_offset)
         // We store children inline in a separate vec to avoid allocating Vec per node
         let mut stack: Vec<(usize, usize, usize, usize)> = Vec::with_capacity(estimated_size);
         let mut all_children: Vec<usize> = Vec::with_capacity(estimated_size * 2);
-        
+
         // Get root children and push to stack
         let root_node = sppf.get_node(root_node_id);
         let root_child_offset = all_children.len();
         let root_num_children = self.get_flattened_children_inline(root_node, &mut all_children);
         stack.push((root_node_id, root_num_children, 0, root_child_offset));
         visited.insert(root_node_id);
-        
+
         // Results stack holds constructed ParseTree nodes
         let mut results: Vec<ParseTree> = Vec::with_capacity(estimated_size);
-        
+
         // Epsilon node for cycles (reused)
         let epsilon_tree = ParseTree::from_str("ε", vec![]);
 
@@ -985,20 +971,21 @@ impl RnglrParser {
                     // Get next child
                     let next_child_id = all_children[*child_offset + *child_idx];
                     *child_idx += 1;
-                    
+
                     // Check if already visited - if so, add epsilon placeholder
                     if visited.contains(&next_child_id) {
                         // Already processed this node - add epsilon to avoid duplicates/cycles
                         results.push(epsilon_tree.clone());
                         continue;
                     }
-                    
+
                     visited.insert(next_child_id);
-                    
+
                     // Get children for next node
                     let next_node = sppf.get_node(next_child_id);
                     let next_child_offset = all_children.len();
-                    let next_num_children = self.get_flattened_children_inline(next_node, &mut all_children);
+                    let next_num_children =
+                        self.get_flattened_children_inline(next_node, &mut all_children);
                     stack.push((next_child_id, next_num_children, 0, next_child_offset));
                 } else {
                     // All children processed for this node. Build the ParseTree.
@@ -1042,7 +1029,7 @@ impl RnglrParser {
         }
         ids.len() - start_len
     }
-    
+
     /// Get node name from label with caching to avoid repeated string allocations
     #[inline]
     fn get_node_name(&self, label: i64) -> String {
@@ -1721,13 +1708,12 @@ impl BrnglrParser {
                     let new_z = sppf.create_node(x_m_label, c as i32);
                     gss.get_node_mut(w_id).add_child(u, new_z);
 
-                    // Add reduction for m-1 (continue decomposition)
+                    // Add reduction for m-1
                     reductions.push((u, x, m - 1, 0, new_z));
 
                     new_z
                 };
 
-                // Add children to SPPF node: [x_edge, y] and optionally epsilon
                 let mut node_seq = vec![x_edge, y];
                 if f != 0 {
                     node_seq.push(sppf.get_epsilon(f));
@@ -1739,26 +1725,6 @@ impl BrnglrParser {
 }
 
 // =================================== End of Code =======================================
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // ============================================================================
 // Tests
@@ -1809,7 +1775,7 @@ mod tests {
         let mut parser = RnglrParser::import_table_from_csv(temp_path)
             .expect("Failed to import CSV into parser");
         parser.set_grammar(grammar);
-        
+
         let parse_trees = parser
             .parse_all(&glr_tokens)
             .expect("Failed to parse input");
@@ -1991,7 +1957,6 @@ mod tests {
         let result_invalid = parser.parse(&[2]);
         println!("Invalid input result: {:?}", result_invalid);
     }
-
 
     #[test]
     fn test_glr_ambiguous_grammar() {

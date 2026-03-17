@@ -791,11 +791,11 @@ pub fn load_grammar_from_str(json: &str) -> Result<NumericGrammar, String> {
 
     // Register non-terminals (start symbol first to ensure it gets ID 0)
     grammar.non_terminals.get_or_insert(&parsed.start);
-    
+
     // Sort non-terminal names for deterministic ordering
     let mut nt_names: Vec<String> = str_rules.keys().cloned().collect();
     nt_names.sort();
-    
+
     for lhs in &nt_names {
         grammar.non_terminals.get_or_insert(lhs);
     }

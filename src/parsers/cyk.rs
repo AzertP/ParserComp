@@ -2,7 +2,9 @@
 
 use crate::grammars::{NumProduction, NumSymbol, NumericGrammar};
 use crate::parse_tree::{ParseSymbol, ParseTree};
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
+
+type HashMap<K, V> = FxHashMap<K, V>;
 
 /// A forest node represents multiple possible parse trees
 /// Each entry is (non-terminal, children) where children are references to other forest nodes
@@ -68,7 +70,7 @@ impl CYKParser {
     fn init_table(&self, length: usize) -> CYKTable {
         // We need table[s][e] for 0 <= s <= e <= length
         // Using length+1 for both dimensions
-        vec![vec![HashMap::new(); length + 1]; length + 1]
+        vec![vec![HashMap::default(); length + 1]; length + 1]
     }
 
     /// Parse terminals (length 1 substrings)

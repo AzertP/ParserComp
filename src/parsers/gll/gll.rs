@@ -1,8 +1,14 @@
-use std::collections::{HashMap, HashSet, VecDeque};
+use std::collections::{VecDeque};
 use std::{u32, vec};
+
+use rustc_hash::{FxHashMap, FxHashSet};
 
 use crate::grammars::{NumSymbol, NumericGrammar};
 use crate::parse_tree::{ParseSymbol, ParseTree};
+
+type HashMap<K, V> = FxHashMap<K, V>;
+type HashSet<T> = FxHashSet<T>;
+
 
 type GIndex = usize;
 
@@ -33,7 +39,7 @@ impl GrammarGraph {
     /// Convert grammar to the presentation in the paper
     pub fn from_numeric(grammar: &NumericGrammar) -> Self {
         let mut nodes = Vec::new();
-        let mut headers = HashMap::new();
+        let mut headers = HashMap::default();
 
         for (&nt_id, _) in &grammar.rules {
             let idx = nodes.len();
@@ -188,7 +194,7 @@ impl GSS {
     fn new() -> Self {
         GSS {
             nodes: Vec::new(),
-            lookup: HashMap::new(),
+            lookup: HashMap::default(),
         }
     }
 
@@ -214,8 +220,8 @@ impl GSS {
             self.nodes.push(GSSNode {
                 gn,
                 i,
-                edges: HashSet::new(),
-                pops: HashSet::new(),
+                edges: HashSet::default(),
+                pops: HashSet::default(),
             });
             new_id
         })
@@ -257,8 +263,8 @@ impl SPPF {
         SPPF {
             nodes: Vec::new(),
             pack_nodes: Vec::new(),
-            lookup_nodes: HashMap::new(),
-            lookup_packs: HashMap::new(),
+            lookup_nodes: HashMap::default(),
+            lookup_packs: HashMap::default(),
         }
     }
 
@@ -271,7 +277,7 @@ impl SPPF {
                 gn,
                 li,
                 ri,
-                pack_ns: HashSet::new(),
+                pack_ns: HashSet::default(),
             });
             new_id
         })
@@ -353,7 +359,7 @@ impl GLLParser {
             gn: 0,
             sn: 0,
             dn: None,
-            desc_set: HashSet::new(),
+            desc_set: HashSet::default(),
             desc_queue: VecDeque::new(),
             gss: GSS::new(),
             gss_root: 0,
@@ -365,7 +371,7 @@ impl GLLParser {
             first,
             follow,
             nullable,
-            alt_first_cache: HashMap::new(),
+            alt_first_cache: HashMap::default(),
         };
 
         parser.compute_alt_lookahead();
@@ -374,7 +380,7 @@ impl GLLParser {
     }
 
     fn compute_alt_lookahead(&mut self) {
-        let mut cache = HashMap::new();
+        let mut cache = HashMap::default();
 
         // Iterate over all nodes to find ALT nodes
         for (idx, node) in self.g_grammar.nodes.iter().enumerate() {
@@ -387,7 +393,7 @@ impl GLLParser {
     }
 
     fn compute_sequence_lookahead(&self, start_node_idx: GIndex) -> (HashSet<u32>, bool) {
-        let mut result_first = HashSet::new();
+        let mut result_first = HashSet::default();
         let mut is_seq_nullable = true;
         let mut curr_idx = start_node_idx;
 
@@ -432,14 +438,14 @@ impl GLLParser {
     fn compute_first_follow_nullable(
         grammar: &NumericGrammar,
     ) -> (HashMap<u32, HashSet<u32>>, HashMap<u32, HashSet<u32>>, HashSet<u32>) {
-        let mut first: HashMap<u32, HashSet<u32>> = HashMap::new();
-        let mut follow: HashMap<u32, HashSet<u32>> = HashMap::new();
-        let mut nullable: HashSet<u32> = HashSet::new();
+        let mut first: HashMap<u32, HashSet<u32>> = HashMap::default();
+        let mut follow: HashMap<u32, HashSet<u32>> = HashMap::default();
+        let mut nullable: HashSet<u32> = HashSet::default();
 
         // Initialize FIRST sets
         for &nt in grammar.rules.keys() {
-            first.insert(nt, HashSet::new());
-            follow.insert(nt, HashSet::new());
+            first.insert(nt, HashSet::default());
+            follow.insert(nt, HashSet::default());
         }
 
         // Fixed-point iteration
@@ -486,7 +492,7 @@ impl GLLParser {
                     for sym in rule.iter().rev() {
                         match sym {
                             NumSymbol::Terminal(t) => {
-                                follow_set = HashSet::new();
+                                follow_set = HashSet::default();
                                 follow_set.insert(*t);
                             }
                             NumSymbol::NonTerminal(nt2) => {
@@ -544,8 +550,8 @@ impl GLLParser {
         let start_gn = GSSNode {
             gn: self.g_grammar.eos_index,
             i: 0,
-            edges: HashSet::new(),
-            pops: HashSet::new(),
+            edges: HashSet::default(),
+            pops: HashSet::default(),
         };
         self.gss_root = self.gss.add_node(start_gn);
 
@@ -846,7 +852,7 @@ impl GLLParser {
     }
 
     fn sppf_to_tree(&self, root_id: SPPFNodeId) -> Option<ParseTree> {
-        let mut visited = HashSet::new();
+        let mut visited = HashSet::default();
         self.flatten_tree_first(root_id, &mut visited)
     }
 

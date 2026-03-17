@@ -1,8 +1,13 @@
 // Earley parser implementation - new version
 use crate::grammars::{NumSymbol, NumericGrammar};
 use crate::parse_tree::{ParseSymbol, ParseTree};
-use std::collections::{HashMap, HashSet};
+// use std::collections::{HashMap, HashSet};
 use std::rc::Rc;
+
+use rustc_hash::{FxHashMap, FxHashSet};
+
+type HashMap<K, V> = FxHashMap<K, V>;
+type HashSet<T> = FxHashSet<T>;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 struct RuleID(usize);
@@ -22,7 +27,7 @@ impl Grammar {
         let mut rules = Vec::new();
 
         let mut lhs_keys: Vec<_> = grammar.rules.keys().collect();
-        let mut lookup: HashMap<NumSymbol, Vec<RuleID>> = HashMap::new();
+        let mut lookup: HashMap<NumSymbol, Vec<RuleID>> = HashMap::default();
         lhs_keys.sort();
 
         for lhs in lhs_keys {
@@ -44,7 +49,7 @@ impl Grammar {
     }
 
     pub fn calculate_nullables(&self) -> HashSet<NumSymbol> {
-        let mut nullables = HashSet::new();
+        let mut nullables = HashSet::default();
         let mut changed = true;
 
         while changed {
@@ -154,7 +159,7 @@ impl Column {
             _id: id,
             token,
             states: Vec::new(),
-            lookup: HashMap::new(),
+            lookup: HashMap::default(),
         }
     }
 
@@ -387,8 +392,8 @@ impl<'a> ForestBuilder<'a> {
             numeric_grammar: &parser.num_grammar,
             chart: &parser.chart,
             input: &parser.input,
-            memo: HashMap::new(),
-            in_progress: HashSet::new(),
+            memo: HashMap::default(),
+            in_progress: HashSet::default(),
         }
     }
 
@@ -495,7 +500,7 @@ impl<'a> ForestBuilder<'a> {
         let candidates: Box<dyn Iterator<Item = usize>> = match child_sym {
             NumSymbol::Terminal(_) => Box::new(std::iter::once(current_end.saturating_sub(1))),
             NumSymbol::NonTerminal(_) => {
-                let mut splits = HashSet::new();
+                let mut splits = HashSet::default();
                 for st in &self.chart.columns[current_end].states {
                     if st.is_complete(self.grammar)
                         && self.grammar.rules[st.rule_id.0].lhs == child_sym

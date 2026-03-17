@@ -3,7 +3,10 @@
 use crate::grammars::{Grammar, NumProduction, NumSymbol};
 use crate::parse_tree::{ParseSymbol, ParseTree};
 use m4ri_rust::friendly::BinMatrix;
-use std::collections::{HashMap, HashSet};
+use rustc_hash::{FxHashMap, FxHashSet};
+
+type HashMap<K, V> = FxHashMap<K, V>;
+type HashSet<T> = FxHashSet<T>;
 
 pub type NTMatrix = Vec<Vec<HashSet<u32>>>;
 pub type BoolMatrix = Vec<Vec<bool>>;
@@ -51,7 +54,7 @@ impl ValiantParser {
         }
 
         ValiantParser {
-            cache: HashMap::new(),
+            cache: HashMap::default(),
             cell_width: 5,
             grammar,
             productions,
@@ -85,7 +88,7 @@ impl ValiantParser {
     /// Convert a matrix of non-terminal sets to boolean matrices (one per non-terminal)
     fn bool_matrices(&self, a: &NTMatrix) -> BoolMatrices {
         let m = a.len();
-        let mut m_ks: BoolMatrices = HashMap::new();
+        let mut m_ks: BoolMatrices = HashMap::default();
 
         // Initialize boolean matrices for each non-terminal
         for &nt in &self.nonterminals {
@@ -151,10 +154,10 @@ impl ValiantParser {
 
     /// Multiply all pairs of boolean matrices
     fn multiply_pairs(&self, bool_as: &BoolMatrices, bool_bs: &BoolMatrices) -> PairProduct {
-        let mut r: PairProduct = HashMap::new();
+        let mut r: PairProduct = HashMap::default();
 
         for (&a_key, a_matrix) in bool_as {
-            let mut inner: HashMap<u32, BoolMatrix> = HashMap::new();
+            let mut inner: HashMap<u32, BoolMatrix> = HashMap::default();
             for (&b_key, b_matrix) in bool_bs {
                 inner.insert(b_key, self.multiply_bool_matrices(a_matrix, b_matrix));
             }
@@ -164,7 +167,7 @@ impl ValiantParser {
     }
 
     fn get_final_matrix(&self, r: &PairProduct, m: usize) -> NTMatrix {
-        let mut result: NTMatrix = vec![vec![HashSet::new(); m]; m];
+        let mut result: NTMatrix = vec![vec![HashSet::default(); m]; m];
 
         for i in 0..m {
             for j in 0..m {
@@ -194,7 +197,7 @@ impl ValiantParser {
     /// Union of two matrices
     fn union_matrices(&self, a: &NTMatrix, b: &NTMatrix) -> NTMatrix {
         let m = a.len();
-        let mut c: NTMatrix = vec![vec![HashSet::new(); m]; m];
+        let mut c: NTMatrix = vec![vec![HashSet::default(); m]; m];
 
         for i in 0..m {
             for j in 0..m {
@@ -219,7 +222,7 @@ impl ValiantParser {
 
         // Initialize result matrix
         let m = a.len();
-        let mut res: NTMatrix = vec![vec![HashSet::new(); m]; m];
+        let mut res: NTMatrix = vec![vec![HashSet::default(); m]; m];
 
         // For j in range(1, i)
         for j in 1..i {
@@ -237,7 +240,7 @@ impl ValiantParser {
 
     fn transitive_closure(&mut self, a: &NTMatrix, l: usize) -> NTMatrix {
         let m = a.len();
-        let mut res: NTMatrix = vec![vec![HashSet::new(); m]; m];
+        let mut res: NTMatrix = vec![vec![HashSet::default(); m]; m];
 
         // For i in range(1, l+1)
         for i in 1..=l {
@@ -267,7 +270,7 @@ impl ValiantParser {
 
     /// Initialize an NTMatrix (for recognition, not parse forest)
     fn init_nt_matrix(&self, length: usize) -> NTMatrix {
-        vec![vec![HashSet::new(); length + 1]; length + 1]
+        vec![vec![HashSet::default(); length + 1]; length + 1]
     }
 
     /// Fill terminal productions into NTMatrix

@@ -48,7 +48,7 @@ const GENERAL_PLUS_LLLR: &[&str] = &["Earley", "GLL", "RNGLR", "BRNGLR", "LL", "
 const NO_EARLEY_LLLR: &[&str] = &["GLL", "RNGLR", "BRNGLR", "LL", "LR"];
 
 const CONFIGS: &[GrammarConfig] = &[
-    // // ----- LR suit ----------
+    // ----- LR suit ----------
     // GrammarConfig {
     //     name: "lr_json_large",
     //     grammar_path: "grammars/lr_json.json",
@@ -64,6 +64,15 @@ const CONFIGS: &[GrammarConfig] = &[
     //     input_path: "input/tinyc_lr_large.txt",
     //     table_path: "table/lr_tinyc_glr_table.csv",
     //     lr_table_path: "table/lr_tinyc_lr_table.csv",
+    //     generate_table: true,
+    //     parsers: GENERAL_PLUS_LR,
+    // },
+    // GrammarConfig {
+    //     name: "expr",
+    //     grammar_path: "grammars/expr.json",
+    //     input_path: "input/expr_ambi.txt",
+    //     table_path: "table/expr_glr_table.csv",
+    //     lr_table_path: "table/expr_lr_table.csv",
     //     generate_table: true,
     //     parsers: GENERAL_PLUS_LR,
     // },
@@ -113,8 +122,62 @@ const CONFIGS: &[GrammarConfig] = &[
     //     generate_table: true,
     //     parsers: GENERAL_PLUS_LLLR,
     // },
-
-    // // ----- General large suit ----------
+    // // // ----- Ambi suit ---------
+    // GrammarConfig {
+    //     name: "expr_ambi",
+    //     grammar_path: "grammars/expr_ambi.json",
+    //     input_path: "input/expr_ambi.txt",
+    //     table_path: "table/expr_ambi_glr_table.csv",
+    //     lr_table_path: "table/expr_ambi_lr_table.csv",
+    //     generate_table: true,
+    //     parsers: GENERAL_PARSERS,
+    // },
+    // GrammarConfig {
+    //     name: "bool",
+    //     grammar_path: "grammars/bool.json",
+    //     input_path: "input/bool.txt",
+    //     table_path: "table/bool_glr_table.csv",
+    //     lr_table_path: "table/expr_ambi_lr_table.csv",
+    //     generate_table: true,
+    //     parsers: GENERAL_PARSERS,
+    // },
+    // // // ----- General large suit ----------
+    // GrammarConfig {
+    //     name: "css_large",
+    //     grammar_path: "grammars/css.json",
+    //     input_path: "input/css_small.txt",
+    //     table_path: "table/css_glr_table.csv",
+    //     lr_table_path: "table/css_lr_table.csv",
+    //     generate_table: false,
+    //     parsers: FAST_PARSERS,
+    // },
+    // GrammarConfig {
+    //     name: "html",
+    //     grammar_path: "grammars/html.json",
+    //     input_path: "input/html.txt",
+    //     table_path: "table/html_glr_table.csv",
+    //     lr_table_path: "table/html_lr_table.csv",
+    //     generate_table: false,
+    //     parsers: FAST_PARSERS,
+    // },
+    // GrammarConfig {
+    //     name: "shell",
+    //     grammar_path: "grammars/shell.json",
+    //     input_path: "input/shell.txt",
+    //     table_path: "table/shell_glr_table.csv",
+    //     lr_table_path: "table/shell_lr_table.csv",
+    //     generate_table: false,
+    //     parsers: FAST_PARSERS,
+    // },
+    // GrammarConfig {
+    //     name: "sql",
+    //     grammar_path: "grammars/sql.json",
+    //     input_path: "input/sql.txt",
+    //     table_path: "table/sql_glr_table.csv",
+    //     lr_table_path: "table/sql_lr_table.csv",
+    //     generate_table: false,
+    //     parsers: FAST_PARSERS,
+    // },
     // GrammarConfig {
     //     name: "json_large",
     //     grammar_path: "grammars/json.json",
@@ -124,15 +187,15 @@ const CONFIGS: &[GrammarConfig] = &[
     //     generate_table: true,
     //     parsers: GLL_GLR_PARSERS,
     // },
-    // GrammarConfig {
-    //     name: "json_earley",
-    //     grammar_path: "grammars/json.json",
-    //     input_path: "input/json_medium.txt",
-    //     table_path: "table/json_glr_table.csv",
-    //     lr_table_path: "table/json_lr_table.csv",
-    //     generate_table: true,
-    //     parsers: &["Earley"],
-    // },
+    GrammarConfig {
+        name: "json_earley",
+        grammar_path: "grammars/json.json",
+        input_path: "input/json_medium.txt",
+        table_path: "table/json_glr_table.csv",
+        lr_table_path: "table/json_lr_table.csv",
+        generate_table: false,
+        parsers: &["Earley"],
+    },
     // GrammarConfig {
     //     name: "sexp_large",
     //     grammar_path: "grammars/sexp.json",
@@ -196,47 +259,47 @@ const CONFIGS: &[GrammarConfig] = &[
     //     generate_table: false,
     //     parsers: FAST_PARSERS,
     // },
-    // // -------- General small suit --------
-    GrammarConfig {
-        name: "json_small",
-        grammar_path: "grammars/json.json",
-        input_path: "input/json_small.txt",
-        table_path: "table/json_glr_table.csv",
-        lr_table_path: "table/json_lr_table.csv",
-        generate_table: true,
-        parsers: GENERAL_PARSERS,
-    },
-    GrammarConfig {
-        name: "sexp_small",
-        grammar_path: "grammars/sexp.json",
-        input_path: "input/sexp_small.txt",
-        table_path: "table/sexp_glr_table.csv",
-        lr_table_path: "table/sexp_lr_table.csv",
-        generate_table: true,
-        parsers: GENERAL_PARSERS,
-    },
-    GrammarConfig {
-        name: "calc_small",
-        grammar_path: "grammars/calc.json",
-        input_path: "input/calc_small.txt",
-        table_path: "table/calc_glr_table.csv",
-        lr_table_path: "table/calc_lr_table.csv",
-        generate_table: true,
-        parsers: GENERAL_PARSERS,
-    },
-    GrammarConfig {
-        name: "tinyc_small",
-        grammar_path: "grammars/tinyc.json",
-        input_path: "input/tinyc_small.txt",
-        table_path: "table/tinyc_glr_table.csv",
-        lr_table_path: "table/tinyc_lr_table.csv",
-        generate_table: true,
-        parsers: GENERAL_PARSERS,
-    },
+    // -------- General small suit --------
+    // GrammarConfig {
+    //     name: "json_small",
+    //     grammar_path: "grammars/json.json",
+    //     input_path: "input/json_small.txt",
+    //     table_path: "table/json_glr_table.csv",
+    //     lr_table_path: "table/json_lr_table.csv",
+    //     generate_table: true,
+    //     parsers: GENERAL_PARSERS,
+    // },
+    // GrammarConfig {
+    //     name: "sexp_small",
+    //     grammar_path: "grammars/sexp.json",
+    //     input_path: "input/sexp_small.txt",
+    //     table_path: "table/sexp_glr_table.csv",
+    //     lr_table_path: "table/sexp_lr_table.csv",
+    //     generate_table: true,
+    //     parsers: GENERAL_PARSERS,
+    // },
+    // GrammarConfig {
+    //     name: "calc_small",
+    //     grammar_path: "grammars/calc.json",
+    //     input_path: "input/calc_small.txt",
+    //     table_path: "table/calc_glr_table.csv",
+    //     lr_table_path: "table/calc_lr_table.csv",
+    //     generate_table: true,
+    //     parsers: GENERAL_PARSERS,
+    // },
+    // GrammarConfig {
+    //     name: "tinyc_small",
+    //     grammar_path: "grammars/tinyc.json",
+    //     input_path: "input/tinyc_small.txt",
+    //     table_path: "table/tinyc_glr_table.csv",
+    //     lr_table_path: "table/tinyc_lr_table.csv",
+    //     generate_table: true,
+    //     parsers: GENERAL_PARSERS,
+    // },
 ];
 
 const WARMUP_ITERATIONS: u32 = 1;
-const MIN_ITERATIONS: u32 = 5;
+const MIN_ITERATIONS: u32 = 10;
 const MAX_ITERATIONS: u32 = 20;
 const TARGET_TIME: Duration = Duration::from_millis(500);
 const TIMEOUT_THRESHOLD: f64 = 1_000_000_000.0; // 1 seconds in ns

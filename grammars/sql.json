@@ -1,0 +1,803 @@
+{
+  "name": "sql",
+  "start": "<start>",
+  "rules": {
+    "<start>": [
+      ["<statement>"]
+    ],
+    "<statement>": [
+      ["<select_statement>"],
+      ["<insert_statement>"],
+      ["<update_statement>"],
+      ["<delete_statement>"],
+      ["<create_table_statement>"],
+      ["<drop_table_statement>"],
+      ["<alter_table_statement>"],
+      ["<create_index_statement>"],
+      ["<drop_index_statement>"],
+      ["<create_view_statement>"],
+      ["<drop_view_statement>"],
+      ["<grant_statement>"],
+      ["<revoke_statement>"],
+      ["<transaction_statement>"]
+    ],
+    "<select_statement>": [
+      ["<query_expression>"],
+      ["<query_expression>", " ", "O", "R", "D", "E", "R", " ", "B", "Y", " ", "<sort_spec_list>"],
+      ["<query_expression>", " ", "O", "R", "D", "E", "R", " ", "B", "Y", " ", "<sort_spec_list>", " ", "L", "I", "M", "I", "T", " ", "<unsigned_int>"],
+      ["<query_expression>", " ", "O", "R", "D", "E", "R", " ", "B", "Y", " ", "<sort_spec_list>", " ", "L", "I", "M", "I", "T", " ", "<unsigned_int>", " ", "O", "F", "F", "S", "E", "T", " ", "<unsigned_int>"],
+      ["<query_expression>", " ", "L", "I", "M", "I", "T", " ", "<unsigned_int>"]
+    ],
+    "<query_expression>": [
+      ["<query_primary>"],
+      ["<query_expression>", " ", "U", "N", "I", "O", "N", " ", "<query_primary>"],
+      ["<query_expression>", " ", "U", "N", "I", "O", "N", " ", "A", "L", "L", " ", "<query_primary>"],
+      ["<query_expression>", " ", "I", "N", "T", "E", "R", "S", "E", "C", "T", " ", "<query_primary>"],
+      ["<query_expression>", " ", "I", "N", "T", "E", "R", "S", "E", "C", "T", " ", "A", "L", "L", " ", "<query_primary>"],
+      ["<query_expression>", " ", "E", "X", "C", "E", "P", "T", " ", "<query_primary>"],
+      ["<query_expression>", " ", "E", "X", "C", "E", "P", "T", " ", "A", "L", "L", " ", "<query_primary>"]
+    ],
+    "<query_primary>": [
+      ["<select_core>"],
+      ["(", "<query_expression>", ")"]
+    ],
+    "<select_core>": [
+      ["S", "E", "L", "E", "C", "T", " ", "<set_quantifier>", "<select_list>", "<from_clause>"],
+      ["S", "E", "L", "E", "C", "T", " ", "<set_quantifier>", "<select_list>", "<from_clause>", "<where_clause>"],
+      ["S", "E", "L", "E", "C", "T", " ", "<set_quantifier>", "<select_list>", "<from_clause>", "<group_by_clause>"],
+      ["S", "E", "L", "E", "C", "T", " ", "<set_quantifier>", "<select_list>", "<from_clause>", "<where_clause>", "<group_by_clause>"],
+      ["S", "E", "L", "E", "C", "T", " ", "<set_quantifier>", "<select_list>", "<from_clause>", "<where_clause>", "<group_by_clause>", "<having_clause>"],
+      ["S", "E", "L", "E", "C", "T", " ", "<set_quantifier>", "<select_list>", "<from_clause>", "<group_by_clause>", "<having_clause>"],
+      ["S", "E", "L", "E", "C", "T", " ", "<set_quantifier>", "<select_list>"]
+    ],
+    "<set_quantifier>": [
+      [],
+      ["D", "I", "S", "T", "I", "N", "C", "T", " "],
+      ["A", "L", "L", " "]
+    ],
+    "<select_list>": [
+      ["*"],
+      ["<select_item>"],
+      ["<select_list>", ",", " ", "<select_item>"]
+    ],
+    "<select_item>": [
+      ["<expr>"],
+      ["<expr>", " ", "A", "S", " ", "<column_alias>"],
+      ["<expr>", " ", "<column_alias>"],
+      ["<table_name>", ".", "*"]
+    ],
+    "<column_alias>": [
+      ["<identifier>"]
+    ],
+    "<from_clause>": [
+      ["F", "R", "O", "M", " ", "<table_ref_list>"]
+    ],
+    "<table_ref_list>": [
+      ["<table_ref>"],
+      ["<table_ref_list>", ",", " ", "<table_ref>"]
+    ],
+    "<table_ref>": [
+      ["<table_primary>"],
+      ["<table_ref>", " ", "J", "O", "I", "N", " ", "<table_primary>", " ", "O", "N", " ", "<expr>"],
+      ["<table_ref>", " ", "J", "O", "I", "N", " ", "<table_primary>", " ", "U", "S", "I", "N", "G", " ", "(", "<column_list>", ")"],
+      ["<table_ref>", " ", "I", "N", "N", "E", "R", " ", "J", "O", "I", "N", " ", "<table_primary>", " ", "O", "N", " ", "<expr>"],
+      ["<table_ref>", " ", "L", "E", "F", "T", " ", "J", "O", "I", "N", " ", "<table_primary>", " ", "O", "N", " ", "<expr>"],
+      ["<table_ref>", " ", "L", "E", "F", "T", " ", "O", "U", "T", "E", "R", " ", "J", "O", "I", "N", " ", "<table_primary>", " ", "O", "N", " ", "<expr>"],
+      ["<table_ref>", " ", "R", "I", "G", "H", "T", " ", "J", "O", "I", "N", " ", "<table_primary>", " ", "O", "N", " ", "<expr>"],
+      ["<table_ref>", " ", "R", "I", "G", "H", "T", " ", "O", "U", "T", "E", "R", " ", "J", "O", "I", "N", " ", "<table_primary>", " ", "O", "N", " ", "<expr>"],
+      ["<table_ref>", " ", "F", "U", "L", "L", " ", "J", "O", "I", "N", " ", "<table_primary>", " ", "O", "N", " ", "<expr>"],
+      ["<table_ref>", " ", "F", "U", "L", "L", " ", "O", "U", "T", "E", "R", " ", "J", "O", "I", "N", " ", "<table_primary>", " ", "O", "N", " ", "<expr>"],
+      ["<table_ref>", " ", "C", "R", "O", "S", "S", " ", "J", "O", "I", "N", " ", "<table_primary>"],
+      ["<table_ref>", " ", "N", "A", "T", "U", "R", "A", "L", " ", "J", "O", "I", "N", " ", "<table_primary>"],
+      ["<table_ref>", " ", "N", "A", "T", "U", "R", "A", "L", " ", "L", "E", "F", "T", " ", "J", "O", "I", "N", " ", "<table_primary>"],
+      ["<table_ref>", " ", "N", "A", "T", "U", "R", "A", "L", " ", "R", "I", "G", "H", "T", " ", "J", "O", "I", "N", " ", "<table_primary>"]
+    ],
+    "<table_primary>": [
+      ["<table_name>"],
+      ["<table_name>", " ", "<table_alias>"],
+      ["<table_name>", " ", "A", "S", " ", "<table_alias>"],
+      ["(", "<query_expression>", ")", " ", "A", "S", " ", "<table_alias>"],
+      ["(", "<table_ref>", ")"]
+    ],
+    "<table_alias>": [
+      ["<identifier>"]
+    ],
+    "<where_clause>": [
+      ["W", "H", "E", "R", "E", " ", "<expr>"]
+    ],
+    "<group_by_clause>": [
+      ["G", "R", "O", "U", "P", " ", "B", "Y", " ", "<expr_list>"]
+    ],
+    "<having_clause>": [
+      ["H", "A", "V", "I", "N", "G", " ", "<expr>"]
+    ],
+    "<sort_spec_list>": [
+      ["<sort_spec>"],
+      ["<sort_spec_list>", ",", " ", "<sort_spec>"]
+    ],
+    "<sort_spec>": [
+      ["<expr>"],
+      ["<expr>", " ", "A", "S", "C"],
+      ["<expr>", " ", "D", "E", "S", "C"],
+      ["<expr>", " ", "A", "S", "C", " ", "N", "U", "L", "L", "S", " ", "F", "I", "R", "S", "T"],
+      ["<expr>", " ", "A", "S", "C", " ", "N", "U", "L", "L", "S", " ", "L", "A", "S", "T"],
+      ["<expr>", " ", "D", "E", "S", "C", " ", "N", "U", "L", "L", "S", " ", "F", "I", "R", "S", "T"],
+      ["<expr>", " ", "D", "E", "S", "C", " ", "N", "U", "L", "L", "S", " ", "L", "A", "S", "T"]
+    ],
+    "<expr>": [
+      ["<literal>"],
+      ["<column_ref>"],
+      ["<function_call>"],
+      ["<aggregate_function>"],
+      ["<window_function>"],
+      ["<case_expr>"],
+      ["<cast_expr>"],
+      ["<subquery_expr>"],
+      ["(", "<expr>", ")"],
+      ["N", "O", "T", " ", "<expr>"],
+      ["-", "<expr>"],
+      ["+", "<expr>"],
+      ["<expr>", " ", "+", " ", "<expr>"],
+      ["<expr>", " ", "-", " ", "<expr>"],
+      ["<expr>", " ", "*", " ", "<expr>"],
+      ["<expr>", " ", "/", " ", "<expr>"],
+      ["<expr>", " ", "%", " ", "<expr>"],
+      ["<expr>", " ", "|", "|", " ", "<expr>"],
+      ["<expr>", " ", "=", " ", "<expr>"],
+      ["<expr>", " ", "<", ">", " ", "<expr>"],
+      ["<expr>", " ", "!", "=", " ", "<expr>"],
+      ["<expr>", " ", "<", " ", "<expr>"],
+      ["<expr>", " ", "<", "=", " ", "<expr>"],
+      ["<expr>", " ", ">", " ", "<expr>"],
+      ["<expr>", " ", ">", "=", " ", "<expr>"],
+      ["<expr>", " ", "A", "N", "D", " ", "<expr>"],
+      ["<expr>", " ", "O", "R", " ", "<expr>"],
+      ["<expr>", " ", "X", "O", "R", " ", "<expr>"],
+      ["<expr>", " ", "I", "S", " ", "N", "U", "L", "L"],
+      ["<expr>", " ", "I", "S", " ", "N", "O", "T", " ", "N", "U", "L", "L"],
+      ["<expr>", " ", "B", "E", "T", "W", "E", "E", "N", " ", "<expr>", " ", "A", "N", "D", " ", "<expr>"],
+      ["<expr>", " ", "N", "O", "T", " ", "B", "E", "T", "W", "E", "E", "N", " ", "<expr>", " ", "A", "N", "D", " ", "<expr>"],
+      ["<expr>", " ", "L", "I", "K", "E", " ", "<expr>"],
+      ["<expr>", " ", "N", "O", "T", " ", "L", "I", "K", "E", " ", "<expr>"],
+      ["<expr>", " ", "I", "L", "I", "K", "E", " ", "<expr>"],
+      ["<expr>", " ", "S", "I", "M", "I", "L", "A", "R", " ", "T", "O", " ", "<expr>"],
+      ["<expr>", " ", "N", "O", "T", " ", "S", "I", "M", "I", "L", "A", "R", " ", "T", "O", " ", "<expr>"],
+      ["<expr>", " ", "I", "N", " ", "(", "<expr_list>", ")"],
+      ["<expr>", " ", "N", "O", "T", " ", "I", "N", " ", "(", "<expr_list>", ")"],
+      ["<expr>", " ", "I", "N", " ", "(", "<query_expression>", ")"],
+      ["<expr>", " ", "N", "O", "T", " ", "I", "N", " ", "(", "<query_expression>", ")"],
+      ["<expr>", " ", "=", " ", "A", "N", "Y", " ", "(", "<query_expression>", ")"],
+      ["<expr>", " ", "=", " ", "A", "L", "L", " ", "(", "<query_expression>", ")"],
+      ["<expr>", " ", "<", ">", " ", "A", "N", "Y", " ", "(", "<query_expression>", ")"],
+      ["<expr>", " ", "<", ">", " ", "A", "L", "L", " ", "(", "<query_expression>", ")"],
+      ["<expr>", " ", "<", " ", "A", "N", "Y", " ", "(", "<query_expression>", ")"],
+      ["<expr>", " ", ">", " ", "A", "N", "Y", " ", "(", "<query_expression>", ")"],
+      ["E", "X", "I", "S", "T", "S", " ", "(", "<query_expression>", ")"],
+      ["N", "O", "T", " ", "E", "X", "I", "S", "T", "S", " ", "(", "<query_expression>", ")"],
+      ["<expr>", " ", "I", "S", " ", "D", "I", "S", "T", "I", "N", "C", "T", " ", "F", "R", "O", "M", " ", "<expr>"],
+      ["<expr>", " ", "I", "S", " ", "N", "O", "T", " ", "D", "I", "S", "T", "I", "N", "C", "T", " ", "F", "R", "O", "M", " ", "<expr>"],
+      ["(", "<expr>", ",", " ", "<expr>", ")", " ", "O", "V", "E", "R", "L", "A", "P", "S", " ", "(", "<expr>", ",", " ", "<expr>", ")"]
+    ],
+    "<expr_list>": [
+      ["<expr>"],
+      ["<expr_list>", ",", " ", "<expr>"]
+    ],
+    "<case_expr>": [
+      ["C", "A", "S", "E", " ", "<when_clause_list>", " ", "E", "N", "D"],
+      ["C", "A", "S", "E", " ", "<when_clause_list>", " ", "E", "L", "S", "E", " ", "<expr>", " ", "E", "N", "D"],
+      ["C", "A", "S", "E", " ", "<expr>", " ", "<when_clause_list>", " ", "E", "N", "D"],
+      ["C", "A", "S", "E", " ", "<expr>", " ", "<when_clause_list>", " ", "E", "L", "S", "E", " ", "<expr>", " ", "E", "N", "D"]
+    ],
+    "<when_clause_list>": [
+      ["<when_clause>"],
+      ["<when_clause_list>", " ", "<when_clause>"]
+    ],
+    "<when_clause>": [
+      ["W", "H", "E", "N", " ", "<expr>", " ", "T", "H", "E", "N", " ", "<expr>"]
+    ],
+    "<cast_expr>": [
+      ["C", "A", "S", "T", "(", "<expr>", " ", "A", "S", " ", "<data_type>", ")"],
+      ["T", "R", "Y", "_", "C", "A", "S", "T", "(", "<expr>", " ", "A", "S", " ", "<data_type>", ")"]
+    ],
+    "<subquery_expr>": [
+      ["(", "<query_expression>", ")"]
+    ],
+    "<function_call>": [
+      ["<function_name>", "(", ")"],
+      ["<function_name>", "(", "<expr_list>", ")"],
+      ["<function_name>", "(", "D", "I", "S", "T", "I", "N", "C", "T", " ", "<expr>", ")"],
+      ["<function_name>", "(", "A", "L", "L", " ", "<expr_list>", ")"],
+      ["S", "U", "B", "S", "T", "R", "I", "N", "G", "(", "<expr>", " ", "F", "R", "O", "M", " ", "<expr>", ")"],
+      ["S", "U", "B", "S", "T", "R", "I", "N", "G", "(", "<expr>", " ", "F", "R", "O", "M", " ", "<expr>", " ", "F", "O", "R", " ", "<expr>", ")"],
+      ["T", "R", "I", "M", "(", "<expr>", ")"],
+      ["T", "R", "I", "M", "(", "L", "E", "A", "D", "I", "N", "G", " ", "<expr>", " ", "F", "R", "O", "M", " ", "<expr>", ")"],
+      ["T", "R", "I", "M", "(", "T", "R", "A", "I", "L", "I", "N", "G", " ", "<expr>", " ", "F", "R", "O", "M", " ", "<expr>", ")"],
+      ["T", "R", "I", "M", "(", "B", "O", "T", "H", " ", "<expr>", " ", "F", "R", "O", "M", " ", "<expr>", ")"],
+      ["O", "V", "E", "R", "L", "A", "Y", "(", "<expr>", " ", "P", "L", "A", "C", "I", "N", "G", " ", "<expr>", " ", "F", "R", "O", "M", " ", "<expr>", ")"],
+      ["O", "V", "E", "R", "L", "A", "Y", "(", "<expr>", " ", "P", "L", "A", "C", "I", "N", "G", " ", "<expr>", " ", "F", "R", "O", "M", " ", "<expr>", " ", "F", "O", "R", " ", "<expr>", ")"],
+      ["P", "O", "S", "I", "T", "I", "O", "N", "(", "<expr>", " ", "I", "N", " ", "<expr>", ")"],
+      ["E", "X", "T", "R", "A", "C", "T", "(", "<datetime_field>", " ", "F", "R", "O", "M", " ", "<expr>", ")"],
+      ["N", "U", "L", "L", "I", "F", "(", "<expr>", ",", " ", "<expr>", ")"],
+      ["C", "O", "A", "L", "E", "S", "C", "E", "(", "<expr_list>", ")"],
+      ["G", "R", "E", "A", "T", "E", "S", "T", "(", "<expr_list>", ")"],
+      ["L", "E", "A", "S", "T", "(", "<expr_list>", ")"],
+      ["I", "I", "F", "(", "<expr>", ",", " ", "<expr>", ",", " ", "<expr>", ")"]
+    ],
+    "<function_name>": [
+      ["A", "B", "S"],
+      ["C", "E", "I", "L"],
+      ["C", "E", "I", "L", "I", "N", "G"],
+      ["F", "L", "O", "O", "R"],
+      ["R", "O", "U", "N", "D"],
+      ["T", "R", "U", "N", "C"],
+      ["S", "Q", "R", "T"],
+      ["P", "O", "W", "E", "R"],
+      ["M", "O", "D"],
+      ["S", "I", "G", "N"],
+      ["E", "X", "P"],
+      ["L", "N"],
+      ["L", "O", "G"],
+      ["U", "P", "P", "E", "R"],
+      ["L", "O", "W", "E", "R"],
+      ["L", "E", "N", "G", "T", "H"],
+      ["C", "H", "A", "R", "_", "L", "E", "N", "G", "T", "H"],
+      ["O", "C", "T", "E", "T", "_", "L", "E", "N", "G", "T", "H"],
+      ["L", "T", "R", "I", "M"],
+      ["R", "T", "R", "I", "M"],
+      ["L", "P", "A", "D"],
+      ["R", "P", "A", "D"],
+      ["R", "E", "P", "L", "A", "C", "E"],
+      ["R", "E", "P", "E", "A", "T"],
+      ["R", "E", "V", "E", "R", "S", "E"],
+      ["S", "P", "L", "I", "T", "_", "P", "A", "R", "T"],
+      ["S", "T", "A", "R", "T", "S", "_", "W", "I", "T", "H"],
+      ["N", "O", "W"],
+      ["C", "U", "R", "R", "E", "N", "T", "_", "D", "A", "T", "E"],
+      ["C", "U", "R", "R", "E", "N", "T", "_", "T", "I", "M", "E"],
+      ["C", "U", "R", "R", "E", "N", "T", "_", "T", "I", "M", "E", "S", "T", "A", "M", "P"],
+      ["D", "A", "T", "E", "_", "T", "R", "U", "N", "C"],
+      ["D", "A", "T", "E", "_", "P", "A", "R", "T"],
+      ["D", "A", "T", "E", "_", "A", "D", "D"],
+      ["D", "A", "T", "E", "_", "D", "I", "F", "F"],
+      ["T", "O", "_", "C", "H", "A", "R"],
+      ["T", "O", "_", "D", "A", "T", "E"],
+      ["T", "O", "_", "T", "I", "M", "E", "S", "T", "A", "M", "P"],
+      ["T", "O", "_", "N", "U", "M", "B", "E", "R"],
+      ["C", "O", "N", "C", "A", "T"],
+      ["C", "O", "N", "C", "A", "T", "_", "W", "S"],
+      ["F", "O", "R", "M", "A", "T"],
+      ["M", "D", "5"],
+      ["S", "H", "A", "2", "5", "6"],
+      ["R", "O", "W", "_", "N", "U", "M", "B", "E", "R"],
+      ["R", "A", "N", "K"],
+      ["D", "E", "N", "S", "E", "_", "R", "A", "N", "K"],
+      ["L", "E", "A", "D"],
+      ["L", "A", "G"],
+      ["F", "I", "R", "S", "T", "_", "V", "A", "L", "U", "E"],
+      ["L", "A", "S", "T", "_", "V", "A", "L", "U", "E"],
+      ["N", "T", "H", "_", "V", "A", "L", "U", "E"],
+      ["N", "T", "I", "L", "E"],
+      ["C", "U", "M", "E", "_", "D", "I", "S", "T"],
+      ["P", "E", "R", "C", "E", "N", "T", "_", "R", "A", "N", "K"],
+      ["<identifier>"]
+    ],
+    "<aggregate_function>": [
+      ["C", "O", "U", "N", "T", "(", "*", ")"],
+      ["C", "O", "U", "N", "T", "(", "<expr>", ")"],
+      ["C", "O", "U", "N", "T", "(", "D", "I", "S", "T", "I", "N", "C", "T", " ", "<expr>", ")"],
+      ["S", "U", "M", "(", "<expr>", ")"],
+      ["S", "U", "M", "(", "D", "I", "S", "T", "I", "N", "C", "T", " ", "<expr>", ")"],
+      ["A", "V", "G", "(", "<expr>", ")"],
+      ["A", "V", "G", "(", "D", "I", "S", "T", "I", "N", "C", "T", " ", "<expr>", ")"],
+      ["M", "I", "N", "(", "<expr>", ")"],
+      ["M", "A", "X", "(", "<expr>", ")"],
+      ["E", "V", "E", "R", "Y", "(", "<expr>", ")"],
+      ["A", "N", "Y", "_", "V", "A", "L", "U", "E", "(", "<expr>", ")"],
+      ["A", "R", "R", "A", "Y", "_", "A", "G", "G", "(", "<expr>", ")"],
+      ["A", "R", "R", "A", "Y", "_", "A", "G", "G", "(", "<expr>", " ", "O", "R", "D", "E", "R", " ", "B", "Y", " ", "<sort_spec_list>", ")"],
+      ["S", "T", "R", "I", "N", "G", "_", "A", "G", "G", "(", "<expr>", ",", " ", "<expr>", ")"],
+      ["S", "T", "R", "I", "N", "G", "_", "A", "G", "G", "(", "<expr>", ",", " ", "<expr>", " ", "O", "R", "D", "E", "R", " ", "B", "Y", " ", "<sort_spec_list>", ")"],
+      ["L", "I", "S", "T", "A", "G", "G", "(", "<expr>", ",", " ", "<expr>", ")"],
+      ["P", "E", "R", "C", "E", "N", "T", "I", "L", "E", "_", "C", "O", "N", "T", "(", "<expr>", ")", " ", "W", "I", "T", "H", "I", "N", " ", "G", "R", "O", "U", "P", " ", "(", "O", "R", "D", "E", "R", " ", "B", "Y", " ", "<expr>", ")"],
+      ["P", "E", "R", "C", "E", "N", "T", "I", "L", "E", "_", "D", "I", "S", "C", "(", "<expr>", ")", " ", "W", "I", "T", "H", "I", "N", " ", "G", "R", "O", "U", "P", " ", "(", "O", "R", "D", "E", "R", " ", "B", "Y", " ", "<expr>", ")"]
+    ],
+    "<window_function>": [
+      ["<aggregate_function>", " ", "O", "V", "E", "R", " ", "(", "<window_spec>", ")"],
+      ["<function_name>", "(", "<expr_list>", ")", " ", "O", "V", "E", "R", " ", "(", "<window_spec>", ")"],
+      ["<function_name>", "(", ")", " ", "O", "V", "E", "R", " ", "(", "<window_spec>", ")"]
+    ],
+    "<window_spec>": [
+      [],
+      ["P", "A", "R", "T", "I", "T", "I", "O", "N", " ", "B", "Y", " ", "<expr_list>"],
+      ["O", "R", "D", "E", "R", " ", "B", "Y", " ", "<sort_spec_list>"],
+      ["P", "A", "R", "T", "I", "T", "I", "O", "N", " ", "B", "Y", " ", "<expr_list>", " ", "O", "R", "D", "E", "R", " ", "B", "Y", " ", "<sort_spec_list>"],
+      ["P", "A", "R", "T", "I", "T", "I", "O", "N", " ", "B", "Y", " ", "<expr_list>", " ", "O", "R", "D", "E", "R", " ", "B", "Y", " ", "<sort_spec_list>", " ", "<frame_clause>"],
+      ["O", "R", "D", "E", "R", " ", "B", "Y", " ", "<sort_spec_list>", " ", "<frame_clause>"]
+    ],
+    "<frame_clause>": [
+      ["R", "O", "W", "S", " ", "U", "N", "B", "O", "U", "N", "D", "E", "D", " ", "P", "R", "E", "C", "E", "D", "I", "N", "G"],
+      ["R", "O", "W", "S", " ", "C", "U", "R", "R", "E", "N", "T", " ", "R", "O", "W"],
+      ["R", "O", "W", "S", " ", "B", "E", "T", "W", "E", "E", "N", " ", "U", "N", "B", "O", "U", "N", "D", "E", "D", " ", "P", "R", "E", "C", "E", "D", "I", "N", "G", " ", "A", "N", "D", " ", "C", "U", "R", "R", "E", "N", "T", " ", "R", "O", "W"],
+      ["R", "O", "W", "S", " ", "B", "E", "T", "W", "E", "E", "N", " ", "U", "N", "B", "O", "U", "N", "D", "E", "D", " ", "P", "R", "E", "C", "E", "D", "I", "N", "G", " ", "A", "N", "D", " ", "U", "N", "B", "O", "U", "N", "D", "E", "D", " ", "F", "O", "L", "L", "O", "W", "I", "N", "G"],
+      ["R", "O", "W", "S", " ", "B", "E", "T", "W", "E", "E", "N", " ", "<expr>", " ", "P", "R", "E", "C", "E", "D", "I", "N", "G", " ", "A", "N", "D", " ", "C", "U", "R", "R", "E", "N", "T", " ", "R", "O", "W"],
+      ["R", "O", "W", "S", " ", "B", "E", "T", "W", "E", "E", "N", " ", "C", "U", "R", "R", "E", "N", "T", " ", "R", "O", "W", " ", "A", "N", "D", " ", "<expr>", " ", "F", "O", "L", "L", "O", "W", "I", "N", "G"],
+      ["R", "A", "N", "G", "E", " ", "U", "N", "B", "O", "U", "N", "D", "E", "D", " ", "P", "R", "E", "C", "E", "D", "I", "N", "G"],
+      ["R", "A", "N", "G", "E", " ", "B", "E", "T", "W", "E", "E", "N", " ", "U", "N", "B", "O", "U", "N", "D", "E", "D", " ", "P", "R", "E", "C", "E", "D", "I", "N", "G", " ", "A", "N", "D", " ", "C", "U", "R", "R", "E", "N", "T", " ", "R", "O", "W"],
+      ["R", "A", "N", "G", "E", " ", "B", "E", "T", "W", "E", "E", "N", " ", "U", "N", "B", "O", "U", "N", "D", "E", "D", " ", "P", "R", "E", "C", "E", "D", "I", "N", "G", " ", "A", "N", "D", " ", "U", "N", "B", "O", "U", "N", "D", "E", "D", " ", "F", "O", "L", "L", "O", "W", "I", "N", "G"]
+    ],
+    "<datetime_field>": [
+      ["Y", "E", "A", "R"],
+      ["M", "O", "N", "T", "H"],
+      ["D", "A", "Y"],
+      ["H", "O", "U", "R"],
+      ["M", "I", "N", "U", "T", "E"],
+      ["S", "E", "C", "O", "N", "D"],
+      ["D", "O", "W"],
+      ["D", "O", "Y"],
+      ["W", "E", "E", "K"],
+      ["Q", "U", "A", "R", "T", "E", "R"],
+      ["E", "P", "O", "C", "H"],
+      ["T", "I", "M", "E", "Z", "O", "N", "E"],
+      ["T", "I", "M", "E", "Z", "O", "N", "E", "_", "H", "O", "U", "R"],
+      ["T", "I", "M", "E", "Z", "O", "N", "E", "_", "M", "I", "N", "U", "T", "E"]
+    ],
+    "<insert_statement>": [
+      ["I", "N", "S", "E", "R", "T", " ", "I", "N", "T", "O", " ", "<table_name>", " ", "V", "A", "L", "U", "E", "S", " ", "(", "<expr_list>", ")"],
+      ["I", "N", "S", "E", "R", "T", " ", "I", "N", "T", "O", " ", "<table_name>", " ", "(", "<column_list>", ")", " ", "V", "A", "L", "U", "E", "S", " ", "(", "<expr_list>", ")"],
+      ["I", "N", "S", "E", "R", "T", " ", "I", "N", "T", "O", " ", "<table_name>", " ", "<query_expression>"],
+      ["I", "N", "S", "E", "R", "T", " ", "I", "N", "T", "O", " ", "<table_name>", " ", "(", "<column_list>", ")", " ", "<query_expression>"],
+      ["I", "N", "S", "E", "R", "T", " ", "I", "N", "T", "O", " ", "<table_name>", " ", "(", "<column_list>", ")", " ", "V", "A", "L", "U", "E", "S", " ", "<multi_row_values>"],
+      ["I", "N", "S", "E", "R", "T", " ", "O", "R", " ", "R", "E", "P", "L", "A", "C", "E", " ", "I", "N", "T", "O", " ", "<table_name>", " ", "(", "<column_list>", ")", " ", "V", "A", "L", "U", "E", "S", " ", "(", "<expr_list>", ")"],
+      ["I", "N", "S", "E", "R", "T", " ", "O", "R", " ", "I", "G", "N", "O", "R", "E", " ", "I", "N", "T", "O", " ", "<table_name>", " ", "(", "<column_list>", ")", " ", "V", "A", "L", "U", "E", "S", " ", "(", "<expr_list>", ")"]
+    ],
+    "<multi_row_values>": [
+      ["(", "<expr_list>", ")"],
+      ["<multi_row_values>", ",", " ", "(", "<expr_list>", ")"]
+    ],
+    "<update_statement>": [
+      ["U", "P", "D", "A", "T", "E", " ", "<table_name>", " ", "S", "E", "T", " ", "<set_clause_list>"],
+      ["U", "P", "D", "A", "T", "E", " ", "<table_name>", " ", "S", "E", "T", " ", "<set_clause_list>", " ", "W", "H", "E", "R", "E", " ", "<expr>"],
+      ["U", "P", "D", "A", "T", "E", " ", "<table_name>", " ", "A", "S", " ", "<table_alias>", " ", "S", "E", "T", " ", "<set_clause_list>", " ", "W", "H", "E", "R", "E", " ", "<expr>"],
+      ["U", "P", "D", "A", "T", "E", " ", "<table_name>", " ", "S", "E", "T", " ", "<set_clause_list>", " ", "F", "R", "O", "M", " ", "<table_ref_list>", " ", "W", "H", "E", "R", "E", " ", "<expr>"]
+    ],
+    "<set_clause_list>": [
+      ["<set_clause>"],
+      ["<set_clause_list>", ",", " ", "<set_clause>"]
+    ],
+    "<set_clause>": [
+      ["<column_name>", " ", "=", " ", "<expr>"],
+      ["(", "<column_list>", ")", " ", "=", " ", "(", "<expr_list>", ")"],
+      ["(", "<column_list>", ")", " ", "=", " ", "(", "<query_expression>", ")"]
+    ],
+    "<delete_statement>": [
+      ["D", "E", "L", "E", "T", "E", " ", "F", "R", "O", "M", " ", "<table_name>"],
+      ["D", "E", "L", "E", "T", "E", " ", "F", "R", "O", "M", " ", "<table_name>", " ", "W", "H", "E", "R", "E", " ", "<expr>"],
+      ["D", "E", "L", "E", "T", "E", " ", "F", "R", "O", "M", " ", "<table_name>", " ", "A", "S", " ", "<table_alias>", " ", "W", "H", "E", "R", "E", " ", "<expr>"],
+      ["D", "E", "L", "E", "T", "E", " ", "<table_name>", " ", "F", "R", "O", "M", " ", "<table_ref_list>", " ", "W", "H", "E", "R", "E", " ", "<expr>"]
+    ],
+    "<create_table_statement>": [
+      ["C", "R", "E", "A", "T", "E", " ", "T", "A", "B", "L", "E", " ", "<table_name>", " ", "(", "<table_element_list>", ")"],
+      ["C", "R", "E", "A", "T", "E", " ", "T", "A", "B", "L", "E", " ", "I", "F", " ", "N", "O", "T", " ", "E", "X", "I", "S", "T", "S", " ", "<table_name>", " ", "(", "<table_element_list>", ")"],
+      ["C", "R", "E", "A", "T", "E", " ", "T", "E", "M", "P", "O", "R", "A", "R", "Y", " ", "T", "A", "B", "L", "E", " ", "<table_name>", " ", "(", "<table_element_list>", ")"],
+      ["C", "R", "E", "A", "T", "E", " ", "T", "A", "B", "L", "E", " ", "<table_name>", " ", "A", "S", " ", "<query_expression>"],
+      ["C", "R", "E", "A", "T", "E", " ", "T", "A", "B", "L", "E", " ", "<table_name>", " ", "(", "<table_element_list>", ")", " ", "<table_options>"]
+    ],
+    "<table_element_list>": [
+      ["<table_element>"],
+      ["<table_element_list>", ",", " ", "<table_element>"]
+    ],
+    "<table_element>": [
+      ["<column_def>"],
+      ["<table_constraint>"]
+    ],
+    "<column_def>": [
+      ["<column_name>", " ", "<data_type>"],
+      ["<column_name>", " ", "<data_type>", " ", "<column_constraint_list>"]
+    ],
+    "<column_constraint_list>": [
+      ["<column_constraint>"],
+      ["<column_constraint_list>", " ", "<column_constraint>"]
+    ],
+    "<column_constraint>": [
+      ["N", "O", "T", " ", "N", "U", "L", "L"],
+      ["N", "U", "L", "L"],
+      ["U", "N", "I", "Q", "U", "E"],
+      ["P", "R", "I", "M", "A", "R", "Y", " ", "K", "E", "Y"],
+      ["D", "E", "F", "A", "U", "L", "T", " ", "<expr>"],
+      ["C", "H", "E", "C", "K", " ", "(", "<expr>", ")"],
+      ["R", "E", "F", "E", "R", "E", "N", "C", "E", "S", " ", "<table_name>"],
+      ["R", "E", "F", "E", "R", "E", "N", "C", "E", "S", " ", "<table_name>", " ", "(", "<column_name>", ")"],
+      ["R", "E", "F", "E", "R", "E", "N", "C", "E", "S", " ", "<table_name>", " ", "(", "<column_name>", ")", " ", "O", "N", " ", "D", "E", "L", "E", "T", "E", " ", "C", "A", "S", "C", "A", "D", "E"],
+      ["R", "E", "F", "E", "R", "E", "N", "C", "E", "S", " ", "<table_name>", " ", "(", "<column_name>", ")", " ", "O", "N", " ", "D", "E", "L", "E", "T", "E", " ", "S", "E", "T", " ", "N", "U", "L", "L"],
+      ["R", "E", "F", "E", "R", "E", "N", "C", "E", "S", " ", "<table_name>", " ", "(", "<column_name>", ")", " ", "O", "N", " ", "U", "P", "D", "A", "T", "E", " ", "C", "A", "S", "C", "A", "D", "E"],
+      ["A", "U", "T", "O", "_", "I", "N", "C", "R", "E", "M", "E", "N", "T"],
+      ["A", "U", "T", "O", "I", "N", "C", "R", "E", "M", "E", "N", "T"],
+      ["S", "E", "R", "I", "A", "L"],
+      ["G", "E", "N", "E", "R", "A", "T", "E", "D", " ", "A", "L", "W", "A", "Y", "S", " ", "A", "S", " ", "(", "<expr>", ")", " ", "S", "T", "O", "R", "E", "D"],
+      ["G", "E", "N", "E", "R", "A", "T", "E", "D", " ", "A", "L", "W", "A", "Y", "S", " ", "A", "S", " ", "(", "<expr>", ")", " ", "V", "I", "R", "T", "U", "A", "L"]
+    ],
+    "<table_constraint>": [
+      ["P", "R", "I", "M", "A", "R", "Y", " ", "K", "E", "Y", " ", "(", "<column_list>", ")"],
+      ["U", "N", "I", "Q", "U", "E", " ", "(", "<column_list>", ")"],
+      ["C", "H", "E", "C", "K", " ", "(", "<expr>", ")"],
+      ["F", "O", "R", "E", "I", "G", "N", " ", "K", "E", "Y", " ", "(", "<column_list>", ")", " ", "R", "E", "F", "E", "R", "E", "N", "C", "E", "S", " ", "<table_name>"],
+      ["F", "O", "R", "E", "I", "G", "N", " ", "K", "E", "Y", " ", "(", "<column_list>", ")", " ", "R", "E", "F", "E", "R", "E", "N", "C", "E", "S", " ", "<table_name>", " ", "(", "<column_list>", ")"],
+      ["F", "O", "R", "E", "I", "G", "N", " ", "K", "E", "Y", " ", "(", "<column_list>", ")", " ", "R", "E", "F", "E", "R", "E", "N", "C", "E", "S", " ", "<table_name>", " ", "(", "<column_list>", ")", " ", "O", "N", " ", "D", "E", "L", "E", "T", "E", " ", "C", "A", "S", "C", "A", "D", "E"],
+      ["F", "O", "R", "E", "I", "G", "N", " ", "K", "E", "Y", " ", "(", "<column_list>", ")", " ", "R", "E", "F", "E", "R", "E", "N", "C", "E", "S", " ", "<table_name>", " ", "(", "<column_list>", ")", " ", "O", "N", " ", "D", "E", "L", "E", "T", "E", " ", "S", "E", "T", " ", "N", "U", "L", "L"],
+      ["C", "O", "N", "S", "T", "R", "A", "I", "N", "T", " ", "<identifier>", " ", "P", "R", "I", "M", "A", "R", "Y", " ", "K", "E", "Y", " ", "(", "<column_list>", ")"],
+      ["C", "O", "N", "S", "T", "R", "A", "I", "N", "T", " ", "<identifier>", " ", "U", "N", "I", "Q", "U", "E", " ", "(", "<column_list>", ")"],
+      ["C", "O", "N", "S", "T", "R", "A", "I", "N", "T", " ", "<identifier>", " ", "C", "H", "E", "C", "K", " ", "(", "<expr>", ")"],
+      ["C", "O", "N", "S", "T", "R", "A", "I", "N", "T", " ", "<identifier>", " ", "F", "O", "R", "E", "I", "G", "N", " ", "K", "E", "Y", " ", "(", "<column_list>", ")", " ", "R", "E", "F", "E", "R", "E", "N", "C", "E", "S", " ", "<table_name>", " ", "(", "<column_list>", ")"]
+    ],
+    "<table_options>": [
+      ["E", "N", "G", "I", "N", "E", "=", "I", "n", "n", "o", "D", "B"],
+      ["E", "N", "G", "I", "N", "E", "=", "M", "y", "I", "S", "A", "M"],
+      ["D", "E", "F", "A", "U", "L", "T", " ", "C", "H", "A", "R", "S", "E", "T", "=", "u", "t", "f", "8"],
+      ["D", "E", "F", "A", "U", "L", "T", " ", "C", "H", "A", "R", "S", "E", "T", "=", "u", "t", "f", "8", "m", "b", "4"],
+      ["E", "N", "G", "I", "N", "E", "=", "I", "n", "n", "o", "D", "B", " ", "D", "E", "F", "A", "U", "L", "T", " ", "C", "H", "A", "R", "S", "E", "T", "=", "u", "t", "f", "8", "m", "b", "4"]
+    ],
+    "<data_type>": [
+      ["I", "N", "T", "E", "G", "E", "R"],
+      ["I", "N", "T"],
+      ["S", "M", "A", "L", "L", "I", "N", "T"],
+      ["B", "I", "G", "I", "N", "T"],
+      ["T", "I", "N", "Y", "I", "N", "T"],
+      ["N", "U", "M", "E", "R", "I", "C"],
+      ["N", "U", "M", "E", "R", "I", "C", "(", "<unsigned_int>", ")"],
+      ["N", "U", "M", "E", "R", "I", "C", "(", "<unsigned_int>", ",", " ", "<unsigned_int>", ")"],
+      ["D", "E", "C", "I", "M", "A", "L"],
+      ["D", "E", "C", "I", "M", "A", "L", "(", "<unsigned_int>", ")"],
+      ["D", "E", "C", "I", "M", "A", "L", "(", "<unsigned_int>", ",", " ", "<unsigned_int>", ")"],
+      ["F", "L", "O", "A", "T"],
+      ["F", "L", "O", "A", "T", "(", "<unsigned_int>", ")"],
+      ["R", "E", "A", "L"],
+      ["D", "O", "U", "B", "L", "E", " ", "P", "R", "E", "C", "I", "S", "I", "O", "N"],
+      ["D", "O", "U", "B", "L", "E"],
+      ["B", "O", "O", "L", "E", "A", "N"],
+      ["B", "O", "O", "L"],
+      ["S", "E", "R", "I", "A", "L"],
+      ["B", "I", "G", "S", "E", "R", "I", "A", "L"],
+      ["S", "M", "A", "L", "L", "S", "E", "R", "I", "A", "L"],
+      ["C", "H", "A", "R", "(", "<unsigned_int>", ")"],
+      ["C", "H", "A", "R", "A", "C", "T", "E", "R", "(", "<unsigned_int>", ")"],
+      ["V", "A", "R", "C", "H", "A", "R", "(", "<unsigned_int>", ")"],
+      ["C", "H", "A", "R", "A", "C", "T", "E", "R", " ", "V", "A", "R", "Y", "I", "N", "G", "(", "<unsigned_int>", ")"],
+      ["T", "E", "X", "T"],
+      ["C", "L", "O", "B"],
+      ["N", "C", "H", "A", "R", "(", "<unsigned_int>", ")"],
+      ["N", "V", "A", "R", "C", "H", "A", "R", "(", "<unsigned_int>", ")"],
+      ["B", "L", "O", "B"],
+      ["B", "Y", "T", "E", "A"],
+      ["B", "I", "N", "A", "R", "Y", "(", "<unsigned_int>", ")"],
+      ["V", "A", "R", "B", "I", "N", "A", "R", "Y", "(", "<unsigned_int>", ")"],
+      ["D", "A", "T", "E"],
+      ["T", "I", "M", "E"],
+      ["T", "I", "M", "E", "S", "T", "A", "M", "P"],
+      ["T", "I", "M", "E", " ", "W", "I", "T", "H", " ", "T", "I", "M", "E", " ", "Z", "O", "N", "E"],
+      ["T", "I", "M", "E", "S", "T", "A", "M", "P", " ", "W", "I", "T", "H", " ", "T", "I", "M", "E", " ", "Z", "O", "N", "E"],
+      ["I", "N", "T", "E", "R", "V", "A", "L"],
+      ["J", "S", "O", "N"],
+      ["J", "S", "O", "N", "B"],
+      ["<data_type>", "[", "]"],
+      ["A", "R", "R", "A", "Y"],
+      ["U", "U", "I", "D"]
+    ],
+    "<drop_table_statement>": [
+      ["D", "R", "O", "P", " ", "T", "A", "B", "L", "E", " ", "<table_name>"],
+      ["D", "R", "O", "P", " ", "T", "A", "B", "L", "E", " ", "I", "F", " ", "E", "X", "I", "S", "T", "S", " ", "<table_name>"],
+      ["D", "R", "O", "P", " ", "T", "A", "B", "L", "E", " ", "<table_name>", " ", "C", "A", "S", "C", "A", "D", "E"],
+      ["D", "R", "O", "P", " ", "T", "A", "B", "L", "E", " ", "<table_name>", " ", "R", "E", "S", "T", "R", "I", "C", "T"],
+      ["D", "R", "O", "P", " ", "T", "A", "B", "L", "E", " ", "I", "F", " ", "E", "X", "I", "S", "T", "S", " ", "<table_name>", " ", "C", "A", "S", "C", "A", "D", "E"]
+    ],
+    "<alter_table_statement>": [
+      ["A", "L", "T", "E", "R", " ", "T", "A", "B", "L", "E", " ", "<table_name>", " ", "A", "D", "D", " ", "C", "O", "L", "U", "M", "N", " ", "<column_def>"],
+      ["A", "L", "T", "E", "R", " ", "T", "A", "B", "L", "E", " ", "<table_name>", " ", "A", "D", "D", " ", "<column_def>"],
+      ["A", "L", "T", "E", "R", " ", "T", "A", "B", "L", "E", " ", "<table_name>", " ", "D", "R", "O", "P", " ", "C", "O", "L", "U", "M", "N", " ", "<column_name>"],
+      ["A", "L", "T", "E", "R", " ", "T", "A", "B", "L", "E", " ", "<table_name>", " ", "D", "R", "O", "P", " ", "C", "O", "L", "U", "M", "N", " ", "I", "F", " ", "E", "X", "I", "S", "T", "S", " ", "<column_name>"],
+      ["A", "L", "T", "E", "R", " ", "T", "A", "B", "L", "E", " ", "<table_name>", " ", "D", "R", "O", "P", " ", "C", "O", "L", "U", "M", "N", " ", "<column_name>", " ", "C", "A", "S", "C", "A", "D", "E"],
+      ["A", "L", "T", "E", "R", " ", "T", "A", "B", "L", "E", " ", "<table_name>", " ", "R", "E", "N", "A", "M", "E", " ", "C", "O", "L", "U", "M", "N", " ", "<column_name>", " ", "T", "O", " ", "<column_name>"],
+      ["A", "L", "T", "E", "R", " ", "T", "A", "B", "L", "E", " ", "<table_name>", " ", "R", "E", "N", "A", "M", "E", " ", "T", "O", " ", "<table_name>"],
+      ["A", "L", "T", "E", "R", " ", "T", "A", "B", "L", "E", " ", "<table_name>", " ", "A", "L", "T", "E", "R", " ", "C", "O", "L", "U", "M", "N", " ", "<column_name>", " ", "S", "E", "T", " ", "D", "E", "F", "A", "U", "L", "T", " ", "<expr>"],
+      ["A", "L", "T", "E", "R", " ", "T", "A", "B", "L", "E", " ", "<table_name>", " ", "A", "L", "T", "E", "R", " ", "C", "O", "L", "U", "M", "N", " ", "<column_name>", " ", "D", "R", "O", "P", " ", "D", "E", "F", "A", "U", "L", "T"],
+      ["A", "L", "T", "E", "R", " ", "T", "A", "B", "L", "E", " ", "<table_name>", " ", "A", "L", "T", "E", "R", " ", "C", "O", "L", "U", "M", "N", " ", "<column_name>", " ", "S", "E", "T", " ", "N", "O", "T", " ", "N", "U", "L", "L"],
+      ["A", "L", "T", "E", "R", " ", "T", "A", "B", "L", "E", " ", "<table_name>", " ", "A", "L", "T", "E", "R", " ", "C", "O", "L", "U", "M", "N", " ", "<column_name>", " ", "D", "R", "O", "P", " ", "N", "O", "T", " ", "N", "U", "L", "L"],
+      ["A", "L", "T", "E", "R", " ", "T", "A", "B", "L", "E", " ", "<table_name>", " ", "A", "L", "T", "E", "R", " ", "C", "O", "L", "U", "M", "N", " ", "<column_name>", " ", "T", "Y", "P", "E", " ", "<data_type>"],
+      ["A", "L", "T", "E", "R", " ", "T", "A", "B", "L", "E", " ", "<table_name>", " ", "A", "D", "D", " ", "<table_constraint>"],
+      ["A", "L", "T", "E", "R", " ", "T", "A", "B", "L", "E", " ", "<table_name>", " ", "D", "R", "O", "P", " ", "C", "O", "N", "S", "T", "R", "A", "I", "N", "T", " ", "<identifier>"],
+      ["A", "L", "T", "E", "R", " ", "T", "A", "B", "L", "E", " ", "<table_name>", " ", "D", "R", "O", "P", " ", "C", "O", "N", "S", "T", "R", "A", "I", "N", "T", " ", "I", "F", " ", "E", "X", "I", "S", "T", "S", " ", "<identifier>"],
+      ["A", "L", "T", "E", "R", " ", "T", "A", "B", "L", "E", " ", "<table_name>", " ", "M", "O", "D", "I", "F", "Y", " ", "C", "O", "L", "U", "M", "N", " ", "<column_def>"],
+      ["A", "L", "T", "E", "R", " ", "T", "A", "B", "L", "E", " ", "<table_name>", " ", "C", "H", "A", "N", "G", "E", " ", "C", "O", "L", "U", "M", "N", " ", "<column_name>", " ", "<column_def>"]
+    ],
+    "<create_index_statement>": [
+      ["C", "R", "E", "A", "T", "E", " ", "I", "N", "D", "E", "X", " ", "<identifier>", " ", "O", "N", " ", "<table_name>", " ", "(", "<column_list>", ")"],
+      ["C", "R", "E", "A", "T", "E", " ", "U", "N", "I", "Q", "U", "E", " ", "I", "N", "D", "E", "X", " ", "<identifier>", " ", "O", "N", " ", "<table_name>", " ", "(", "<column_list>", ")"],
+      ["C", "R", "E", "A", "T", "E", " ", "I", "N", "D", "E", "X", " ", "I", "F", " ", "N", "O", "T", " ", "E", "X", "I", "S", "T", "S", " ", "<identifier>", " ", "O", "N", " ", "<table_name>", " ", "(", "<column_list>", ")"],
+      ["C", "R", "E", "A", "T", "E", " ", "I", "N", "D", "E", "X", " ", "<identifier>", " ", "O", "N", " ", "<table_name>", " ", "(", "<index_column_list>", ")"],
+      ["C", "R", "E", "A", "T", "E", " ", "I", "N", "D", "E", "X", " ", "<identifier>", " ", "O", "N", " ", "<table_name>", " ", "U", "S", "I", "N", "G", " ", "<index_method>", " ", "(", "<column_list>", ")"]
+    ],
+    "<index_column_list>": [
+      ["<index_column>"],
+      ["<index_column_list>", ",", " ", "<index_column>"]
+    ],
+    "<index_column>": [
+      ["<column_name>"],
+      ["<column_name>", " ", "A", "S", "C"],
+      ["<column_name>", " ", "D", "E", "S", "C"],
+      ["<expr>"]
+    ],
+    "<index_method>": [
+      ["b", "t", "r", "e", "e"],
+      ["h", "a", "s", "h"],
+      ["g", "i", "s", "t"],
+      ["g", "i", "n"],
+      ["s", "p", "g", "i", "s", "t"],
+      ["b", "r", "i", "n"]
+    ],
+    "<drop_index_statement>": [
+      ["D", "R", "O", "P", " ", "I", "N", "D", "E", "X", " ", "<identifier>"],
+      ["D", "R", "O", "P", " ", "I", "N", "D", "E", "X", " ", "I", "F", " ", "E", "X", "I", "S", "T", "S", " ", "<identifier>"],
+      ["D", "R", "O", "P", " ", "I", "N", "D", "E", "X", " ", "<identifier>", " ", "O", "N", " ", "<table_name>"]
+    ],
+    "<create_view_statement>": [
+      ["C", "R", "E", "A", "T", "E", " ", "V", "I", "E", "W", " ", "<table_name>", " ", "A", "S", " ", "<query_expression>"],
+      ["C", "R", "E", "A", "T", "E", " ", "O", "R", " ", "R", "E", "P", "L", "A", "C", "E", " ", "V", "I", "E", "W", " ", "<table_name>", " ", "A", "S", " ", "<query_expression>"],
+      ["C", "R", "E", "A", "T", "E", " ", "V", "I", "E", "W", " ", "<table_name>", " ", "(", "<column_list>", ")", " ", "A", "S", " ", "<query_expression>"],
+      ["C", "R", "E", "A", "T", "E", " ", "T", "E", "M", "P", "O", "R", "A", "R", "Y", " ", "V", "I", "E", "W", " ", "<table_name>", " ", "A", "S", " ", "<query_expression>"]
+    ],
+    "<drop_view_statement>": [
+      ["D", "R", "O", "P", " ", "V", "I", "E", "W", " ", "<table_name>"],
+      ["D", "R", "O", "P", " ", "V", "I", "E", "W", " ", "I", "F", " ", "E", "X", "I", "S", "T", "S", " ", "<table_name>"],
+      ["D", "R", "O", "P", " ", "V", "I", "E", "W", " ", "<table_name>", " ", "C", "A", "S", "C", "A", "D", "E"]
+    ],
+    "<grant_statement>": [
+      ["G", "R", "A", "N", "T", " ", "<privilege_list>", " ", "O", "N", " ", "<table_name>", " ", "T", "O", " ", "<grantee>"],
+      ["G", "R", "A", "N", "T", " ", "<privilege_list>", " ", "O", "N", " ", "<table_name>", " ", "T", "O", " ", "<grantee>", " ", "W", "I", "T", "H", " ", "G", "R", "A", "N", "T", " ", "O", "P", "T", "I", "O", "N"],
+      ["G", "R", "A", "N", "T", " ", "<privilege_list>", " ", "O", "N", " ", "A", "L", "L", " ", "T", "A", "B", "L", "E", "S", " ", "I", "N", " ", "S", "C", "H", "E", "M", "A", " ", "<identifier>", " ", "T", "O", " ", "<grantee>"]
+    ],
+    "<revoke_statement>": [
+      ["R", "E", "V", "O", "K", "E", " ", "<privilege_list>", " ", "O", "N", " ", "<table_name>", " ", "F", "R", "O", "M", " ", "<grantee>"],
+      ["R", "E", "V", "O", "K", "E", " ", "G", "R", "A", "N", "T", " ", "O", "P", "T", "I", "O", "N", " ", "F", "O", "R", " ", "<privilege_list>", " ", "O", "N", " ", "<table_name>", " ", "F", "R", "O", "M", " ", "<grantee>"]
+    ],
+    "<privilege_list>": [
+      ["<privilege>"],
+      ["<privilege_list>", ",", " ", "<privilege>"],
+      ["A", "L", "L"],
+      ["A", "L", "L", " ", "P", "R", "I", "V", "I", "L", "E", "G", "E", "S"]
+    ],
+    "<privilege>": [
+      ["S", "E", "L", "E", "C", "T"],
+      ["I", "N", "S", "E", "R", "T"],
+      ["U", "P", "D", "A", "T", "E"],
+      ["D", "E", "L", "E", "T", "E"],
+      ["R", "E", "F", "E", "R", "E", "N", "C", "E", "S"],
+      ["T", "R", "I", "G", "G", "E", "R"],
+      ["T", "R", "U", "N", "C", "A", "T", "E"],
+      ["E", "X", "E", "C", "U", "T", "E"],
+      ["S", "E", "L", "E", "C", "T", " ", "(", "<column_list>", ")"],
+      ["U", "P", "D", "A", "T", "E", " ", "(", "<column_list>", ")"]
+    ],
+    "<grantee>": [
+      ["P", "U", "B", "L", "I", "C"],
+      ["<identifier>"],
+      ["G", "R", "O", "U", "P", " ", "<identifier>"],
+      ["C", "U", "R", "R", "E", "N", "T", "_", "U", "S", "E", "R"]
+    ],
+    "<transaction_statement>": [
+      ["B", "E", "G", "I", "N"],
+      ["B", "E", "G", "I", "N", " ", "T", "R", "A", "N", "S", "A", "C", "T", "I", "O", "N"],
+      ["B", "E", "G", "I", "N", " ", "W", "O", "R", "K"],
+      ["S", "T", "A", "R", "T", " ", "T", "R", "A", "N", "S", "A", "C", "T", "I", "O", "N"],
+      ["S", "T", "A", "R", "T", " ", "T", "R", "A", "N", "S", "A", "C", "T", "I", "O", "N", " ", "R", "E", "A", "D", " ", "O", "N", "L", "Y"],
+      ["S", "T", "A", "R", "T", " ", "T", "R", "A", "N", "S", "A", "C", "T", "I", "O", "N", " ", "R", "E", "A", "D", " ", "W", "R", "I", "T", "E"],
+      ["S", "T", "A", "R", "T", " ", "T", "R", "A", "N", "S", "A", "C", "T", "I", "O", "N", " ", "I", "S", "O", "L", "A", "T", "I", "O", "N", " ", "L", "E", "V", "E", "L", " ", "R", "E", "A", "D", " ", "U", "N", "C", "O", "M", "M", "I", "T", "T", "E", "D"],
+      ["S", "T", "A", "R", "T", " ", "T", "R", "A", "N", "S", "A", "C", "T", "I", "O", "N", " ", "I", "S", "O", "L", "A", "T", "I", "O", "N", " ", "L", "E", "V", "E", "L", " ", "R", "E", "A", "D", " ", "C", "O", "M", "M", "I", "T", "T", "E", "D"],
+      ["S", "T", "A", "R", "T", " ", "T", "R", "A", "N", "S", "A", "C", "T", "I", "O", "N", " ", "I", "S", "O", "L", "A", "T", "I", "O", "N", " ", "L", "E", "V", "E", "L", " ", "R", "E", "P", "E", "A", "T", "A", "B", "L", "E", " ", "R", "E", "A", "D"],
+      ["S", "T", "A", "R", "T", " ", "T", "R", "A", "N", "S", "A", "C", "T", "I", "O", "N", " ", "I", "S", "O", "L", "A", "T", "I", "O", "N", " ", "L", "E", "V", "E", "L", " ", "S", "E", "R", "I", "A", "L", "I", "Z", "A", "B", "L", "E"],
+      ["C", "O", "M", "M", "I", "T"],
+      ["C", "O", "M", "M", "I", "T", " ", "W", "O", "R", "K"],
+      ["C", "O", "M", "M", "I", "T", " ", "T", "R", "A", "N", "S", "A", "C", "T", "I", "O", "N"],
+      ["R", "O", "L", "L", "B", "A", "C", "K"],
+      ["R", "O", "L", "L", "B", "A", "C", "K", " ", "W", "O", "R", "K"],
+      ["R", "O", "L", "L", "B", "A", "C", "K", " ", "T", "R", "A", "N", "S", "A", "C", "T", "I", "O", "N"],
+      ["S", "A", "V", "E", "P", "O", "I", "N", "T", " ", "<identifier>"],
+      ["R", "O", "L", "L", "B", "A", "C", "K", " ", "T", "O", " ", "S", "A", "V", "E", "P", "O", "I", "N", "T", " ", "<identifier>"],
+      ["R", "E", "L", "E", "A", "S", "E", " ", "S", "A", "V", "E", "P", "O", "I", "N", "T", " ", "<identifier>"],
+      ["S", "E", "T", " ", "T", "R", "A", "N", "S", "A", "C", "T", "I", "O", "N", " ", "R", "E", "A", "D", " ", "O", "N", "L", "Y"],
+      ["S", "E", "T", " ", "T", "R", "A", "N", "S", "A", "C", "T", "I", "O", "N", " ", "R", "E", "A", "D", " ", "W", "R", "I", "T", "E"],
+      ["S", "E", "T", " ", "T", "R", "A", "N", "S", "A", "C", "T", "I", "O", "N", " ", "I", "S", "O", "L", "A", "T", "I", "O", "N", " ", "L", "E", "V", "E", "L", " ", "S", "E", "R", "I", "A", "L", "I", "Z", "A", "B", "L", "E"]
+    ],
+    "<literal>": [
+      ["<string_literal>"],
+      ["<numeric_literal>"],
+      ["<boolean_literal>"],
+      ["N", "U", "L", "L"],
+      ["<date_literal>"],
+      ["<time_literal>"],
+      ["<timestamp_literal>"],
+      ["<interval_literal>"],
+      ["<array_literal>"]
+    ],
+    "<string_literal>": [
+      ["'", "<", "s", "t", "r", "i", "n", "g", "_", "c", "h", "a", "r", "s", ">", "'"],
+      ["'", "'"],
+      ["E", "'", "<", "e", "s", "c", "a", "p", "e", "d", "_", "s", "t", "r", "i", "n", "g", "_", "c", "h", "a", "r", "s", ">", "'"],
+      ["N", "'", "<", "s", "t", "r", "i", "n", "g", "_", "c", "h", "a", "r", "s", ">", "'"],
+      ["B", "'", "<", "b", "i", "n", "a", "r", "y", "_", "d", "i", "g", "i", "t", "s", ">", "'"],
+      ["X", "'", "<", "h", "e", "x", "_", "d", "i", "g", "i", "t", "s", ">", "'"]
+    ],
+    "<numeric_literal>": [
+      ["<unsigned_int>"],
+      ["<unsigned_int>", ".", "<unsigned_int>"],
+      ["-", "<unsigned_int>"],
+      ["-", "<unsigned_int>", ".", "<unsigned_int>"],
+      ["<unsigned_int>", "e", "<unsigned_int>"],
+      ["<unsigned_int>", ".", "<unsigned_int>", "e", "<unsigned_int>"],
+      ["<unsigned_int>", "e", "-", "<unsigned_int>"]
+    ],
+    "<boolean_literal>": [
+      ["T", "R", "U", "E"],
+      ["F", "A", "L", "S", "E"],
+      ["U", "N", "K", "N", "O", "W", "N"]
+    ],
+    "<date_literal>": [
+      ["D", "A", "T", "E", " ", "'", "<date_string>", "'"]
+    ],
+    "<time_literal>": [
+      ["T", "I", "M", "E", " ", "'", "<time_string>", "'"]
+    ],
+    "<timestamp_literal>": [
+      ["T", "I", "M", "E", "S", "T", "A", "M", "P", " ", "'", "<date_string>", " ", "<time_string>", "'"]
+    ],
+    "<interval_literal>": [
+      ["I", "N", "T", "E", "R", "V", "A", "L", " ", "'", "<unsigned_int>", "'", " ", "Y", "E", "A", "R"],
+      ["I", "N", "T", "E", "R", "V", "A", "L", " ", "'", "<unsigned_int>", "'", " ", "M", "O", "N", "T", "H"],
+      ["I", "N", "T", "E", "R", "V", "A", "L", " ", "'", "<unsigned_int>", "'", " ", "D", "A", "Y"],
+      ["I", "N", "T", "E", "R", "V", "A", "L", " ", "'", "<unsigned_int>", "'", " ", "H", "O", "U", "R"],
+      ["I", "N", "T", "E", "R", "V", "A", "L", " ", "'", "<unsigned_int>", "'", " ", "M", "I", "N", "U", "T", "E"],
+      ["I", "N", "T", "E", "R", "V", "A", "L", " ", "'", "<unsigned_int>", "'", " ", "S", "E", "C", "O", "N", "D"],
+      ["I", "N", "T", "E", "R", "V", "A", "L", " ", "'", "<unsigned_int>", "-", "<unsigned_int>", "'", " ", "Y", "E", "A", "R", " ", "T", "O", " ", "M", "O", "N", "T", "H"],
+      ["I", "N", "T", "E", "R", "V", "A", "L", " ", "'", "<unsigned_int>", " ", "<unsigned_int>", ":", "<unsigned_int>", ":", "<unsigned_int>", "'", " ", "D", "A", "Y", " ", "T", "O", " ", "S", "E", "C", "O", "N", "D"]
+    ],
+    "<array_literal>": [
+      ["A", "R", "R", "A", "Y", "[", "]"],
+      ["A", "R", "R", "A", "Y", "[", "<expr_list>", "]"],
+      ["'", "{", "<expr_list>", "}", "'"]
+    ],
+    "<column_ref>": [
+      ["<column_name>"],
+      ["<table_name>", ".", "<column_name>"],
+      ["<identifier>", ".", "<identifier>", ".", "<column_name>"]
+    ],
+    "<column_list>": [
+      ["<column_name>"],
+      ["<column_list>", ",", " ", "<column_name>"]
+    ],
+    "<table_name>": [
+      ["<identifier>"],
+      ["<identifier>", ".", "<identifier>"],
+      ["<identifier>", ".", "<identifier>", ".", "<identifier>"]
+    ],
+    "<column_name>": [
+      ["<identifier>"]
+    ],
+    "<identifier>": [
+      ["t"],
+      ["t", "1"],
+      ["t", "2"],
+      ["t", "3"],
+      ["a"],
+      ["b"],
+      ["c"],
+      ["d"],
+      ["i", "d"],
+      ["n", "a", "m", "e"],
+      ["v", "a", "l", "u", "e"],
+      ["d", "a", "t", "a"],
+      ["k", "e", "y"],
+      ["c", "o", "l"],
+      ["c", "o", "l", "1"],
+      ["c", "o", "l", "2"],
+      ["t", "b", "l"],
+      ["t", "b", "l", "1"],
+      ["t", "b", "l", "2"],
+      ["x"],
+      ["y"],
+      ["z"],
+      ["f", "o", "o"],
+      ["b", "a", "r"],
+      ["b", "a", "z"],
+      ["\"", "<identifier_body>", "\""],
+      ["`", "<identifier_body>", "`"]
+    ],
+    "<identifier_body>": [
+      ["<simple_id>"],
+      ["<simple_id>", " ", "<simple_id>"]
+    ],
+    "<simple_id>": [
+      ["t"],
+      ["a"],
+      ["b"],
+      ["c"],
+      ["d"],
+      ["i", "d"],
+      ["n", "a", "m", "e"],
+      ["v", "a", "l", "u", "e"],
+      ["d", "a", "t", "a"],
+      ["k", "e", "y"],
+      ["c", "o", "l"],
+      ["t", "b", "l"],
+      ["i", "d", "x"],
+      ["v", "w"],
+      ["f", "o", "o"],
+      ["b", "a", "r"],
+      ["b", "a", "z"],
+      ["m", "y", "_", "t", "a", "b", "l", "e"],
+      ["m", "y", "_", "c", "o", "l"],
+      ["t", "e", "s", "t", "_", "d", "a", "t", "a"]
+    ],
+    "<unsigned_int>": [
+      ["0"],
+      ["1"],
+      ["2"],
+      ["3"],
+      ["5"],
+      ["1", "0"],
+      ["4", "2"],
+      ["1", "0", "0"],
+      ["2", "5", "5"],
+      ["1", "0", "0", "0"],
+      ["9", "9", "9", "9"]
+    ],
+    "<string_chars>": [
+      [],
+      ["a"],
+      ["b"],
+      ["h", "e", "l", "l", "o"],
+      ["w", "o", "r", "l", "d"],
+      ["f", "o", "o"],
+      ["b", "a", "r"],
+      ["t", "e", "s", "t"],
+      ["v", "a", "l", "u", "e"],
+      ["n", "a", "m", "e"],
+      ["i", "t", "'", "'", "s"],
+      ["h", "e", "l", "l", "o", " ", "w", "o", "r", "l", "d"],
+      ["f", "o", "o", " ", "b", "a", "r"],
+      ["2", "0", "2", "4", "-", "0", "1", "-", "0", "1"],
+      ["a", "b", "c", "1", "2", "3"]
+    ],
+    "<escaped_string_chars>": [
+      [],
+      ["h", "e", "l", "l", "o", "n", "w", "o", "r", "l", "d"],
+      ["t", "a", "b", "t", "h", "e", "r", "e"],
+      ["q", "u", "o", "t", "e", "'", "h", "e", "r", "e"],
+      ["b", "a", "c", "k", "s", "l", "a", "s", "h", "h", "e", "r", "e"]
+    ],
+    "<binary_digits>": [
+      ["0"],
+      ["1"],
+      ["0", "1", "0", "1"],
+      ["1", "1", "0", "0"],
+      ["1", "1", "1", "1", "0", "0", "0", "0"]
+    ],
+    "<hex_digits>": [
+      ["0", "0"],
+      ["F", "F"],
+      ["D", "E", "A", "D", "B", "E", "E", "F"],
+      ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"]
+    ],
+    "<date_string>": [
+      ["2", "0", "2", "4", "-", "0", "1", "-", "0", "1"],
+      ["2", "0", "2", "3", "-", "1", "2", "-", "3", "1"],
+      ["2", "0", "0", "0", "-", "0", "6", "-", "1", "5"],
+      ["1", "9", "9", "9", "-", "0", "1", "-", "0", "1"],
+      ["2", "0", "2", "4", "-", "0", "2", "-", "2", "9"]
+    ],
+    "<time_string>": [
+      ["0", "0", ":", "0", "0", ":", "0", "0"],
+      ["1", "2", ":", "0", "0", ":", "0", "0"],
+      ["2", "3", ":", "5", "9", ":", "5", "9"],
+      ["0", "9", ":", "3", "0", ":", "0", "0"],
+      ["1", "5", ":", "4", "5", ":", "3", "0"]
+    ]
+  }
+}

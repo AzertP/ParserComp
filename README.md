@@ -27,8 +27,7 @@ cargo run --release --bin benchmark_csv   # writes results/*.csv
 python3 plotter.py                         # writes plot/*.pdf
 ```
 
-See [INSTALL.md](INSTALL.md) for detailed prerequisite setup (Rust, Python, m4ri).  
-See [CLAIMS.md](CLAIMS.md) for a figure-to-script/data mapping.
+See [INSTALL.md](INSTALL.md) for detailed prerequisite setup (Rust, Python, m4ri).
 
 ## Repository structure
 
@@ -52,7 +51,6 @@ See [CLAIMS.md](CLAIMS.md) for a figure-to-script/data mapping.
 ├── requirements.txt              Python dependencies for plotter
 ├── rust-toolchain.toml           
 ├── INSTALL.md                    Installation guide
-└── CLAIMS.md                     Maps paper figures to data and scripts
 ```
 
 ## Parser implementations

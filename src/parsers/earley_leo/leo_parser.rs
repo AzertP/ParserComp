@@ -1,0 +1,922 @@
+// Earley parser implementation with Leo Optimizations
+use crate::grammars::{NumSymbol, NumericGrammar, load_grammar_from_file};
+use std::collections::{HashMap, HashSet};
+use std::rc::Rc;
+use crate::parse_tree::{ParseTree, ParseSymbol};
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+struct RuleID(usize);
+
+struct Rule {
+    lhs: NumSymbol,
+    rhs: Vec<NumSymbol>,
+}
+
+struct Grammar {
+    rules: Vec<Rule>,
+    lookup: HashMap<NumSymbol, Vec<RuleID>>,
+}
+
+impl Grammar {
+    fn from_numeric(grammar: &NumericGrammar) -> Self {
+        let mut rules = Vec::new();
+        
+        let mut lhs_keys: Vec<_> = grammar.rules.keys().collect();
+        let mut lookup: HashMap<NumSymbol, Vec<RuleID>> = HashMap::new();
+        lhs_keys.sort();
+
+        for lhs in lhs_keys {
+            let rhs_list = &grammar.rules[lhs];
+            let mut rule_ids = Vec::new();
+            for rhs in rhs_list {
+                let rule = Rule {
+                    lhs: NumSymbol::NonTerminal(*lhs),
+                    rhs: rhs.iter().map(|&s| s).collect(),
+                };
+                let rule_id = RuleID(rules.len());
+                rule_ids.push(rule_id);
+                rules.push(rule);
+            }
+            lookup.insert(NumSymbol::NonTerminal(*lhs), rule_ids);
+        }
+
+        Grammar { rules, lookup }
+    }
+
+    pub fn calculate_nullables(&self) -> HashSet<NumSymbol> {
+        let mut nullables = HashSet::new();
+        let mut changed = true;
+
+        while changed {
+            changed = false;
+
+            for rule in &self.rules {
+                if nullables.contains(&rule.lhs) {
+                    continue;
+                }
+
+                let is_nullable = rule.rhs.iter().all(|sym| {
+                    match sym {
+                        NumSymbol::Terminal(_) => false,
+                        NumSymbol::NonTerminal(_) => nullables.contains(sym),
+                    }
+                });
+
+                if is_nullable {
+                    nullables.insert(rule.lhs);
+                    changed = true;
+                }
+            }
+        }
+
+        nullables
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+struct State {
+    rule_id: RuleID,
+    dot: usize,
+    s_col: ColumnID,
+}
+
+impl State {
+    fn new(rule_id: RuleID, dot: usize, s_col: ColumnID) -> Self {
+        State { rule_id, dot, s_col }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+struct ColumnID(usize);
+
+struct Column {
+    _id: ColumnID,
+    token: Option<NumSymbol>,
+    states: Vec<State>,
+    lookup: HashMap<State, usize>,
+    /// Transitive items for Leo optimization: Maps (Symbol) -> State (The Top State)
+    /// Used to memoize the top of a right-recursive chain.
+    transitives: HashMap<NumSymbol, State>,
+}
+
+impl Column {
+    fn new(id: ColumnID, token: Option<NumSymbol>) -> Self {
+        Column {
+            _id: id,
+            token,
+            states: Vec::new(),
+            lookup: HashMap::new(),
+            transitives: HashMap::new(),
+        }
+    }
+
+    fn add_state(&mut self, state: State) -> bool {
+        if self.lookup.contains_key(&state) {
+            return false;
+        }
+        let index = self.states.len();
+        self.states.push(state);
+        self.lookup.insert(state, index);
+        true
+    }
+
+    fn add_transitive(&mut self, symbol: NumSymbol, state: State) {
+        // In Python's Leo logic, we store the resulting TOP state mapped by the symbol that triggered it.
+        self.transitives.insert(symbol, state);
+    }
+}
+
+struct Chart {
+    columns: Vec<Column>,
+}
+
+impl Chart {
+    fn new(size: usize) -> Self {
+        let columns = Vec::with_capacity(size);
+        Chart { columns }
+    }
+}
+
+pub struct LeoParser {
+    grammar: Grammar,
+    num_grammar: NumericGrammar,
+    start_symbol: NumSymbol,
+    nullables: HashSet<NumSymbol>,
+    input: Vec<NumSymbol>,
+    chart: Chart,
+    
+    // Leo Optimization: _postdots
+    // Tracks the parent-child relationship in deterministic reductions.
+    // Key: The Parent State (at the dot before reduction)
+    // Value: List of Child States (completed) that reduced to this parent, along with their end column.
+    postdots: HashMap<State, Vec<(State, ColumnID)>>,
+    
+    // Track states that were added via Leo optimization, to speed up expansion.
+    leo_events: Vec<(State, usize)>,
+
+    // Reverse Index: Maps a State to the list of Column IDs (indices) where it appears.
+    // Used for efficient Implicit Reconstruction lookup.
+    state_to_cols: HashMap<State, Vec<usize>>,
+}
+
+impl LeoParser {
+    pub fn new(grammar: NumericGrammar) -> Self {
+        let num_grammar = grammar.clone();
+        let grammar_converted = Grammar::from_numeric(&grammar);
+        let nullables = grammar_converted.calculate_nullables();
+        
+        LeoParser { 
+            grammar: grammar_converted, 
+            num_grammar,
+            start_symbol: NumSymbol::NonTerminal(grammar.start),
+            nullables,
+            input: Vec::new(),
+            chart: Chart::new(0),
+            postdots: HashMap::new(),
+            leo_events: Vec::new(),
+            state_to_cols: HashMap::new(),
+        }
+    }
+
+    fn chart_parse(&mut self, input: Vec<NumSymbol>) {
+        self.input = input;
+        self.postdots.clear(); // Reset optimizations for new parse
+        self.leo_events.clear();
+        self.state_to_cols.clear();
+
+        let mut chart = Chart::new(self.input.len() + 1);
+
+        // Initialize Column 0
+        let first_column = Column::new(ColumnID(0), None);
+        chart.columns.push(first_column);
+        
+        // Initialize other columns
+        for (i, token) in self.input.iter().enumerate() {
+            let column = Column::new(ColumnID(i + 1), Some(*token));
+            chart.columns.push(column);
+        }
+
+        // Seed Column 0
+        if let Some(start_rules) = self.grammar.lookup.get(&self.start_symbol) {
+            for &rule_id in start_rules {
+                let state = State::new(rule_id, 0, ColumnID(0));
+                chart.columns[0].add_state(state);
+                self.state_to_cols.entry(state).or_default().push(0);
+            }
+        }
+        self.chart = chart;
+
+        self.fill_chart();
+    }
+
+    pub fn recognize_on(&mut self, input: Vec<NumSymbol>) -> bool {
+        self.chart_parse(input);
+
+        let last_col_idx = self.chart.columns.len() - 1;
+        for state in &self.chart.columns[last_col_idx].states {
+            if self.is_complete(state) {
+                let rule = &self.grammar.rules[state.rule_id.0];
+                if rule.lhs == self.start_symbol && state.s_col == ColumnID(0) {
+                    return true;
+                }
+            }
+        }
+        false
+    }
+    
+    // Helper to add state and update reverse index
+    fn add_state(&mut self, col_idx: usize, state: State) -> bool {
+        if self.chart.columns[col_idx].add_state(state) {
+            self.state_to_cols.entry(state).or_default().push(col_idx);
+            true
+        } else {
+            false
+        }
+    }
+
+    // =========================================================================
+    // Core Earley Loop
+    // =========================================================================
+
+    fn fill_chart(&mut self) {
+        let mut i = 0;
+        while i < self.chart.columns.len() {
+            let mut j = 0;
+            // Note: self.chart.columns[i].states grows during iteration
+            while j < self.chart.columns[i].states.len() {
+                let state = self.chart.columns[i].states[j]; 
+                
+                if self.is_complete(&state) {
+                    self.leo_complete(i, state);
+                } else {
+                    let next_sym = self.next_symbol(&state);
+                    if let Some(sym) = next_sym {
+                        match sym {
+                            NumSymbol::NonTerminal(_) => {
+                                self.predict(i, *sym, &state);
+                            }
+                            NumSymbol::Terminal(_) => {
+                                if i + 1 < self.chart.columns.len() {
+                                    self.scan(i + 1, &state, *sym);
+                                }
+                            }
+                        }
+                    }
+                }
+                j += 1;
+            }
+            i += 1;
+        }
+    }
+
+    // =========================================================================
+    // Standard Operations
+    // =========================================================================
+
+    fn predict(&mut self, col_idx: usize, sym: NumSymbol, state: &State) {
+        let rule_ids = if let Some(ids) = self.grammar.lookup.get(&sym) {
+            ids.clone()
+        } else {
+            Vec::new()
+        };
+
+        for rule_id in rule_ids {
+            let new_state = State::new(rule_id, 0, ColumnID(col_idx));
+            self.add_state(col_idx, new_state);
+        }
+
+        if self.nullables.contains(&sym) {
+            let advanced_state = self.advance(state);
+            self.add_state(col_idx, advanced_state);
+        }
+    }
+
+    fn scan(&mut self, col_idx: usize, state: &State, token: NumSymbol) {
+        if self.chart.columns[col_idx].token == Some(token) {
+            let advanced_state = self.advance(state);
+            self.add_state(col_idx, advanced_state);
+        }
+    }
+
+    fn earley_complete(&mut self, col_idx: usize, state: State) {
+        let state_name = self.grammar.rules[state.rule_id.0].lhs;
+        let s_col_idx = state.s_col.0;
+
+        // Find parents in start column waiting for this NonTerminal
+        let mut parents = Vec::new();
+        for st in &self.chart.columns[s_col_idx].states {
+            if let Some(next) = self.next_symbol(st) {
+                if *next == state_name {
+                    parents.push(*st);
+                }
+            }
+        }
+
+        for parent in parents {
+            let advanced = self.advance(&parent);
+            self.add_state(col_idx, advanced);
+        }
+    }
+
+    // =========================================================================
+    // Leo Optimizations
+    // =========================================================================
+
+    fn leo_complete(&mut self, col_idx: usize, state: State) {
+        if let Some(top_state) = self.deterministic_reduction(state, col_idx) {
+            self.add_state(col_idx, top_state);
+            self.leo_events.push((top_state, col_idx));
+        } else {
+            self.earley_complete(col_idx, state);
+        }
+    }
+
+    fn deterministic_reduction(&mut self, state: State, col_idx: usize) -> Option<State> {
+        self.get_top(state, col_idx)
+    }
+
+    /// Recursively finds the top-most item in a deterministic right-recursive chain.
+    fn get_top(&mut self, state_a: State, current_col_idx: usize) -> Option<State> {
+        // 1. Find the unique parent (state_b_inc) that satisfies deterministic constraints
+        let st_b_inc = self.uniq_postdot(state_a, current_col_idx)?;
+        
+        let lhs_a = self.grammar.rules[state_a.rule_id.0].lhs;
+        let col_s1_idx = state_a.s_col.0;
+
+        // 2. Memoization Check: Did we already find the top for this symbol at that start column?
+        // Note: We check col_s1 (where A started) for transitives of *A* (the child)
+        if let Some(&cached_top) = self.chart.columns[col_s1_idx].transitives.get(&lhs_a) {
+             return Some(cached_top);
+        }
+
+        // 3. Advance the parent to create the completed B state
+        let st_b = self.advance(&st_b_inc);
+
+        // 4. Recursive Step: Is there a deterministic path above B?
+        // If not, B itself is the top.
+        let top = self.get_top(st_b, current_col_idx).unwrap_or(st_b);
+
+        // 5. Cache the result (Memoization)
+        // Store in the column where A started
+        self.chart.columns[col_s1_idx].add_transitive(lhs_a, top);
+
+        Some(top)
+    }
+
+    /// Identifies if `state_a` contributes to a deterministic reduction path.
+    /// Returns the UNIQUE parent state (`st_B_inc`) if constraints are met.
+    fn uniq_postdot(&mut self, state_a: State, current_col_idx: usize) -> Option<State> {
+        let col_s1_idx = state_a.s_col.0;
+        let lhs_a = self.grammar.rules[state_a.rule_id.0].lhs;
+
+        // Filter parents in s_col that are waiting for lhs_a
+        let mut potential_parents = Vec::new();
+        for s in &self.chart.columns[col_s1_idx].states {
+             if let Some(next) = self.next_symbol(s) {
+                 if *next == lhs_a {
+                     potential_parents.push(*s);
+                 }
+             }
+        }
+        
+        // Constraint 1: Must be unique
+        if potential_parents.len() != 1 {
+            return None;
+        }
+
+        let parent = potential_parents[0];
+        // ... match remainder ...
+        
+        // Constraint 2: The parent must be "at the end" after consuming A.
+        // i.e., dot is at penultimate position.
+        let parent_rule_len = self.grammar.rules[parent.rule_id.0].rhs.len();
+        if parent.dot != parent_rule_len - 1 {
+            // println!("  Rejected by Constraint 2: parent dot {} len {}", parent.dot, parent_rule_len);
+            return None;
+        }
+
+        // FIX (from Python): Handle Collisions/History using postdots
+        // We record that 'parent' was completed by 'state_a' ending at 'current_col_idx'.
+        // This is needed later to "expand" the optimized forest.
+        let entry = self.postdots.entry(parent).or_insert_with(Vec::new);
+        
+        // Avoid duplicates
+        let item = (state_a, ColumnID(current_col_idx));
+        if !entry.contains(&item) {
+            entry.push(item);
+        }
+
+        Some(parent)
+    }
+    
+    /// Pure version of checking for a deterministic reduction parent check.
+    /// Used by ForestBuilder to reconstruct virtual states.
+    fn check_deterministic_parent(&self, child_rule_id: RuleID, child_start_col: usize) -> Option<State> {
+        let lhs_a = self.grammar.rules[child_rule_id.0].lhs;
+        let col_s1_idx = child_start_col;
+        
+        // Filter parents in s_col that are waiting for lhs_a
+        let mut potential_parents = Vec::new();
+        for s in &self.chart.columns[col_s1_idx].states {
+             if let Some(next) = self.next_symbol(s) {
+                 if *next == lhs_a {
+                     potential_parents.push(*s);
+                 }
+             }
+        }
+        
+        if potential_parents.len() != 1 {
+            return None;
+        }
+
+        let parent = potential_parents[0];
+        let parent_rule_len = self.grammar.rules[parent.rule_id.0].rhs.len();
+        if parent.dot != parent_rule_len - 1 {
+            return None;
+        }
+
+        Some(parent)
+    }
+
+    // =========================================================================
+    // Forest Expansion (Un-Optimization)
+    // =========================================================================
+
+    /// Re-populates the chart with intermediate states skipped by Leo optimization.
+    /// Must be called before SPPF construction.
+    fn expand_chart(&mut self) {
+        let mut visited = HashSet::new();
+        
+        // Optimize: Only iterate states that were actually added by Leo optimization.
+        // We traverse them in reverse order (LIFO) to respect dependencies, although
+        // recursive_expand handles dependencies vertically.
+        for (state, col_idx) in self.leo_events.clone().into_iter().rev() {
+            self.recursive_expand(state, col_idx, &mut visited);
+        }
+    }
+
+    fn recursive_expand(&mut self, state: State, end_col_idx: usize, visited: &mut HashSet<(State, usize)>) {
+        if visited.contains(&(state, end_col_idx)) {
+            return;
+        }
+        visited.insert((state, end_col_idx));
+
+        let back_state = self.back(&state);
+
+        // Retrieve children that reduced to `back_state`
+        // We clone to allow mutation of chart in loop
+        let children_opt = self.postdots.get(&back_state).cloned();
+
+        if let Some(children) = children_opt {
+            for (child_state, child_end_col) in children {
+                // Time constraint: Parent cannot end before child
+                if end_col_idx < child_end_col.0 {
+                    continue;
+                }
+
+                // Add the missing child to the chart
+                self.chart.columns[child_end_col.0].add_state(child_state);
+                
+                // Recurse to expand the child's own history
+                self.recursive_expand(child_state, child_end_col.0, visited);
+            }
+        }
+    }
+
+    // =========================================================================
+    // Helpers
+    // =========================================================================
+
+    fn is_complete(&self, state: &State) -> bool {
+        let rule = &self.grammar.rules[state.rule_id.0];
+        state.dot >= rule.rhs.len()
+    }
+
+    fn next_symbol(&self, state: &State) -> Option<&NumSymbol> {
+        let rule = &self.grammar.rules[state.rule_id.0];
+        rule.rhs.get(state.dot)
+    }
+
+    fn advance(&self, state: &State) -> State {
+        State {
+            rule_id: state.rule_id,
+            dot: state.dot + 1,
+            s_col: state.s_col,
+        }
+    }
+
+    fn back(&self, state: &State) -> State {
+        State {
+            rule_id: state.rule_id,
+            dot: state.dot.saturating_sub(1),
+            s_col: state.s_col,
+        }
+    }
+    
+    // =========================================================================
+    // Public API
+    // =========================================================================
+
+    pub fn parse(&mut self, input: Vec<u32>) -> Option<ParseTree> {
+        let symbols: Vec<NumSymbol> = input.iter().map(|&id| NumSymbol::Terminal(id)).collect();
+        if self.recognize_on(symbols) {
+            // Lazy expansion now handled by ForestBuilder
+            // self.expand_chart(); 
+            self.extract_one_tree()
+        } else {
+            None
+        }
+    }
+
+    pub fn parse_all(&mut self, input: Vec<u32>) -> Vec<ParseTree> {
+        let symbols: Vec<NumSymbol> = input.iter().map(|&id| NumSymbol::Terminal(id)).collect();
+        if self.recognize_on(symbols) {
+            self.expand_chart(); // Keeping full expansion for parse_all just in case
+            self.extract_all_trees()
+        } else {
+            Vec::new()
+        }
+    }
+
+    pub fn extract_one_tree(&self) -> Option<ParseTree> {
+        let root = self.build_sppf()?;
+        Some(self.sppf_to_tree_single(&root))
+    }
+
+    pub fn extract_all_trees(&self) -> Vec<ParseTree> {
+        if let Some(root) = self.build_sppf() {
+            self.sppf_to_trees_all(&root)
+        } else {
+            Vec::new()
+        }
+    }
+
+    pub fn build_sppf(&self) -> Option<Rc<SPPFNode>> {
+        if self.chart.columns.is_empty() { return None; }
+        
+        let last_col = self.chart.columns.len() - 1;
+        let success = self.chart.columns[last_col].states.iter().any(|s| 
+            self.is_complete(s) 
+            && self.grammar.rules[s.rule_id.0].lhs == self.start_symbol
+            && s.s_col.0 == 0
+        );
+
+        if !success { return None; }
+
+        let mut builder = ForestBuilder::new(self);
+        builder.build(self.start_symbol)
+    }
+
+    // --- Tree Extraction Helpers (Unchanged from original logic) ---
+
+    fn sppf_to_tree_single(&self, node: &SPPFNode) -> ParseTree {
+        if node.derivations.is_empty() {
+            ParseTree::leaf(&node.symbol.to_string().trim_matches('\''))
+        } else {
+            let children = node.derivations[0].iter()
+                .map(|c| self.sppf_to_tree_single(c))
+                .collect();
+            ParseTree::new(node.symbol.clone(), children)
+        }
+    }
+
+    fn sppf_to_trees_all(&self, node: &SPPFNode) -> Vec<ParseTree> {
+        if node.derivations.is_empty() {
+            return vec![ParseTree::leaf(&node.symbol.to_string().trim_matches('\''))];
+        }
+        let mut trees = Vec::new();
+        for deriv in &node.derivations {
+            let child_lists = self.cartesian_product(deriv);
+            for children in child_lists {
+                trees.push(ParseTree::new(node.symbol.clone(), children));
+            }
+        }
+        trees
+    }
+
+    fn cartesian_product(&self, nodes: &[Rc<SPPFNode>]) -> Vec<Vec<ParseTree>> {
+        if nodes.is_empty() { return vec![vec![]]; }
+        let first_trees = self.sppf_to_trees_all(&nodes[0]);
+        let rest_lists = self.cartesian_product(&nodes[1..]);
+        let mut result = Vec::new();
+        for t in &first_trees {
+            for l in &rest_lists {
+                let mut list = vec![t.clone()];
+                list.extend(l.clone());
+                result.push(list);
+            }
+        }
+        result
+    }
+
+    pub fn debug_chart(&self) {
+        println!("Chart Debug:");
+        for (i, col) in self.chart.columns.iter().enumerate() {
+            println!("Column {}: Token: {:?}", i, 
+                col.token.map(|t| self.num_grammar.symbol_to_str(&t).unwrap_or("?"))
+            );
+            for state in &col.states {
+                let rule = &self.grammar.rules[state.rule_id.0];
+                let lhs = self.num_grammar.symbol_to_str(&rule.lhs).unwrap_or("?");
+                let rhs: Vec<String> = rule.rhs.iter().map(|s| 
+                    self.num_grammar.symbol_to_str(s).unwrap_or("?").to_string()
+                ).collect();
+                
+                // Format: LHS -> . RHS (RuleID) from s_col
+                let mut rhs_str = String::new();
+                for (k, sym) in rhs.iter().enumerate() {
+                    if k == state.dot {
+                        rhs_str.push_str("• ");
+                    }
+                    rhs_str.push_str(sym);
+                    rhs_str.push(' ');
+                }
+                if state.dot == rhs.len() {
+                    rhs_str.push_str("•");
+                }
+                
+                println!("  {} -> {} ({:?}) from {}", lhs, rhs_str, state.rule_id, state.s_col.0);
+            }
+        }
+    }
+}
+
+// ============================================================================
+// SPPF Nodes & Builder
+// ============================================================================
+
+#[derive(Debug)]
+pub struct SPPFNode {
+    pub symbol: ParseSymbol,
+    pub start_idx: usize,
+    pub end_idx: usize,
+    pub derivations: Vec<Vec<Rc<SPPFNode>>>,
+}
+
+impl SPPFNode {
+    fn new(symbol: ParseSymbol, start: usize, end: usize) -> Self {
+        SPPFNode {
+            symbol,
+            start_idx: start,
+            end_idx: end,
+            derivations: Vec::new(),
+        }
+    }
+    
+    fn add_derivation(&mut self, children: Vec<Rc<SPPFNode>>) {
+        self.derivations.push(children);
+    }
+}
+
+struct ForestBuilder<'a> {
+    parser: &'a LeoParser,
+    memo: HashMap<(u32, bool, usize, usize), Rc<SPPFNode>>,
+    in_progress: HashSet<(u32, bool, usize, usize)>,
+}
+
+impl<'a> ForestBuilder<'a> {
+    fn new(parser: &'a LeoParser) -> Self {
+        ForestBuilder {
+            parser,
+            memo: HashMap::new(),
+            in_progress: HashSet::new(),
+        }
+    }
+
+    fn build(&mut self, root_symbol: NumSymbol) -> Option<Rc<SPPFNode>> {
+        let end = self.parser.chart.columns.len().saturating_sub(1);
+        self.find_node(root_symbol, 0, end, None)
+    }
+
+    fn find_node(&mut self, sym: NumSymbol, start: usize, end: usize, hint_state: Option<State>) -> Option<Rc<SPPFNode>> {
+        let key = (sym.id(), sym.is_terminal(), start, end);
+        
+        // If we have a hint, we might need to add it to an existing node
+        if let Some(node) = self.memo.get(&key) {
+            // If we have a hint, we should ensure its derivation is present.
+            // SPPFNode mutable logic is tricky with Rc. 
+            // Simplified approach: Assume if node exists, it's populated enough or will be populated by the first creator?
+            // Problem: If first creator didn't see the hint, it might be partial.
+            // But we are using Interior Mutability? No, SPPFNode fields are not Cell/RefCell.
+            // We'll ignore this for now assuming 'hint' is primarily for instantiation.
+            // Note: Optimally we should check if this specific derivation is missing. 
+            return Some(node.clone());
+        }
+        
+        if self.in_progress.contains(&key) { return None; }
+        self.in_progress.insert(key);
+
+        let parse_sym = match sym {
+            NumSymbol::Terminal(id) => ParseSymbol::Terminal(
+                self.parser.num_grammar.terminal_str(id)?.to_string()
+            ),
+            NumSymbol::NonTerminal(id) => ParseSymbol::NonTerminal(
+                self.parser.num_grammar.non_terminal_str(id)?.to_string()
+            ),
+        };
+
+        let mut node = SPPFNode::new(parse_sym, start, end);
+        let mut added = false;
+        
+        // 1. Hint Processing (Virtual States)
+        if let Some(state) = hint_state {
+            let rule = &self.parser.grammar.rules[state.rule_id.0];
+            // Ensure hint matches request
+            if rule.lhs == sym && state.s_col.0 == start {
+                 let paths = self.walk_back(state.rule_id, rule.rhs.len(), end, start);
+                 for children in paths {
+                     node.add_derivation(children);
+                     added = true;
+                 }
+            }
+        }
+
+        // 2. Chart Processing (Existing States)
+        match sym {
+            NumSymbol::Terminal(_) => {
+                if start + 1 == end && self.parser.input.get(start) == Some(&sym) {
+                    node.add_derivation(vec![]); 
+                    added = true;
+                }
+            }
+            NumSymbol::NonTerminal(_) => {
+                let col = &self.parser.chart.columns[end];
+                for state in &col.states {
+                    // Check for completion of this symbol starting at 'start'
+                    if state.s_col.0 == start {
+                        let rule = &self.parser.grammar.rules[state.rule_id.0];
+                        if rule.lhs == sym && state.dot >= rule.rhs.len() {
+                            let paths = self.walk_back(state.rule_id, rule.rhs.len(), end, start);
+                            for children in paths {
+                                node.add_derivation(children);
+                                added = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        self.in_progress.remove(&key);
+
+        if added {
+            let rc = Rc::new(node);
+            self.memo.insert(key, rc.clone());
+            Some(rc)
+        } else {
+            None
+        }
+    }
+
+    fn walk_back(&mut self, rule_id: RuleID, dot: usize, current_end: usize, target_start: usize) -> Vec<Vec<Rc<SPPFNode>>> {
+        if dot == 0 {
+            return if current_end == target_start { vec![vec![]] } else { vec![] };
+        }
+
+        let rule = &self.parser.grammar.rules[rule_id.0];
+        let child_sym = rule.rhs[dot - 1];
+        let mut results = Vec::new();
+
+        // Standard Chart Candidates
+        let mut split_candidates: Vec<usize> = Vec::new();
+        match child_sym {
+            NumSymbol::Terminal(_) => {
+                let k = current_end.saturating_sub(1);
+                split_candidates.push(k);
+            },
+            NumSymbol::NonTerminal(_) => {
+                for st in &self.parser.chart.columns[current_end].states {
+                    let st_rule = &self.parser.grammar.rules[st.rule_id.0];
+                    if st_rule.lhs == child_sym && st.dot >= st_rule.rhs.len() {
+                        split_candidates.push(st.s_col.0);
+                    }
+                }
+            }
+        };
+
+        // Virtual Candidates (from Leo Optimization)
+        // Pred state: The parent state at dot-1, residing at 'current_end' (conceptually)
+        // Actually, uniq_postdot logic hooks: Parent(at dot-1) -> Child(complete).
+        // The Parent(at dot-1) is independent of 'current_end' or 'child'.
+        // It is `State { rule_id, dot: dot-1, s_col: target_start }`.
+        
+        // We look for children that reduced to this specific parent state.
+        let pred_state = State { rule_id, dot: dot - 1, s_col: ColumnID(target_start) };
+        let mut virtual_matches = Vec::new();
+        
+        if let Some(virtual_children) = self.parser.postdots.get(&pred_state) {
+            for (child_state, child_end_col) in virtual_children {
+                if child_end_col.0 == current_end {
+                     virtual_matches.push((child_state.s_col.0, *child_state));
+                     // Also add to split_candidates to trigger recursion?
+                     // If we add to split_candidates, we lose the 'state' info needed for the hint.
+                     // So we handle virtuals separately.
+                }
+            }
+        }
+        
+        // Process Standard
+        for k in &split_candidates {
+            if *k < target_start { continue; }
+            let prev_st = State { rule_id, dot: dot - 1, s_col: ColumnID(target_start) };
+            if self.parser.chart.columns[*k].lookup.contains_key(&prev_st) {
+                 if let Some(child_node) = self.find_node(child_sym, *k, current_end, None) {
+                    let prefix_paths = self.walk_back(rule_id, dot - 1, *k, target_start);
+                    for mut path in prefix_paths {
+                        path.push(child_node.clone());
+                        results.push(path);
+                    }
+                }
+            }
+        }
+        
+        // Process Virtuals (Lazy Expansion from Postdots)
+        for (k, child_state) in virtual_matches {
+            if k < target_start { continue; }
+             if let Some(child_node) = self.find_node(child_sym, k, current_end, Some(child_state)) {
+                let prefix_paths = self.walk_back(rule_id, dot - 1, k, target_start);
+                for mut path in prefix_paths {
+                    path.push(child_node.clone());
+                    results.push(path);
+                }
+            }
+        }
+        
+        // 3. Implicit Forest / Leo Reconstruction
+        // If we found no matches in the chart or postdots, we might be inside a Leo optimized chain
+        // where the intermediate link was not recorded (due to Memoization).
+        // We attempt to infer the missing link.
+        // We are looking for a state `C` (instance of `child_sym`) spanning `k..current_end`
+        // such that `C` deterministically reduces to `pred_state` (Parent).
+        // Since `pred_state` exists at `k`, we iterate `k` (split_candidates).
+        if results.is_empty() {
+            if let NumSymbol::NonTerminal(_) = child_sym {
+                if let Some(child_rules) = self.parser.grammar.lookup.get(&child_sym) {
+                    // Implicit Reconstruction: Scan potentially skipped split points
+                    let expected_parent = State { rule_id, dot: dot - 1, s_col: ColumnID(target_start) };
+
+                    // Optimization: Only scan columns k that actually contain the parent state
+                    // This avoids O(N) scan.
+                    let cols_empty = Vec::new();
+                    let cols = self.parser.state_to_cols.get(&expected_parent).unwrap_or(&cols_empty);
+
+                    for &k in cols {
+                        if k < target_start || k > current_end { continue; }
+
+                        // Try each rule for child_sym
+                        for &c_rule_id in child_rules {
+                            // Virtual state C must be complete (dot at end)
+                            // C starts at k. Ends at current_end.
+                            // Condition: check_deterministic_parent(C) == expected_parent
+                            if let Some(p) = self.parser.check_deterministic_parent(c_rule_id, k) {
+                                if p == expected_parent {
+                                    // Found correct virtual child!
+                                    // Construct virtual state C
+                                    let c_len = self.parser.grammar.rules[c_rule_id.0].rhs.len();
+                                    let c_state = State { rule_id: c_rule_id, dot: c_len, s_col: ColumnID(k) };
+                                    
+                                    if let Some(child_node) = self.find_node(child_sym, k, current_end, Some(c_state)) {
+                                        let prefix_paths = self.walk_back(rule_id, dot - 1, k, target_start);
+                                        for mut path in prefix_paths {
+                                            path.push(child_node.clone());
+                                            results.push(path);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        results
+    }
+}
+
+
+
+
+
+
+
+
+
+
+// ============================================================================
+#[test]
+fn test_leo_parser_sexp() {
+    // Load grammar from json file in grammars/sexp.json
+    let path = "grammars/sexp.json";
+    let grammar = load_grammar_from_file(path).expect("Failed to load S-expression grammar");
+
+    let input = r#"(..)"#;
+    let tokens = grammar.tokenize(input).expect("Failed to tokenize input");
+
+    let mut parser = LeoParser::new(grammar);
+    let result = parser.parse(tokens);
+    
+    assert!(result.is_some(), "Leo parser should accept S-expression");
+    let tree = result.unwrap();
+    println!("Parse tree:\n{}", tree.display());
+}

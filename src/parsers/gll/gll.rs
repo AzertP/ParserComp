@@ -255,6 +255,7 @@ struct SPPF {
     nodes: Vec<SPPFNode>,
     pack_nodes: Vec<SPPFPackingNode>,
     lookup_nodes: HashMap<(GIndex, u32, u32), SPPFNodeId>,
+    lookup_leaves: HashMap<(GIndex, u32, u32), SPPFNodeId>,
     lookup_packs: HashMap<(SPPFNodeId, GIndex, u32), PackID>,
 }
 
@@ -264,14 +265,32 @@ impl SPPF {
             nodes: Vec::new(),
             pack_nodes: Vec::new(),
             lookup_nodes: HashMap::default(),
+            lookup_leaves: HashMap::default(),
             lookup_packs: HashMap::default(),
         }
     }
 
-    /// Find or create SPPF node
+    /// Find or create SPPF node (for intermediate/LHS nodes)
     fn find(&mut self, gn: GIndex, li: u32, ri: u32) -> SPPFNodeId {
         let key = (gn, li, ri);
         *self.lookup_nodes.entry(key).or_insert_with(|| {
+            let new_id = SPPFNodeId(self.nodes.len());
+            self.nodes.push(SPPFNode {
+                gn,
+                li,
+                ri,
+                pack_ns: HashSet::default(),
+            });
+            new_id
+        })
+    }
+
+    /// Find or create a terminal/epsilon leaf node.
+    /// Uses a separate lookup from `find()` to prevent collisions between
+    /// terminal leaves and intermediate nodes that share the same (GIndex, li, ri).
+    fn find_leaf(&mut self, gn: GIndex, li: u32, ri: u32) -> SPPFNodeId {
+        let key = (gn, li, ri);
+        *self.lookup_leaves.entry(key).or_insert_with(|| {
             let new_id = SPPFNodeId(self.nodes.len());
             self.nodes.push(SPPFNode {
                 gn,
@@ -749,7 +768,7 @@ impl GLLParser {
 
     fn du(&mut self, width: u32) {
         let next_gn = self.g_grammar.get(self.gn).seq;
-        let leaf_node = self.sppf.find(self.gn, self.i, self.i + width);
+        let leaf_node = self.sppf.find_leaf(self.gn, self.i, self.i + width);
 
         self.dn = Some(self.sppf_update(next_gn, self.dn, leaf_node));
     }
@@ -869,6 +888,7 @@ impl GLLParser {
 
         // --- Base Case: Leaf Node (Terminal or Epsilon) ---
         if node.pack_ns.is_empty() {
+            visited.remove(&node_id);
             return match g_node.kind {
                 GKind::Terminal(t_id) => {
                     let name = self.grammar.terminal_str(t_id).unwrap_or("?").to_string();
@@ -881,17 +901,21 @@ impl GLLParser {
             };
         }
 
-        // Take only the first packed node (first parse alternative)
-        if let Some(pack_id) = node.pack_ns.iter().next() {
+        // Try each packed node alternative. When a node has multiple alternatives
+        // (ambiguity), some may produce incomplete trees due to SPPF cycles.
+        // Strategy: try alternatives, preferring ones where both children produce
+        // results. If multiple are "complete", pick the one with the most terminal
+        // characters (matching the expected span width).
+        let expected_len = (node.ri - node.li) as usize;
+        let mut best_children: Option<Vec<ParseTree>> = None;
+        let mut best_count: usize = 0;
+        let mut found_perfect = false;
+        for pack_id in &node.pack_ns {
             let pack = &self.sppf.pack_nodes[pack_id.0];
-
-            // Collect children from Left and Right subtrees
             let mut children = Vec::new();
 
-            // The Left child (if it exists) represents the prefix of the rule
             if let Some(left_id) = pack.left_c {
                 if let Some(left_tree) = self.flatten_tree_first(left_id, visited) {
-                    // Flatten: extend children if it's a node with children
                     if !left_tree.children.is_empty() {
                         children.extend(left_tree.children);
                     } else {
@@ -900,13 +924,28 @@ impl GLLParser {
                 }
             }
 
-            // The Right child is the symbol just parsed
             if let Some(right_tree) = self.flatten_tree_first(pack.right_c, visited) {
                 children.push(right_tree);
             }
 
-            // Determine if we Wrap or Flatten
-            // ONLY wrap for LHS nodes, NOT for NonTerminal nodes (which are RHS references)
+            // For nodes with a single packed alternative, skip counting
+            if node.pack_ns.len() == 1 {
+                best_children = Some(children);
+                break;
+            }
+
+            let char_count: usize = children.iter().map(|c| Self::count_tree_chars(c)).sum();
+            if char_count == expected_len {
+                best_children = Some(children);
+                found_perfect = true;
+                break;
+            } else if char_count > best_count {
+                best_count = char_count;
+                best_children = Some(children);
+            }
+        }
+
+        let result = if let Some(children) = best_children {
             match g_node.kind {
                 GKind::LHS(nt_id) => {
                     let name = self
@@ -917,24 +956,18 @@ impl GLLParser {
                     Some(ParseTree::new(ParseSymbol::NonTerminal(name), children))
                 }
                 GKind::NonTerminal(_nt_id) => {
-                    // NonTerminal references should pass through their single child
-                    // (which is the result of calling that non-terminal)
                     if children.len() == 1 {
                         children.into_iter().next()
                     } else if !children.is_empty() {
-                        // Intermediate sequence node - wrap children to preserve structure
                         Some(ParseTree::new(ParseSymbol::NonTerminal("_seq".to_string()), children))
                     } else {
                         None
                     }
                 }
                 _ => {
-                    // For intermediate sequencing nodes (Terminal, Alt, End, Epsilon)
-                    // We need to return all children properly
                     if children.len() == 1 {
                         children.into_iter().next()
                     } else if !children.is_empty() {
-                        // Intermediate sequence node - wrap children to preserve structure
                         Some(ParseTree::new(ParseSymbol::NonTerminal("_seq".to_string()), children))
                     } else {
                         None
@@ -943,6 +976,26 @@ impl GLLParser {
             }
         } else {
             None
+        };
+
+        // Allow this node to be visited again from a different path (SPPF sharing)
+        visited.remove(&node_id);
+        result
+    }
+
+    /// Count total terminal characters in a parse tree (for alternative selection)
+    fn count_tree_chars(tree: &ParseTree) -> usize {
+        if tree.children.is_empty() {
+            match &tree.name {
+                ParseSymbol::Terminal(s) => {
+                    if s == "ε" || s == "epsilon" { 0 } else { s.len() }
+                }
+                ParseSymbol::NonTerminal(s) => {
+                    if s.starts_with('<') && s.ends_with('>') { 0 } else { s.len() }
+                }
+            }
+        } else {
+            tree.children.iter().map(|c| Self::count_tree_chars(c)).sum()
         }
     }
 

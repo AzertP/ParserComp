@@ -1035,16 +1035,16 @@ impl RnglrParser {
     fn get_node_name(&self, label: i64) -> String {
         if let Some(grammar) = &self.grammar {
             if label < 0 {
-                // Non-terminal
-                let nt_id = (-label) as u32;
+                // Non-terminal: labels are -(nt_id + 1), so subtract 1
+                let nt_id = ((-label) - 1) as u32;
                 grammar
                     .non_terminals
                     .get_str(nt_id)
                     .map(|s| s.to_string())
                     .unwrap_or_else(|| format!("NT{}", nt_id))
             } else if label > 0 {
-                // Terminal
-                let t_id = label as u32;
+                // Terminal: labels are (token_id + 1), so subtract 1
+                let t_id = (label - 1) as u32;
                 grammar
                     .terminals
                     .get_str(t_id)

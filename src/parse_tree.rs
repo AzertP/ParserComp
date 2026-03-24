@@ -114,6 +114,38 @@ impl ParseTree {
         }
     }
 
+    /// Flatten the parse tree into a string by concatenating all terminal (leaf) symbols.
+    /// Epsilon terminals ("epsilon", "ε") are treated as empty strings.
+    pub fn to_flat_string(&self) -> String {
+        let mut result = String::new();
+        self.collect_terminals(&mut result);
+        result
+    }
+
+    fn collect_terminals(&self, result: &mut String) {
+        if self.children.is_empty() {
+            match &self.name {
+                ParseSymbol::Terminal(s) => {
+                    // Skip epsilon terminals
+                    if s != "epsilon" && s != "ε" {
+                        result.push_str(s);
+                    }
+                }
+                ParseSymbol::NonTerminal(s) => {
+                    // GLR/LR parsers create terminal leaves as NonTerminal.
+                    // Actual nonterminal leaves (from nullable productions) use angle brackets.
+                    if s != "epsilon" && s != "ε" && !(s.starts_with('<') && s.ends_with('>')) {
+                        result.push_str(s);
+                    }
+                }
+            }
+        } else {
+            for child in &self.children {
+                child.collect_terminals(result);
+            }
+        }
+    }
+
     /// Convert to Python tuple-style string representation
     /// Output: ('name', [('child1', []), ('child2', [])])
     pub fn to_tuple_string(&self) -> String {

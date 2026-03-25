@@ -352,12 +352,16 @@ impl LeoParser {
         // 3. Advance the parent to create the completed B state
         let st_b = self.advance(&st_b_inc);
 
-        // 4. Recursive Step: Is there a deterministic path above B?
+        // 4. Pre-cache before recursing to break cycles in grammars with cyclic
+        //    unit production chains (e.g., A -> B -> C -> A). Without this, the
+        //    recursive call would never hit the cache and loop infinitely.
+        self.chart.columns[col_s1_idx].add_transitive(lhs_a, st_b);
+
+        // 5. Recursive Step: Is there a deterministic path above B?
         // If not, B itself is the top.
         let top = self.get_top(st_b, current_col_idx).unwrap_or(st_b);
 
-        // 5. Cache the result (Memoization)
-        // Store in the column where A started
+        // 6. Update cache with actual top
         self.chart.columns[col_s1_idx].add_transitive(lhs_a, top);
 
         Some(top)
@@ -515,8 +519,6 @@ impl LeoParser {
     pub fn parse(&mut self, input: Vec<u32>) -> Option<ParseTree> {
         let symbols: Vec<NumSymbol> = input.iter().map(|&id| NumSymbol::Terminal(id)).collect();
         if self.recognize_on(symbols) {
-            // Lazy expansion now handled by ForestBuilder
-            // self.expand_chart(); 
             self.extract_one_tree()
         } else {
             None
@@ -526,7 +528,7 @@ impl LeoParser {
     pub fn parse_all(&mut self, input: Vec<u32>) -> Vec<ParseTree> {
         let symbols: Vec<NumSymbol> = input.iter().map(|&id| NumSymbol::Terminal(id)).collect();
         if self.recognize_on(symbols) {
-            self.expand_chart(); // Keeping full expansion for parse_all just in case
+            self.expand_chart();
             self.extract_all_trees()
         } else {
             Vec::new()
@@ -534,7 +536,7 @@ impl LeoParser {
     }
 
     pub fn extract_one_tree(&mut self) -> Option<ParseTree> {
-        let root = self.build_sppf()?;
+        let root = self.build_sppf_single()?;
         Some(self.sppf_to_tree_single(&root))
     }
 
@@ -572,6 +574,24 @@ impl LeoParser {
         self.build_state_to_cols();
 
         let mut builder = ForestBuilder::new(self);
+        builder.build(self.start_symbol)
+    }
+
+    pub fn build_sppf_single(&mut self) -> Option<Rc<SPPFNode>> {
+        if self.chart.columns.is_empty() { return None; }
+        
+        let last_col = self.chart.columns.len() - 1;
+        let success = self.chart.columns[last_col].states.iter().any(|s| 
+            self.is_complete(s) 
+            && self.grammar.rules[s.rule_id.0].lhs == self.start_symbol
+            && s.s_col.0 == 0
+        );
+
+        if !success { return None; }
+
+        self.build_state_to_cols();
+
+        let mut builder = ForestBuilder::new_single(self);
         builder.build(self.start_symbol)
     }
 
@@ -680,6 +700,8 @@ struct ForestBuilder<'a> {
     parser: &'a LeoParser,
     memo: HashMap<(u32, bool, usize, usize), Rc<SPPFNode>>,
     in_progress: HashSet<(u32, bool, usize, usize)>,
+    attempt_count: HashMap<(u32, bool, usize, usize), u32>,
+    single: bool,
 }
 
 impl<'a> ForestBuilder<'a> {
@@ -688,6 +710,18 @@ impl<'a> ForestBuilder<'a> {
             parser,
             memo: HashMap::default(),
             in_progress: HashSet::default(),
+            attempt_count: HashMap::default(),
+            single: false,
+        }
+    }
+
+    fn new_single(parser: &'a LeoParser) -> Self {
+        ForestBuilder {
+            parser,
+            memo: HashMap::default(),
+            in_progress: HashSet::default(),
+            attempt_count: HashMap::default(),
+            single: true,
         }
     }
 
@@ -699,16 +733,16 @@ impl<'a> ForestBuilder<'a> {
     fn find_node(&mut self, sym: NumSymbol, start: usize, end: usize, hint_state: Option<State>) -> Option<Rc<SPPFNode>> {
         let key = (sym.id(), sym.is_terminal(), start, end);
         
-        // If we have a hint, we might need to add it to an existing node
         if let Some(node) = self.memo.get(&key) {
-            // If we have a hint, we should ensure its derivation is present.
-            // SPPFNode mutable logic is tricky with Rc. 
-            // Simplified approach: Assume if node exists, it's populated enough or will be populated by the first creator?
-            // Problem: If first creator didn't see the hint, it might be partial.
-            // But we are using Interior Mutability? No, SPPFNode fields are not Cell/RefCell.
-            // We'll ignore this for now assuming 'hint' is primarily for instantiation.
-            // Note: Optimally we should check if this specific derivation is missing. 
             return Some(node.clone());
+        }
+        
+        // Limit retries per key to prevent infinite loops from repeated
+        // failed find_node calls in ambiguous grammars
+        let count = self.attempt_count.entry(key).or_insert(0);
+        *count += 1;
+        if *count > 20 {
+            return None;
         }
         
         if self.in_progress.contains(&key) { return None; }
@@ -735,11 +769,13 @@ impl<'a> ForestBuilder<'a> {
                  for children in paths {
                      node.add_derivation(children);
                      added = true;
+                     if self.single { break; }
                  }
             }
         }
 
         // 2. Chart Processing (Existing States)
+        if !(self.single && added) {
         match sym {
             NumSymbol::Terminal(_) => {
                 if start + 1 == end && self.parser.input.get(start) == Some(&sym) {
@@ -758,11 +794,14 @@ impl<'a> ForestBuilder<'a> {
                             for children in paths {
                                 node.add_derivation(children);
                                 added = true;
+                                if self.single { break; }
                             }
+                            if self.single && added { break; }
                         }
                     }
                 }
             }
+        }
         }
 
         self.in_progress.remove(&key);
@@ -833,6 +872,7 @@ impl<'a> ForestBuilder<'a> {
                     for mut path in prefix_paths {
                         path.push(child_node.clone());
                         results.push(path);
+                        if self.single { return results; }
                     }
                 }
             }
@@ -846,6 +886,7 @@ impl<'a> ForestBuilder<'a> {
                 for mut path in prefix_paths {
                     path.push(child_node.clone());
                     results.push(path);
+                    if self.single { return results; }
                 }
             }
         }
@@ -888,6 +929,7 @@ impl<'a> ForestBuilder<'a> {
                                         for mut path in prefix_paths {
                                             path.push(child_node.clone());
                                             results.push(path);
+                                            if self.single { return results; }
                                         }
                                     }
                                 }

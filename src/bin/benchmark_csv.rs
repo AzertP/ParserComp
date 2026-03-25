@@ -14,6 +14,7 @@ use parser_comparison::parsers::gll::ll;
 use parser_comparison::parsers::glr::lr;
 use parser_comparison::parsers::glr::table_generator;
 use parser_comparison::parsers::{cyk, earley_leo, gll, glr, valiant};
+use parser_comparison::tree;
 use std::collections::HashSet;
 use std::fs::{self, File};
 use std::hint::black_box;
@@ -41,7 +42,7 @@ struct GrammarConfig {
     parsers: &'static [&'static str],
 }
 
-const ALL_PARSERS: &[&str] = &["Leo", "GLL", "RNGLR", "BRNGLR", "Valiant", "CYK", "LL", "LR"];
+const ALL_PARSERS: &[&str] = &["Leo", "GLL", "RNGLR", "BRNGLR", "CYK", "LL", "LR"];
 
 const CONFIGS: &[GrammarConfig] = &[
     // ----- ANSI C -----
@@ -141,7 +142,7 @@ const CONFIGS: &[GrammarConfig] = &[
         input_paths: &["input/json_small.txt", "input/json_medium.txt", "input/json_large.txt", "input/json_ultra.txt"],
         table_path: "table/json_glr_table.csv",
         lr_table_path: "table/json_lr_table.csv",
-        generate_table: false,
+        generate_table: true,
         parsers: ALL_PARSERS,
     },
     // ----- Json LL(1) -----
@@ -161,6 +162,16 @@ const CONFIGS: &[GrammarConfig] = &[
         input_paths: &["input/json_small.txt", "input/json_medium.txt", "input/json_large.txt", "input/json_ultra.txt"],
         table_path: "table/lr_json_glr_table.csv",
         lr_table_path: "table/lr_json_lr_table.csv",
+        generate_table: false,
+        parsers: ALL_PARSERS,
+    },
+    // ----- Json Ambiguous -----
+    GrammarConfig {
+        name: "json_ambi",
+        grammar_path: "grammars/json_ambi.json",
+        input_paths: &["input/json_small.txt", "input/json_medium.txt", "input/json_large.txt", "input/json_ultra.txt"],
+        table_path: "table/json_ambi_glr_table.csv",
+        lr_table_path: "table/json_ambi_lr_table.csv",
         generate_table: false,
         parsers: ALL_PARSERS,
     },

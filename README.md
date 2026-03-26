@@ -76,7 +76,8 @@ Results are written to `results_comprehensive/benchmark_<config>.csv`. Experimen
 To change the input corpora, grammar, or parsers used, edit the `BenchmarkConfig` struct in `src/bin/benchmark_csv.rs`.
 
 ## Claim
-Tables and plots in the paper are generated from the CSV files in `results_comprehensive/`.  
+Tables and plots in the paper are generated from the CSV files in `results_comprehensive/`. Each file contains per-parser timing and memory
+data for one grammar; the tables in the paper aggregate across all files.
 
 ## Modify the test suite
 

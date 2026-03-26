@@ -10,7 +10,6 @@
 #
 # Output:
 #   results/benchmark_<grammar>_<size>.csv   (one file per benchmark config)
-#   plot/*.pdf                               (all paper figures)
 
 set -euo pipefail
 
@@ -27,7 +26,7 @@ echo "========================================"
 # Step 1: Build
 # --------------------------------------------------------------------------
 echo ""
-echo "[1/3] Building Rust benchmarking tool (release mode)..."
+echo "[1/2] Building Rust benchmarking tool (release mode)..."
 cargo build --release
 echo "      Build complete."
 
@@ -36,10 +35,10 @@ echo "      Build complete."
 # --------------------------------------------------------------------------
 if [[ "$SKIP_BENCHMARK" == true ]]; then
   echo ""
-  echo "[2/3] Skipping benchmarks — using pre-computed results in results/."
+  echo "[2/2] Skipping benchmarks — using pre-computed results in results/."
 else
   echo ""
-  echo "[2/3] Running benchmarks..."
+  echo "[2/2] Running benchmarks..."
   echo "      This will write CSV files to results/."
   echo ""
   cargo run --release --bin benchmark_csv

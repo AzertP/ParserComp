@@ -41,21 +41,7 @@ else
   echo ""
   echo "[2/3] Running benchmarks..."
   echo "      This will write CSV files to results/."
-  echo "      Expected wall-clock time: 10–60 min depending on hardware."
   echo ""
   cargo run --release --bin benchmark_csv
   echo "      Benchmarks complete."
 fi
-
-# --------------------------------------------------------------------------
-# Step 3: Plot
-# --------------------------------------------------------------------------
-echo ""
-echo "[3/3] Generating plots..."
-python3 plotter.py
-echo "      Plots written to plot/."
-
-echo ""
-echo "========================================"
-echo " Done.  Figures are in plot/"
-echo "========================================"

@@ -1,19 +1,8 @@
 # Generalised Parser Comparison
 
-Contains the full implementation of five generalised parsing algorithms (CYK, Valiant, Earley, GLL, RNGLR, BRNGLR) benchmarked against eight context-free grammars, together with results and plotting scripts needed to reproduce all paper figures.
+Contains the full implementation of five generalised parsing algorithms (CYK, Valiant, Earley, GLL, RNGLR, BRNGLR) benchmarked against various context-free grammars, together with experiment results and input corpora.  
 
 ## Quick start
-
-```bash
-# 1. Install prerequisites (see INSTALL.md)
-pip install -r requirements.txt
-
-# 2. Regenerate all plots from the included CSV data
-python3 plotter.py
-# Figures are written to plot/
-```
-
-## Full reproduction
 
 ```bash
 bash reproduce.sh
@@ -24,7 +13,6 @@ Or step by step:
 ```bash
 cargo build --release
 cargo run --release --bin benchmark_csv   # writes results/*.csv
-python3 plotter.py                         # writes plot/*.pdf
 ```
 
 See [INSTALL.md](INSTALL.md) for detailed prerequisite setup (Rust, Python, m4ri).
@@ -34,7 +22,8 @@ See [INSTALL.md](INSTALL.md) for detailed prerequisite setup (Rust, Python, m4ri
 ```
 ├── src/                          
 │   ├── bin/benchmark_csv.rs      Benchmark driver (CLI entry point)
-│   ├── parsers/                  
+│   ├── parsers/  
+│   │   ├── earley_leo/   
 │   │   ├── earley.rs             
 │   │   ├── cyk.rs                
 │   │   ├── valiant.rs            
@@ -45,7 +34,8 @@ See [INSTALL.md](INSTALL.md) for detailed prerequisite setup (Rust, Python, m4ri
 ├── grammars/                     Grammar files in JSON format
 ├── input/                        Benchmark input files (generated corpora)
 ├── table/                        Pre-generated GLR/LR parse tables
-├── results/                      Experiment results (CSV files)
+├── results_comprehensive/        Experiment results (CSV files)
+├── results/                      Old results (CSV files)
 ├── plotter.py                   
 ├── reproduce.sh                  
 ├── requirements.txt              Python dependencies for plotter
@@ -68,18 +58,7 @@ See [INSTALL.md](INSTALL.md) for detailed prerequisite setup (Rust, Python, m4ri
 
 ## Grammars
 
-Eight grammars are used in the main evaluation.  All are stored in `grammars/` in a JSON representation.  Several were adapted from the [referenceLanguageCorpora](https://github.com/AJohnstone2007/referenceLanguageCorpora) repository.
-
-| Grammar key | Language | File |
-|---|---|---|
-| `sexp` | S-Expressions | `grammars/sexp.json` |
-| `calc` | Calculator expressions | `grammars/calc.json` |
-| `tinyc` | TinyC | `grammars/tinyc.json` |
-| `json` | JSON | `grammars/json.json` |
-| `ansi_c` | ANSI C | `grammars/ansi_c.json` |
-| `cpp` | C++ | `grammars/cpp.json` |
-| `java` | Java (JLS 18) | `grammars/jsl18.json` |
-| `pascal` | Pascal | `grammars/pascal.json` |
+Multiple grammars are used in the main evaluation.  All are stored in `grammars/` in a JSON representation.  Several were adapted from the [referenceLanguageCorpora](https://github.com/AJohnstone2007/referenceLanguageCorpora) repository.
 
 Additional `ll1_*` and `lr_*` grammar variants are used in the LL/LR baseline experiments.
 
@@ -88,11 +67,13 @@ Additional `ll1_*` and `lr_*` grammar variants are used in the LL/LR baseline ex
 The benchmark driver (`src/bin/benchmark_csv.rs`) runs each parser on increasing-length input slices drawn from the corpus files.  For each (parser, input-length) pair it:
 
 1. Performs one warmup iteration (excluded from timing).
-2. Runs between 5 and 20 timed iterations, stopping early if 500 ms of wall time have been accumulated.
+2. Runs between 10 and 20 timed iterations, stopping early if 500 ms of wall time have been accumulated.
 3. Reports median time (ns) and median absolute deviation (MAD) over the timed iterations.
 4. Samples peak memory via a 1 ms polling thread.
 
-Results are written to `results/benchmark_<config>.csv`.  Pre-computed CSVs for all configurations are included in the repository so reviewers can reproduce the figures without re-running the full benchmark (which takes 10–60 minutes depending on hardware).
+Results are written to `results_comprehensive/benchmark_<config>.csv`. Experiment data is included in `results_comprehensive/` and `results/` for reference.
+
+To change the input corpora, grammar, or parsers used, edit the `BenchmarkConfig` struct in `src/bin/benchmark_csv.rs`.
 
 ## License
 

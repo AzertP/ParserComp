@@ -462,8 +462,8 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
     println!("{}", "=".repeat(60));
 
     // Setup CSV file and write header
-    fs::create_dir_all("results_comprehensive")?;
-    let filename = format!("results_comprehensive/benchmark_{}.csv", config.name);
+    fs::create_dir_all("results")?;
+    let filename = format!("results/benchmark_{}.csv", config.name);
     let mut csv_file = File::create(&filename)?;
     writeln!(
         csv_file,

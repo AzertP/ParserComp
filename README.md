@@ -1,7 +1,6 @@
 # Generalised Parser Comparison
 
-Contains the full implementation of five generalised parsing algorithms (CYK, Valiant, Earley, GLL, RNGLR, BRNGLR) benchmarked against various context-free grammars, together with experiment results and input corpora.  
-Contains the full implementation of five generalised parsing algorithms (CYK, Valiant, Earley, GLL, RNGLR, BRNGLR) benchmarked against various context-free grammars, together with experiment results and input corpora.  
+Contains the full implementation of five generalised parsing algorithms (CYK, Valiant, Earley, GLL, RNGLR, BRNGLR) benchmarked against various context-free grammars, together with experiment results and input corpora.
 
 ## Quick start
 
@@ -129,6 +128,10 @@ cargo run --release --bin benchmark_csv
 ```
 
 Results are written to `results/benchmark_my_grammar.csv`.
+
+## Docker
+
+A Dockerfile is provided to build a self-contained image with all dependencies pre-installed.
 ## License
 
 MIT — see [LICENSE](LICENSE).

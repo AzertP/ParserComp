@@ -2,6 +2,7 @@
 
 Contains the full implementation of five generalised parsing algorithms (CYK, Valiant, Earley, GLL, RNGLR, BRNGLR) benchmarked against various context-free grammars, together with experiment results and input corpora.
 
+DOI: [10.5281/zenodo.19231344](https://doi.org/10.5281/zenodo.19231344)
 ## Quick start
 
 ```bash
@@ -76,8 +77,11 @@ Results are written to `results_comprehensive/benchmark_<config>.csv`. Experimen
 To change the input corpora, grammar, or parsers used, edit the `BenchmarkConfig` struct in `src/bin/benchmark_csv.rs`.
 
 ## Claim
-Tables and plots in the paper are generated from the CSV files in `results_comprehensive/`. Each file contains per-parser timing and memory
-data for one grammar; the tables in the paper aggregate across all files.
+Tables and plots in the paper are generated from the CSV files in `results_comprehensive/`. Each file contains per-parser timing and memory data for one grammar; the tables in the paper aggregate across all files.
+
+Scripts for generating the paper's tables and plots are included in `script/`.
+
+A pre-rendered overview plot is available here: [allGrammarsGeneralTime.pdf](allGrammarsGeneralTime.pdf)
 
 ## Modify the test suite
 

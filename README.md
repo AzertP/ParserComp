@@ -2,7 +2,7 @@
 
 Contains the full implementation of five generalised parsing algorithms (CYK, Valiant, Earley, GLL, RNGLR, BRNGLR) benchmarked against various context-free grammars, together with experiment results and input corpora.
 
-DOI: [10.5281/zenodo.19231344](https://doi.org/10.5281/zenodo.19231344)
+DOI: [10.5281/zenodo.19231343](https://doi.org/10.5281/zenodo.19231343)
 ## Quick start
 
 ```bash

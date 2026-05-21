@@ -1,0 +1,2912 @@
+{
+  "name": "jsl18_ws",
+  "start": "<CompilationUnit>",
+  "rules": {
+    "<OWS>": [
+      [],
+      [ " ", "<OWS>" ],
+      [ "\t", "<OWS>" ],
+      [ "\n", "<OWS>" ],
+      [ "\r", "<OWS>" ],
+      [ "<TraditionalComment>", "<OWS>" ],
+      [ "<EndOfLineComment>", "\n", "<OWS>" ]
+    ],
+    "<UnicodeEscape>": [
+      [ "\\\\", "<UnicodeMarker>", "<HexDigit>", "<HexDigit>", "<HexDigit>", "<HexDigit>" ]
+    ],
+    "<UnicodeMarker>": [
+      [ "u", "<UnicodeMarker_pattern_0>" ]
+    ],
+    "<HexDigit>": [
+      [ "0" ],
+      [ "1" ],
+      [ "2" ],
+      [ "3" ],
+      [ "4" ],
+      [ "5" ],
+      [ "6" ],
+      [ "7" ],
+      [ "8" ],
+      [ "9" ],
+      [ "a" ],
+      [ "b" ],
+      [ "c" ],
+      [ "d" ],
+      [ "e" ],
+      [ "f" ],
+      [ "A" ],
+      [ "B" ],
+      [ "C" ],
+      [ "D" ],
+      [ "E" ],
+      [ "F" ]
+    ],
+    "<Comment>": [
+      [ "<TraditionalComment>" ],
+      [ "<EndOfLineComment>" ]
+    ],
+    "<TraditionalComment>": [
+      [ "/", "*", "<CommentTail>" ]
+    ],
+    "<CommentTail>": [
+      [ "*", "<CommentTailStar>" ],
+      [ "<NotStar>", "<CommentTail>" ]
+    ],
+    "<CommentTailStar>": [
+      [ "/" ],
+      [ "*", "<CommentTailStar>" ],
+      [ "<NotStarNotSlash>", "<CommentTail>" ]
+    ],
+    "<EndOfLineComment>": [
+      [ "/", "/", "<EndOfLineComment_pattern_1>" ]
+    ],
+    "<Identifier>": [
+      [ "<IdentifierChars>" ]
+    ],
+    "<IdentifierChars>": [
+      [ "<JavaLetter>", "<IdentifierChars_pattern_2>" ]
+    ],
+    "<TypeIdentifier>": [
+      [ "<IdentifierChars>" ]
+    ],
+    "<UnqualifiedMethodIdentifier>": [
+      [ "<IdentifierChars>" ]
+    ],
+    "<Keyword>": [
+      [ "<ReservedKeyword>" ],
+      [ "<ContextualKeyword>" ]
+    ],
+    "<ReservedKeyword>": [
+      [ "a", "b", "s", "t", "r", "a", "c", "t" ],
+      [ "c", "o", "n", "t", "i", "n", "u", "e" ],
+      [ "f", "o", "r" ],
+      [ "n", "e", "w" ],
+      [ "s", "w", "i", "t", "c", "h" ],
+      [ "a", "s", "s", "e", "r", "t" ],
+      [ "d", "e", "f", "a", "u", "l", "t" ],
+      [ "i", "f" ],
+      [ "p", "a", "c", "k", "a", "g", "e" ],
+      [ "s", "y", "n", "c", "h", "r", "o", "n", "i", "z", "e", "d" ],
+      [ "b", "o", "o", "l", "e", "a", "n" ],
+      [ "d", "o" ],
+      [ "g", "o", "t", "o" ],
+      [ "p", "r", "i", "v", "a", "t", "e" ],
+      [ "t", "h", "i", "s" ],
+      [ "b", "r", "e", "a", "k" ],
+      [ "d", "o", "u", "b", "l", "e" ],
+      [ "i", "m", "p", "l", "e", "m", "e", "n", "t", "s" ],
+      [ "p", "r", "o", "t", "e", "c", "t", "e", "d" ],
+      [ "t", "h", "r", "o", "w" ],
+      [ "b", "y", "t", "e" ],
+      [ "e", "l", "s", "e" ],
+      [ "i", "m", "p", "o", "r", "t" ],
+      [ "p", "u", "b", "l", "i", "c" ],
+      [ "t", "h", "r", "o", "w", "s" ],
+      [ "c", "a", "s", "e" ],
+      [ "e", "n", "u", "m" ],
+      [ "i", "n", "s", "t", "a", "n", "c", "e", "o", "f" ],
+      [ "r", "e", "t", "u", "r", "n" ],
+      [ "t", "r", "a", "n", "s", "i", "e", "n", "t" ],
+      [ "c", "a", "t", "c", "h" ],
+      [ "e", "x", "t", "e", "n", "d", "s" ],
+      [ "i", "n", "t" ],
+      [ "s", "h", "o", "r", "t" ],
+      [ "t", "r", "y" ],
+      [ "c", "h", "a", "r" ],
+      [ "f", "i", "n", "a", "l" ],
+      [ "i", "n", "t", "e", "r", "f", "a", "c", "e" ],
+      [ "s", "t", "a", "t", "i", "c" ],
+      [ "v", "o", "i", "d" ],
+      [ "c", "l", "a", "s", "s" ],
+      [ "f", "i", "n", "a", "l", "l", "y" ],
+      [ "l", "o", "n", "g" ],
+      [ "s", "t", "r", "i", "c", "t", "f", "p" ],
+      [ "v", "o", "l", "a", "t", "i", "l", "e" ],
+      [ "c", "o", "n", "s", "t" ],
+      [ "f", "l", "o", "a", "t" ],
+      [ "n", "a", "t", "i", "v", "e" ],
+      [ "s", "u", "p", "e", "r" ],
+      [ "w", "h", "i", "l", "e" ],
+      [ "_" ]
+    ],
+    "<ContextualKeyword>": [
+      [ "e", "x", "p", "o", "r", "t", "s" ],
+      [ "o", "p", "e", "n", "s" ],
+      [ "r", "e", "q", "u", "i", "r", "e", "s" ],
+      [ "u", "s", "e", "s" ],
+      [ "m", "o", "d", "u", "l", "e" ],
+      [ "p", "e", "r", "m", "i", "t", "s" ],
+      [ "s", "e", "a", "l", "e", "d" ],
+      [ "v", "a", "r" ],
+      [ "n", "o", "n", "-", "s", "e", "a", "l", "e", "d" ],
+      [ "p", "r", "o", "v", "i", "d", "e", "s" ],
+      [ "t", "o" ],
+      [ "w", "i", "t", "h" ],
+      [ "o", "p", "e", "n" ],
+      [ "r", "e", "c", "o", "r", "d" ],
+      [ "t", "r", "a", "n", "s", "i", "t", "i", "v", "e" ],
+      [ "y", "i", "e", "l", "d" ]
+    ],
+    "<IntegerLiteral>": [
+      [ "<DecimalIntegerLiteral>" ],
+      [ "<HexIntegerLiteral>" ],
+      [ "<OctalIntegerLiteral>" ],
+      [ "<BinaryIntegerLiteral>" ]
+    ],
+    "<DecimalIntegerLiteral>": [
+      [ "<DecimalNumeral>", "<DecimalIntegerLiteral_pattern_3>" ]
+    ],
+    "<HexIntegerLiteral>": [
+      [ "<HexNumeral>", "<HexIntegerLiteral_pattern_4>" ]
+    ],
+    "<OctalIntegerLiteral>": [
+      [ "<OctalNumeral>", "<OctalIntegerLiteral_pattern_5>" ]
+    ],
+    "<BinaryIntegerLiteral>": [
+      [ "<BinaryNumeral>", "<BinaryIntegerLiteral_pattern_6>" ]
+    ],
+    "<IntegerTypeSuffix>": [
+      [ "l" ],
+      [ "L" ]
+    ],
+    "<DecimalNumeral>": [
+      [ "0" ],
+      [ "<NonZeroDigit>", "<DecimalNumeral_pattern_7>" ],
+      [ "<NonZeroDigit>", "<Underscores>", "<Digits>" ]
+    ],
+    "<NonZeroDigit>": [
+      [ "1" ],
+      [ "2" ],
+      [ "3" ],
+      [ "4" ],
+      [ "5" ],
+      [ "6" ],
+      [ "7" ],
+      [ "8" ],
+      [ "9" ]
+    ],
+    "<Digits>": [
+      [ "<Digit>" ],
+      [ "<Digit>", "<Digits_pattern_8>", "<Digit>" ]
+    ],
+    "<Digit>": [
+      [ "0" ],
+      [ "<NonZeroDigit>" ]
+    ],
+    "<DigitsAndUnderscores>": [
+      [ "<DigitOrUnderscore>", "<DigitsAndUnderscores_pattern_9>" ]
+    ],
+    "<DigitOrUnderscore>": [
+      [ "<Digit>" ],
+      [ "_" ]
+    ],
+    "<Underscores>": [
+      [ "_", "<Underscores_pattern_10>" ]
+    ],
+    "<HexNumeral>": [
+      [ "0", "x", "<HexDigits>" ],
+      [ "0", "X", "<HexDigits>" ]
+    ],
+    "<HexDigits>": [
+      [ "<HexDigit>" ],
+      [ "<HexDigit>", "<HexDigits_pattern_11>", "<HexDigit>" ]
+    ],
+    "<HexDigitsAndUnderscores>": [
+      [ "<HexDigitOrUnderscore>", "<HexDigitsAndUnderscores_pattern_12>" ]
+    ],
+    "<HexDigitOrUnderscore>": [
+      [ "<HexDigit>" ],
+      [ "_" ]
+    ],
+    "<OctalNumeral>": [
+      [ "0", "<OctalDigits>" ],
+      [ "0", "<Underscores>", "<OctalDigits>" ]
+    ],
+    "<OctalDigits>": [
+      [ "<OctalDigit>" ],
+      [ "<OctalDigit>", "<OctalDigits_pattern_13>", "<OctalDigit>" ]
+    ],
+    "<OctalDigit>": [
+      [ "0" ],
+      [ "1" ],
+      [ "2" ],
+      [ "3" ],
+      [ "4" ],
+      [ "5" ],
+      [ "6" ],
+      [ "7" ]
+    ],
+    "<OctalDigitsAndUnderscores>": [
+      [ "<OctalDigitOrUnderscore>", "<OctalDigitsAndUnderscores_pattern_14>" ]
+    ],
+    "<OctalDigitOrUnderscore>": [
+      [ "<OctalDigit>" ],
+      [ "_" ]
+    ],
+    "<BinaryNumeral>": [
+      [ "0", "b", "<BinaryDigits>" ],
+      [ "0", "B", "<BinaryDigits>" ]
+    ],
+    "<BinaryDigits>": [
+      [ "<BinaryDigit>" ],
+      [ "<BinaryDigit>", "<BinaryDigits_pattern_15>", "<BinaryDigit>" ]
+    ],
+    "<BinaryDigit>": [
+      [ "0" ],
+      [ "1" ]
+    ],
+    "<BinaryDigitsAndUnderscores>": [
+      [ "<BinaryDigitOrUnderscore>", "<BinaryDigitsAndUnderscores_pattern_16>" ]
+    ],
+    "<BinaryDigitOrUnderscore>": [
+      [ "<BinaryDigit>" ],
+      [ "_" ]
+    ],
+    "<FloatingPointLiteral>": [
+      [ "<DecimalFloatingPointLiteral>" ],
+      [ "<HexadecimalFloatingPointLiteral>" ]
+    ],
+    "<DecimalFloatingPointLiteral>": [
+      [ "<Digits>", ".", "<DecimalFloatingPointLiteral_pattern_17>", "<DecimalFloatingPointLiteral_pattern_18>", "<DecimalFloatingPointLiteral_pattern_19>" ],
+      [ ".", "<Digits>", "<DecimalFloatingPointLiteral_pattern_20>", "<DecimalFloatingPointLiteral_pattern_21>" ],
+      [ "<Digits>", "<ExponentPart>", "<DecimalFloatingPointLiteral_pattern_22>" ],
+      [ "<Digits>", "<DecimalFloatingPointLiteral_pattern_23>", "<FloatTypeSuffix>" ]
+    ],
+    "<ExponentPart>": [
+      [ "<ExponentIndicator>", "<SignedInteger>" ]
+    ],
+    "<ExponentIndicator>": [
+      [ "e" ],
+      [ "E" ]
+    ],
+    "<SignedInteger>": [
+      [ "<SignedInteger_pattern_24>", "<Digits>" ]
+    ],
+    "<Sign>": [
+      [ "+" ],
+      [ "-" ]
+    ],
+    "<FloatTypeSuffix>": [
+      [ "f" ],
+      [ "F" ],
+      [ "d" ],
+      [ "D" ]
+    ],
+    "<HexadecimalFloatingPointLiteral>": [
+      [ "<HexSignificand>", "<BinaryExponent>", "<HexadecimalFloatingPointLiteral_pattern_25>" ]
+    ],
+    "<HexSignificand>": [
+      [ "<HexNumeral>", "<HexSignificand_pattern_26>" ],
+      [ "0", "x", "<HexSignificand_pattern_27>", ".", "<HexDigits>" ],
+      [ "0", "X", "<HexSignificand_pattern_28>", ".", "<HexDigits>" ]
+    ],
+    "<BinaryExponent>": [
+      [ "<BinaryExponentIndicator>", "<SignedInteger>" ]
+    ],
+    "<BinaryExponentIndicator>": [
+      [ "p" ],
+      [ "P" ]
+    ],
+    "<BooleanLiteral>": [
+      [ "t", "r", "u", "e" ],
+      [ "f", "a", "l", "s", "e" ]
+    ],
+    "<CharacterLiteral>": [
+      [ "'", "<SingleCharacter>", "'" ],
+      [ "'", "<EscapeSequence>", "'" ]
+    ],
+    "<StringLiteral>": [
+      [ "\"", "<StringLiteral_pattern_29>", "\"" ]
+    ],
+    "<TextBlock>": [
+      [ "\"", "\"", "\"", "<TextBlock_pattern_30>", "<LineTerminator>", "<TextBlock_pattern_31>", "\"", "\"", "\"" ]
+    ],
+    "<TextBlockWhiteSpace>": [
+      [ "<WhiteSpace>" ]
+    ],
+    "<EscapeSequence>": [
+      [ "\\\\", "b" ],
+      [ "\\\\", "s" ],
+      [ "\\\\", "t" ],
+      [ "\\\\", "n" ],
+      [ "\\\\", "f" ],
+      [ "\\\\", "r" ],
+      [ "\\\\", "<LineTerminator>" ],
+      [ "\\\\", "\"" ],
+      [ "\\\\", "'" ],
+      [ "\\\\", "\\\\" ],
+      [ "<OctalEscape>" ]
+    ],
+    "<OctalEscape>": [
+      [ "\\\\", "<OctalDigit>" ],
+      [ "\\\\", "<OctalDigit>", "<OctalDigit>" ],
+      [ "\\\\", "<ZeroToThree>", "<OctalDigit>", "<OctalDigit>" ]
+    ],
+    "<ZeroToThree>": [
+      [ "0" ],
+      [ "1" ],
+      [ "2" ],
+      [ "3" ]
+    ],
+    "<NullLiteral>": [
+      [ "n", "u", "l", "l" ]
+    ],
+    "<Separator>": [
+      [ "(" ],
+      [ ")" ],
+      [ "{" ],
+      [ "}" ],
+      [ "[" ],
+      [ "]" ],
+      [ ";" ],
+      [ "," ],
+      [ "." ],
+      [ ".", ".", "." ],
+      [ "@" ],
+      [ ":", ":" ]
+    ],
+    "<Operator>": [
+      [ "=" ],
+      [ ">" ],
+      [ "<" ],
+      [ "!" ],
+      [ "~" ],
+      [ "?" ],
+      [ ":" ],
+      [ "-", ">" ],
+      [ "=", "=" ],
+      [ ">", "=" ],
+      [ "<", "=" ],
+      [ "!", "=" ],
+      [ "&", "&" ],
+      [ "|", "|" ],
+      [ "+", "+" ],
+      [ "-", "-" ],
+      [ "+" ],
+      [ "-" ],
+      [ "*" ],
+      [ "/" ],
+      [ "&" ],
+      [ "|" ],
+      [ "^" ],
+      [ "%" ],
+      [ "<", "<" ],
+      [ ">", ">" ],
+      [ ">", ">", ">" ],
+      [ "+", "=" ],
+      [ "-", "=" ],
+      [ "*", "=" ],
+      [ "/", "=" ],
+      [ "&", "=" ],
+      [ "|", "=" ],
+      [ "^", "=" ],
+      [ "%", "=" ],
+      [ "<", "<", "=" ],
+      [ ">", ">", "=" ],
+      [ ">", ">", ">", "=" ]
+    ],
+    "<Literal>": [
+      [ "<IntegerLiteral>" ],
+      [ "<FloatingPointLiteral>" ],
+      [ "<BooleanLiteral>" ],
+      [ "<CharacterLiteral>" ],
+      [ "<StringLiteral>" ],
+      [ "<TextBlock>" ],
+      [ "<NullLiteral>" ]
+    ],
+    "<Type>": [
+      [ "<PrimitiveType>" ],
+      [ "<ReferenceType>" ]
+    ],
+    "<PrimitiveType>": [
+      [ "<PrimitiveType_pattern_32>", "<OWS>", "<NumericType>" ],
+      [ "<PrimitiveType_pattern_33>", "<OWS>", "b", "o", "o", "l", "e", "a", "n" ]
+    ],
+    "<NumericType>": [
+      [ "<IntegralType>" ],
+      [ "<FloatingPointType>" ]
+    ],
+    "<IntegralType>": [
+      [ "b", "y", "t", "e" ],
+      [ "s", "h", "o", "r", "t" ],
+      [ "i", "n", "t" ],
+      [ "l", "o", "n", "g" ],
+      [ "c", "h", "a", "r" ]
+    ],
+    "<FloatingPointType>": [
+      [ "f", "l", "o", "a", "t" ],
+      [ "d", "o", "u", "b", "l", "e" ]
+    ],
+    "<ReferenceType>": [
+      [ "<ClassOrInterfaceType>" ],
+      [ "<TypeVariable>" ],
+      [ "<ArrayType>" ]
+    ],
+    "<ClassOrInterfaceType>": [
+      [ "<ClassType>" ],
+      [ "<InterfaceType>" ]
+    ],
+    "<ClassType>": [
+      [ "<ClassType_pattern_34>", "<OWS>", "<TypeIdentifier>", "<OWS>", "<ClassType_pattern_35>" ],
+      [ "<PackageName>", "<OWS>", ".", "<OWS>", "<ClassType_pattern_36>", "<OWS>", "<TypeIdentifier>", "<OWS>", "<ClassType_pattern_37>" ],
+      [ "<ClassOrInterfaceType>", "<OWS>", ".", "<OWS>", "<ClassType_pattern_38>", "<OWS>", "<TypeIdentifier>", "<OWS>", "<ClassType_pattern_39>" ]
+    ],
+    "<InterfaceType>": [
+      [ "<ClassType>" ]
+    ],
+    "<TypeVariable>": [
+      [ "<TypeVariable_pattern_40>", "<OWS>", "<TypeIdentifier>" ]
+    ],
+    "<ArrayType>": [
+      [ "<PrimitiveType>", "<OWS>", "<Dims>" ],
+      [ "<ClassOrInterfaceType>", "<OWS>", "<Dims>" ],
+      [ "<TypeVariable>", "<OWS>", "<Dims>" ]
+    ],
+    "<Dims>": [
+      [ "<Dims_pattern_41>", "<OWS>", "[", "]", "<OWS>", "<Dims_pattern_42>" ]
+    ],
+    "<TypeParameter>": [
+      [ "<TypeParameter_pattern_44>", "<OWS>", "<TypeIdentifier>", "<OWS>", "<TypeParameter_pattern_45>" ]
+    ],
+    "<TypeParameterModifier>": [
+      [ "<Annotation>" ]
+    ],
+    "<TypeBound>": [
+      [ "e", "x", "t", "e", "n", "d", "s", "<OWS>", "<TypeVariable>" ],
+      [ "e", "x", "t", "e", "n", "d", "s", "<OWS>", "<ClassOrInterfaceType>", "<OWS>", "<TypeBound_pattern_46>" ]
+    ],
+    "<AdditionalBound>": [
+      [ "&", "<OWS>", "<InterfaceType>" ]
+    ],
+    "<TypeArguments>": [
+      [ "<", "<OWS>", "<TypeArgumentList>", "<OWS>", ">" ]
+    ],
+    "<TypeArgumentList>": [
+      [ "<TypeArgument>", "<OWS>", "<TypeArgumentList_pattern_47>" ]
+    ],
+    "<TypeArgument>": [
+      [ "<ReferenceType>" ],
+      [ "<Wildcard>" ]
+    ],
+    "<Wildcard>": [
+      [ "<Wildcard_pattern_48>", "<OWS>", "?", "<OWS>", "<Wildcard_pattern_49>" ]
+    ],
+    "<WildcardBounds>": [
+      [ "e", "x", "t", "e", "n", "d", "s", "<OWS>", "<ReferenceType>" ],
+      [ "s", "u", "p", "e", "r", "<OWS>", "<ReferenceType>" ]
+    ],
+    "<ModuleName>": [
+      [ "<Identifier>" ],
+      [ "<ModuleName>", "<OWS>", ".", "<OWS>", "<Identifier>" ]
+    ],
+    "<PackageName>": [
+      [ "<Identifier>" ],
+      [ "<PackageName>", "<OWS>", ".", "<OWS>", "<Identifier>" ]
+    ],
+    "<TypeName>": [
+      [ "<TypeIdentifier>" ],
+      [ "<PackageOrTypeName>", "<OWS>", ".", "<OWS>", "<TypeIdentifier>" ]
+    ],
+    "<ExpressionName>": [
+      [ "<Identifier>" ],
+      [ "<AmbiguousName>", "<OWS>", ".", "<OWS>", "<Identifier>" ]
+    ],
+    "<MethodName>": [
+      [ "<UnqualifiedMethodIdentifier>" ]
+    ],
+    "<PackageOrTypeName>": [
+      [ "<Identifier>" ],
+      [ "<PackageOrTypeName>", "<OWS>", ".", "<OWS>", "<Identifier>" ]
+    ],
+    "<AmbiguousName>": [
+      [ "<Identifier>" ],
+      [ "<AmbiguousName>", "<OWS>", ".", "<OWS>", "<Identifier>" ]
+    ],
+    "<CompilationUnit>": [
+      [ "<OrdinaryCompilationUnit>" ],
+      [ "<ModularCompilationUnit>" ]
+    ],
+    "<OrdinaryCompilationUnit>": [
+      [ "<OrdinaryCompilationUnit_pattern_50>", "<OWS>", "<OrdinaryCompilationUnit_pattern_51>", "<OWS>", "<OrdinaryCompilationUnit_pattern_52>" ]
+    ],
+    "<ModularCompilationUnit>": [
+      [ "<ModularCompilationUnit_pattern_53>", "<OWS>", "<ModuleDeclaration>" ]
+    ],
+    "<PackageDeclaration>": [
+      [ "<PackageDeclaration_pattern_54>", "<OWS>", "p", "a", "c", "k", "a", "g", "e", "<OWS>", "<Identifier>", "<OWS>", "<PackageDeclaration_pattern_55>", "<OWS>", ";" ]
+    ],
+    "<PackageModifier>": [
+      [ "<Annotation>" ]
+    ],
+    "<ImportDeclaration>": [
+      [ "<SingleTypeImportDeclaration>" ],
+      [ "<TypeImportOnDemandDeclaration>" ],
+      [ "<SingleStaticImportDeclaration>" ],
+      [ "<StaticImportOnDemandDeclaration>" ]
+    ],
+    "<SingleTypeImportDeclaration>": [
+      [ "i", "m", "p", "o", "r", "t", "<OWS>", "<TypeName>", "<OWS>", ";" ]
+    ],
+    "<TypeImportOnDemandDeclaration>": [
+      [ "i", "m", "p", "o", "r", "t", "<OWS>", "<PackageOrTypeName>", "<OWS>", ".", "*", ";" ]
+    ],
+    "<SingleStaticImportDeclaration>": [
+      [ "i", "m", "p", "o", "r", "t", "s", "t", "a", "t", "i", "c", "<OWS>", "<TypeName>", "<OWS>", ".", "<OWS>", "<Identifier>", "<OWS>", ";" ]
+    ],
+    "<StaticImportOnDemandDeclaration>": [
+      [ "i", "m", "p", "o", "r", "t", "s", "t", "a", "t", "i", "c", "<OWS>", "<TypeName>", "<OWS>", ".", "*", ";" ]
+    ],
+    "<TopLevelClassOrInterfaceDeclaration>": [
+      [ "<ClassDeclaration>" ],
+      [ "<InterfaceDeclaration>" ],
+      [ ";" ]
+    ],
+    "<ModuleDeclaration>": [
+      [ "<ModuleDeclaration_pattern_56>", "<OWS>", "<ModuleDeclaration_pattern_57>", "<OWS>", "m", "o", "d", "u", "l", "e", "<OWS>", "<Identifier>", "<OWS>", "<ModuleDeclaration_pattern_58>", "<OWS>", "{", "<OWS>", "<ModuleDeclaration_pattern_59>", "<OWS>", "}" ]
+    ],
+    "<ModuleDirective>": [
+      [ "r", "e", "q", "u", "i", "r", "e", "s", "<OWS>", "<ModuleDirective_pattern_60>", "<OWS>", "<ModuleName>", "<OWS>", ";" ],
+      [ "e", "x", "p", "o", "r", "t", "s", "<OWS>", "<PackageName>", "<OWS>", "<ModuleDirective_pattern_61>", "<OWS>", ";" ],
+      [ "o", "p", "e", "n", "s", "<OWS>", "<PackageName>", "<OWS>", "<ModuleDirective_pattern_63>", "<OWS>", ";" ],
+      [ "u", "s", "e", "s", "<OWS>", "<TypeName>", "<OWS>", ";" ],
+      [ "p", "r", "o", "v", "i", "d", "e", "s", "<OWS>", "<TypeName>", "<OWS>", "w", "i", "t", "h", "<OWS>", "<TypeName>", "<OWS>", "<ModuleDirective_pattern_65>", "<OWS>", ";" ]
+    ],
+    "<RequiresModifier>": [
+      [ "t", "r", "a", "n", "s", "i", "t", "i", "v", "e" ],
+      [ "s", "t", "a", "t", "i", "c" ]
+    ],
+    "<ClassDeclaration>": [
+      [ "<NormalClassDeclaration>" ],
+      [ "<EnumDeclaration>" ],
+      [ "<RecordDeclaration>" ]
+    ],
+    "<NormalClassDeclaration>": [
+      [ "<NormalClassDeclaration_pattern_66>", "<OWS>", "c", "l", "a", "s", "s", "<OWS>", "<TypeIdentifier>", "<OWS>", "<NormalClassDeclaration_pattern_67>", "<OWS>", "<NormalClassDeclaration_pattern_68>", "<OWS>", "<NormalClassDeclaration_pattern_69>", "<OWS>", "<NormalClassDeclaration_pattern_70>", "<OWS>", "<ClassBody>" ]
+    ],
+    "<ClassModifier>": [
+      [ "<Annotation>" ],
+      [ "p", "u", "b", "l", "i", "c" ],
+      [ "p", "r", "o", "t", "e", "c", "t", "e", "d" ],
+      [ "p", "r", "i", "v", "a", "t", "e" ],
+      [ "a", "b", "s", "t", "r", "a", "c", "t" ],
+      [ "s", "t", "a", "t", "i", "c" ],
+      [ "f", "i", "n", "a", "l" ],
+      [ "s", "e", "a", "l", "e", "d" ],
+      [ "n", "o", "n", "-", "s", "e", "a", "l", "e", "d" ],
+      [ "s", "t", "r", "i", "c", "t", "f", "p" ]
+    ],
+    "<TypeParameters>": [
+      [ "<", "<OWS>", "<TypeParameterList>", "<OWS>", ">" ]
+    ],
+    "<TypeParameterList>": [
+      [ "<TypeParameter>", "<OWS>", "<TypeParameterList_pattern_71>" ]
+    ],
+    "<ClassExtends>": [
+      [ "e", "x", "t", "e", "n", "d", "s", "<OWS>", "<ClassType>" ]
+    ],
+    "<ClassImplements>": [
+      [ "i", "m", "p", "l", "e", "m", "e", "n", "t", "s", "<OWS>", "<InterfaceTypeList>" ]
+    ],
+    "<InterfaceTypeList>": [
+      [ "<InterfaceType>", "<OWS>", "<InterfaceTypeList_pattern_72>" ]
+    ],
+    "<ClassPermits>": [
+      [ "p", "e", "r", "m", "i", "t", "s", "<OWS>", "<TypeName>", "<OWS>", "<ClassPermits_pattern_73>" ]
+    ],
+    "<ClassBody>": [
+      [ "{", "<OWS>", "<ClassBody_pattern_74>", "<OWS>", "}" ]
+    ],
+    "<ClassBodyDeclaration>": [
+      [ "<ClassMemberDeclaration>" ],
+      [ "<InstanceInitializer>" ],
+      [ "<StaticInitializer>" ],
+      [ "<ConstructorDeclaration>" ]
+    ],
+    "<ClassMemberDeclaration>": [
+      [ "<FieldDeclaration>" ],
+      [ "<MethodDeclaration>" ],
+      [ "<ClassDeclaration>" ],
+      [ "<InterfaceDeclaration>" ],
+      [ ";" ]
+    ],
+    "<FieldDeclaration>": [
+      [ "<FieldDeclaration_pattern_75>", "<OWS>", "<UnannType>", "<OWS>", "<VariableDeclaratorList>", "<OWS>", ";" ]
+    ],
+    "<FieldModifier>": [
+      [ "<Annotation>" ],
+      [ "p", "u", "b", "l", "i", "c" ],
+      [ "p", "r", "o", "t", "e", "c", "t", "e", "d" ],
+      [ "p", "r", "i", "v", "a", "t", "e" ],
+      [ "s", "t", "a", "t", "i", "c" ],
+      [ "f", "i", "n", "a", "l" ],
+      [ "t", "r", "a", "n", "s", "i", "e", "n", "t" ],
+      [ "v", "o", "l", "a", "t", "i", "l", "e" ]
+    ],
+    "<VariableDeclaratorList>": [
+      [ "<VariableDeclarator>", "<OWS>", "<VariableDeclaratorList_pattern_76>" ]
+    ],
+    "<VariableDeclarator>": [
+      [ "<VariableDeclaratorId>", "<OWS>", "<VariableDeclarator_pattern_77>" ]
+    ],
+    "<VariableDeclaratorId>": [
+      [ "<Identifier>", "<OWS>", "<VariableDeclaratorId_pattern_78>" ]
+    ],
+    "<VariableInitializer>": [
+      [ "<Expression>" ],
+      [ "<ArrayInitializer>" ]
+    ],
+    "<UnannType>": [
+      [ "<UnannPrimitiveType>" ],
+      [ "<UnannReferenceType>" ]
+    ],
+    "<UnannPrimitiveType>": [
+      [ "<NumericType>" ],
+      [ "b", "o", "o", "l", "e", "a", "n" ]
+    ],
+    "<UnannReferenceType>": [
+      [ "<UnannClassOrInterfaceType>" ],
+      [ "<UnannTypeVariable>" ],
+      [ "<UnannArrayType>" ]
+    ],
+    "<UnannClassOrInterfaceType>": [
+      [ "<UnannClassType>" ],
+      [ "<UnannInterfaceType>" ]
+    ],
+    "<UnannClassType>": [
+      [ "<TypeIdentifier>", "<OWS>", "<UnannClassType_pattern_79>" ],
+      [ "<PackageName>", "<OWS>", ".", "<OWS>", "<UnannClassType_pattern_80>", "<OWS>", "<TypeIdentifier>", "<OWS>", "<UnannClassType_pattern_81>" ],
+      [ "<UnannClassOrInterfaceType>", "<OWS>", ".", "<OWS>", "<UnannClassType_pattern_82>", "<OWS>", "<TypeIdentifier>", "<OWS>", "<UnannClassType_pattern_83>" ]
+    ],
+    "<UnannInterfaceType>": [
+      [ "<UnannClassType>" ]
+    ],
+    "<UnannTypeVariable>": [
+      [ "<TypeIdentifier>" ]
+    ],
+    "<UnannArrayType>": [
+      [ "<UnannPrimitiveType>", "<OWS>", "<Dims>" ],
+      [ "<UnannClassOrInterfaceType>", "<OWS>", "<Dims>" ],
+      [ "<UnannTypeVariable>", "<OWS>", "<Dims>" ]
+    ],
+    "<MethodDeclaration>": [
+      [ "<MethodDeclaration_pattern_84>", "<OWS>", "<MethodHeader>", "<OWS>", "<MethodBody>" ]
+    ],
+    "<MethodModifier>": [
+      [ "<Annotation>" ],
+      [ "p", "u", "b", "l", "i", "c" ],
+      [ "p", "r", "o", "t", "e", "c", "t", "e", "d" ],
+      [ "p", "r", "i", "v", "a", "t", "e" ],
+      [ "a", "b", "s", "t", "r", "a", "c", "t" ],
+      [ "s", "t", "a", "t", "i", "c" ],
+      [ "f", "i", "n", "a", "l" ],
+      [ "s", "y", "n", "c", "h", "r", "o", "n", "i", "z", "e", "d" ],
+      [ "n", "a", "t", "i", "v", "e" ],
+      [ "s", "t", "r", "i", "c", "t", "f", "p" ]
+    ],
+    "<MethodHeader>": [
+      [ "<Result>", "<OWS>", "<MethodDeclarator>", "<OWS>", "<MethodHeader_pattern_85>" ],
+      [ "<TypeParameters>", "<OWS>", "<MethodHeader_pattern_86>", "<OWS>", "<Result>", "<OWS>", "<MethodDeclarator>", "<OWS>", "<MethodHeader_pattern_87>" ]
+    ],
+    "<Result>": [
+      [ "<UnannType>" ],
+      [ "v", "o", "i", "d" ]
+    ],
+    "<MethodDeclarator>": [
+      [ "<Identifier>", "<OWS>", "(", "<OWS>", "<MethodDeclarator_pattern_88>", "<OWS>", "<MethodDeclarator_pattern_89>", "<OWS>", ")", "<OWS>", "<MethodDeclarator_pattern_90>" ]
+    ],
+    "<ReceiverParameter>": [
+      [ "<ReceiverParameter_pattern_91>", "<OWS>", "<UnannType>", "<OWS>", "<ReceiverParameter_pattern_92>", "<OWS>", "t", "h", "i", "s" ]
+    ],
+    "<FormalParameterList>": [
+      [ "<FormalParameter>", "<OWS>", "<FormalParameterList_pattern_93>" ]
+    ],
+    "<FormalParameter>": [
+      [ "<FormalParameter_pattern_94>", "<OWS>", "<UnannType>", "<OWS>", "<VariableDeclaratorId>" ],
+      [ "<VariableArityParameter>" ]
+    ],
+    "<VariableArityParameter>": [
+      [ "<VariableArityParameter_pattern_95>", "<OWS>", "<UnannType>", "<OWS>", "<VariableArityParameter_pattern_96>", "<OWS>", ".", ".", ".", "<OWS>", "<Identifier>" ]
+    ],
+    "<VariableModifier>": [
+      [ "<Annotation>" ],
+      [ "f", "i", "n", "a", "l" ]
+    ],
+    "<Throws>": [
+      [ "t", "h", "r", "o", "w", "s", "<OWS>", "<ExceptionTypeList>" ]
+    ],
+    "<ExceptionTypeList>": [
+      [ "<ExceptionType>", "<OWS>", "<ExceptionTypeList_pattern_97>" ]
+    ],
+    "<ExceptionType>": [
+      [ "<ClassType>" ],
+      [ "<TypeVariable>" ]
+    ],
+    "<MethodBody>": [
+      [ "<Block>" ],
+      [ ";" ]
+    ],
+    "<InstanceInitializer>": [
+      [ "<Block>" ]
+    ],
+    "<StaticInitializer>": [
+      [ "s", "t", "a", "t", "i", "c", "<OWS>", "<Block>" ]
+    ],
+    "<ConstructorDeclaration>": [
+      [ "<ConstructorDeclaration_pattern_98>", "<OWS>", "<ConstructorDeclarator>", "<OWS>", "<ConstructorDeclaration_pattern_99>", "<OWS>", "<ConstructorBody>" ]
+    ],
+    "<ConstructorModifier>": [
+      [ "<Annotation>" ],
+      [ "p", "u", "b", "l", "i", "c" ],
+      [ "p", "r", "o", "t", "e", "c", "t", "e", "d" ],
+      [ "p", "r", "i", "v", "a", "t", "e" ]
+    ],
+    "<ConstructorDeclarator>": [
+      [ "<ConstructorDeclarator_pattern_100>", "<OWS>", "<SimpleTypeName>", "<OWS>", "(", "<OWS>", "<ConstructorDeclarator_pattern_101>", "<OWS>", "<ConstructorDeclarator_pattern_102>", "<OWS>", ")" ]
+    ],
+    "<SimpleTypeName>": [
+      [ "<TypeIdentifier>" ]
+    ],
+    "<ConstructorBody>": [
+      [ "{", "<OWS>", "<ConstructorBody_pattern_103>", "<OWS>", "<ConstructorBody_pattern_104>", "<OWS>", "}" ]
+    ],
+    "<ExplicitConstructorInvocation>": [
+      [ "<ExplicitConstructorInvocation_pattern_105>", "<OWS>", "t", "h", "i", "s", "<OWS>", "(", "<OWS>", "<ExplicitConstructorInvocation_pattern_106>", "<OWS>", ")", ";" ],
+      [ "<ExplicitConstructorInvocation_pattern_107>", "<OWS>", "s", "u", "p", "e", "r", "<OWS>", "(", "<OWS>", "<ExplicitConstructorInvocation_pattern_108>", "<OWS>", ")", ";" ],
+      [ "<ExpressionName>", "<OWS>", ".", "<OWS>", "<ExplicitConstructorInvocation_pattern_109>", "<OWS>", "s", "u", "p", "e", "r", "<OWS>", "(", "<OWS>", "<ExplicitConstructorInvocation_pattern_110>", "<OWS>", ")", ";" ],
+      [ "<Primary>", "<OWS>", ".", "<OWS>", "<ExplicitConstructorInvocation_pattern_111>", "<OWS>", "s", "u", "p", "e", "r", "<OWS>", "(", "<OWS>", "<ExplicitConstructorInvocation_pattern_112>", "<OWS>", ")", ";" ]
+    ],
+    "<EnumDeclaration>": [
+      [ "<EnumDeclaration_pattern_113>", "<OWS>", "e", "n", "u", "m", "<OWS>", "<TypeIdentifier>", "<OWS>", "<EnumDeclaration_pattern_114>", "<OWS>", "<EnumBody>" ]
+    ],
+    "<EnumBody>": [
+      [ "{", "<OWS>", "<EnumBody_pattern_115>", "<OWS>", "<EnumBody_pattern_116>", "<OWS>", "<EnumBody_pattern_117>", "<OWS>", "}" ]
+    ],
+    "<EnumConstantList>": [
+      [ "<EnumConstant>", "<OWS>", "<EnumConstantList_pattern_118>" ]
+    ],
+    "<EnumConstant>": [
+      [ "<EnumConstant_pattern_119>", "<OWS>", "<Identifier>", "<OWS>", "<EnumConstant_pattern_120>", "<OWS>", "<EnumConstant_pattern_122>" ]
+    ],
+    "<EnumConstantModifier>": [
+      [ "<Annotation>" ]
+    ],
+    "<EnumBodyDeclarations>": [
+      [ ";", "<OWS>", "<EnumBodyDeclarations_pattern_123>" ]
+    ],
+    "<RecordDeclaration>": [
+      [ "<RecordDeclaration_pattern_124>", "<OWS>", "r", "e", "c", "o", "r", "d", "<OWS>", "<TypeIdentifier>", "<OWS>", "<RecordDeclaration_pattern_125>", "<OWS>", "<RecordHeader>", "<OWS>", "<RecordDeclaration_pattern_126>", "<OWS>", "<RecordBody>" ]
+    ],
+    "<RecordHeader>": [
+      [ "(", "<OWS>", "<RecordHeader_pattern_127>", "<OWS>", ")" ]
+    ],
+    "<RecordComponentList>": [
+      [ "<RecordComponent>", "<OWS>", "<RecordComponentList_pattern_128>" ]
+    ],
+    "<RecordComponent>": [
+      [ "<RecordComponent_pattern_129>", "<OWS>", "<UnannType>", "<OWS>", "<Identifier>" ],
+      [ "<VariableArityRecordComponent>" ]
+    ],
+    "<VariableArityRecordComponent>": [
+      [ "<VariableArityRecordComponent_pattern_130>", "<OWS>", "<UnannType>", "<OWS>", "<VariableArityRecordComponent_pattern_131>", "<OWS>", ".", ".", ".", "<OWS>", "<Identifier>" ]
+    ],
+    "<RecordComponentModifier>": [
+      [ "<Annotation>" ]
+    ],
+    "<RecordBody>": [
+      [ "{", "<OWS>", "<RecordBody_pattern_132>", "<OWS>", "}" ]
+    ],
+    "<RecordBodyDeclaration>": [
+      [ "<ClassBodyDeclaration>" ],
+      [ "<CompactConstructorDeclaration>" ]
+    ],
+    "<CompactConstructorDeclaration>": [
+      [ "<CompactConstructorDeclaration_pattern_133>", "<OWS>", "<SimpleTypeName>", "<OWS>", "<ConstructorBody>" ]
+    ],
+    "<InterfaceDeclaration>": [
+      [ "<NormalInterfaceDeclaration>" ],
+      [ "<AnnotationInterfaceDeclaration>" ]
+    ],
+    "<NormalInterfaceDeclaration>": [
+      [ "<NormalInterfaceDeclaration_pattern_134>", "<OWS>", "i", "n", "t", "e", "r", "f", "a", "c", "e", "<OWS>", "<TypeIdentifier>", "<OWS>", "<NormalInterfaceDeclaration_pattern_135>", "<OWS>", "<NormalInterfaceDeclaration_pattern_136>", "<OWS>", "<NormalInterfaceDeclaration_pattern_137>", "<OWS>", "<InterfaceBody>" ]
+    ],
+    "<InterfaceModifier>": [
+      [ "<Annotation>" ],
+      [ "p", "u", "b", "l", "i", "c" ],
+      [ "p", "r", "o", "t", "e", "c", "t", "e", "d" ],
+      [ "p", "r", "i", "v", "a", "t", "e" ],
+      [ "a", "b", "s", "t", "r", "a", "c", "t" ],
+      [ "s", "t", "a", "t", "i", "c" ],
+      [ "s", "e", "a", "l", "e", "d" ],
+      [ "n", "o", "n", "-", "s", "e", "a", "l", "e", "d" ],
+      [ "s", "t", "r", "i", "c", "t", "f", "p" ]
+    ],
+    "<InterfaceExtends>": [
+      [ "e", "x", "t", "e", "n", "d", "s", "<OWS>", "<InterfaceTypeList>" ]
+    ],
+    "<InterfacePermits>": [
+      [ "p", "e", "r", "m", "i", "t", "s", "<OWS>", "<TypeName>", "<OWS>", "<InterfacePermits_pattern_138>" ]
+    ],
+    "<InterfaceBody>": [
+      [ "{", "<OWS>", "<InterfaceBody_pattern_139>", "<OWS>", "}" ]
+    ],
+    "<InterfaceMemberDeclaration>": [
+      [ "<ConstantDeclaration>" ],
+      [ "<InterfaceMethodDeclaration>" ],
+      [ "<ClassDeclaration>" ],
+      [ "<InterfaceDeclaration>" ],
+      [ ";" ]
+    ],
+    "<ConstantDeclaration>": [
+      [ "<ConstantDeclaration_pattern_140>", "<OWS>", "<UnannType>", "<OWS>", "<VariableDeclaratorList>", "<OWS>", ";" ]
+    ],
+    "<ConstantModifier>": [
+      [ "<Annotation>" ],
+      [ "p", "u", "b", "l", "i", "c" ],
+      [ "s", "t", "a", "t", "i", "c" ],
+      [ "f", "i", "n", "a", "l" ]
+    ],
+    "<InterfaceMethodDeclaration>": [
+      [ "<InterfaceMethodDeclaration_pattern_141>", "<OWS>", "<MethodHeader>", "<OWS>", "<MethodBody>" ]
+    ],
+    "<InterfaceMethodModifier>": [
+      [ "<Annotation>" ],
+      [ "p", "u", "b", "l", "i", "c" ],
+      [ "p", "r", "i", "v", "a", "t", "e" ],
+      [ "a", "b", "s", "t", "r", "a", "c", "t" ],
+      [ "d", "e", "f", "a", "u", "l", "t" ],
+      [ "s", "t", "a", "t", "i", "c" ],
+      [ "s", "t", "r", "i", "c", "t", "f", "p" ]
+    ],
+    "<AnnotationInterfaceDeclaration>": [
+      [ "<AnnotationInterfaceDeclaration_pattern_142>", "<OWS>", "@", "i", "n", "t", "e", "r", "f", "a", "c", "e", "<OWS>", "<TypeIdentifier>", "<OWS>", "<AnnotationInterfaceBody>" ]
+    ],
+    "<AnnotationInterfaceBody>": [
+      [ "{", "<OWS>", "<AnnotationInterfaceBody_pattern_143>", "<OWS>", "}" ]
+    ],
+    "<AnnotationInterfaceMemberDeclaration>": [
+      [ "<AnnotationInterfaceElementDeclaration>" ],
+      [ "<ConstantDeclaration>" ],
+      [ "<ClassDeclaration>" ],
+      [ "<InterfaceDeclaration>" ],
+      [ ";" ]
+    ],
+    "<AnnotationInterfaceElementDeclaration>": [
+      [ "<AnnotationInterfaceElementDeclaration_pattern_144>", "<OWS>", "<UnannType>", "<OWS>", "<Identifier>", "<OWS>", "(", ")", "<OWS>", "<AnnotationInterfaceElementDeclaration_pattern_145>", "<OWS>", "<AnnotationInterfaceElementDeclaration_pattern_146>", "<OWS>", ";" ]
+    ],
+    "<AnnotationInterfaceElementModifier>": [
+      [ "<Annotation>" ],
+      [ "p", "u", "b", "l", "i", "c" ],
+      [ "a", "b", "s", "t", "r", "a", "c", "t" ]
+    ],
+    "<DefaultValue>": [
+      [ "d", "e", "f", "a", "u", "l", "t", "<OWS>", "<ElementValue>" ]
+    ],
+    "<Annotation>": [
+      [ "<NormalAnnotation>" ],
+      [ "<MarkerAnnotation>" ],
+      [ "<SingleElementAnnotation>" ]
+    ],
+    "<NormalAnnotation>": [
+      [ "@", "<OWS>", "<TypeName>", "<OWS>", "(", "<OWS>", "<NormalAnnotation_pattern_147>", "<OWS>", ")" ]
+    ],
+    "<ElementValuePairList>": [
+      [ "<ElementValuePair>", "<OWS>", "<ElementValuePairList_pattern_148>" ]
+    ],
+    "<ElementValuePair>": [
+      [ "<Identifier>", "<OWS>", "=", "<OWS>", "<ElementValue>" ]
+    ],
+    "<ElementValue>": [
+      [ "<ConditionalExpression>" ],
+      [ "<ElementValueArrayInitializer>" ],
+      [ "<Annotation>" ]
+    ],
+    "<ElementValueArrayInitializer>": [
+      [ "{", "<OWS>", "<ElementValueArrayInitializer_pattern_149>", "<OWS>", "<ElementValueArrayInitializer_pattern_150>", "<OWS>", "}" ]
+    ],
+    "<ElementValueList>": [
+      [ "<ElementValue>", "<OWS>", "<ElementValueList_pattern_151>" ]
+    ],
+    "<MarkerAnnotation>": [
+      [ "@", "<OWS>", "<TypeName>" ]
+    ],
+    "<SingleElementAnnotation>": [
+      [ "@", "<OWS>", "<TypeName>", "<OWS>", "(", "<OWS>", "<ElementValue>", "<OWS>", ")" ]
+    ],
+    "<ArrayInitializer>": [
+      [ "{", "<OWS>", "<ArrayInitializer_pattern_152>", "<OWS>", "<ArrayInitializer_pattern_153>", "<OWS>", "}" ]
+    ],
+    "<VariableInitializerList>": [
+      [ "<VariableInitializer>", "<OWS>", "<VariableInitializerList_pattern_154>" ]
+    ],
+    "<Block>": [
+      [ "{", "<OWS>", "<Block_pattern_155>", "<OWS>", "}" ]
+    ],
+    "<BlockStatements>": [
+      [ "<BlockStatement>", "<OWS>", "<BlockStatements_pattern_156>" ]
+    ],
+    "<BlockStatement>": [
+      [ "<LocalClassOrInterfaceDeclaration>" ],
+      [ "<LocalVariableDeclarationStatement>" ],
+      [ "<Statement>" ]
+    ],
+    "<LocalClassOrInterfaceDeclaration>": [
+      [ "<ClassDeclaration>" ],
+      [ "<NormalInterfaceDeclaration>" ]
+    ],
+    "<LocalVariableDeclarationStatement>": [
+      [ "<LocalVariableDeclaration>", "<OWS>", ";" ]
+    ],
+    "<LocalVariableDeclaration>": [
+      [ "<LocalVariableDeclaration_pattern_157>", "<OWS>", "<LocalVariableType>", "<OWS>", "<VariableDeclaratorList>" ]
+    ],
+    "<LocalVariableType>": [
+      [ "<UnannType>" ],
+      [ "v", "a", "r" ]
+    ],
+    "<Statement>": [
+      [ "<StatementWithoutTrailingSubstatement>" ],
+      [ "<LabeledStatement>" ],
+      [ "<IfThenStatement>" ],
+      [ "<IfThenElseStatement>" ],
+      [ "<WhileStatement>" ],
+      [ "<ForStatement>" ]
+    ],
+    "<StatementNoShortIf>": [
+      [ "<StatementWithoutTrailingSubstatement>" ],
+      [ "<LabeledStatementNoShortIf>" ],
+      [ "<IfThenElseStatementNoShortIf>" ],
+      [ "<WhileStatementNoShortIf>" ],
+      [ "<ForStatementNoShortIf>" ]
+    ],
+    "<StatementWithoutTrailingSubstatement>": [
+      [ "<Block>" ],
+      [ "<EmptyStatement>" ],
+      [ "<ExpressionStatement>" ],
+      [ "<AssertStatement>" ],
+      [ "<SwitchStatement>" ],
+      [ "<DoStatement>" ],
+      [ "<BreakStatement>" ],
+      [ "<ContinueStatement>" ],
+      [ "<ReturnStatement>" ],
+      [ "<SynchronizedStatement>" ],
+      [ "<ThrowStatement>" ],
+      [ "<TryStatement>" ],
+      [ "<YieldStatement>" ]
+    ],
+    "<EmptyStatement>": [
+      [ ";" ]
+    ],
+    "<LabeledStatement>": [
+      [ "<Identifier>", "<OWS>", ":", "<OWS>", "<Statement>" ]
+    ],
+    "<LabeledStatementNoShortIf>": [
+      [ "<Identifier>", "<OWS>", ":", "<OWS>", "<StatementNoShortIf>" ]
+    ],
+    "<ExpressionStatement>": [
+      [ "<StatementExpression>", "<OWS>", ";" ]
+    ],
+    "<StatementExpression>": [
+      [ "<Assignment>" ],
+      [ "<PreIncrementExpression>" ],
+      [ "<PreDecrementExpression>" ],
+      [ "<PostIncrementExpression>" ],
+      [ "<PostDecrementExpression>" ],
+      [ "<MethodInvocation>" ],
+      [ "<ClassInstanceCreationExpression>" ]
+    ],
+    "<IfThenStatement>": [
+      [ "i", "f", "<OWS>", "(", "<OWS>", "<Expression>", "<OWS>", ")", "<OWS>", "<Statement>" ]
+    ],
+    "<IfThenElseStatement>": [
+      [ "i", "f", "<OWS>", "(", "<OWS>", "<Expression>", "<OWS>", ")", "<OWS>", "<StatementNoShortIf>", "<OWS>", "e", "l", "s", "e", "<OWS>", "<Statement>" ]
+    ],
+    "<IfThenElseStatementNoShortIf>": [
+      [ "i", "f", "<OWS>", "(", "<OWS>", "<Expression>", "<OWS>", ")", "<OWS>", "<StatementNoShortIf>", "<OWS>", "e", "l", "s", "e", "<OWS>", "<StatementNoShortIf>" ]
+    ],
+    "<AssertStatement>": [
+      [ "a", "s", "s", "e", "r", "t", "<OWS>", "<Expression>", "<OWS>", ";" ],
+      [ "a", "s", "s", "e", "r", "t", "<OWS>", "<Expression>", "<OWS>", ":", "<OWS>", "<Expression>", "<OWS>", ";" ]
+    ],
+    "<SwitchStatement>": [
+      [ "s", "w", "i", "t", "c", "h", "<OWS>", "(", "<OWS>", "<Expression>", "<OWS>", ")", "<OWS>", "<SwitchBlock>" ]
+    ],
+    "<SwitchBlock>": [
+      [ "{", "<OWS>", "<SwitchRule>", "<OWS>", "<SwitchBlock_pattern_158>", "<OWS>", "}" ],
+      [ "{", "<OWS>", "<SwitchBlock_pattern_159>", "<OWS>", "<SwitchBlock_pattern_160>", "<OWS>", "}" ]
+    ],
+    "<SwitchRule>": [
+      [ "<SwitchLabel>", "<OWS>", "-", ">", "<OWS>", "<Expression>", "<OWS>", ";" ],
+      [ "<SwitchLabel>", "<OWS>", "-", ">", "<OWS>", "<Block>" ],
+      [ "<SwitchLabel>", "<OWS>", "-", ">", "<OWS>", "<ThrowStatement>" ]
+    ],
+    "<SwitchBlockStatementGroup>": [
+      [ "<SwitchLabel>", "<OWS>", ":", "<OWS>", "<SwitchBlockStatementGroup_pattern_161>", "<OWS>", "<BlockStatements>" ]
+    ],
+    "<SwitchLabel>": [
+      [ "c", "a", "s", "e", "<OWS>", "<CaseConstant>", "<OWS>", "<SwitchLabel_pattern_162>" ],
+      [ "d", "e", "f", "a", "u", "l", "t" ]
+    ],
+    "<CaseConstant>": [
+      [ "<ConditionalExpression>" ]
+    ],
+    "<WhileStatement>": [
+      [ "w", "h", "i", "l", "e", "<OWS>", "(", "<OWS>", "<Expression>", "<OWS>", ")", "<OWS>", "<Statement>" ]
+    ],
+    "<WhileStatementNoShortIf>": [
+      [ "w", "h", "i", "l", "e", "<OWS>", "(", "<OWS>", "<Expression>", "<OWS>", ")", "<OWS>", "<StatementNoShortIf>" ]
+    ],
+    "<DoStatement>": [
+      [ "d", "o", "<OWS>", "<Statement>", "<OWS>", "w", "h", "i", "l", "e", "<OWS>", "(", "<OWS>", "<Expression>", "<OWS>", ")", ";" ]
+    ],
+    "<ForStatement>": [
+      [ "<BasicForStatement>" ],
+      [ "<EnhancedForStatement>" ]
+    ],
+    "<ForStatementNoShortIf>": [
+      [ "<BasicForStatementNoShortIf>" ],
+      [ "<EnhancedForStatementNoShortIf>" ]
+    ],
+    "<BasicForStatement>": [
+      [ "f", "o", "r", "<OWS>", "(", "<OWS>", "<BasicForStatement_pattern_163>", "<OWS>", ";", "<OWS>", "<BasicForStatement_pattern_164>", "<OWS>", ";", "<OWS>", "<BasicForStatement_pattern_165>", "<OWS>", ")", "<OWS>", "<Statement>" ]
+    ],
+    "<BasicForStatementNoShortIf>": [
+      [ "f", "o", "r", "<OWS>", "(", "<OWS>", "<BasicForStatementNoShortIf_pattern_166>", "<OWS>", ";", "<OWS>", "<BasicForStatementNoShortIf_pattern_167>", "<OWS>", ";", "<OWS>", "<BasicForStatementNoShortIf_pattern_168>", "<OWS>", ")", "<OWS>", "<StatementNoShortIf>" ]
+    ],
+    "<ForInit>": [
+      [ "<StatementExpressionList>" ],
+      [ "<LocalVariableDeclaration>" ]
+    ],
+    "<ForUpdate>": [
+      [ "<StatementExpressionList>" ]
+    ],
+    "<StatementExpressionList>": [
+      [ "<StatementExpression>", "<OWS>", "<StatementExpressionList_pattern_169>" ]
+    ],
+    "<EnhancedForStatement>": [
+      [ "f", "o", "r", "<OWS>", "(", "<OWS>", "<LocalVariableDeclaration>", "<OWS>", ":", "<OWS>", "<Expression>", "<OWS>", ")", "<OWS>", "<Statement>" ]
+    ],
+    "<EnhancedForStatementNoShortIf>": [
+      [ "f", "o", "r", "<OWS>", "(", "<OWS>", "<LocalVariableDeclaration>", "<OWS>", ":", "<OWS>", "<Expression>", "<OWS>", ")", "<OWS>", "<StatementNoShortIf>" ]
+    ],
+    "<BreakStatement>": [
+      [ "b", "r", "e", "a", "k", "<OWS>", "<BreakStatement_pattern_170>", "<OWS>", ";" ]
+    ],
+    "<YieldStatement>": [
+      [ "y", "i", "e", "l", "d", "<OWS>", "<Expression>", "<OWS>", ";" ]
+    ],
+    "<ContinueStatement>": [
+      [ "c", "o", "n", "t", "i", "n", "u", "e", "<OWS>", "<ContinueStatement_pattern_171>", "<OWS>", ";" ]
+    ],
+    "<ReturnStatement>": [
+      [ "r", "e", "t", "u", "r", "n", "<OWS>", "<ReturnStatement_pattern_172>", "<OWS>", ";" ]
+    ],
+    "<ThrowStatement>": [
+      [ "t", "h", "r", "o", "w", "<OWS>", "<Expression>", "<OWS>", ";" ]
+    ],
+    "<SynchronizedStatement>": [
+      [ "s", "y", "n", "c", "h", "r", "o", "n", "i", "z", "e", "d", "<OWS>", "(", "<OWS>", "<Expression>", "<OWS>", ")", "<OWS>", "<Block>" ]
+    ],
+    "<TryStatement>": [
+      [ "t", "r", "y", "<OWS>", "<Block>", "<OWS>", "<Catches>" ],
+      [ "t", "r", "y", "<OWS>", "<Block>", "<OWS>", "<TryStatement_pattern_173>", "<OWS>", "<Finally>" ],
+      [ "<TryWithResourcesStatement>" ]
+    ],
+    "<Catches>": [
+      [ "<CatchClause>", "<OWS>", "<Catches_pattern_174>" ]
+    ],
+    "<CatchClause>": [
+      [ "c", "a", "t", "c", "h", "<OWS>", "(", "<OWS>", "<CatchFormalParameter>", "<OWS>", ")", "<OWS>", "<Block>" ]
+    ],
+    "<CatchFormalParameter>": [
+      [ "<CatchFormalParameter_pattern_175>", "<OWS>", "<CatchType>", "<OWS>", "<VariableDeclaratorId>" ]
+    ],
+    "<CatchType>": [
+      [ "<UnannClassType>", "<OWS>", "<CatchType_pattern_176>" ]
+    ],
+    "<Finally>": [
+      [ "f", "i", "n", "a", "l", "l", "y", "<OWS>", "<Block>" ]
+    ],
+    "<TryWithResourcesStatement>": [
+      [ "t", "r", "y", "<OWS>", "<ResourceSpecification>", "<OWS>", "<Block>", "<OWS>", "<TryWithResourcesStatement_pattern_177>", "<OWS>", "<TryWithResourcesStatement_pattern_178>" ]
+    ],
+    "<ResourceSpecification>": [
+      [ "(", "<OWS>", "<ResourceList>", "<OWS>", "<ResourceSpecification_pattern_179>", "<OWS>", ")" ]
+    ],
+    "<ResourceList>": [
+      [ "<Resource>", "<OWS>", "<ResourceList_pattern_180>" ]
+    ],
+    "<Resource>": [
+      [ "<LocalVariableDeclaration>" ],
+      [ "V", "a", "r", "i", "a", "b", "l", "e", "A", "c", "c", "e", "s", "s" ]
+    ],
+    "<Pattern>": [
+      [ "<TypePattern>" ]
+    ],
+    "<TypePattern>": [
+      [ "<LocalVariableDeclaration>" ]
+    ],
+    "<Primary>": [
+      [ "<PrimaryNoNewArray>" ],
+      [ "<ArrayCreationExpression>" ]
+    ],
+    "<PrimaryNoNewArray>": [
+      [ "<Literal>" ],
+      [ "<ClassLiteral>" ],
+      [ "t", "h", "i", "s" ],
+      [ "<TypeName>", "<OWS>", ".", "t", "h", "i", "s" ],
+      [ "(", "<OWS>", "<Expression>", "<OWS>", ")" ],
+      [ "<ClassInstanceCreationExpression>" ],
+      [ "<FieldAccess>" ],
+      [ "<ArrayAccess>" ],
+      [ "<MethodInvocation>" ],
+      [ "<MethodReference>" ]
+    ],
+    "<ClassLiteral>": [
+      [ "<TypeName>", "<OWS>", "<ClassLiteral_pattern_181>", "<OWS>", ".", "c", "l", "a", "s", "s" ],
+      [ "<NumericType>", "<OWS>", "<ClassLiteral_pattern_182>", "<OWS>", ".", "c", "l", "a", "s", "s" ],
+      [ "b", "o", "o", "l", "e", "a", "n", "<OWS>", "<ClassLiteral_pattern_183>", "<OWS>", ".", "c", "l", "a", "s", "s" ],
+      [ "v", "o", "i", "d", ".", "c", "l", "a", "s", "s" ]
+    ],
+    "<ClassInstanceCreationExpression>": [
+      [ "<UnqualifiedClassInstanceCreationExpression>" ],
+      [ "<ExpressionName>", "<OWS>", ".", "<OWS>", "<UnqualifiedClassInstanceCreationExpression>" ],
+      [ "<Primary>", "<OWS>", ".", "<OWS>", "<UnqualifiedClassInstanceCreationExpression>" ]
+    ],
+    "<UnqualifiedClassInstanceCreationExpression>": [
+      [ "n", "e", "w", "<OWS>", "<UnqualifiedClassInstanceCreationExpression_pattern_184>", "<OWS>", "<ClassOrInterfaceTypeToInstantiate>", "<OWS>", "(", "<OWS>", "<UnqualifiedClassInstanceCreationExpression_pattern_185>", "<OWS>", ")", "<OWS>", "<UnqualifiedClassInstanceCreationExpression_pattern_186>" ]
+    ],
+    "<ClassOrInterfaceTypeToInstantiate>": [
+      [ "<ClassOrInterfaceTypeToInstantiate_pattern_187>", "<OWS>", "<Identifier>", "<OWS>", "<ClassOrInterfaceTypeToInstantiate_pattern_188>", "<OWS>", "<ClassOrInterfaceTypeToInstantiate_pattern_190>" ]
+    ],
+    "<TypeArgumentsOrDiamond>": [
+      [ "<TypeArguments>" ],
+      [ "<", "<OWS>", ">" ]
+    ],
+    "<ArrayCreationExpression>": [
+      [ "<ArrayCreationExpressionWithoutInitializer>" ],
+      [ "<ArrayCreationExpressionWithInitializer>" ]
+    ],
+    "<ArrayCreationExpressionWithoutInitializer>": [
+      [ "n", "e", "w", "<OWS>", "<PrimitiveType>", "<OWS>", "<DimExprs>", "<OWS>", "<ArrayCreationExpressionWithoutInitializer_pattern_191>" ],
+      [ "n", "e", "w", "<OWS>", "<ClassOrInterfaceType>", "<OWS>", "<DimExprs>", "<OWS>", "<ArrayCreationExpressionWithoutInitializer_pattern_192>" ]
+    ],
+    "<ArrayCreationExpressionWithInitializer>": [
+      [ "n", "e", "w", "<OWS>", "<PrimitiveType>", "<OWS>", "<Dims>", "<OWS>", "<ArrayInitializer>" ],
+      [ "n", "e", "w", "<OWS>", "<ClassOrInterfaceType>", "<OWS>", "<Dims>", "<OWS>", "<ArrayInitializer>" ]
+    ],
+    "<DimExprs>": [
+      [ "<DimExpr>", "<OWS>", "<DimExprs_pattern_193>" ]
+    ],
+    "<DimExpr>": [
+      [ "<DimExpr_pattern_194>", "<OWS>", "[", "<OWS>", "<Expression>", "<OWS>", "]" ]
+    ],
+    "<ArrayAccess>": [
+      [ "<ExpressionName>", "<OWS>", "[", "<OWS>", "<Expression>", "<OWS>", "]" ],
+      [ "<PrimaryNoNewArray>", "<OWS>", "[", "<OWS>", "<Expression>", "<OWS>", "]" ],
+      [ "<ArrayCreationExpressionWithInitializer>", "<OWS>", "[", "<OWS>", "<Expression>", "<OWS>", "]" ]
+    ],
+    "<FieldAccess>": [
+      [ "<Primary>", "<OWS>", ".", "<OWS>", "<Identifier>" ],
+      [ "s", "u", "p", "e", "r", ".", "<OWS>", "<Identifier>" ],
+      [ "<TypeName>", "<OWS>", ".", "s", "u", "p", "e", "r", ".", "<OWS>", "<Identifier>" ]
+    ],
+    "<MethodInvocation>": [
+      [ "<MethodName>", "<OWS>", "(", "<OWS>", "<MethodInvocation_pattern_195>", "<OWS>", ")" ],
+      [ "<TypeName>", "<OWS>", ".", "<OWS>", "<MethodInvocation_pattern_196>", "<OWS>", "<Identifier>", "<OWS>", "(", "<OWS>", "<MethodInvocation_pattern_197>", "<OWS>", ")" ],
+      [ "<ExpressionName>", "<OWS>", ".", "<OWS>", "<MethodInvocation_pattern_198>", "<OWS>", "<Identifier>", "<OWS>", "(", "<OWS>", "<MethodInvocation_pattern_199>", "<OWS>", ")" ],
+      [ "<Primary>", "<OWS>", ".", "<OWS>", "<MethodInvocation_pattern_200>", "<OWS>", "<Identifier>", "<OWS>", "(", "<OWS>", "<MethodInvocation_pattern_201>", "<OWS>", ")" ],
+      [ "s", "u", "p", "e", "r", ".", "<OWS>", "<MethodInvocation_pattern_202>", "<OWS>", "<Identifier>", "<OWS>", "(", "<OWS>", "<MethodInvocation_pattern_203>", "<OWS>", ")" ],
+      [ "<TypeName>", "<OWS>", ".", "s", "u", "p", "e", "r", ".", "<OWS>", "<MethodInvocation_pattern_204>", "<OWS>", "<Identifier>", "<OWS>", "(", "<OWS>", "<MethodInvocation_pattern_205>", "<OWS>", ")" ]
+    ],
+    "<ArgumentList>": [
+      [ "<Expression>", "<OWS>", "<ArgumentList_pattern_206>" ]
+    ],
+    "<MethodReference>": [
+      [ "<ExpressionName>", "<OWS>", ":", ":", "<OWS>", "<MethodReference_pattern_207>", "<OWS>", "<Identifier>" ],
+      [ "<Primary>", "<OWS>", ":", ":", "<OWS>", "<MethodReference_pattern_208>", "<OWS>", "<Identifier>" ],
+      [ "<ReferenceType>", "<OWS>", ":", ":", "<OWS>", "<MethodReference_pattern_209>", "<OWS>", "<Identifier>" ],
+      [ "s", "u", "p", "e", "r", ":", ":", "<OWS>", "<MethodReference_pattern_210>", "<OWS>", "<Identifier>" ],
+      [ "<TypeName>", "<OWS>", ".", "s", "u", "p", "e", "r", ":", ":", "<OWS>", "<MethodReference_pattern_211>", "<OWS>", "<Identifier>" ],
+      [ "<ClassType>", "<OWS>", ":", ":", "<OWS>", "<MethodReference_pattern_212>", "<OWS>", "n", "e", "w" ],
+      [ "<ArrayType>", "<OWS>", ":", ":", "n", "e", "w" ]
+    ],
+    "<Expression>": [
+      [ "<LambdaExpression>" ],
+      [ "<AssignmentExpression>" ]
+    ],
+    "<LambdaExpression>": [
+      [ "<LambdaParameters>", "<OWS>", "-", ">", "<OWS>", "<LambdaBody>" ]
+    ],
+    "<LambdaParameters>": [
+      [ "(", "<OWS>", "<LambdaParameters_pattern_213>", "<OWS>", ")" ],
+      [ "<Identifier>" ]
+    ],
+    "<LambdaParameterList>": [
+      [ "<LambdaParameter>", "<OWS>", "<LambdaParameterList_pattern_214>" ],
+      [ "<Identifier>", "<OWS>", "<LambdaParameterList_pattern_215>" ]
+    ],
+    "<LambdaParameter>": [
+      [ "<LambdaParameter_pattern_216>", "<OWS>", "<LambdaParameterType>", "<OWS>", "<VariableDeclaratorId>" ],
+      [ "<VariableArityParameter>" ]
+    ],
+    "<LambdaParameterType>": [
+      [ "<UnannType>" ],
+      [ "v", "a", "r" ]
+    ],
+    "<LambdaBody>": [
+      [ "<Expression>" ],
+      [ "<Block>" ]
+    ],
+    "<AssignmentExpression>": [
+      [ "<ConditionalExpression>" ],
+      [ "<Assignment>" ]
+    ],
+    "<Assignment>": [
+      [ "<LeftHandSide>", "<OWS>", "<AssignmentOperator>", "<OWS>", "<Expression>" ]
+    ],
+    "<LeftHandSide>": [
+      [ "<ExpressionName>" ],
+      [ "<FieldAccess>" ],
+      [ "<ArrayAccess>" ]
+    ],
+    "<AssignmentOperator>": [
+      [ "=" ],
+      [ "*", "=" ],
+      [ "/", "=" ],
+      [ "%", "=" ],
+      [ "+", "=" ],
+      [ "-", "=" ],
+      [ "<", "<OWS>", "<", "<OWS>", "=" ],
+      [ ">", ">", "=" ],
+      [ ">", ">", ">", "=" ],
+      [ "&", "=" ],
+      [ "^", "=" ],
+      [],
+      []
+    ],
+    "<ConditionalExpression>": [
+      [ "<ConditionalOrExpression>" ],
+      [ "<ConditionalOrExpression>", "<OWS>", "?", "<OWS>", "<Expression>", "<OWS>", ":", "<OWS>", "<ConditionalExpression>" ],
+      [ "<ConditionalOrExpression>", "<OWS>", "?", "<OWS>", "<Expression>", "<OWS>", ":", "<OWS>", "<LambdaExpression>" ]
+    ],
+    "<ConditionalOrExpression>": [
+      [ "<ConditionalAndExpression>" ],
+      [ "<ConditionalOrExpression>", "<OWS>", "|", "|", "<OWS>", "<ConditionalAndExpression>" ]
+    ],
+    "<ConditionalAndExpression>": [
+      [ "<InclusiveOrExpression>" ],
+      [ "<ConditionalAndExpression>", "<OWS>", "&", "&", "<OWS>", "<InclusiveOrExpression>" ]
+    ],
+    "<InclusiveOrExpression>": [
+      [ "<ExclusiveOrExpression>" ],
+      [ "<InclusiveOrExpression>", "<OWS>", "|", "<OWS>", "<ExclusiveOrExpression>" ]
+    ],
+    "<ExclusiveOrExpression>": [
+      [ "<AndExpression>" ],
+      [ "<ExclusiveOrExpression>", "<OWS>", "^", "<OWS>", "<AndExpression>" ]
+    ],
+    "<AndExpression>": [
+      [ "<EqualityExpression>" ],
+      [ "<AndExpression>", "<OWS>", "&", "<OWS>", "<EqualityExpression>" ]
+    ],
+    "<EqualityExpression>": [
+      [ "<RelationalExpression>" ],
+      [ "<EqualityExpression>", "<OWS>", "=", "=", "<OWS>", "<RelationalExpression>" ],
+      [ "<EqualityExpression>", "<OWS>", "!", "=", "<OWS>", "<RelationalExpression>" ]
+    ],
+    "<RelationalExpression>": [
+      [ "<ShiftExpression>" ],
+      [ "<RelationalExpression>", "<OWS>", "<", "<OWS>", "<ShiftExpression>" ],
+      [ "<RelationalExpression>", "<OWS>", ">", "<OWS>", "<ShiftExpression>" ],
+      [ "<RelationalExpression>", "<OWS>", "<", "<OWS>", "=", "<OWS>", "<ShiftExpression>" ],
+      [ "<RelationalExpression>", "<OWS>", ">", "=", "<OWS>", "<ShiftExpression>" ],
+      [ "<InstanceofExpression>" ]
+    ],
+    "<InstanceofExpression>": [
+      [ "<RelationalExpression>", "<OWS>", "i", "n", "s", "t", "a", "n", "c", "e", "o", "f", "<OWS>", "<ReferenceType>" ],
+      [ "<RelationalExpression>", "<OWS>", "i", "n", "s", "t", "a", "n", "c", "e", "o", "f", "<OWS>", "<Pattern>" ]
+    ],
+    "<ShiftExpression>": [
+      [ "<AdditiveExpression>" ],
+      [ "<ShiftExpression>", "<OWS>", "<", "<OWS>", "<", "<OWS>", "<AdditiveExpression>" ],
+      [ "<ShiftExpression>", "<OWS>", ">", ">", "<OWS>", "<AdditiveExpression>" ],
+      [ "<ShiftExpression>", "<OWS>", ">", ">", ">", "<OWS>", "<AdditiveExpression>" ]
+    ],
+    "<AdditiveExpression>": [
+      [ "<MultiplicativeExpression>" ],
+      [ "<AdditiveExpression>", "<OWS>", "+", "<OWS>", "<MultiplicativeExpression>" ],
+      [ "<AdditiveExpression>", "<OWS>", "-", "<OWS>", "<MultiplicativeExpression>" ]
+    ],
+    "<MultiplicativeExpression>": [
+      [ "<UnaryExpression>" ],
+      [ "<MultiplicativeExpression>", "<OWS>", "*", "<OWS>", "<UnaryExpression>" ],
+      [ "<MultiplicativeExpression>", "<OWS>", "/", "<OWS>", "<UnaryExpression>" ],
+      [ "<MultiplicativeExpression>", "<OWS>", "%", "<OWS>", "<UnaryExpression>" ]
+    ],
+    "<UnaryExpression>": [
+      [ "<PreIncrementExpression>" ],
+      [ "<PreDecrementExpression>" ],
+      [ "+", "<OWS>", "<UnaryExpression>" ],
+      [ "-", "<OWS>", "<UnaryExpression>" ],
+      [ "<UnaryExpressionNotPlusMinus>" ]
+    ],
+    "<PreIncrementExpression>": [
+      [ "+", "+", "<OWS>", "<UnaryExpression>" ]
+    ],
+    "<PreDecrementExpression>": [
+      [ "-", "-", "<OWS>", "<UnaryExpression>" ]
+    ],
+    "<UnaryExpressionNotPlusMinus>": [
+      [ "<PostfixExpression>" ],
+      [ "~", "<OWS>", "<UnaryExpression>" ],
+      [ "!", "<OWS>", "<UnaryExpression>" ],
+      [ "<CastExpression>" ],
+      [ "<SwitchExpression>" ]
+    ],
+    "<PostfixExpression>": [
+      [ "<Primary>" ],
+      [ "<ExpressionName>" ],
+      [ "<PostIncrementExpression>" ],
+      [ "<PostDecrementExpression>" ]
+    ],
+    "<PostIncrementExpression>": [
+      [ "<PostfixExpression>", "<OWS>", "+", "+" ]
+    ],
+    "<PostDecrementExpression>": [
+      [ "<PostfixExpression>", "<OWS>", "-", "-" ]
+    ],
+    "<CastExpression>": [
+      [ "(", "<OWS>", "<PrimitiveType>", "<OWS>", ")", "<OWS>", "<UnaryExpression>" ],
+      [ "(", "<OWS>", "<ReferenceType>", "<OWS>", "<CastExpression_pattern_217>", "<OWS>", ")", "<OWS>", "<UnaryExpressionNotPlusMinus>" ],
+      [ "(", "<OWS>", "<ReferenceType>", "<OWS>", "<CastExpression_pattern_218>", "<OWS>", ")", "<OWS>", "<LambdaExpression>" ]
+    ],
+    "<SwitchExpression>": [
+      [ "s", "w", "i", "t", "c", "h", "<OWS>", "(", "<OWS>", "<Expression>", "<OWS>", ")", "<OWS>", "<SwitchBlock>" ]
+    ],
+    "<ConstantExpression>": [
+      [ "<Expression>" ]
+    ],
+    "<UnicodeMarker_pattern_0>": [
+      [],
+      [ "u", "<UnicodeMarker_pattern_0>" ]
+    ],
+    "<EndOfLineComment_pattern_1>": [
+      [],
+      [ "<InputCharacter>", "<EndOfLineComment_pattern_1>" ]
+    ],
+    "<IdentifierChars_pattern_2>": [
+      [],
+      [ "<JavaLetterOrDigit>", "<IdentifierChars_pattern_2>" ]
+    ],
+    "<DecimalIntegerLiteral_pattern_3>": [
+      [],
+      [ "<IntegerTypeSuffix>" ]
+    ],
+    "<HexIntegerLiteral_pattern_4>": [
+      [],
+      [ "<IntegerTypeSuffix>" ]
+    ],
+    "<OctalIntegerLiteral_pattern_5>": [
+      [],
+      [ "<IntegerTypeSuffix>" ]
+    ],
+    "<BinaryIntegerLiteral_pattern_6>": [
+      [],
+      [ "<IntegerTypeSuffix>" ]
+    ],
+    "<DecimalNumeral_pattern_7>": [
+      [],
+      [ "<Digits>" ]
+    ],
+    "<Digits_pattern_8>": [
+      [],
+      [ "<DigitsAndUnderscores>" ]
+    ],
+    "<DigitsAndUnderscores_pattern_9>": [
+      [],
+      [ "<DigitOrUnderscore>", "<DigitsAndUnderscores_pattern_9>" ]
+    ],
+    "<Underscores_pattern_10>": [
+      [],
+      [ "_", "<Underscores_pattern_10>" ]
+    ],
+    "<HexDigits_pattern_11>": [
+      [],
+      [ "<HexDigitsAndUnderscores>" ]
+    ],
+    "<HexDigitsAndUnderscores_pattern_12>": [
+      [],
+      [ "<HexDigitOrUnderscore>", "<HexDigitsAndUnderscores_pattern_12>" ]
+    ],
+    "<OctalDigits_pattern_13>": [
+      [],
+      [ "<OctalDigitsAndUnderscores>" ]
+    ],
+    "<OctalDigitsAndUnderscores_pattern_14>": [
+      [],
+      [ "<OctalDigitOrUnderscore>", "<OctalDigitsAndUnderscores_pattern_14>" ]
+    ],
+    "<BinaryDigits_pattern_15>": [
+      [],
+      [ "<BinaryDigitsAndUnderscores>" ]
+    ],
+    "<BinaryDigitsAndUnderscores_pattern_16>": [
+      [],
+      [ "<BinaryDigitOrUnderscore>", "<BinaryDigitsAndUnderscores_pattern_16>" ]
+    ],
+    "<DecimalFloatingPointLiteral_pattern_17>": [
+      [],
+      [ "<Digits>" ]
+    ],
+    "<DecimalFloatingPointLiteral_pattern_18>": [
+      [],
+      [ "<ExponentPart>" ]
+    ],
+    "<DecimalFloatingPointLiteral_pattern_19>": [
+      [],
+      [ "<FloatTypeSuffix>" ]
+    ],
+    "<DecimalFloatingPointLiteral_pattern_20>": [
+      [],
+      [ "<ExponentPart>" ]
+    ],
+    "<DecimalFloatingPointLiteral_pattern_21>": [
+      [],
+      [ "<FloatTypeSuffix>" ]
+    ],
+    "<DecimalFloatingPointLiteral_pattern_22>": [
+      [],
+      [ "<FloatTypeSuffix>" ]
+    ],
+    "<DecimalFloatingPointLiteral_pattern_23>": [
+      [],
+      [ "<ExponentPart>" ]
+    ],
+    "<SignedInteger_pattern_24>": [
+      [],
+      [ "<Sign>" ]
+    ],
+    "<HexadecimalFloatingPointLiteral_pattern_25>": [
+      [],
+      [ "<FloatTypeSuffix>" ]
+    ],
+    "<HexSignificand_pattern_26>": [
+      [],
+      [ "." ]
+    ],
+    "<HexSignificand_pattern_27>": [
+      [],
+      [ "<HexDigits>" ]
+    ],
+    "<HexSignificand_pattern_28>": [
+      [],
+      [ "<HexDigits>" ]
+    ],
+    "<StringLiteral_pattern_29>": [
+      [],
+      [ "<StringCharacter>", "<StringLiteral_pattern_29>" ]
+    ],
+    "<TextBlock_pattern_30>": [
+      [],
+      [ "<TextBlockWhiteSpace>", "<TextBlock_pattern_30>" ]
+    ],
+    "<TextBlock_pattern_31>": [
+      [],
+      [ "<TextBlockCharacter>", "<TextBlock_pattern_31>" ]
+    ],
+    "<PrimitiveType_pattern_32>": [
+      [],
+      [ "<Annotation>", "<OWS>", "<PrimitiveType_pattern_32>" ]
+    ],
+    "<PrimitiveType_pattern_33>": [
+      [],
+      [ "<Annotation>", "<OWS>", "<PrimitiveType_pattern_33>" ]
+    ],
+    "<ClassType_pattern_34>": [
+      [],
+      [ "<Annotation>", "<OWS>", "<ClassType_pattern_34>" ]
+    ],
+    "<ClassType_pattern_35>": [
+      [],
+      [ "<TypeArguments>" ]
+    ],
+    "<ClassType_pattern_36>": [
+      [],
+      [ "<Annotation>", "<OWS>", "<ClassType_pattern_36>" ]
+    ],
+    "<ClassType_pattern_37>": [
+      [],
+      [ "<TypeArguments>" ]
+    ],
+    "<ClassType_pattern_38>": [
+      [],
+      [ "<Annotation>", "<OWS>", "<ClassType_pattern_38>" ]
+    ],
+    "<ClassType_pattern_39>": [
+      [],
+      [ "<TypeArguments>" ]
+    ],
+    "<TypeVariable_pattern_40>": [
+      [],
+      [ "<Annotation>", "<OWS>", "<TypeVariable_pattern_40>" ]
+    ],
+    "<Dims_pattern_41>": [
+      [],
+      [ "<Annotation>", "<OWS>", "<Dims_pattern_41>" ]
+    ],
+    "<Dims_pattern_43>": [
+      [],
+      [ "<Annotation>", "<OWS>", "<Dims_pattern_43>" ]
+    ],
+    "<Dims_pattern_42>": [
+      [],
+      [ "<Dims_pattern_43>", "<OWS>", "[", "]", "<OWS>", "<Dims_pattern_42>" ]
+    ],
+    "<TypeParameter_pattern_44>": [
+      [],
+      [ "<TypeParameterModifier>", "<OWS>", "<TypeParameter_pattern_44>" ]
+    ],
+    "<TypeParameter_pattern_45>": [
+      [],
+      [ "<TypeBound>" ]
+    ],
+    "<TypeBound_pattern_46>": [
+      [],
+      [ "<AdditionalBound>", "<OWS>", "<TypeBound_pattern_46>" ]
+    ],
+    "<TypeArgumentList_pattern_47>": [
+      [],
+      [ ",", "<OWS>", "<TypeArgument>", "<OWS>", "<TypeArgumentList_pattern_47>" ]
+    ],
+    "<Wildcard_pattern_48>": [
+      [],
+      [ "<Annotation>", "<OWS>", "<Wildcard_pattern_48>" ]
+    ],
+    "<Wildcard_pattern_49>": [
+      [],
+      [ "<WildcardBounds>" ]
+    ],
+    "<OrdinaryCompilationUnit_pattern_50>": [
+      [],
+      [ "<PackageDeclaration>" ]
+    ],
+    "<OrdinaryCompilationUnit_pattern_51>": [
+      [],
+      [ "<ImportDeclaration>", "<OWS>", "<OrdinaryCompilationUnit_pattern_51>" ]
+    ],
+    "<OrdinaryCompilationUnit_pattern_52>": [
+      [],
+      [ "<TopLevelClassOrInterfaceDeclaration>", "<OWS>", "<OrdinaryCompilationUnit_pattern_52>" ]
+    ],
+    "<ModularCompilationUnit_pattern_53>": [
+      [],
+      [ "<ImportDeclaration>", "<OWS>", "<ModularCompilationUnit_pattern_53>" ]
+    ],
+    "<PackageDeclaration_pattern_54>": [
+      [],
+      [ "<PackageModifier>", "<OWS>", "<PackageDeclaration_pattern_54>" ]
+    ],
+    "<PackageDeclaration_pattern_55>": [
+      [],
+      [ ".", "<OWS>", "<Identifier>", "<OWS>", "<PackageDeclaration_pattern_55>" ]
+    ],
+    "<ModuleDeclaration_pattern_56>": [
+      [],
+      [ "<Annotation>", "<OWS>", "<ModuleDeclaration_pattern_56>" ]
+    ],
+    "<ModuleDeclaration_pattern_57>": [
+      [],
+      [ "o", "p", "e", "n" ]
+    ],
+    "<ModuleDeclaration_pattern_58>": [
+      [],
+      [ ".", "<OWS>", "<Identifier>", "<OWS>", "<ModuleDeclaration_pattern_58>" ]
+    ],
+    "<ModuleDeclaration_pattern_59>": [
+      [],
+      [ "<ModuleDirective>", "<OWS>", "<ModuleDeclaration_pattern_59>" ]
+    ],
+    "<ModuleDirective_pattern_60>": [
+      [],
+      [ "<RequiresModifier>", "<OWS>", "<ModuleDirective_pattern_60>" ]
+    ],
+    "<ModuleDirective_pattern_62>": [
+      [],
+      [ ",", "<OWS>", "<ModuleName>" ]
+    ],
+    "<ModuleDirective_pattern_61>": [
+      [],
+      [ "t", "o", "<OWS>", "<ModuleName>", "<OWS>", "<ModuleDirective_pattern_62>", "<OWS>", "<ModuleDirective_pattern_61>" ]
+    ],
+    "<ModuleDirective_pattern_64>": [
+      [],
+      [ ",", "<OWS>", "<ModuleName>" ]
+    ],
+    "<ModuleDirective_pattern_63>": [
+      [],
+      [ "t", "o", "<OWS>", "<ModuleName>", "<OWS>", "<ModuleDirective_pattern_64>", "<OWS>", "<ModuleDirective_pattern_63>" ]
+    ],
+    "<ModuleDirective_pattern_65>": [
+      [],
+      [ ",", "<OWS>", "<TypeName>", "<OWS>", "<ModuleDirective_pattern_65>" ]
+    ],
+    "<NormalClassDeclaration_pattern_66>": [
+      [],
+      [ "<ClassModifier>", "<OWS>", "<NormalClassDeclaration_pattern_66>" ]
+    ],
+    "<NormalClassDeclaration_pattern_67>": [
+      [],
+      [ "<TypeParameters>" ]
+    ],
+    "<NormalClassDeclaration_pattern_68>": [
+      [],
+      [ "<ClassExtends>" ]
+    ],
+    "<NormalClassDeclaration_pattern_69>": [
+      [],
+      [ "<ClassImplements>" ]
+    ],
+    "<NormalClassDeclaration_pattern_70>": [
+      [],
+      [ "<ClassPermits>" ]
+    ],
+    "<TypeParameterList_pattern_71>": [
+      [],
+      [ ",", "<OWS>", "<TypeParameter>", "<OWS>", "<TypeParameterList_pattern_71>" ]
+    ],
+    "<InterfaceTypeList_pattern_72>": [
+      [],
+      [ ",", "<OWS>", "<InterfaceType>", "<OWS>", "<InterfaceTypeList_pattern_72>" ]
+    ],
+    "<ClassPermits_pattern_73>": [
+      [],
+      [ ",", "<OWS>", "<TypeName>", "<OWS>", "<ClassPermits_pattern_73>" ]
+    ],
+    "<ClassBody_pattern_74>": [
+      [],
+      [ "<ClassBodyDeclaration>", "<OWS>", "<ClassBody_pattern_74>" ]
+    ],
+    "<FieldDeclaration_pattern_75>": [
+      [],
+      [ "<FieldModifier>", "<OWS>", "<FieldDeclaration_pattern_75>" ]
+    ],
+    "<VariableDeclaratorList_pattern_76>": [
+      [],
+      [ ",", "<OWS>", "<VariableDeclarator>", "<OWS>", "<VariableDeclaratorList_pattern_76>" ]
+    ],
+    "<VariableDeclarator_pattern_77>": [
+      [],
+      [ "=", "<OWS>", "<VariableInitializer>" ]
+    ],
+    "<VariableDeclaratorId_pattern_78>": [
+      [],
+      [ "<Dims>" ]
+    ],
+    "<UnannClassType_pattern_79>": [
+      [],
+      [ "<TypeArguments>" ]
+    ],
+    "<UnannClassType_pattern_80>": [
+      [],
+      [ "<Annotation>", "<OWS>", "<UnannClassType_pattern_80>" ]
+    ],
+    "<UnannClassType_pattern_81>": [
+      [],
+      [ "<TypeArguments>" ]
+    ],
+    "<UnannClassType_pattern_82>": [
+      [],
+      [ "<Annotation>", "<OWS>", "<UnannClassType_pattern_82>" ]
+    ],
+    "<UnannClassType_pattern_83>": [
+      [],
+      [ "<TypeArguments>" ]
+    ],
+    "<MethodDeclaration_pattern_84>": [
+      [],
+      [ "<MethodModifier>", "<OWS>", "<MethodDeclaration_pattern_84>" ]
+    ],
+    "<MethodHeader_pattern_85>": [
+      [],
+      [ "<Throws>" ]
+    ],
+    "<MethodHeader_pattern_86>": [
+      [],
+      [ "<Annotation>", "<OWS>", "<MethodHeader_pattern_86>" ]
+    ],
+    "<MethodHeader_pattern_87>": [
+      [],
+      [ "<Throws>" ]
+    ],
+    "<MethodDeclarator_pattern_88>": [
+      [],
+      [ "<ReceiverParameter>", "<OWS>", "," ]
+    ],
+    "<MethodDeclarator_pattern_89>": [
+      [],
+      [ "<FormalParameterList>" ]
+    ],
+    "<MethodDeclarator_pattern_90>": [
+      [],
+      [ "<Dims>" ]
+    ],
+    "<ReceiverParameter_pattern_91>": [
+      [],
+      [ "<Annotation>", "<OWS>", "<ReceiverParameter_pattern_91>" ]
+    ],
+    "<ReceiverParameter_pattern_92>": [
+      [],
+      [ "<Identifier>", "<OWS>", "." ]
+    ],
+    "<FormalParameterList_pattern_93>": [
+      [],
+      [ ",", "<OWS>", "<FormalParameter>", "<OWS>", "<FormalParameterList_pattern_93>" ]
+    ],
+    "<FormalParameter_pattern_94>": [
+      [],
+      [ "<VariableModifier>", "<OWS>", "<FormalParameter_pattern_94>" ]
+    ],
+    "<VariableArityParameter_pattern_95>": [
+      [],
+      [ "<VariableModifier>", "<OWS>", "<VariableArityParameter_pattern_95>" ]
+    ],
+    "<VariableArityParameter_pattern_96>": [
+      [],
+      [ "<Annotation>", "<OWS>", "<VariableArityParameter_pattern_96>" ]
+    ],
+    "<ExceptionTypeList_pattern_97>": [
+      [],
+      [ ",", "<OWS>", "<ExceptionType>", "<OWS>", "<ExceptionTypeList_pattern_97>" ]
+    ],
+    "<ConstructorDeclaration_pattern_98>": [
+      [],
+      [ "<ConstructorModifier>", "<OWS>", "<ConstructorDeclaration_pattern_98>" ]
+    ],
+    "<ConstructorDeclaration_pattern_99>": [
+      [],
+      [ "<Throws>" ]
+    ],
+    "<ConstructorDeclarator_pattern_100>": [
+      [],
+      [ "<TypeParameters>" ]
+    ],
+    "<ConstructorDeclarator_pattern_101>": [
+      [],
+      [ "<ReceiverParameter>", "<OWS>", "," ]
+    ],
+    "<ConstructorDeclarator_pattern_102>": [
+      [],
+      [ "<FormalParameterList>" ]
+    ],
+    "<ConstructorBody_pattern_103>": [
+      [],
+      [ "<ExplicitConstructorInvocation>" ]
+    ],
+    "<ConstructorBody_pattern_104>": [
+      [],
+      [ "<BlockStatements>" ]
+    ],
+    "<ExplicitConstructorInvocation_pattern_105>": [
+      [],
+      [ "<TypeArguments>" ]
+    ],
+    "<ExplicitConstructorInvocation_pattern_106>": [
+      [],
+      [ "<ArgumentList>" ]
+    ],
+    "<ExplicitConstructorInvocation_pattern_107>": [
+      [],
+      [ "<TypeArguments>" ]
+    ],
+    "<ExplicitConstructorInvocation_pattern_108>": [
+      [],
+      [ "<ArgumentList>" ]
+    ],
+    "<ExplicitConstructorInvocation_pattern_109>": [
+      [],
+      [ "<TypeArguments>" ]
+    ],
+    "<ExplicitConstructorInvocation_pattern_110>": [
+      [],
+      [ "<ArgumentList>" ]
+    ],
+    "<ExplicitConstructorInvocation_pattern_111>": [
+      [],
+      [ "<TypeArguments>" ]
+    ],
+    "<ExplicitConstructorInvocation_pattern_112>": [
+      [],
+      [ "<ArgumentList>" ]
+    ],
+    "<EnumDeclaration_pattern_113>": [
+      [],
+      [ "<ClassModifier>", "<OWS>", "<EnumDeclaration_pattern_113>" ]
+    ],
+    "<EnumDeclaration_pattern_114>": [
+      [],
+      [ "<ClassImplements>" ]
+    ],
+    "<EnumBody_pattern_115>": [
+      [],
+      [ "<EnumConstantList>" ]
+    ],
+    "<EnumBody_pattern_116>": [
+      [],
+      [ "," ]
+    ],
+    "<EnumBody_pattern_117>": [
+      [],
+      [ "<EnumBodyDeclarations>" ]
+    ],
+    "<EnumConstantList_pattern_118>": [
+      [],
+      [ ",", "<OWS>", "<EnumConstant>", "<OWS>", "<EnumConstantList_pattern_118>" ]
+    ],
+    "<EnumConstant_pattern_119>": [
+      [],
+      [ "<EnumConstantModifier>", "<OWS>", "<EnumConstant_pattern_119>" ]
+    ],
+    "<EnumConstant_pattern_121>": [
+      [],
+      [ "<ArgumentList>" ]
+    ],
+    "<EnumConstant_pattern_120>": [
+      [],
+      [ "(", "<OWS>", "<EnumConstant_pattern_121>", "<OWS>", ")" ]
+    ],
+    "<EnumConstant_pattern_122>": [
+      [],
+      [ "<ClassBody>" ]
+    ],
+    "<EnumBodyDeclarations_pattern_123>": [
+      [],
+      [ "<ClassBodyDeclaration>", "<OWS>", "<EnumBodyDeclarations_pattern_123>" ]
+    ],
+    "<RecordDeclaration_pattern_124>": [
+      [],
+      [ "<ClassModifier>", "<OWS>", "<RecordDeclaration_pattern_124>" ]
+    ],
+    "<RecordDeclaration_pattern_125>": [
+      [],
+      [ "<TypeParameters>" ]
+    ],
+    "<RecordDeclaration_pattern_126>": [
+      [],
+      [ "<ClassImplements>" ]
+    ],
+    "<RecordHeader_pattern_127>": [
+      [],
+      [ "<RecordComponentList>" ]
+    ],
+    "<RecordComponentList_pattern_128>": [
+      [],
+      [ ",", "<OWS>", "<RecordComponent>", "<OWS>", "<RecordComponentList_pattern_128>" ]
+    ],
+    "<RecordComponent_pattern_129>": [
+      [],
+      [ "<RecordComponentModifier>", "<OWS>", "<RecordComponent_pattern_129>" ]
+    ],
+    "<VariableArityRecordComponent_pattern_130>": [
+      [],
+      [ "<RecordComponentModifier>", "<OWS>", "<VariableArityRecordComponent_pattern_130>" ]
+    ],
+    "<VariableArityRecordComponent_pattern_131>": [
+      [],
+      [ "<Annotation>", "<OWS>", "<VariableArityRecordComponent_pattern_131>" ]
+    ],
+    "<RecordBody_pattern_132>": [
+      [],
+      [ "<RecordBodyDeclaration>", "<OWS>", "<RecordBody_pattern_132>" ]
+    ],
+    "<CompactConstructorDeclaration_pattern_133>": [
+      [],
+      [ "<ConstructorModifier>", "<OWS>", "<CompactConstructorDeclaration_pattern_133>" ]
+    ],
+    "<NormalInterfaceDeclaration_pattern_134>": [
+      [],
+      [ "<InterfaceModifier>", "<OWS>", "<NormalInterfaceDeclaration_pattern_134>" ]
+    ],
+    "<NormalInterfaceDeclaration_pattern_135>": [
+      [],
+      [ "<TypeParameters>" ]
+    ],
+    "<NormalInterfaceDeclaration_pattern_136>": [
+      [],
+      [ "<InterfaceExtends>" ]
+    ],
+    "<NormalInterfaceDeclaration_pattern_137>": [
+      [],
+      [ "<InterfacePermits>" ]
+    ],
+    "<InterfacePermits_pattern_138>": [
+      [],
+      [ ",", "<OWS>", "<TypeName>", "<OWS>", "<InterfacePermits_pattern_138>" ]
+    ],
+    "<InterfaceBody_pattern_139>": [
+      [],
+      [ "<InterfaceMemberDeclaration>", "<OWS>", "<InterfaceBody_pattern_139>" ]
+    ],
+    "<ConstantDeclaration_pattern_140>": [
+      [],
+      [ "<ConstantModifier>", "<OWS>", "<ConstantDeclaration_pattern_140>" ]
+    ],
+    "<InterfaceMethodDeclaration_pattern_141>": [
+      [],
+      [ "<InterfaceMethodModifier>", "<OWS>", "<InterfaceMethodDeclaration_pattern_141>" ]
+    ],
+    "<AnnotationInterfaceDeclaration_pattern_142>": [
+      [],
+      [ "<InterfaceModifier>", "<OWS>", "<AnnotationInterfaceDeclaration_pattern_142>" ]
+    ],
+    "<AnnotationInterfaceBody_pattern_143>": [
+      [],
+      [ "<AnnotationInterfaceMemberDeclaration>", "<OWS>", "<AnnotationInterfaceBody_pattern_143>" ]
+    ],
+    "<AnnotationInterfaceElementDeclaration_pattern_144>": [
+      [],
+      [ "<AnnotationInterfaceElementModifier>", "<OWS>", "<AnnotationInterfaceElementDeclaration_pattern_144>" ]
+    ],
+    "<AnnotationInterfaceElementDeclaration_pattern_145>": [
+      [],
+      [ "<Dims>" ]
+    ],
+    "<AnnotationInterfaceElementDeclaration_pattern_146>": [
+      [],
+      [ "<DefaultValue>" ]
+    ],
+    "<NormalAnnotation_pattern_147>": [
+      [],
+      [ "<ElementValuePairList>" ]
+    ],
+    "<ElementValuePairList_pattern_148>": [
+      [],
+      [ ",", "<OWS>", "<ElementValuePair>", "<OWS>", "<ElementValuePairList_pattern_148>" ]
+    ],
+    "<ElementValueArrayInitializer_pattern_149>": [
+      [],
+      [ "<ElementValueList>" ]
+    ],
+    "<ElementValueArrayInitializer_pattern_150>": [
+      [],
+      [ "," ]
+    ],
+    "<ElementValueList_pattern_151>": [
+      [],
+      [ ",", "<OWS>", "<ElementValue>", "<OWS>", "<ElementValueList_pattern_151>" ]
+    ],
+    "<ArrayInitializer_pattern_152>": [
+      [],
+      [ "<VariableInitializerList>" ]
+    ],
+    "<ArrayInitializer_pattern_153>": [
+      [],
+      [ "," ]
+    ],
+    "<VariableInitializerList_pattern_154>": [
+      [],
+      [ ",", "<OWS>", "<VariableInitializer>", "<OWS>", "<VariableInitializerList_pattern_154>" ]
+    ],
+    "<Block_pattern_155>": [
+      [],
+      [ "<BlockStatements>" ]
+    ],
+    "<BlockStatements_pattern_156>": [
+      [],
+      [ "<BlockStatement>", "<OWS>", "<BlockStatements_pattern_156>" ]
+    ],
+    "<LocalVariableDeclaration_pattern_157>": [
+      [],
+      [ "<VariableModifier>", "<OWS>", "<LocalVariableDeclaration_pattern_157>" ]
+    ],
+    "<SwitchBlock_pattern_158>": [
+      [],
+      [ "<SwitchRule>", "<OWS>", "<SwitchBlock_pattern_158>" ]
+    ],
+    "<SwitchBlock_pattern_159>": [
+      [],
+      [ "<SwitchBlockStatementGroup>", "<OWS>", "<SwitchBlock_pattern_159>" ]
+    ],
+    "<SwitchBlock_pattern_160>": [
+      [],
+      [ "<SwitchLabel>", "<OWS>", ":", "<OWS>", "<SwitchBlock_pattern_160>" ]
+    ],
+    "<SwitchBlockStatementGroup_pattern_161>": [
+      [],
+      [ "<SwitchLabel>", "<OWS>", ":", "<OWS>", "<SwitchBlockStatementGroup_pattern_161>" ]
+    ],
+    "<SwitchLabel_pattern_162>": [
+      [],
+      [ ",", "<OWS>", "<CaseConstant>", "<OWS>", "<SwitchLabel_pattern_162>" ]
+    ],
+    "<BasicForStatement_pattern_163>": [
+      [],
+      [ "<ForInit>" ]
+    ],
+    "<BasicForStatement_pattern_164>": [
+      [],
+      [ "<Expression>" ]
+    ],
+    "<BasicForStatement_pattern_165>": [
+      [],
+      [ "<ForUpdate>" ]
+    ],
+    "<BasicForStatementNoShortIf_pattern_166>": [
+      [],
+      [ "<ForInit>" ]
+    ],
+    "<BasicForStatementNoShortIf_pattern_167>": [
+      [],
+      [ "<Expression>" ]
+    ],
+    "<BasicForStatementNoShortIf_pattern_168>": [
+      [],
+      [ "<ForUpdate>" ]
+    ],
+    "<StatementExpressionList_pattern_169>": [
+      [],
+      [ ",", "<OWS>", "<StatementExpression>", "<OWS>", "<StatementExpressionList_pattern_169>" ]
+    ],
+    "<BreakStatement_pattern_170>": [
+      [],
+      [ "<Identifier>" ]
+    ],
+    "<ContinueStatement_pattern_171>": [
+      [],
+      [ "<Identifier>" ]
+    ],
+    "<ReturnStatement_pattern_172>": [
+      [],
+      [ "<Expression>" ]
+    ],
+    "<TryStatement_pattern_173>": [
+      [],
+      [ "<Catches>" ]
+    ],
+    "<Catches_pattern_174>": [
+      [],
+      [ "<CatchClause>", "<OWS>", "<Catches_pattern_174>" ]
+    ],
+    "<CatchFormalParameter_pattern_175>": [
+      [],
+      [ "<VariableModifier>", "<OWS>", "<CatchFormalParameter_pattern_175>" ]
+    ],
+    "<CatchType_pattern_176>": [
+      [],
+      [ "|", "<OWS>", "<ClassType>", "<OWS>", "<CatchType_pattern_176>" ]
+    ],
+    "<TryWithResourcesStatement_pattern_177>": [
+      [],
+      [ "<Catches>" ]
+    ],
+    "<TryWithResourcesStatement_pattern_178>": [
+      [],
+      [ "<Finally>" ]
+    ],
+    "<ResourceSpecification_pattern_179>": [
+      [],
+      [ ";" ]
+    ],
+    "<ResourceList_pattern_180>": [
+      [],
+      [ ";", "<OWS>", "<Resource>", "<OWS>", "<ResourceList_pattern_180>" ]
+    ],
+    "<ClassLiteral_pattern_181>": [
+      [],
+      [ "[", "]", "<OWS>", "<ClassLiteral_pattern_181>" ]
+    ],
+    "<ClassLiteral_pattern_182>": [
+      [],
+      [ "[", "]", "<OWS>", "<ClassLiteral_pattern_182>" ]
+    ],
+    "<ClassLiteral_pattern_183>": [
+      [],
+      [ "[", "]", "<OWS>", "<ClassLiteral_pattern_183>" ]
+    ],
+    "<UnqualifiedClassInstanceCreationExpression_pattern_184>": [
+      [],
+      [ "<TypeArguments>" ]
+    ],
+    "<UnqualifiedClassInstanceCreationExpression_pattern_185>": [
+      [],
+      [ "<ArgumentList>" ]
+    ],
+    "<UnqualifiedClassInstanceCreationExpression_pattern_186>": [
+      [],
+      [ "<ClassBody>" ]
+    ],
+    "<ClassOrInterfaceTypeToInstantiate_pattern_187>": [
+      [],
+      [ "<Annotation>", "<OWS>", "<ClassOrInterfaceTypeToInstantiate_pattern_187>" ]
+    ],
+    "<ClassOrInterfaceTypeToInstantiate_pattern_189>": [
+      [],
+      [ "<Annotation>", "<OWS>", "<ClassOrInterfaceTypeToInstantiate_pattern_189>" ]
+    ],
+    "<ClassOrInterfaceTypeToInstantiate_pattern_188>": [
+      [],
+      [ ".", "<OWS>", "<ClassOrInterfaceTypeToInstantiate_pattern_189>", "<OWS>", "<Identifier>", "<OWS>", "<ClassOrInterfaceTypeToInstantiate_pattern_188>" ]
+    ],
+    "<ClassOrInterfaceTypeToInstantiate_pattern_190>": [
+      [],
+      [ "<TypeArgumentsOrDiamond>" ]
+    ],
+    "<ArrayCreationExpressionWithoutInitializer_pattern_191>": [
+      [],
+      [ "<Dims>" ]
+    ],
+    "<ArrayCreationExpressionWithoutInitializer_pattern_192>": [
+      [],
+      [ "<Dims>" ]
+    ],
+    "<DimExprs_pattern_193>": [
+      [],
+      [ "<DimExpr>", "<OWS>", "<DimExprs_pattern_193>" ]
+    ],
+    "<DimExpr_pattern_194>": [
+      [],
+      [ "<Annotation>", "<OWS>", "<DimExpr_pattern_194>" ]
+    ],
+    "<MethodInvocation_pattern_195>": [
+      [],
+      [ "<ArgumentList>" ]
+    ],
+    "<MethodInvocation_pattern_196>": [
+      [],
+      [ "<TypeArguments>" ]
+    ],
+    "<MethodInvocation_pattern_197>": [
+      [],
+      [ "<ArgumentList>" ]
+    ],
+    "<MethodInvocation_pattern_198>": [
+      [],
+      [ "<TypeArguments>" ]
+    ],
+    "<MethodInvocation_pattern_199>": [
+      [],
+      [ "<ArgumentList>" ]
+    ],
+    "<MethodInvocation_pattern_200>": [
+      [],
+      [ "<TypeArguments>" ]
+    ],
+    "<MethodInvocation_pattern_201>": [
+      [],
+      [ "<ArgumentList>" ]
+    ],
+    "<MethodInvocation_pattern_202>": [
+      [],
+      [ "<TypeArguments>" ]
+    ],
+    "<MethodInvocation_pattern_203>": [
+      [],
+      [ "<ArgumentList>" ]
+    ],
+    "<MethodInvocation_pattern_204>": [
+      [],
+      [ "<TypeArguments>" ]
+    ],
+    "<MethodInvocation_pattern_205>": [
+      [],
+      [ "<ArgumentList>" ]
+    ],
+    "<ArgumentList_pattern_206>": [
+      [],
+      [ ",", "<OWS>", "<Expression>", "<OWS>", "<ArgumentList_pattern_206>" ]
+    ],
+    "<MethodReference_pattern_207>": [
+      [],
+      [ "<TypeArguments>" ]
+    ],
+    "<MethodReference_pattern_208>": [
+      [],
+      [ "<TypeArguments>" ]
+    ],
+    "<MethodReference_pattern_209>": [
+      [],
+      [ "<TypeArguments>" ]
+    ],
+    "<MethodReference_pattern_210>": [
+      [],
+      [ "<TypeArguments>" ]
+    ],
+    "<MethodReference_pattern_211>": [
+      [],
+      [ "<TypeArguments>" ]
+    ],
+    "<MethodReference_pattern_212>": [
+      [],
+      [ "<TypeArguments>" ]
+    ],
+    "<LambdaParameters_pattern_213>": [
+      [],
+      [ "<LambdaParameterList>" ]
+    ],
+    "<LambdaParameterList_pattern_214>": [
+      [],
+      [ ",", "<OWS>", "<LambdaParameter>", "<OWS>", "<LambdaParameterList_pattern_214>" ]
+    ],
+    "<LambdaParameterList_pattern_215>": [
+      [],
+      [ ",", "<OWS>", "<Identifier>", "<OWS>", "<LambdaParameterList_pattern_215>" ]
+    ],
+    "<LambdaParameter_pattern_216>": [
+      [],
+      [ "<VariableModifier>", "<OWS>", "<LambdaParameter_pattern_216>" ]
+    ],
+    "<CastExpression_pattern_217>": [
+      [],
+      [ "<AdditionalBound>", "<OWS>", "<CastExpression_pattern_217>" ]
+    ],
+    "<CastExpression_pattern_218>": [
+      [],
+      [ "<AdditionalBound>", "<OWS>", "<CastExpression_pattern_218>" ]
+    ],
+    "<JavaLetter>": [
+      [ "a" ],
+      [ "b" ],
+      [ "c" ],
+      [ "d" ],
+      [ "e" ],
+      [ "f" ],
+      [ "g" ],
+      [ "h" ],
+      [ "i" ],
+      [ "j" ],
+      [ "k" ],
+      [ "l" ],
+      [ "m" ],
+      [ "n" ],
+      [ "o" ],
+      [ "p" ],
+      [ "q" ],
+      [ "r" ],
+      [ "s" ],
+      [ "t" ],
+      [ "u" ],
+      [ "v" ],
+      [ "w" ],
+      [ "x" ],
+      [ "y" ],
+      [ "z" ],
+      [ "A" ],
+      [ "B" ],
+      [ "C" ],
+      [ "D" ],
+      [ "E" ],
+      [ "F" ],
+      [ "G" ],
+      [ "H" ],
+      [ "I" ],
+      [ "J" ],
+      [ "K" ],
+      [ "L" ],
+      [ "M" ],
+      [ "N" ],
+      [ "O" ],
+      [ "P" ],
+      [ "Q" ],
+      [ "R" ],
+      [ "S" ],
+      [ "T" ],
+      [ "U" ],
+      [ "V" ],
+      [ "W" ],
+      [ "X" ],
+      [ "Y" ],
+      [ "Z" ],
+      [ "_" ],
+      [ "$" ]
+    ],
+    "<JavaLetterOrDigit>": [
+      [ "<JavaLetter>" ],
+      [ "<Digit>" ]
+    ],
+    "<InputCharacter>": [
+      [ " " ],
+      [ "!" ],
+      [ "\"" ],
+      [ "#" ],
+      [ "$" ],
+      [ "%" ],
+      [ "&" ],
+      [ "'" ],
+      [ "(" ],
+      [ ")" ],
+      [ "*" ],
+      [ "+" ],
+      [ "," ],
+      [ "-" ],
+      [ "." ],
+      [ "/" ],
+      [ "0" ],
+      [ "1" ],
+      [ "2" ],
+      [ "3" ],
+      [ "4" ],
+      [ "5" ],
+      [ "6" ],
+      [ "7" ],
+      [ "8" ],
+      [ "9" ],
+      [ ":" ],
+      [ ";" ],
+      [ "<" ],
+      [ "=" ],
+      [ ">" ],
+      [ "?" ],
+      [ "@" ],
+      [ "A" ],
+      [ "B" ],
+      [ "C" ],
+      [ "D" ],
+      [ "E" ],
+      [ "F" ],
+      [ "G" ],
+      [ "H" ],
+      [ "I" ],
+      [ "J" ],
+      [ "K" ],
+      [ "L" ],
+      [ "M" ],
+      [ "N" ],
+      [ "O" ],
+      [ "P" ],
+      [ "Q" ],
+      [ "R" ],
+      [ "S" ],
+      [ "T" ],
+      [ "U" ],
+      [ "V" ],
+      [ "W" ],
+      [ "X" ],
+      [ "Y" ],
+      [ "Z" ],
+      [ "[" ],
+      [ "\\" ],
+      [ "]" ],
+      [ "^" ],
+      [ "_" ],
+      [ "`" ],
+      [ "a" ],
+      [ "b" ],
+      [ "c" ],
+      [ "d" ],
+      [ "e" ],
+      [ "f" ],
+      [ "g" ],
+      [ "h" ],
+      [ "i" ],
+      [ "j" ],
+      [ "k" ],
+      [ "l" ],
+      [ "m" ],
+      [ "n" ],
+      [ "o" ],
+      [ "p" ],
+      [ "q" ],
+      [ "r" ],
+      [ "s" ],
+      [ "t" ],
+      [ "u" ],
+      [ "v" ],
+      [ "w" ],
+      [ "x" ],
+      [ "y" ],
+      [ "z" ],
+      [ "{" ],
+      [ "|" ],
+      [ "}" ],
+      [ "~" ]
+    ],
+    "<LineTerminator>": [
+      [ "\n" ],
+      [ "\r" ],
+      [ "\r", "\n" ]
+    ],
+    "<WhiteSpace>": [
+      [ " " ],
+      [ "\t" ],
+      [ "\n" ],
+      [ "\r" ]
+    ],
+    "<NotStar>": [
+      [ " " ],
+      [ "!" ],
+      [ "\"" ],
+      [ "#" ],
+      [ "$" ],
+      [ "%" ],
+      [ "&" ],
+      [ "'" ],
+      [ "(" ],
+      [ ")" ],
+      [ "+" ],
+      [ "," ],
+      [ "-" ],
+      [ "." ],
+      [ "/" ],
+      [ "0" ],
+      [ "1" ],
+      [ "2" ],
+      [ "3" ],
+      [ "4" ],
+      [ "5" ],
+      [ "6" ],
+      [ "7" ],
+      [ "8" ],
+      [ "9" ],
+      [ ":" ],
+      [ ";" ],
+      [ "<" ],
+      [ "=" ],
+      [ ">" ],
+      [ "?" ],
+      [ "@" ],
+      [ "A" ],
+      [ "B" ],
+      [ "C" ],
+      [ "D" ],
+      [ "E" ],
+      [ "F" ],
+      [ "G" ],
+      [ "H" ],
+      [ "I" ],
+      [ "J" ],
+      [ "K" ],
+      [ "L" ],
+      [ "M" ],
+      [ "N" ],
+      [ "O" ],
+      [ "P" ],
+      [ "Q" ],
+      [ "R" ],
+      [ "S" ],
+      [ "T" ],
+      [ "U" ],
+      [ "V" ],
+      [ "W" ],
+      [ "X" ],
+      [ "Y" ],
+      [ "Z" ],
+      [ "[" ],
+      [ "\\" ],
+      [ "]" ],
+      [ "^" ],
+      [ "_" ],
+      [ "`" ],
+      [ "a" ],
+      [ "b" ],
+      [ "c" ],
+      [ "d" ],
+      [ "e" ],
+      [ "f" ],
+      [ "g" ],
+      [ "h" ],
+      [ "i" ],
+      [ "j" ],
+      [ "k" ],
+      [ "l" ],
+      [ "m" ],
+      [ "n" ],
+      [ "o" ],
+      [ "p" ],
+      [ "q" ],
+      [ "r" ],
+      [ "s" ],
+      [ "t" ],
+      [ "u" ],
+      [ "v" ],
+      [ "w" ],
+      [ "x" ],
+      [ "y" ],
+      [ "z" ],
+      [ "{" ],
+      [ "|" ],
+      [ "}" ],
+      [ "~" ]
+    ],
+    "<NotStarNotSlash>": [
+      [ " " ],
+      [ "!" ],
+      [ "\"" ],
+      [ "#" ],
+      [ "$" ],
+      [ "%" ],
+      [ "&" ],
+      [ "'" ],
+      [ "(" ],
+      [ ")" ],
+      [ "+" ],
+      [ "," ],
+      [ "-" ],
+      [ "." ],
+      [ "0" ],
+      [ "1" ],
+      [ "2" ],
+      [ "3" ],
+      [ "4" ],
+      [ "5" ],
+      [ "6" ],
+      [ "7" ],
+      [ "8" ],
+      [ "9" ],
+      [ ":" ],
+      [ ";" ],
+      [ "<" ],
+      [ "=" ],
+      [ ">" ],
+      [ "?" ],
+      [ "@" ],
+      [ "A" ],
+      [ "B" ],
+      [ "C" ],
+      [ "D" ],
+      [ "E" ],
+      [ "F" ],
+      [ "G" ],
+      [ "H" ],
+      [ "I" ],
+      [ "J" ],
+      [ "K" ],
+      [ "L" ],
+      [ "M" ],
+      [ "N" ],
+      [ "O" ],
+      [ "P" ],
+      [ "Q" ],
+      [ "R" ],
+      [ "S" ],
+      [ "T" ],
+      [ "U" ],
+      [ "V" ],
+      [ "W" ],
+      [ "X" ],
+      [ "Y" ],
+      [ "Z" ],
+      [ "[" ],
+      [ "\\" ],
+      [ "]" ],
+      [ "^" ],
+      [ "_" ],
+      [ "`" ],
+      [ "a" ],
+      [ "b" ],
+      [ "c" ],
+      [ "d" ],
+      [ "e" ],
+      [ "f" ],
+      [ "g" ],
+      [ "h" ],
+      [ "i" ],
+      [ "j" ],
+      [ "k" ],
+      [ "l" ],
+      [ "m" ],
+      [ "n" ],
+      [ "o" ],
+      [ "p" ],
+      [ "q" ],
+      [ "r" ],
+      [ "s" ],
+      [ "t" ],
+      [ "u" ],
+      [ "v" ],
+      [ "w" ],
+      [ "x" ],
+      [ "y" ],
+      [ "z" ],
+      [ "{" ],
+      [ "|" ],
+      [ "}" ],
+      [ "~" ]
+    ],
+    "<SingleCharacter>": [
+      [ " " ],
+      [ "!" ],
+      [ "\"" ],
+      [ "#" ],
+      [ "$" ],
+      [ "%" ],
+      [ "&" ],
+      [ "(" ],
+      [ ")" ],
+      [ "*" ],
+      [ "+" ],
+      [ "," ],
+      [ "-" ],
+      [ "." ],
+      [ "/" ],
+      [ "0" ],
+      [ "1" ],
+      [ "2" ],
+      [ "3" ],
+      [ "4" ],
+      [ "5" ],
+      [ "6" ],
+      [ "7" ],
+      [ "8" ],
+      [ "9" ],
+      [ ":" ],
+      [ ";" ],
+      [ "<" ],
+      [ "=" ],
+      [ ">" ],
+      [ "?" ],
+      [ "@" ],
+      [ "A" ],
+      [ "B" ],
+      [ "C" ],
+      [ "D" ],
+      [ "E" ],
+      [ "F" ],
+      [ "G" ],
+      [ "H" ],
+      [ "I" ],
+      [ "J" ],
+      [ "K" ],
+      [ "L" ],
+      [ "M" ],
+      [ "N" ],
+      [ "O" ],
+      [ "P" ],
+      [ "Q" ],
+      [ "R" ],
+      [ "S" ],
+      [ "T" ],
+      [ "U" ],
+      [ "V" ],
+      [ "W" ],
+      [ "X" ],
+      [ "Y" ],
+      [ "Z" ],
+      [ "[" ],
+      [ "]" ],
+      [ "^" ],
+      [ "_" ],
+      [ "`" ],
+      [ "a" ],
+      [ "b" ],
+      [ "c" ],
+      [ "d" ],
+      [ "e" ],
+      [ "f" ],
+      [ "g" ],
+      [ "h" ],
+      [ "i" ],
+      [ "j" ],
+      [ "k" ],
+      [ "l" ],
+      [ "m" ],
+      [ "n" ],
+      [ "o" ],
+      [ "p" ],
+      [ "q" ],
+      [ "r" ],
+      [ "s" ],
+      [ "t" ],
+      [ "u" ],
+      [ "v" ],
+      [ "w" ],
+      [ "x" ],
+      [ "y" ],
+      [ "z" ],
+      [ "{" ],
+      [ "|" ],
+      [ "}" ],
+      [ "~" ]
+    ],
+    "<StringCharacter>": [
+      [ " " ],
+      [ "!" ],
+      [ "#" ],
+      [ "$" ],
+      [ "%" ],
+      [ "&" ],
+      [ "'" ],
+      [ "(" ],
+      [ ")" ],
+      [ "*" ],
+      [ "+" ],
+      [ "," ],
+      [ "-" ],
+      [ "." ],
+      [ "/" ],
+      [ "0" ],
+      [ "1" ],
+      [ "2" ],
+      [ "3" ],
+      [ "4" ],
+      [ "5" ],
+      [ "6" ],
+      [ "7" ],
+      [ "8" ],
+      [ "9" ],
+      [ ":" ],
+      [ ";" ],
+      [ "<" ],
+      [ "=" ],
+      [ ">" ],
+      [ "?" ],
+      [ "@" ],
+      [ "A" ],
+      [ "B" ],
+      [ "C" ],
+      [ "D" ],
+      [ "E" ],
+      [ "F" ],
+      [ "G" ],
+      [ "H" ],
+      [ "I" ],
+      [ "J" ],
+      [ "K" ],
+      [ "L" ],
+      [ "M" ],
+      [ "N" ],
+      [ "O" ],
+      [ "P" ],
+      [ "Q" ],
+      [ "R" ],
+      [ "S" ],
+      [ "T" ],
+      [ "U" ],
+      [ "V" ],
+      [ "W" ],
+      [ "X" ],
+      [ "Y" ],
+      [ "Z" ],
+      [ "[" ],
+      [ "]" ],
+      [ "^" ],
+      [ "_" ],
+      [ "`" ],
+      [ "a" ],
+      [ "b" ],
+      [ "c" ],
+      [ "d" ],
+      [ "e" ],
+      [ "f" ],
+      [ "g" ],
+      [ "h" ],
+      [ "i" ],
+      [ "j" ],
+      [ "k" ],
+      [ "l" ],
+      [ "m" ],
+      [ "n" ],
+      [ "o" ],
+      [ "p" ],
+      [ "q" ],
+      [ "r" ],
+      [ "s" ],
+      [ "t" ],
+      [ "u" ],
+      [ "v" ],
+      [ "w" ],
+      [ "x" ],
+      [ "y" ],
+      [ "z" ],
+      [ "{" ],
+      [ "|" ],
+      [ "}" ],
+      [ "~" ]
+    ],
+    "<TextBlockCharacter>": [
+      [ " " ],
+      [ "!" ],
+      [ "\"" ],
+      [ "#" ],
+      [ "$" ],
+      [ "%" ],
+      [ "&" ],
+      [ "'" ],
+      [ "(" ],
+      [ ")" ],
+      [ "*" ],
+      [ "+" ],
+      [ "," ],
+      [ "-" ],
+      [ "." ],
+      [ "/" ],
+      [ "0" ],
+      [ "1" ],
+      [ "2" ],
+      [ "3" ],
+      [ "4" ],
+      [ "5" ],
+      [ "6" ],
+      [ "7" ],
+      [ "8" ],
+      [ "9" ],
+      [ ":" ],
+      [ ";" ],
+      [ "<" ],
+      [ "=" ],
+      [ ">" ],
+      [ "?" ],
+      [ "@" ],
+      [ "A" ],
+      [ "B" ],
+      [ "C" ],
+      [ "D" ],
+      [ "E" ],
+      [ "F" ],
+      [ "G" ],
+      [ "H" ],
+      [ "I" ],
+      [ "J" ],
+      [ "K" ],
+      [ "L" ],
+      [ "M" ],
+      [ "N" ],
+      [ "O" ],
+      [ "P" ],
+      [ "Q" ],
+      [ "R" ],
+      [ "S" ],
+      [ "T" ],
+      [ "U" ],
+      [ "V" ],
+      [ "W" ],
+      [ "X" ],
+      [ "Y" ],
+      [ "Z" ],
+      [ "[" ],
+      [ "\\" ],
+      [ "]" ],
+      [ "^" ],
+      [ "_" ],
+      [ "`" ],
+      [ "a" ],
+      [ "b" ],
+      [ "c" ],
+      [ "d" ],
+      [ "e" ],
+      [ "f" ],
+      [ "g" ],
+      [ "h" ],
+      [ "i" ],
+      [ "j" ],
+      [ "k" ],
+      [ "l" ],
+      [ "m" ],
+      [ "n" ],
+      [ "o" ],
+      [ "p" ],
+      [ "q" ],
+      [ "r" ],
+      [ "s" ],
+      [ "t" ],
+      [ "u" ],
+      [ "v" ],
+      [ "w" ],
+      [ "x" ],
+      [ "y" ],
+      [ "z" ],
+      [ "{" ],
+      [ "|" ],
+      [ "}" ],
+      [ "~" ]
+    ]
+  }
+}

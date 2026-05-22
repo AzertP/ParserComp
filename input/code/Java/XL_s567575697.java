@@ -130,7 +130,7 @@ public class Main {
             int t = p[firstIndex];
             p[firstIndex] = p[ok];
             p[ok] = t;
-            //p[firstIndex+1]以降のものを逆にする
+            //p[firstIndex+1]
             firstIndex++;
             Arrays.sort(p,firstIndex,p.length);
             return true;
@@ -152,9 +152,9 @@ public class Main {
             T t = p[firstIndex];
             p[firstIndex] = p[ok];
             p[ok] = t;
-            //p[firstIndex+1]以降のものを逆にする
-            //現在降順で昇順に並べる
-            //ソートのほうが簡潔に書ける
+            //p[firstIndex+1]
+            //
+            //
             firstIndex++;
             Arrays.sort(p,firstIndex,p.length);
             return true;
@@ -165,11 +165,11 @@ public class Main {
             int ng=list.size();
             int ok=firstIndex;
             firstIndex--;
-            //MGR式
+            //MGR
             while(Math.abs(ng-ok)>1){
                 int mid=(ng+ok)/2;
                 if(comparator.compare(list.get(mid),list.get(firstIndex))>0){
-                    //真に大きいならokの領域
+                    //ok
                     ok=mid;
                 }else{
                     ng=mid;
@@ -178,7 +178,7 @@ public class Main {
             T t = list.get(firstIndex);
             list.set(firstIndex,list.get(ok));
             list.set(ok,t);
-            //インデックスがfirstIndex+1以降のものを逆にする
+            //firstIndex+1
             firstIndex++;
             Collections.reverse(list.subList(firstIndex,list.size()));
             return true;
@@ -206,7 +206,7 @@ public class Main {
             return false;
         }
     }
-    //runWhenEAで使う
+    //runWhenEA
     private static Runnable func(Object... objects){
         try{
             assert false;
@@ -449,8 +449,8 @@ public class Main {
 
         /**
          *
-         * @param array arrayが1～nの順列になっていないならば定義されない
-         * @return 転倒数
+         * @param array array1n
+         * @return 
          */
         public static int inv(int[] array){
             int[] a=new int[array.length];

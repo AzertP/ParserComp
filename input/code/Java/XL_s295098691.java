@@ -1,6 +1,6 @@
 
 /*
- * 二叉树 
+ *  
  * ALDS1_7_B
  * 
  */
@@ -24,11 +24,11 @@ public class Main {
 			int n = Integer.parseInt(line);
 			Tree tree = new Tree();
 
-			// ??????????則????
+			// ??????????????
 			for (int i = 0; i < n; i++) {
 				tree.addNode(br.readLine());
 			}
-			// ??????????????賊??????
+			// ????????????????????
 			for (int i = 0; i < n; i++) {
 				System.out.println(tree.getNode(i).toString());
 			}
@@ -107,10 +107,10 @@ public class Main {
 	
 	
 	public static class Node {
-		int id;  //节点编号
-		Node parent; // 父节点 -1表示没有
+		int id;  //
+		Node parent; //  -1
 		Node left; 
-		Node right; //左右子节点 -1表示没有
+		Node right; // -1
 		
 		
 		Node(int value, Node parent)
@@ -119,12 +119,12 @@ public class Main {
 			this.parent = parent;
 		}
 		
-		//方法find 返回一个Node
+		//find Node
 		
 		Node find(int id)
 		{
 			
-			//就一直找
+			//
 			Node result = null;
 			if(this.id == id)
 			{
@@ -144,13 +144,13 @@ public class Main {
 			return result;
 		}
 		
-		//返回id
+		//id
 		int id()
 		{
 			return id;
 		}
 		
-		//返回父节点 id
+		// id
 		int parentId()
 		{
 			if(parent != null)
@@ -159,7 +159,7 @@ public class Main {
 				return -1;
 		}
 		
-		//返回兄弟节点
+		//
 		int sibling()
 		{
 			int lid, rid;
@@ -174,22 +174,22 @@ public class Main {
 				else
 					rid = -1;
 			
-				//这里的lid 和 rid 是父节点的 左子节点和右子节点
-				//由于是二叉树
-				//lid 和 rid 有一个是id
-				//如果自己是lid 及左节点，返回右节点
-				//如果自己是rid 及右节点，返回左节点
+				//lid  rid  
+				//
+				//lid  rid id
+				//lid 
+				//rid 
 				return lid != id ? lid : rid;
 			}
 			else
 			{
-				//没有父节点，根节点
+				//
 				return -1;
 			}
 		}
 		
 		
-		//返回度数，即子节点的个数
+		//
 		int degree()
 		{
 			int result = 0;
@@ -206,7 +206,7 @@ public class Main {
 		}
 		
 		
-		//返回深度
+		//
 		int depth()
 		{
 			int result = 0;
@@ -220,14 +220,14 @@ public class Main {
 		}
 		
 		
-		// 返回高
+		// 
 		int height()
 		{
 			int lh = 0;
 			int rh = 0;
 			if(left != null)
 			{
-				//一路往下，找到没有
+				//
 				lh = left.height()+1;
 			}
 			if(right != null )

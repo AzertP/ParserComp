@@ -50,7 +50,7 @@ public class Main {
 				}
 			}
 			r--;
-			// 180度回転
+			// 180
 			while(l<r) {
 				boolean t = T[r];
 				T[r] = !T[l];

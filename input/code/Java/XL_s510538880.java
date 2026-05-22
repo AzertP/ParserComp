@@ -11,10 +11,10 @@ public class Main {
 
 	static int n;
 	static List<Integer> graph[];
-	static long dp1[] = new long[220000];//根から葉方向で、頂点i以下の部分木の採番の場合の数
-	static long dp2[] = new long[220000];//葉から根方向
-	static int size1[] = new int[220000];//根から葉方向で、頂点i以下の部分木の大きさ
-	static int size2[] = new int[220000];//葉から根方向(size2 == n - size1 + 1)
+	static long dp1[] = new long[220000];//i
+	static long dp2[] = new long[220000];//
+	static int size1[] = new int[220000];//i
+	static int size2[] = new int[220000];//(size2 == n - size1 + 1)
 	static long ans[] = new long[220000];
 	public static void main(String[] args) {
 		FastScanner fs = new FastScanner(System.in);
@@ -29,16 +29,16 @@ public class Main {
 		preFactrials(n+20);
 		dfs1(0,-1);
 		dfs2(0,-1);
-		dfs3(0,-1);//ansの作成(親はdp2,size2を使うため、親が誰か知りたい。よってdfsで作る)
+		dfs3(0,-1);//ans(dp2,size2dfs)
 		for(int i=0;i<n;i++) {
 			System.out.println(ans[i]);
 		}
 	}
 	
-	//根から葉方向の場合の数(dp1)と、部分木の大きさ(size1&size2)を求める
+	//(dp1)(size1&size2)
 	static void dfs1(int v, int p) {
 		dp1[v] = 1;
-		size1[v] = 1;//自分を含めるために、1スタート
+		size1[v] = 1;//1
 		for(int to:graph[v]) {
 			if(to==p)continue;
 			dfs1(to, v);
@@ -50,7 +50,7 @@ public class Main {
 		dp1[v] = mul(dp1[v], factorials[size1[v]-1]);
 	}
 	
-	//葉から根
+	//
 	static void dfs2(int v, int p) {
 		if(p==-1)dp2[v] = 1;
 		long all_product = 1;
@@ -146,7 +146,7 @@ public class Main {
 	}
 }
 
-//高速なScanner
+//Scanner
 class FastScanner {
 	private BufferedReader reader = null;
 	private StringTokenizer tokenizer = null;

@@ -96,7 +96,7 @@ class Pair implements Comparable<Pair>{
 class UnionFind {
 	int[] par;
 	int[] rank;
-	int[] peers; //集合の要素数用
+	int[] peers; //
 	
 	public UnionFind(int n){
 		par = new int[n];
@@ -109,17 +109,17 @@ class UnionFind {
 		}
 	}
 	
-	//木の根を求める
+	//
 	int find(int x){
 		if(par[x] == x){
 			return x;
 		}
 		else{
-			return par[x] = find(par[x]);	//経路圧縮
+			return par[x] = find(par[x]);	//
 		}
 	}
 	
-	//xとyの属する集合を併合
+	//xy
 	public void unite(int x, int y){
 		int px = find(x);
 		int py = find(y);
@@ -142,12 +142,12 @@ class UnionFind {
 		
 	}
 	
-	//xとyが同じ集合に属するか
+	//xy
 	public boolean isSame(int x, int y){
 		return find(x) == find(y);
 	}
 	
-	//xの仲間の数を求める
+	//x
 	public int setSize(int x){
 		return peers[find(x)];
 	}

@@ -4,7 +4,7 @@ public class Main {
 
     public static void main(String args[]) {
 
-        // 入力
+        // 
         Scanner sc = new Scanner(System.in);
         int n = Integer.parseInt(sc.next());
         int k = Integer.parseInt(sc.next());
@@ -14,7 +14,7 @@ public class Main {
         }
         sc.close();
 
-        // 主処理
+        // 
         List<String> list = new ArrayList<>();
         for (int i = k; i < n; i++) {
             long first = a[i - k];
@@ -24,7 +24,7 @@ public class Main {
         }
         String result = String.join("\r\n", list);
 
-        // 出力
+        // 
         System.out.println(result);
     }
 }

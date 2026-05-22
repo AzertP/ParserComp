@@ -64,7 +64,7 @@ public class Main {
 	}
 }
 
-//高速なScanner
+//Scanner
 class FastScanner {
 	private BufferedReader reader = null;
 	private StringTokenizer tokenizer = null;

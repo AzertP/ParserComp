@@ -25,7 +25,7 @@ class Main{
         }
 
         long x = -1;
-        long f = 1; // 0:最後に底 1:最後に天井
+        long f = 1; // 0: 1:
 
         for(int i = 0; i < n - 1; i++){
             if(f == 0 && a[i] > x && a[i] > a[i + 1]){
@@ -54,25 +54,25 @@ class Main{
 
     }
 
-    long gcd(long a, long b){ // return aとbの最大公約数
+    long gcd(long a, long b){ // return ab
         if(b == 0){
           return a;
         }
         return gcd(b, a % b);
     }
 
-    long lcm(long a, long b){ // return aとbの最小公倍数
+    long lcm(long a, long b){ // return ab
         return a * b / gcd(a, b);
     }
 
-    long inv(long a){ // return aの逆元 (mod MOD)
+    long inv(long a){ // return a (mod MOD)
         return pow(a, MOD - 2);
     }
 
     long pow(long a, long r){ // return a^r (mod MOD)
         long sum = 1;
         while(r > 0){
-            if((r & 1) == 1){ // 2進数表記で末尾1の時
+            if((r & 1) == 1){ // 21
                 sum *= a;
                 sum %= MOD;
             }
@@ -108,7 +108,7 @@ class Main{
         }
     }
 
-    long modComb(int n, int r){ // return nCr (先にinitCOMB()必要)
+    long modComb(int n, int r){ // return nCr (initCOMB())
         if(n < r || n < 0 || r < 0) return 0;
         return fac[n] * finv[r] % MOD * finv[n - r] % MOD;
     }
@@ -121,7 +121,7 @@ class Main{
         return num;
     }
 
-    boolean isPrime(long a){ // aの素数判定
+    boolean isPrime(long a){ // a
         if(a <= 1) return false;
         for(int i = 2; i * i <= a; i++){
             if(a % i == 0) return false;
@@ -129,7 +129,7 @@ class Main{
         return true;
     }
 
-    int lowerBound(long[] a, long v){ // return 配列a内のv以上の要素の内最低の要素のイテレータ
+    int lowerBound(long[] a, long v){ // return av
         int r = a.length;
         int l = -1;
         while(r - l > 1){
@@ -143,7 +143,7 @@ class Main{
         return r;
     }
 
-    int upperBound(long[] a, long v){ // return 配列a内のvより大きい要素の内最低の要素のイテレータ
+    int upperBound(long[] a, long v){ // return av
         int r = a.length;
         int l = -1;
         while(r - l > 1){
@@ -157,7 +157,7 @@ class Main{
         return r;
     }
 
-    String nextPermutation(String s){ // return sの次の順列
+    String nextPermutation(String s){ // return s
         ArrayList<Character> list = new ArrayList<>();
         for(int i = 0; i < s.length(); i++) list.add(s.charAt(i));
 
@@ -242,10 +242,10 @@ class Main{
     class SegmentTree{
 
         //------------------------------------------------------------
-        // 2 * n - 1 : 木全体のノード数
-        // i + n - 1 : 配列のi番目が対応するノードの番号
-        // 2 * i + 1, 2 * i + 2 : i番目のノードの子ノードの番号
-        // (i - 1) / 2 : i番目のノードの親ノードの番号
+        // 2 * n - 1 : 
+        // i + n - 1 : i
+        // 2 * i + 1, 2 * i + 2 : i
+        // (i - 1) / 2 : i
         //
         // int n = sc.nextInt();
         // long[] a = new long[n];
@@ -258,21 +258,21 @@ class Main{
 
         final static long INF = Long.MAX_VALUE / 2;
 
-        // long e = INF; // 単位元
+        // long e = INF; // 
         long e = 0;
-        long func(long a, long b){ // 処理
+        long func(long a, long b){ // 
             // return Math.min(a, b);
             return a + b;
         }
 
-        int n; // 配列の要素数を超える最小の2のべき乗
+        int n; // 2
         long[] node;
 
         SegmentTree(long[] a){
             init(a);
         }
 
-        void init(long[] a){ // 配列aで初期化
+        void init(long[] a){ // a
             n = 1;
             while(n < a.length){
                 n *= 2;
@@ -287,7 +287,7 @@ class Main{
             }
         }
 
-        void update(int p, long v){ // 配列のp番目をvに変更し、木全体を更新
+        void update(int p, long v){ // pv
             p = p + n - 1;
             node[p] = v;
             while(p > 0){
@@ -296,7 +296,7 @@ class Main{
             }
         }
 
-        long query(int a, int b){ // 区間[a, b)についてクエリを処理
+        long query(int a, int b){ // [a, b)
             return query(a, b, 0, 0, n);
         }
 
@@ -335,8 +335,8 @@ class Main{
         // }
         //------------------------------------------------------------
 
-        int[] parent; // インデックスにとノードを対応させ、そのルートノードのインデックスを格納
-        int[] rank; // parentと同様に、木の高さを格納
+        int[] parent; // 
+        int[] rank; // parent
 
         UnionFindTree(int size){
             parent = new int[size];
@@ -356,24 +356,24 @@ class Main{
             int xRoot = find(x);
             int yRoot = find(y);
 
-            if(rank[xRoot] > rank[yRoot]){ // xが属する木の方が大きい場合
+            if(rank[xRoot] > rank[yRoot]){ // x
                 parent[yRoot] = xRoot;
             }else if(rank[xRoot] < rank[yRoot]){
-                parent[xRoot] = yRoot; // yの親をxに更新
+                parent[xRoot] = yRoot; // yx
             }else{
                 parent[yRoot] = xRoot;
-                rank[xRoot]++; // 同じ高さの木がルートの子として着くから大きさ++;
+                rank[xRoot]++; // ++;
             }
         }
 
-        int find(int i){ // iの属するルートを返す
+        int find(int i){ // i
             if(i != parent[i]){
                 parent[i] = find(parent[i]);
             }
             return parent[i];
         }
 
-        boolean same(int x, int y){ // xとyが同じ木に属しているかを返す
+        boolean same(int x, int y){ // xy
             return find(x) == find(y);
         }
 

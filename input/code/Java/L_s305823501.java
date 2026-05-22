@@ -73,7 +73,7 @@ public class Main {
         int y2a = (int)(y2 % 400);
         long c2 = get13f(y2a, m2, d2);
 
-        // 400年間に13日の金曜日は688回ある
+        // 40013688
         result.println(688 * (y2s - y1s) + c2 - c1);
     }
 

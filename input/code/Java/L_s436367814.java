@@ -7,7 +7,7 @@ public class Main {
         // Your code here!
         String[] inputPlane = new String[8];
         
-        //入力を受付、計算しやすいようにintに変換
+        //int
         List<int[][]> planeList = new ArrayList<int[][]>();
         Scanner scan = new Scanner(System.in);
         int row = 0;
@@ -61,7 +61,7 @@ public class Main {
             if(blockJudgeC(plane))continue;
         }
     }
-    //以下各判定
+    //
     static boolean blockJudgeA(int[][] plane){
         for(int i = 0;i < plane.length;i++){
             for(int j = 0;j < plane[i].length;j++){

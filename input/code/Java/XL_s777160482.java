@@ -149,8 +149,8 @@ public class Main {
 	}
 
 	/**
-	 * メビウス関数をエラトステネスの篩っぽく前計算するクラスです。
-	 * 計算量はO(1)で、前計算でO(N logN)です。
+	 * 
+	 * O(1)O(N logN)
 	 */
 	class SieveMobiusFunction implements MobiusFunction {
 		int size;
@@ -199,8 +199,8 @@ public class Main {
 	}
 
 	/**
-	 * メビウス関数を定義通り計算するクラスです。
-	 * 計算量はO(logN)です。
+	 * 
+	 * O(logN)
 	 */
 	class PrimeFactorizationMobiusFunction implements MobiusFunction {
 		@Override
@@ -226,11 +226,11 @@ public class Main {
 	}
 
 	/**
-	 * 組み合わせ計算を階乗の値で行うクラスです(MOD対応)
-	 * 階乗とその逆元は前計算してテーブルに格納します。
-	 * C(N, N) % M の計算量は O(1)、 前計算でO(max(N, logM))です。
-	 * sizeを1e8より大きい値で実行するとMLEの危険性があります。
-	 * また素数以外のMODには対応していません(逆元の計算に素数の剰余環の性質を利用しているため)。
+	 * (MOD)
+	 * 
+	 * C(N, N) % M  O(1) O(max(N, logM))
+	 * size1e8MLE
+	 * MOD()
 	 */
 	class FactorialTableCombCalculator implements CombCalculator {
 		int size;
@@ -283,9 +283,9 @@ public class Main {
 	}
 
 	/**
-	 * 組み合わせ計算をテーブルで実装したクラスです(MOD対応)
-	 * 前計算でO(N^2), combはO(1)で実行できます
-	 * sizeを2 * 1e4より大きい値で実行するとMLEの危険性があります
+	 * (MOD)
+	 * O(N^2), combO(1)
+	 * size2 * 1e4MLE
 	 */
 	class TableCombCalculator implements CombCalculator {
 		long[][] table;
@@ -330,8 +330,8 @@ public class Main {
 	}
 
 	/**
-	 * グラフの行列による実装
-	 * 接点数の大きいグラフで使うとMLEで死にそう
+	 * 
+	 * MLE
 	 */
 	class ArrayGraph implements Graph {
 		private Long[][] costArray;
@@ -362,8 +362,8 @@ public class Main {
 	}
 
 	/**
-	 * DFS(深さ優先探索)による実装
-	 * 計算量はO(E*MaxFlow)のはず (E:辺の数, MaxFlow:最大フロー)
+	 * DFS()
+	 * O(E*MaxFlow) (E:, MaxFlow:)
 	 */
 	class DfsFlowResolver implements FlowResolver {
 		private Graph graph;
@@ -372,10 +372,10 @@ public class Main {
 		}
 
 		/**
-		 * 最大フロー(最小カット)を求める
-		 * @param from 始点(source)のID
-		 * @param to 終点(target)のID
-		 * @return 最大フロー(最小カット)
+		 * ()
+		 * @param from (source)ID
+		 * @param to (target)ID
+		 * @return ()
 		 */
 		public long maxFlow(int from, int to) {
 			long sum = 0L;
@@ -388,12 +388,12 @@ public class Main {
 		}
 
 		/**
-		 * フローの実行 グラフの更新も行う
-		 * @param from 現在いる節点のID
-		 * @param to 終点(target)のID
-		 * @param current_flow ここまでの流量
-		 * @param passed 既に通った節点か否かを格納した配列
-		 * @return 終点(target)に流した流量/戻りのグラフの流量
+		 *  
+		 * @param from ID
+		 * @param to (target)ID
+		 * @param current_flow 
+		 * @param passed 
+		 * @return (target)/
 		 */
 		private long flow(int from, int to, long current_flow, boolean[] passed) {
 			passed[from] = true;
@@ -420,7 +420,7 @@ public class Main {
 	}
 
 	/**
-	 * 1-indexedのBIT配列
+	 * 1-indexedBIT
 	 */
 	class BinaryIndexedTree {
 		private long[] array;
@@ -430,10 +430,10 @@ public class Main {
 		}
 
 		/**
-		 * 指定した要素に値を加算する
-		 * 計算量はO(logN)
-		 * @param index 加算する要素の添字
-		 * @param value 加算する量
+		 * 
+		 * O(logN)
+		 * @param index 
+		 * @param value 
 		 */
 		public void add(int index, long value) {
 			for (int i = index; i < array.length; i += (i & -i)) {
@@ -442,10 +442,10 @@ public class Main {
 		}
 
 		/**
-		 * 1〜指定した要素までの和を取得する
-		 * 計算量はO(logN)
-		 * @param index 和の終端となる要素の添字
-		 * @return 1〜indexまでの和
+		 * 1
+		 * O(logN)
+		 * @param index 
+		 * @return 1index
 		 */
 		public long getSum(int index) {
 			long sum = 0L;
@@ -457,7 +457,7 @@ public class Main {
 	}
 
 	/**
-	 * 1-indexedの2次元BIT配列
+	 * 1-indexed2BIT
 	 */
 	class BinaryIndexedTree2D {
 		private long[][] array;
@@ -470,11 +470,11 @@ public class Main {
 		}
 
 		/**
-		 * 指定した要素に値を加算する
-		 * 計算量はO(logN * logN)
-		 * @param index1 加算する要素の1次元目の添字
-		 * @param index2 加算する要素の2次元目の添字
-		 * @param value 加算する量
+		 * 
+		 * O(logN * logN)
+		 * @param index1 1
+		 * @param index2 2
+		 * @param value 
 		 */
 		public void add(int index1, int index2, long value) {
 			for (int i1 = index1; i1 < array.length; i1 += (i1 & -i1)) {
@@ -485,11 +485,11 @@ public class Main {
 		}
 
 		/**
-		 * (1,1)〜指定した要素までの矩形和を取得する
-		 * 計算量はO(logN * logN)
-		 * @param index1 和の終端となる要素の1次元目の添字
-		 * @param index2 和の終端となる要素の2次元目の添字
-		 * @return (1,1)〜(index1,index2)までの矩形和
+		 * (1,1)
+		 * O(logN * logN)
+		 * @param index1 1
+		 * @param index2 2
+		 * @return (1,1)(index1,index2)
 		 */
 		public long getSum(int index1, int index2) {
 			long sum = 0L;
@@ -509,10 +509,10 @@ public class Main {
 	}
 
 	/**
-	 * ArrayUnionFindの拡張
-	 * MapSetで根の添字から根にぶら下がる頂点の集合が取得できるようにした
-	 * getSetメソッドをO(logN * logN)に落とせているはず
-	 * ただしunionメソッドは2倍の計算量になっているので注意(オーダーは変わらないはず)
+	 * ArrayUnionFind
+	 * MapSet
+	 * getSetO(logN * logN)
+	 * union2()
 	 */
 	class SetUnionFind extends ArrayUnionFind {
 		Map<Integer, Set<Integer>> map;
@@ -538,8 +538,8 @@ public class Main {
 	}
 
 	/**
-	 * 配列によるUnionFindの実装
-	 * getSetメソッドはO(NlogN)なのでTLEに注意
+	 * UnionFind
+	 * getSetO(NlogN)TLE
 	 */
 	class ArrayUnionFind implements UnionFind {
 		int[] parent;
@@ -596,19 +596,19 @@ public class Main {
 	}
 
 	/**
-	 * 素数のユーティリティ
+	 * 
 	 */
 	class PrimeNumberUtils {
 		boolean[] isPrimeArray;
 		List<Integer> primes;
 
 		/**
-		 * 素数判定の上限となる値を指定してユーティリティを初期化
-		 * @param limit 素数判定の上限(この値以上が素数であるか判定しない)
+		 * 
+		 * @param limit ()
 		 */
 		public PrimeNumberUtils(int limit) {
 			if (limit > 10000000) {
-				System.err.println("上限の値が高すぎるため素数ユーティリティの初期化でTLEする可能性が大変高いです");
+				System.err.println("TLE");
 			}
 			primes = new ArrayList<>();
 			isPrimeArray = new boolean[limit];
@@ -656,9 +656,9 @@ public class Main {
 	}
 
 	/**
-	 * Longの配列によるBitSetの実装
-	 * get/setはO(1)
-	 * shift/or/andはO(size / 64)
+	 * LongBitSet
+	 * get/setO(1)
+	 * shift/or/andO(size / 64)
 	 */
 	class LongBit implements BitSet {
 		long[] bitArray;

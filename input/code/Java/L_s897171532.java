@@ -53,7 +53,7 @@ class Main{
         }
     }
 
-    //【参考URL】
+    //URL
     // http://d.hatena.ne.jp/tomerun/20081203/1228321480
     public static boolean nextPermutation(int[] a) {
     for (int i = a.length - 1; 0 < i; i--) {
@@ -69,7 +69,7 @@ class Main{
     return false;
   }
 
-    // destより大きい要素の中で最小のもののインデックスを二分探索で探す
+    // dest
     private static int find(int dest, int[] a, int s, int e) {
         if (s == e) {
         return s;

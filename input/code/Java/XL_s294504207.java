@@ -10,19 +10,19 @@ public class Main {
 			no();
 			return;
 		}
-		if(a[0]==a[n-1]) {//全部数字が同じ場合
-			if(a[0]==n-1)yes();//全部色が異なる
+		if(a[0]==a[n-1]) {//
+			if(a[0]==n-1)yes();//
 			else{
-				if(a[0]<=n/2)yes();//各色２人以上
+				if(a[0]<=n/2)yes();//
 				else no();
 			}
 			return;
 		}
-		int cnt = 0;//１人の色の数
+		int cnt = 0;//
 		for(int i=0;i<n;i++) {
 			if(a[i]==a[0])cnt++;
 		}
-		int mcnt = n - cnt;//2人以上いる色の人数
+		int mcnt = n - cnt;//2
 		int colorMin = cnt + 1;
 		int colorMax = cnt + mcnt/2; 
 		if(colorMin<=a[n-1]&&a[n-1]<=colorMax)yes();
@@ -113,7 +113,7 @@ public class Main {
 		}
 	}
 
-	static void sbnl() {//StringBuilderに改行文字をappendする
+	static void sbnl() {//StringBuilderappend
 		sb.append("\n");
 	}
 
@@ -336,7 +336,7 @@ public class Main {
 			return ~Collections.binarySearch(ls, x, (t1, t2) -> ((Double) t1).compareTo((Double) t2) >= 0 ? 1 : -1);
 		} else {
 			System.err.println(
-					String.format("%s:数値でないリストを二分探索しています。", Thread.currentThread().getStackTrace()[1].getMethodName()));
+					String.format("%s:", Thread.currentThread().getStackTrace()[1].getMethodName()));
 			throw new RuntimeException();
 		}
 	}
@@ -352,7 +352,7 @@ public class Main {
 			return ~Collections.binarySearch(ls, x, (t1, t2) -> ((Double) t1).compareTo((Double) t2) > 0 ? 1 : -1);
 		} else {
 			System.err.println(
-					String.format("%s:数値でないリストを二分探索しています。", Thread.currentThread().getStackTrace()[1].getMethodName()));
+					String.format("%s:", Thread.currentThread().getStackTrace()[1].getMethodName()));
 			throw new RuntimeException();
 		}
 	}
@@ -368,7 +368,7 @@ public class Main {
 			return ~Collections.binarySearch(ls, x, (t1, t2) -> ((Double) t1).compareTo((Double) t2) < 0 ? 1 : -1);
 		} else {
 			System.err.println(
-					String.format("%s:数値でないリストを二分探索しています。", Thread.currentThread().getStackTrace()[1].getMethodName()));
+					String.format("%s:", Thread.currentThread().getStackTrace()[1].getMethodName()));
 			throw new RuntimeException();
 		}
 	}
@@ -384,7 +384,7 @@ public class Main {
 			return ~Collections.binarySearch(ls, x, (t1, t2) -> ((Double) t1).compareTo((Double) t2) <= 0 ? 1 : -1);
 		} else {
 			System.err.println(
-					String.format("%s:数値でないリストを二分探索しています。", Thread.currentThread().getStackTrace()[1].getMethodName()));
+					String.format("%s:", Thread.currentThread().getStackTrace()[1].getMethodName()));
 			throw new RuntimeException();
 		}
 	}

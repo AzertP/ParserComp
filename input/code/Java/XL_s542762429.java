@@ -53,7 +53,7 @@ public class Main {
     static long startTime;
     static boolean on = true;
 
-    //入力受け取り後に呼び出す(入力時間をカウントしないため)
+    //()
     static void start() {
       startTime = System.currentTimeMillis();
     }
@@ -150,10 +150,10 @@ public class Main {
   }
 
   /*
-    add()でインデックスを指定しない場合指定されたソート順に違わない位置に追加する
-    (ただしソートされていることが前提となる)
-    Comparatorが0を返したとき、それらの順序は保証しない
-    (TreeSet, TreeMapと違い削除はしない)
+    add()
+    ()
+    Comparator0
+    (TreeSet, TreeMap)
    */
   static class TreeList<E> extends ArrayList<E> {
 
@@ -165,7 +165,7 @@ public class Main {
     }
 
     /*
-      ソート済みのリストに要素を追加する
+      
      */
     public boolean add(E e) {
       int lowIndex = 0;

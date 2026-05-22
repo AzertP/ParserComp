@@ -6,7 +6,7 @@ class Main {
     println(money >= value ? "Yes" : "No");
   }
 
-  /* 以下、標準出力用関数 */
+  /*  */
   static public void print(byte what) { System.out.print(what); System.out.flush(); }
   static public void print(boolean what) { System.out.print(what); System.out.flush(); }
   static public void print(char what) { System.out.print(what); System.out.flush(); }

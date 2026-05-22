@@ -24,7 +24,7 @@ public class Main {
         	return tree;
         }
     }
-    static class Node0n {   //重みなし無向・有向グラフの頂点
+    static class Node0n {   //
         private ArrayList<Integer> next_vs = new ArrayList<>();
         public void add(int val){               next_vs.add(val);       }
         public int get(int ad){                 return next_vs.get(ad); }
@@ -54,7 +54,7 @@ public class Main {
         }
     }
 
-    static class Comparator_Edge implements Comparator<Edge>{       //今は大きいのが前に出てくる
+    static class Comparator_Edge implements Comparator<Edge>{       //
         public int compare(Edge a, Edge b){
             if(a.weight>b.weight) return -1;
             else if(a.weight<b.weight) return 1;
@@ -71,11 +71,11 @@ public class Main {
     }
     
     
-    //私が好きなアルゴリズム::累積和・UF木
-    //PriorityQueueは拡張for文で出すとsortされてない順番で出てくるよ
-    //longのbit演算は1L<<posに注意
+    //::UF
+    //PriorityQueueforsort
+    //longbit1L<<pos
     //long long
-    //JOIはMLEが厳しい  shortというものがあるよ。
+    //JOIMLE  short
 	public static void main(String[] args) throws Exception {
 		FastScanner sc = new FastScanner();
 		PrintWriter out = new PrintWriter(System.out);
@@ -244,7 +244,7 @@ public class Main {
 	    return true;
 	}
 	
-    private static long modinv(long a, long p) {    //a|p, >1に注意
+    private static long modinv(long a, long p) {    //a|p, >1
         long b = p, u = 1L, v = 0L;
         while (b>0) {
             long t = a / b;
@@ -277,13 +277,13 @@ public class Main {
 		long cf = 1;    int d=0;
 		while(num >= cf){   d++;    cf = (1L<<d);  }
 		
-		return d; //numはd桁の数で、2^dより小さい
+		return d; //numd2^d
 	}
 	
 	private static int getDigit10(long num){
 		long cf = 1;    int d=0;
 		while(num >= cf){   d++;    cf*=10;     }
-		return d; //numはd桁の数で、10^dより小さい
+		return d; //numd10^d
 	}
 	
 	private static boolean isINF(int in){
@@ -371,7 +371,7 @@ public class Main {
 			if(dt[mid] <= target) left=mid;
 			else right=mid;
 		}
-		return left;//target以下の最大のaddress
+		return left;//targetaddress
 	}
 	public static int biSearchMaxAL(ArrayList<Integer> dt, long target){
 		int left=-1, right=dt.size();
@@ -382,7 +382,7 @@ public class Main {
 			if(dt.get(mid) <= target) left=mid;
 			else right=mid;
 		}
-		return left;//target以下の最大のaddress
+		return left;//targetaddress
 	}
 	
     private static int[] Xdir4 = {1,0,0,-1};
@@ -432,7 +432,7 @@ public class Main {
 		}
 		out.flush();
 	}
-	static void show2(ArrayDeque<Long> dt){		//上手くいかなかった時用
+	static void show2(ArrayDeque<Long> dt){		//
 		long a=0;
 		while(dt.size()>0){
 			a=dt.removeFirst();
@@ -440,7 +440,7 @@ public class Main {
 		}
 		System.out.println("\n");
 	}
-	static void show2(List dt){		//上手くいかなかった時用
+	static void show2(List dt){		//
 	   	for(int i=0; i<dt.size(); i++){
 			System.out.print(dt.get(i)+",");
 		}

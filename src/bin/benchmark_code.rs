@@ -64,7 +64,7 @@ fn configs() -> Vec<GrammarConfig> {
             input_source: InputSource::CodeFiles("input/code/C"),
             table_path: "table/c_ws_glr_table.csv",
             lr_table_path: "table/c_ws_lr_table.csv",
-            generate_table: true,
+            generate_table: false,
             parsers: WS_PARSERS,
         },
         GrammarConfig {
@@ -73,7 +73,7 @@ fn configs() -> Vec<GrammarConfig> {
             input_source: InputSource::CodeFiles("input/code/C++"),
             table_path: "table/cpp_ws_glr_table.csv",
             lr_table_path: "table/cpp_ws_lr_table.csv",
-            generate_table: true,
+            generate_table: false,
             parsers: WS_PARSERS,
         },
         GrammarConfig {
@@ -82,7 +82,7 @@ fn configs() -> Vec<GrammarConfig> {
             input_source: InputSource::CodeFiles("input/code/Java"),
             table_path: "table/java_ws_glr_table.csv",
             lr_table_path: "table/java_ws_lr_table.csv",
-            generate_table: true,
+            generate_table: false,
             parsers: WS_PARSERS,
         },
     ]

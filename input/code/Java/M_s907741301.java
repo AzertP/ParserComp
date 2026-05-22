@@ -40,20 +40,20 @@ public class Main {
 		ArrayDeque<Character> stack = new ArrayDeque<Character>();
 		while ( tb[r][c] != 0 ) {
 
-			// 左上に行けるとき
+			// 
 			if ( tb[r - 1][c - 1] == tb[r][c]) {
 				r -= 1;
 				c -= 1;
 			} else
-			// 上にだけ行けるとき
+			// 
 			if ( tb[r - 1][c] ==  tb[r][c]) {
 				r -= 1;
 			} else
-			// 左にだけ行けるとき
+			// 
 			if ( tb[r][c - 1] == tb[r][c]) {
 				c -= 1;
 			} else
-			// 行き止まり
+			// 
 			{
 				stack.add((Character) s[c - 1]);
 				r -= 1;

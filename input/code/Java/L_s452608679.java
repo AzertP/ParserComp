@@ -16,10 +16,10 @@ public class Main {
 	//map.containsKey(A)
 
 	//Map<String, Integer> map = new HashMap<String, Integer>(n);
-	/*for ( キーのデータ型 key : マップの名前.keySet() ) {
-		データのデータ型 data = マップの名前.get( key );
+	/*for (  key : .keySet() ) {
+		 data = .get( key );
 		
-		// keyやdataを使った処理;
+		// keydata;
 	}*/
 	//int i = Integer.parseInt(s);
 	//Queue<String> qq=new ArrayDeque<>(); //add,poll,peek

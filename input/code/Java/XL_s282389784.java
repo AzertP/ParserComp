@@ -92,7 +92,7 @@ public class Main {
   }
 
   /**
-   * ここから下はテンプレートです。
+   * 
    */
   public static void main(String[] args) throws Exception {
     OutputStream outputStream = System.out;

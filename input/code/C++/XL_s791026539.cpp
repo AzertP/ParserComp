@@ -1,13 +1,6 @@
-#include<bits/stdc++.h>
 using namespace std;
 
-#define int long long
 
-#define rep(i,n) for(int i=0;i<(n);i++)
-#define pb push_back
-#define all(v) (v).begin(),(v).end()
-#define fi first
-#define se second
 typedef vector<int>vint;
 typedef pair<int,int>pint;
 typedef vector<pint>vpint;
@@ -45,7 +38,6 @@ class SuffixArray{
         vector<int>is_l(v.size());
         vector<int>bucket(mv+1);
         vector<int>sa(v.size(),-1);
-        auto is_lms=[&](int x)->bool{return x>0&&is_l[x-1]&&!is_l[x];};
 
         is_l[v.size()-1]=0;
         for(int i=v.size()-2;i>=0;i--)is_l[i]=v[i]>v[i+1]||(v[i]==v[i+1]&&is_l[i+1]);

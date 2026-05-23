@@ -1,4 +1,3 @@
-#include "bits/stdc++.h"
 using namespace std;
 typedef long long ll;
 int P[100], T[100], V[100];

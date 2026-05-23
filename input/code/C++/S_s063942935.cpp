@@ -1,4 +1,3 @@
-#include<iostream>
 using namespace std;
 int v[100];
 int main() {

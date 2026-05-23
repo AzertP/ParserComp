@@ -840,7 +840,9 @@
     "<REAL>": [
       [ "<INTEGER>", ".", "<INTEGER>" ],
       [ "<INTEGER>", ".", "<INTEGER>", "e", "<sign>", "<INTEGER>" ],
-      [ "<INTEGER>", ".", "<INTEGER>", "E", "<sign>", "<INTEGER>" ]
+      [ "<INTEGER>", ".", "<INTEGER>", "E", "<sign>", "<INTEGER>" ],
+      [ "<INTEGER>", "e", "<sign>", "<INTEGER>" ],
+      [ "<INTEGER>", "E", "<sign>", "<INTEGER>" ]
     ],
     "<sign>": [
       [ "+" ],

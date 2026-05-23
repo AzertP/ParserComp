@@ -1,5 +1,3 @@
-#include <cstdio>
-#define rg register
 using namespace std;
 typedef long long ll;
 const int maxn=1000010,mod=1e9+7;

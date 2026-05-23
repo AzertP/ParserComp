@@ -1,4 +1,3 @@
-#include <bits/stdc++.h>
 using namespace std;
 int f[100020];
 long long n, m, x, y, z1, z2, z;

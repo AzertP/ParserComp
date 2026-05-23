@@ -1,4 +1,3 @@
-#include<iostream>
 using namespace std;
 int main(){
     int W,H,x,y,r;

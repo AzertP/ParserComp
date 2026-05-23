@@ -1,9 +1,3 @@
-#include<iostream>
-#include<string>
-#include<vector>
-#include<algorithm>
-#include<map>
-#include<queue>
 using namespace std;
 
 typedef pair<int,int> P;

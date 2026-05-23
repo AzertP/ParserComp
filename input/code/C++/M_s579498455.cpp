@@ -1,8 +1,3 @@
-#include <iostream>
-#include <vector>
-#include <set>
-#include <algorithm>
-#include <utility>
 using namespace std;
 
 int bin_s(vector<int> &u, int key){

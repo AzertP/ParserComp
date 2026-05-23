@@ -1,5 +1,3 @@
-#define _CRT_SECURE_NO_WARNINGS
-#include <bits/stdc++.h>
 using namespace std;
 //using ll=long long;
 const double EPS = 1e-10;
@@ -23,7 +21,6 @@ public:
 	void show() { printf("%.10lf %.10lf", x, y); }
 };
 
-using Vector = Point;
 inline double norm(Vector a) {
 	return a.x*a.x + a.y*a.y;
 }
@@ -40,14 +37,12 @@ struct Segment {
 	Point p1, p2;
 };
 
-using Line = Segment;
 class Circle {
 public:
 	Point c;
 	double r;
 	Circle(Point c = Point(), double r = 0.0) :c(c), r(r) {}
 };
-using Polygon = vector<Point>; 
 Point project(Segment s, Point p) {
 	Vector base = s.p2 - s.p1;
 	double r = dot(p - s.p1, base) / norm(base);

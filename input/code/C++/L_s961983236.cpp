@@ -1,15 +1,4 @@
-#include <iostream>
-#include <cstdio>
-#include <string>
-#include <algorithm>
-#include <vector>
-#include <cstring>
-#include <queue>
-#include <string>
-#include <algorithm>
-#include <set>
 using namespace std;
-#define ll long long
 const int maxn = 1e5 + 10;
 int b[maxn] = {0}, l[maxn] = {0}, u[maxn] = {0};
 long long pre[maxn] = {0}, sum[maxn] = {0};

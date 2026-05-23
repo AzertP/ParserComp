@@ -1,14 +1,3 @@
-#define _USE_MATH_DEFINES
-#include <iostream>
-#include <sstream>
-#include <cmath>
-#include <algorithm>
-#include <queue>
-#include <stack>
-#include <limits>
-#include <map>
-#include <string>
-#include <cstring>
 
 typedef long long ll;
 using namespace std;

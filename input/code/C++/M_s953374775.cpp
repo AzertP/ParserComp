@@ -1,5 +1,3 @@
-#include<bits/stdc++.h>
-#define MOD 998244353
 using namespace std;
 long long cnt[100100];
 int d[100100];

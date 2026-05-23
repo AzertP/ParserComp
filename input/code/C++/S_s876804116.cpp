@@ -1,6 +1,4 @@
-#include <bits/stdc++.h>
 using namespace std;
-using ll = long long;
 ll vs[110][2];
 ll dp[110][100100];
 

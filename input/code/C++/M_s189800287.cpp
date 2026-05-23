@@ -1,9 +1,3 @@
-#include <iostream>
-#include <vector>
-#include <algorithm>
-#include <string>
-#include <cmath>
-#include <climits>
 
 long table[1000010];
 long h[100010];

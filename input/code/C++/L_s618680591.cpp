@@ -1,4 +1,3 @@
-#include<bits/stdc++.h>
 using namespace std;
  
 int N, M; char S[15][15],T[15][15];
@@ -61,7 +60,7 @@ void go(int r)
 		chk[s] = 1;
 		for (int i = s + 1; i < N; i++) if (!chk[i]) {
 			chk[i] = 1;
-			pick.push_back({ s,i });
+			pick.push_back(make_pair(s,i));
 			go(r - 2);
 			pick.pop_back();
 			chk[i] = 0;

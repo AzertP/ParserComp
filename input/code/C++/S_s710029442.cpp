@@ -1,10 +1,4 @@
-#include <iostream>
-#include <cmath>
-#include <vector>
-#include <list>
-#include <unordered_map>
 
-#define BIG 1000000007
 
 using namespace std;
 

@@ -1,20 +1,6 @@
-#include <cstdlib>
 
-#include <algorithm>
-#include <cmath>
-#include <iostream>
-#include <list>
-#include <map>
-#include <queue>
-#include <stdio.h>
-#include <string>
-#include <vector>
-#include <set>
 
-#define rep(i,n) for (int i = 0; i < (n); ++i)
 using namespace std;
-using ll = long long;
-using P = pair<int, int>;
 const double PI = 3.1415926535897932;
 
 template<class T> inline bool chmin(T& a, T b) {
@@ -43,10 +29,10 @@ int main()
 	int N; cin >> N;
 	for (int i = 0; i < N; ++i) cin >> h[i];
 
-	// 初期化 (最小化問題なので INF に初期化)
+	//  ( INF )
 	for (int i = 0; i < 100010; ++i) dp[i] = INF;
 
-	// 初期条件
+	// 
 	dp[0] = 0;
 
 	dp[0] = 0;

@@ -1,14 +1,3 @@
-#include<bits/stdc++.h>
-#define lln long long int
-#define llu unsigned lln
-#define sc(n) scanf("%d",&n);
-#define scl(n) scanf("%lld",&n);
-#define scd(n) scanf("%lf",&n);
-#define pf(res) printf("%d\n",res);
-#define pfl(res) printf("%lld\n",res);
-#define pfd(res) printf("%lf\n",res);
-#define pb(n) push_back(n);
-#define maxii 200005
 using namespace std;
 typedef pair<int,int> pii;
 typedef pair<lln,lln> pll;

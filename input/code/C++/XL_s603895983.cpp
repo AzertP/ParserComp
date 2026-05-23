@@ -1,5 +1,3 @@
-#include <iostream>
-#define MEN 6
 using namespace std;
 
 

@@ -1,23 +1,5 @@
-#include <iostream>
-#include <iomanip>
-#include<math.h>
-#include<list>
-#include <algorithm>
-#include<set>
-#include<vector>
-#include<math.h>
-#include<map>
-#include<string>
-#include <numeric>
-#include <queue>
-#include <sstream>
-#include <bitset>
-#include<stack>
 
 using namespace std;
-using ll = long long;
-using vll = vector<long long>;
-using sll = set<long long>;
 
 template<typename T>
 T gcd(T a, T b) { return b ? gcd(b, a % b) : a; }
@@ -67,8 +49,6 @@ long long modinv(long long a, long long m) {
 	return u;
 }
 
-#define rep(i,s,e) for(ll i=s;i<e;i++)
-#define repeq(i,s,e) for(ll i=s;i<=e;i++)
 
 
 

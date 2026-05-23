@@ -1,4 +1,3 @@
-#include<bits/stdc++.h>
 using namespace std;
 int main(){
   long long p=100,m=0,x;

@@ -1,4 +1,3 @@
-#include<bits/stdc++.h>
 using namespace std;
 typedef complex<double> P;
 typedef complex<double> V;

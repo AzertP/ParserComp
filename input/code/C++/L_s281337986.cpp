@@ -1,23 +1,6 @@
-#include <iostream>
-#include <stack>
-#include <algorithm>
-#include <vector>
-#include <math.h>
-#include <stdio.h>
-#include <functional>
-#include <string>
-#include <cstdlib>
-#include <numeric>
-#include <cstdbool>
-#include <cstring>
-#include <map> 
-#include<set>
-#include<queue>
-#include <iomanip>
 
 typedef long long ll;
 
-#define rep(i,n) for(ll i=0;i<n;i++)
 using namespace std;
 
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }

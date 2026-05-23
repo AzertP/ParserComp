@@ -1,6 +1,3 @@
-#include<iostream>
-#include<cstdio>
-#include<vector>
 using namespace std;
 const int N=500005,M=(1<<20)+5;
 const int MOD=1000000007;

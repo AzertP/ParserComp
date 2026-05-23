@@ -1,6 +1,3 @@
-#include<iostream>
-#include<cstring>
-#include<cstdio>
 char a[1000];
 using namespace std;
 int main()

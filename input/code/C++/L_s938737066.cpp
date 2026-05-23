@@ -1,4 +1,3 @@
-#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -7,17 +6,6 @@ typedef long double ld;
 typedef unsigned long long ull;
 typedef pair<int, int> pii;
 
-#define pb push_back
-#define ff first
-#define ss second
-#define SIZE 1000001
-#define INF int(2e9 + 9)
-#define BIG_INF ll(4e18 + 9)
-#define all(v) (v).begin(), (v).end()
-#define rall(v) (v).rbegin(), (v).rend()
-#define _sz(v) int((v).size())
-#define sqr(x) (x) * (x)
-#define cube(x) (x) * (x) * (x)
 
 //#pragma GCC optimize("Ofast")
 

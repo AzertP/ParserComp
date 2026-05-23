@@ -1,20 +1,6 @@
-#include <iostream>
-#include <vector>
-#include <algorithm>
-#include <unordered_set>
-#include <unordered_map>
-#include <sstream>
-#include <set>
-#include <string>
-#include <math.h>
-#include <map>
-#include <climits>
-#include <iomanip>
 
 
-#define forn(i, n) for (int i = 0; i < int(n); i++)
 
-#define ll long long
 
 using namespace std;
 

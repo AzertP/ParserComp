@@ -1,7 +1,3 @@
-#include<iostream>
-#include<cmath>
-#include<cstring>
-#include<vector>
 using namespace std;
 int a[4][4],v[4][4];
 int b[105];

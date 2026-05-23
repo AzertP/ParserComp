@@ -1,12 +1,3 @@
-#include <cstdio>
-#include <cstring>
-#include <utility>
-#include <cmath>
-#include <algorithm>
-#include <iostream>
-#include <string>
-#include <stack>
-#include <queue>
 using namespace std;
 
 
@@ -23,7 +14,7 @@ int main(){
 
   sort(a,a+n);
 
-//枝刈
+//
   if(n==1){
     if(k<=a[0])
       cout << 0 << endl;
@@ -43,7 +34,7 @@ int main(){
   }
 
 
-//本作業
+//
   int need[5001]={};
 
   for(int i=0;i<n;i++){

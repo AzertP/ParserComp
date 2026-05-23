@@ -1,17 +1,3 @@
-#include<iostream>
-#include<cstdio>
-#include<vector>
-#include<queue>
-#include<map>
-#include<unordered_map>
-#include<stack>
-#include<string>
-#include<iomanip>
-#include<algorithm>
-#include<functional>
-#include<cstring>
-#include<utility>
-#include<math.h>
 using namespace std;
 
 
@@ -178,9 +164,9 @@ public:
 /**** Segment Tree ****/
 class SegmentTree {
 public:
-  vector<pair<double, double>> node;//node[0]は使用しない
-  ll n;//データの個数(nodeの最下層には何個並んでいるか)
-  pair<double, double> initial_value;//初期値
+  vector<pair<double, double>> node;//node[0]
+  ll n;//(node)
+  pair<double, double> initial_value;//
 public:
   void Init(ll n_,pair<double, double> initial_value_){
     n=1;
@@ -192,8 +178,8 @@ public:
     initial_value=initial_value_;
   }
   void Update(ll k,pair<double, double> a){
-    //node[k]をaにする
-    //それに従って先祖も変わっていく
+    //node[k]a
+    //
     k+=n;
     node[k]=a;
     while(k>1){
@@ -214,7 +200,7 @@ public:
 
 /**** LIS ****/
 ll lis(ll* a, ll n, ll* dp) {
-  fill(dp, dp + n, INF);//INFを代入
+  fill(dp, dp + n, INF);//INF
   for (ll i = 0; i < n; i++) *lower_bound(dp, dp + n, a[i]) = a[i];
   return (ll)(lower_bound(dp, dp + n, INF) - dp);
 }

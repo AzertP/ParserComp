@@ -1,5 +1,3 @@
-#include <bits/stdc++.h>
-#define file "gemo"
 using namespace std;
 typedef long long ll;
 const int mod=1000000007;

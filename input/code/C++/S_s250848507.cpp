@@ -1,8 +1,3 @@
-#include <iostream>
-#include <cmath>
-#include <string>
-#include <algorithm>
-#include <vector>
 using namespace std;
 
 int main(){

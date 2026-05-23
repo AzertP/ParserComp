@@ -1,6 +1,4 @@
-#include<bits/stdc++.h>
 using namespace std;
-#define MD 1000000007
 void *wmem;
 template<class T> void walloc1d(T **arr, int x, void **mem = &wmem){
   (*arr)=(T*)(*mem);
@@ -379,33 +377,3 @@ int main(){
   putchar_unlocked('\n');
   return 0;
 }
-// cLay varsion 20180303-1 [beta]
-
-// --- original code ---
-// mint val[1d6];
-// 
-// {
-//   int i, j, k, N;
-//   mint res, tmp;
-//   combination_mint comb;
-// 
-//   rd(N);
-//   
-//   comb.init(2d6);
-//   res = 0;
-// 
-//   rep(i,N){
-//     val[N-i-1] = comb.P(i,i) * comb.P(N-1-i,N-1-i);
-//     val[N-i-1] *= comb.C(N-i,i);
-//   }
-// 
-//   tmp = 0;
-//   rep(i,N){
-//     val[i] -= tmp;
-//     tmp += val[i];
-//   }
-// 
-//   rep(i,N) res += (i+1) * val[i];
-//   wt(res);
-// }
-// 

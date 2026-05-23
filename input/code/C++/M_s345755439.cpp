@@ -1,14 +1,8 @@
-#include <iostream>
 
 using namespace std;
 
-#ifndef ONLINE_JUDGE
-  #include <fstream>
-  #define cin fin
-  #define cout fout
   ifstream fin ("test.in");
   ofstream fout ("test.out");
-#endif
 
 int p[10];
 int n, m, q;

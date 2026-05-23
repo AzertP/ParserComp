@@ -1,7 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
 
 int sort(const void *a, const void *b){
     return *(int*)a-*(int*)b ;

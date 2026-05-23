@@ -1,16 +1,3 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <math.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#define MOD 1000000007
-#define INFTY 2147400000
-#define END printf("\n");return 0;
-#define QS09(how_data,data) qsort(data,how_data,sizeof(long),(int (*)(const void *,const void *))qsort_09);
-#define QS90(how_data,data) qsort(data,how_data,sizeof(long),(int (*)(const void *,const void *))qsort_90);
-#define In(a) long a;scanf("%ld",&a);
-#define Out(a) printf("%ld\n",a);
 void input_array(long how_data,long *data);
 void output_array(long how_data,long *data);
 void input_array2(long first , long second , long data[][2]);
@@ -37,10 +24,10 @@ long fifr(long *data);
 void GRAPH_input(void);
 void GRAPH_dfs(long now);
 
-//グローバル変数一覧
-long fifo[1000]={0};//fifo[0]はデータ件数
+//
+long fifo[1000]={0};//fifo[0]
 long loop1,loop2,loop3,loop4,loop5,i_temp;
-long g_ans=0; //answerグローバル変数用
+long g_ans=0; //answer
 
 typedef struct{
     long how_vertex;
@@ -61,13 +48,13 @@ int main(void){
     In(target_x);In(target_y);
     int next_syori=0,now_x=0,now_y=0;
     /*
-        tの度に、xとyが切り替わるのは確実。
-        つまり、xとyを独立に考えることができる。
-        xとyが両方到達可能な時、Yes。
-        いずれか一方あるいは両方到達不可の時、No。
+        txy
+        xy
+        xyYes
+        No
         
-        正負方向は最初のFの塊を除いて任意。
-        先に最初のFの塊を処理したらあとは任意。
+        F
+        F
     */
     
     int front_F=0;
@@ -78,9 +65,9 @@ int main(void){
     target_x-=front_F;
     
     /*
-        これにより、最初のFの塊を処理し終わったとこから考えることができる
-        はじめはY方向からだ
-        でかいほうから、targetに近づくように+か-をするというのはどうか・・・？
+        F
+        Y
+        target+-
     */
     
     long how_x=0,how_y=0;
@@ -115,9 +102,9 @@ int main(void){
     QS90(how_x,data_x);
     QS90(how_y,data_y);
     //printf("TGT X=%ld Y=%ld\n",target_x,target_y);
-    //xが実現可能か？
+    //x
     
-    //xリスト表示
+    //x
     //printf("List-x\n");
     //for(loop1=0;loop1<how_x;loop1++){
         //printf("%ld\n",data_x[loop1]);
@@ -137,7 +124,7 @@ int main(void){
         x_can=1;
     }
     
-    //yが実現可能か？
+    //y
     bool y_can=0;
     for(loop1=0;loop1<how_y;loop1++){
         if(now_y>target_y){
@@ -194,17 +181,17 @@ void format_array(long how_data ,long *data,long what){
     }
     return ;
 }
-long get_random(long min, long max){   //指定の範囲から乱数を1つ返すやつ
-    //srand((unsigned int)time(0));   //現在時刻で疑似乱数初期化
-    rand();rand();rand();rand();    //乱数を空打ち
+long get_random(long min, long max){   //1
+    //srand((unsigned int)time(0));   //
+    rand();rand();rand();rand();    //
     return (rand()%(max+1-min))+min;
 }
-long factorial(long n){//n!のMOD10^9+7を返すやつ
+long factorial(long n){//n!MOD10^9+7
     unsigned long long int ret=1;
     for(long i=1;i<=n;i++)ret=(ret*i)%1000000007;
     return (long)ret;
 }
-int qsort_09(const int *sys1 , const int *sys2){ //小さいのが上にくるやつ
+int qsort_09(const int *sys1 , const int *sys2){ //
     //qsort(data,how_data,sizeof(long),(int (*)(const void *,const void *))qsort_09);
     if(*sys1<*sys2){
         return -1;
@@ -214,7 +201,7 @@ int qsort_09(const int *sys1 , const int *sys2){ //小さいのが上にくる�
         return 1;
     }
 }
-int qsort_90(const int *sys1 , const int *sys2){ //大きいのが上にくるやつ
+int qsort_90(const int *sys1 , const int *sys2){ //
     //qsort(data,how_data,sizeof(long),(int (*)(const void *,const void *))qsort_90);
     if(*sys1<*sys2){
         return 1;
@@ -240,14 +227,14 @@ long sel_min(long a,long b){
     return a;
 }
 long can_DP(long how_data,long *data,long how_can,bool *can){//Typical DP Contest A
-    //data内で組み合わせられる和をcanに0 or 1で入れる
-    //返り値はパターン数
+    //datacan0 or 1
+    //
     long loopA,loopB;
     long ret=0;
-    for(loopA=0;loopA<how_can;loopA++){//初期化
+    for(loopA=0;loopA<how_can;loopA++){//
         can[loopA]=0;
     }
-    can[0]=1;//絶対にありえる
+    can[0]=1;//
     for(loopA=0;loopA<how_data;loopA++){
         for(loopB=how_can-1;loopB>=0;loopB--){
             if(can[loopB]==1 && loopB+data[loopA]<how_can){
@@ -297,13 +284,13 @@ long array_search(long how_data,long *data,long what){
 }
 long Leven_dist(char *now , char *target){
     long loopA,loopB;
-    //レーベンシュタイン距離を求める
-    // 参考文献
-    // http://nw.tsuda.ac.jp/class/algoB/c13.html  (アルゴリズム理解)
-    // http://d.hatena.ne.jp/ohnishiakira/20090809/1249845529  (実装)
+    //
+    // 
+    // http://nw.tsuda.ac.jp/class/algoB/c13.html  ()
+    // http://d.hatena.ne.jp/ohnishiakira/20090809/1249845529  ()
     long len_now=strlen(now)+1;
     long len_target=strlen(target)+1;
-    long d[len_now][len_target]; //計算用
+    long d[len_now][len_target]; //
     for(loopA=0;loopA<len_now;loopA++) d[loopA][0]=loopA;
     for(loopA=0;loopA<len_target;loopA++) d[0][loopA]=loopA;
     for(loopA=1;loopA<len_now;loopA++){
@@ -318,7 +305,7 @@ long get_digit(long target){
     return (long)(log10(target)+1);
 }
 long ncr(long n , long r){
-    //パスカルの三角形
+    //
     long loopA,loopB;
     long pascal[100][102]={{0}};
     pascal[1][0]=1;
@@ -341,7 +328,7 @@ long nhr(long n , long r){
 int fifw(long add,long *data){
     data[data[0]+1]=add;
     data[0]++;
-    return data[0]; //現在のデータ件数を返す
+    return data[0]; //
 }
 long fifr(long *data){
     long ret=data[1];

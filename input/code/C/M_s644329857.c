@@ -1,5 +1,3 @@
-#include<stdio.h>
-#include<stdlib.h>
 void f_post(int *,int *,int,int,int,int*);
 void post(int *,int *,int,int,int,int*);
 int main(){

@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
 
 int a[10];
 int fact[10]={1,1,2,6,24,120,720,5040,40320};

@@ -1,5 +1,3 @@
-#include<stdio.h>
-#include<stdlib.h>
 
 struct node{
   struct node *right;
@@ -15,7 +13,6 @@ void inorder(Node);
 void treeDelete(Node);
 Node treeSearch(Node, int);
 
-#define NIL NULL
 
 Node root;
 

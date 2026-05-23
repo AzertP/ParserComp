@@ -1,4 +1,3 @@
-#include<stdio.h>
 
 int shori(int,int);
 int data[101][101], suuji[101];

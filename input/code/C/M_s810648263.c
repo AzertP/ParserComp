@@ -1,6 +1,3 @@
-#include<stdio.h>
-#include<string.h>
-#define LEN 100005
   
 typedef struct kouzou{
   char name[100];

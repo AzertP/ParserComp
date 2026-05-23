@@ -1,4 +1,3 @@
-#include <stdio.h>
 int main(){
   int a,b,men,syu;
   scanf("%d%d",&a,&b);

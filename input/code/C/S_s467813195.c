@@ -1,4 +1,3 @@
-#include<stdio.h>
 int snk(int);
 int main(void){
   int N,A,sum=1000;

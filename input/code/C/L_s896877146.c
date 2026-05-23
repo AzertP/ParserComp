@@ -1,5 +1,4 @@
 
-#include <stdio.h>
 
 
 int main (){
@@ -9,7 +8,7 @@ int year[100];
 int month[100];
 int date[100];
 int input=0;
-int result[100]={};
+int result[100]={0};
 int dataset_num=0;
 int dataset_num2=0;
 int count=0;

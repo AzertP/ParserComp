@@ -1,6 +1,5 @@
 // AOJ Volume 1 Problem 0163 Ohajiki Game
 
-#include <stdio.h>
 
 
 int main(void)
@@ -24,28 +23,28 @@ int main(void)
         jiro_turn = 0;
         ohajiki = 32;
         while (1){
-            // êYÌ^[
+            // Y^[
             ohajiki -= ((ohajiki - 1) % 5);
             
-            // ¨Í¶«Ì\¦
+            // \
             printf("%d\n", ohajiki);
 
-            // ¨Í¶«ªÈ­ÈÁ½çI¹
+            // I
             if (ohajiki == 0){
                 break;
             }
             
-            // YÌ^[
+            // Y^[
             ohajiki -= a[jiro_turn];
             jiro_turn = ((jiro_turn + 1) % i);
 
-            // ¨Í¶«ªÈ­ÈÁ½çI¹
+            // I
             if (ohajiki <= 0){
                 printf("0\n");
                 break;
             }
 
-            // ¨Í¶«Ì\¦
+            // \
             printf("%d\n", ohajiki);
         }
     }

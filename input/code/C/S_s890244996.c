@@ -1,9 +1,3 @@
-#include <stdio.h>
-#include <string.h>
-#define Fori(g) for(int i=0;i<g;i++)
-#define	Forj(g) for(int j=0;j<g;j++)
-#define min(aa,bb) (aa<bb)?aa:bb
-#define max(aa,bb) (aa<bb)?bb:aa
 
 int main(){
 	char s[100],t[100],sum[300];

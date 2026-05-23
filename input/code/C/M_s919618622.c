@@ -1,8 +1,6 @@
-#include<stdio.h>
-#include <stdlib.h>
 int main(void){
     int n,k,x[2][50],y[2][50],d[2][50],a[100],b[100],c[100],i,j,h,m,z,count;
-    long long int ans=0LL,surface;
+    long long int ans=0,surface;
     scanf("%d%d",&n,&k);
     for(i=0; i<n; i++){
         scanf("%d%d%d%d%d%d",&x[0][i],&y[0][i],&d[0][i],&x[1][i],&y[1][i],&d[1][i]);

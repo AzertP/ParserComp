@@ -1,5 +1,3 @@
-#include<stdio.h>
-#include<string.h>
 void N(int dice[]);
 void E(int dice[]);
 void S(int dice[]);

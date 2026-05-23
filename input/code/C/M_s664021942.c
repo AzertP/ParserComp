@@ -1,8 +1,3 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdlib.h>
 int max(const void *a, const void *b){return *(int*)b - *(int*)a;}
 
 

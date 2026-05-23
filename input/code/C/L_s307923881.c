@@ -1,7 +1,4 @@
-#include<stdio.h>
-#include<stdlib.h>
 
-#define max(a,b) ((a)>(b)?(a):(b))
 
 int compare_int(const void *a,const void *b){
 	if( *(long long*)b>*(long long*)a)return 1;

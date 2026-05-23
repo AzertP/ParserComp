@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <limits.h>
 
 int main(void) {
     const int merry[] = {1, 2, 1, 2, 1, 4, 1, 4};

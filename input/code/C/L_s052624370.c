@@ -1,5 +1,3 @@
-#include<stdio.h>
-#include<stdlib.h>
 
 struct node{
   struct node *right;
@@ -8,7 +6,6 @@ struct node{
   int key;
 };
 typedef struct node * Node;
-#define NIL NULL
 
 Node root;
 

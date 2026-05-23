@@ -1,6 +1,4 @@
 
-#include <stdio.h>
-#include <stdlib.h>
 
 int index1Origin(int i) {
     return i-1;

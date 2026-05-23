@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include<time.h>
 
 int main(void){
 	int a,b,i,ans=0;

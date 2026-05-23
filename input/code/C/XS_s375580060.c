@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <math.h>
 int main(void){
 char s[200005];
 int sum=0;

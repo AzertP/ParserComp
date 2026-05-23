@@ -1,5 +1,3 @@
-#include<stdio.h>
-#define Max 10000
 
 int main(){
   int i,j,count,n,q,S[Max],T[Max];

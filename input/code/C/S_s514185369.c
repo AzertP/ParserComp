@@ -1,4 +1,3 @@
-#include<stdio.h>
 int main(void)
 {
 	int h1,h2,k1,k2,a,b,c,d,h,k,na,nb;

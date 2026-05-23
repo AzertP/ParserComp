@@ -1,7 +1,4 @@
-#include<stdio.h>
-#include<math.h>
 
-#define N 100000
 
 typedef struct{
   char mark;

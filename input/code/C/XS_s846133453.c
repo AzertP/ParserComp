@@ -1,4 +1,3 @@
-#include<stdio.h>
 int main(void){
   int n,x=0,i,xmax=0;
   char s[101];

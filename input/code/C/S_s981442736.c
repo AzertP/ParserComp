@@ -1,6 +1,3 @@
-#include<stdio.h>
-#define N 100
-#define INF 10000000
 int min(int,int);
 int main(){
   int i,j,k,l,n,p[N+1],m[N+1][N+1];

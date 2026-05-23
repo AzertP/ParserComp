@@ -1,7 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#define MAX 2000001
-#define VMAX 10000
 
 int main(){
   unsigned short *A, *B;

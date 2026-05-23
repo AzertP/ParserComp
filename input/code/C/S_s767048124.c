@@ -1,4 +1,3 @@
-#include <stdio.h>
 
 int main(void) {
   int n,i,a[100],ap=1;

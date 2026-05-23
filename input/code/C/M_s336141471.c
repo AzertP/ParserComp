@@ -1,4 +1,3 @@
-#include<stdio.h>
 int main(){
   int i,j,k,N,count=0,flag,v;
   int data[100];

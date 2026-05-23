@@ -1,6 +1,4 @@
-#include <stdio.h>
 
-#define H 500000
 
 int parent(int);
 int left(int);

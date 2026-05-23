@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
 
 typedef struct List {
 	struct List *next;
@@ -9,8 +7,10 @@ typedef struct List {
 int main()
 {
 	int i, u, w, z, N, M;
-	scanf("%d %d", &N, &M);
 	list **adj = (list**)malloc(sizeof(list*) * (N + 1)), *d = (list*)malloc(sizeof(list) * M * 2);
+    int k, flag[100001] = {0}, q[100001], head, tail;
+    list *p;
+	scanf("%d %d", &N, &M);
 	for (i = 1; i <= N; i++) adj[i] = NULL;
 	for (i = 0; i < M; i++) {
 		scanf("%d %d %d", &u, &w, &z);
@@ -22,8 +22,6 @@ int main()
 		adj[w] = &(d[i*2+1]);
 	}
 	
-	int k, flag[100001] = {}, q[100001], head, tail;
-	list *p;
 	for (i = 1, k = 0; i <= N; i++) {
 		if (flag[i] != 0) continue;
 		flag[i] = ++k;

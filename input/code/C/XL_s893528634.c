@@ -1,12 +1,4 @@
-#include<stdio.h>
-#include<string.h>
 
-#define U 1	//上
-#define D 2	//下
-#define S 3 //南 
-#define E 4 //東
-#define N 5 //北
-#define W 6 //西
 
 
 int d1=U , d2=S , d3=E;		

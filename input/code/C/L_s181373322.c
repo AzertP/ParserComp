@@ -1,7 +1,3 @@
-#include <stdio.h>
-#include <math.h> //=> pow
-#define NEWTON_LIMIT 10000
-#define D 4
 
 int abs(int val) {
 	if (val < 0) { val *= -1; }
@@ -86,8 +82,8 @@ int main() {
 			for (j = 0; j < n; j++) {
 				d[i] += pow(xy[j], i + 1);
 			}
-			//	すべてゼロだった場合の例外処理
-			//	=> i=2...ニュートン法で三乗根求めるときにゼロ除算が入ってnan(ind)になるため．
+			//	
+			//	=> i=2...nan(ind)
 			if (d[i] == 0) { continue; }
 		}
 

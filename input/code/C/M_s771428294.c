@@ -1,4 +1,3 @@
-#include <stdio.h>
  
 int main(void){
   int m,n,i,j,tmp;

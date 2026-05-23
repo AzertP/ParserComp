@@ -1,8 +1,6 @@
 // AOJ 2442: ConvexCut
 // 2017.11.17 bal4u@uu
 
-#include <stdio.h>
-#include <string.h>
 
 int x[51], y[51];
 

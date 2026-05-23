@@ -1,4 +1,3 @@
-#include <stdio.h>
 int main(){
   int S,h,m,s, r;
   scanf("%d",&S);

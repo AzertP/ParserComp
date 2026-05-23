@@ -1,11 +1,8 @@
-#include<stdio.h>
 
-#define SIZE 10
 
-#define compile 0
 /*
-デバッグ用
-0:実装 1:main関数 2:initialize関数 3:check_bomb関数 4:tnt関数 5:little_boy関数 6:fat_man関数 7:check_result関数
+
+0: 1:main 2:initialize 3:check_bomb 4:tnt 5:little_boy 6:fat_man 7:check_result
 */
 
 void initialize(int array[][SIZE]);
@@ -24,7 +21,6 @@ main()
 	while(scanf("%d,%d,%d", &input[0], &input[1], &input[2]) != EOF)
 	{
 		check_bomb(map, input);
-#if compile == 1
 		int i = 0, j = 0;
 		for(i = 0; i < SIZE; i++)
 		{
@@ -34,7 +30,6 @@ main()
 			}
 			printf("\n");
 		}
-#endif
 	}
 	check_result(map, &white, &max);
 	printf("%d\n%d\n", white, max);
@@ -61,23 +56,17 @@ void check_bomb(int map[][SIZE], int input[])
 	{
 		if(input[2] == 1)
 		{
-#if compile == 3
 			printf("call tnt\n");
-#endif
 			tnt(map, input);
 		}
 		else if(input[2] == 2)
 		{
-#if compile == 3
 			printf("call little_boy\n");
-#endif
 			little_boy(map, input);
 		}
 		else if(input[2] == 3)
 		{
-#if compile == 3
 			printf("call fat_man\n");
-#endif
 			fat_man(map, input);
 		}
 	}
@@ -85,7 +74,7 @@ void check_bomb(int map[][SIZE], int input[])
 void tnt(int map[][SIZE], int input[])
 {
 	short i = 0, j = 0;
-	for(i = input[0] - 1; i <= input[0] + 1; i++) //x軸
+	for(i = input[0] - 1; i <= input[0] + 1; i++) //x
 	{
 		if((i < 0) || (i > 10))
 		{
@@ -95,11 +84,9 @@ void tnt(int map[][SIZE], int input[])
 		{
 			map[input[1]][i]++;
 		}
-#if compile == 4
 		printf("map[%d][%d] = %d\n", input[1], i, map[input[1]][i]);
-#endif
 	}
-	for(i = input[1] - 1; i <= input[1] + 1; i++) //y軸
+	for(i = input[1] - 1; i <= input[1] + 1; i++) //y
 	{
 		if((i < 0) || (i > 10))
 		{
@@ -109,9 +96,7 @@ void tnt(int map[][SIZE], int input[])
 		{
 			map[i][input[0]]++;
 		}
-#if compile == 4
 		printf("map[%d][%d] = %d\n", i, input[0], map[i][input[0]]);
-#endif
 	}
 	map[input[1]][input[0]]--;
 }
@@ -129,9 +114,7 @@ void little_boy(int map[][SIZE], int input[])
 			else
 			{
 				map[i][j]++;
-#if compile == 5
 				printf("map[%d][%d] = %d\n", i, j, map[i][j]);
-#endif
 			}
 		}
 	}
@@ -150,39 +133,29 @@ void fat_man(int map[][SIZE], int input[])
 			else
 			{
 				map[i][j]++;
-#if compile == 6
 				printf("map[%d][%d] = %d\n",i, j, map[i][j]);
-#endif
 			}
 		}
 	}
 	if((input[0] - 2) >= 0)
 	{
 		map[input[1]][input[0] - 2]++;
-#if compile == 6
 		printf("map[%d][%d] = %d\n",input[1], input[0] - 2, map[input[1]][input[0] - 2]);
-#endif
 	}
 	if((input[0] + 2) <= 9)
 	{
 		map[input[1]][input[0] + 2]++;
-#if compile == 6
 		printf("map[%d][%d] = %d\n",input[1], input[0] + 2, map[input[1]][input[0] + 2]);
-#endif
 	}
 	if((input[1] - 2) >= 0)
 	{
 		map[input[1] - 2][input[0]]++;
-#if compile == 6
 		printf("map[%d][%d] = %d\n", input[1] - 2, input[0], map[input[1] - 2][input[0]]);
-#endif
 	}
 	if((input[1] + 2) <= 9)
 	{
 		map[input[1] + 2][input[0]]++;
-#if compile == 6
 		printf("map[%d][%d] = %d\n", input[1] + 2, input[0], map[input[1] + 2][input[0]]);
-#endif
 	}
 }
 void check_result(int map[][SIZE], int *white,int *max)

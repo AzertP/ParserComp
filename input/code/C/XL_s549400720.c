@@ -1,21 +1,5 @@
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <inttypes.h>
-#include <ctype.h>
-#include <stdint.h>
-#include <string.h>
-#include <wchar.h>
-#include <math.h>
 
-#define N_MAX (100)
-#define P_MAX (100)
-#define DP_ARRAY_SIZE (N_MAX * P_MAX / 32 + 1)
 
-#define MIN(a, b) ((a) < (b) ? (a) : (b))
-#define MAX(a, b) ((a) > (b) ? (a) : (b))
-#define ABS(a) ((a) < 0 ? -(a) : (a))
-#define ABSS(a, b) ((a) > (b) ? (a) - (b) : (b) - (a))
 
 int compare_sz_asc(const void* a, const void* b) {
     return *((size_t*)a) < *((size_t*)b) ? -1 : 1;
@@ -125,7 +109,6 @@ typedef struct {
     uint64_t idx;
 }BHeap_Val;
 
-#define BHEAP_VAL_TYPE BHeap_Val
 
 static int _bHeap_Compare(const BHEAP_VAL_TYPE* parent, const BHEAP_VAL_TYPE* node) {
     const uint64_t parentVal = status[parent->idx].val;
@@ -134,7 +117,6 @@ static int _bHeap_Compare(const BHEAP_VAL_TYPE* parent, const BHEAP_VAL_TYPE* no
     return parentVal >= nodeVal ? -1 : 1;
 }
 
-#define BHEAP_INVALID_NODE ((size_t)100000000)
 
 typedef struct {
     BHEAP_VAL_TYPE val;
@@ -250,7 +232,6 @@ typedef struct {
     size_t maxNumChild;
 } Tree_Node;
 
-#define TREE_INIT_ALLOC (128)
 
 static Tree_Node tree_Node[200000];
 
@@ -276,7 +257,7 @@ static void tree_AddChild(const size_t parent, const size_t child) {
 int main(void) {
     uint64_t D;
 
-    scanf("%"PRIu64, &D);
+    scanf("%", &D);
 
     printf("%s", "Christmas");
     for (uint64_t i = 25 - D; 0 < i; i--) {

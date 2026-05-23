@@ -1,4 +1,3 @@
-#include<stdio.h>
 int main()
 {
   int i, j, m, n, cnt1, cnt2=0, ans;

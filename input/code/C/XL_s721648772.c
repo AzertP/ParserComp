@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
 
-#define COMMAND_LENGTH 32
 
 typedef struct _DoublyList {
     struct _DoublyList* head;

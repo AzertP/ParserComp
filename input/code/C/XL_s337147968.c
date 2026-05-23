@@ -1,11 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
  
-#define BIG 2000000007
  
-#define MOD 1000000007
 typedef unsigned long long ull;
 typedef   signed long long sll;
  
@@ -14,8 +8,6 @@ typedef struct {
 	int b;
 } hw;
  
-#define N_MAX 100000
-#define M_MAX 100000
  
 ull n, m;
 ull h, w;
@@ -105,7 +97,7 @@ ull bitpow(ull a, ull x){
 // }
 
 int nibutan_target(ull target){
-	ull maxdist = (target * (target + 1) / 2); // 時刻targetまでに到着できる距離は[-maxdist, maxdist]
+	ull maxdist = (target * (target + 1) / 2); // target[-maxdist, maxdist]
 	return (n <= maxdist);
 }
 

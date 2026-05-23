@@ -1,5 +1,4 @@
 /* 164b.c */
-#include <stdio.h>
 
 int main(void){
     int a,b,c,d=0;

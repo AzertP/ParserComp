@@ -2,22 +2,12 @@
 cat <<EOF >mistaken-paste
 */
 
-#pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdbool.h>
-#include <math.h>
 
-#define BIG 2000000007
 
-#define MOD 1000000007
 typedef unsigned long long ull;
 typedef   signed long long sll;
 
-#define N_MAX 100000
-#define M_MAX 200
 
 typedef struct {
 	int a;
@@ -321,7 +311,7 @@ ull solve () {
 	// ull result = 0;
 	sll result = 0;
 	ull sum = 0;
-	// qsortの際には"p"ullcompを使う
+	// qsort"p"ullcomp
 
 	sll okmax = 1;
 	while (!isbeaten(okmax)) okmax *= 2;

@@ -1,10 +1,4 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdint.h> // uint64_t
 
-#define STR_MAX 3000
-#define BUF_SIZE (STR_MAX+50)
 
 // size: specify sizeof(str)
 int get_str(char *str, int size) {
@@ -12,7 +6,6 @@ int get_str(char *str, int size) {
     return 0;
 }
 
-#define max(a,b) ((a) > (b) ? (a) : (b))
 
 int main(void) {
     char astr[BUF_SIZE];
@@ -23,9 +16,7 @@ int main(void) {
     get_str(&bstr[1], BUF_SIZE-1);
     int alen = strlen(&astr[1])-1; int blen = strlen(&bstr[1])-1;
     int i, j;
-#ifdef DEBUG
     printf("%d %d\n", alen, blen);
-#endif
 
     for(i = 1; i <= alen; i++) {
         for(j = 1; j <= blen; j++) {
@@ -39,16 +30,12 @@ int main(void) {
             }
         }
     }
-#ifdef DEBUG
     printf("%d\n", dp[alen][blen]); // length(LCS)
-#endif
     int ait = alen; int bit = blen;
     char stack[BUF_SIZE];
     int sidx = 0;
     while(ait >= 1 && bit >= 1) {
-#ifdef DEBUG
         printf("(%d, %d): %d\n", ait, bit, trace[ait][bit]);
-#endif
         if(trace[ait][bit]>1) {
             stack[sidx++] = trace[ait][bit];
             ait--; bit--;

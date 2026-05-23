@@ -1,6 +1,3 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
 int compare_string(const void *left, const void *right) {
     char *left_char = (char *)left;
     char *right_char = (char *)right;

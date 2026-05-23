@@ -1,5 +1,3 @@
-#include<stdio.h>
-#define N 200000
 int main()
 {
   int x[N];

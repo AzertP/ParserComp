@@ -1,4 +1,3 @@
-#include<stdio.h>
 int main(){
   int n,t,i,x,y,a=(1<<29)*-1,b=1<<29;
   scanf("%d",&n);

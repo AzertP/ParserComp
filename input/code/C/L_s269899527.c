@@ -1,25 +1,13 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdint.h> // uint64_t
 
-#define BUF_SIZE 20
 
 int get_int(void) {
   int num;
-#ifdef BUF_SIZE
   char line[BUF_SIZE];
   if(!fgets(line, BUF_SIZE, stdin)) return 0;
   sscanf(line, "%d", &num);
-#else
-#error
-#endif
   return num;
 }
 
-#define PARTS_MAX 100000
-#define max(a,b) ((a) > (b) ? (a) : (b))
-#define min(a,b) ((a) > (b) ? (b) : (a))
 
 int main(void) {
     static uint64_t parts[PARTS_MAX*2];
@@ -38,9 +26,7 @@ int main(void) {
     // max in theory.
     uint64_t sum = cum[ps];
     sum3 = max(sum / 3, part_max);
-#ifdef DEBUG
     printf("sum3: %llu\n", sum3);
-#endif
 
     int start, end;
     uint64_t ans = 0;
@@ -53,9 +39,7 @@ int main(void) {
             s = ns;
             end++;
         }
-#ifdef DEBUG
         printf("[%d, %d)\n", start, end);
-#endif
         // [start, end-1], [end, high), [high, start+ps)
 
         // search [end, start+ps) in [start, start+ps) using binary-search.
@@ -76,10 +60,8 @@ int main(void) {
         uint64_t s2 = cum[high] - cum[end];
         uint64_t rem = sum - s - s2;
         uint64_t res = min(s, rem);
-#ifdef DEBUG
         printf("[%d, %d), [%d, %d+1) -> %llu ;;", start, end, end, high, s);
         printf("%llu %llu %llu\n", s, s2, rem);
-#endif
         ans = max(ans, res);
 
         // update s

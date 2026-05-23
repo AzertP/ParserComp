@@ -1,12 +1,4 @@
-#include <limits.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <math.h>
 
-#define P 1000000007
 
 int comp(const void *a, const void *b){return *(int*)a-*(int*)b;}
 

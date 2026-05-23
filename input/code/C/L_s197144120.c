@@ -1,10 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
 
-#define D_MAX 1000000000
-#define N_MAX 100000
-#define M_MAX 10000
-#define min(x,y) (((x)<(y))?(x):(y))
 
 int d;
 int n;

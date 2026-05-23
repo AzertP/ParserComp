@@ -1,7 +1,4 @@
-#include<stdio.h>
-#include<stdlib.h>
 
-#define min(a,b) ((a)<(b)?(a):(b))
 
 int main(){
 	int n,k,i,x,ans=0;

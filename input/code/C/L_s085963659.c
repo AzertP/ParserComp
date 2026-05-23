@@ -1,7 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
 int compare_int(const void *a, const void *b)
 {
     return *(int*)a - *(int*)b;
@@ -16,22 +12,22 @@ int main()
   int a, b, c,  d, e,f;
   //  double  c;
 //  long long  A[1000001]={};
-  int  A[2000001]={};
-  int  B[2000001]={};
-  int  ans[100003]={};
-  int  sum[100003]={};
-  int  cnt_flag[100003]={};
+  int  A[2000001]={0};
+  int  B[2000001]={0};
+  int  ans[100003]={0};
+  int  sum[100003]={0};
+  int  cnt_flag[100003]={0};
 
-  int  L[1003]={};
+  int  L[1003]={0};
 
 
 //  long long  a, b, c, d, X, Y;
 //  long long   d, X, Y;
   long long JPY;
   double BTC;
-  char s[200001]={};
-  char t[200001]={};
-  char u[200001]={};
+  char s[200001]={0};
+  char t[200001]={0};
+  char u[200001]={0};
 //  int N, M;
 //  int A[1000000001]={};
 //  long long  C[101]={};

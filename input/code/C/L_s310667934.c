@@ -1,4 +1,3 @@
-#include <stdio.h>
 struct Node{
   int key;
   struct Node *left;

@@ -1,4 +1,3 @@
-#include<stdio.h>
 int main(){
 	int w,h,n,i,c=0,d,e=0,f;
 	int x[200],y[200],a[200];

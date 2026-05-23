@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <string.h>
 
-#define HEAP_SIZE 2000000
 long int heap[HEAP_SIZE + 1];
 int heap_size;
 

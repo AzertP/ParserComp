@@ -1,4 +1,3 @@
-#include <stdio.h>
 
 typedef struct{
     int p, k, l, r;

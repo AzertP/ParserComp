@@ -1,9 +1,4 @@
-#include <stdio.h>
 
-#define WHITE 1
-#define GRAY 0
-#define BLACK -1
-#define INF 100000000
 
 void bfs(int);
 void enqueue(int);
@@ -64,13 +59,13 @@ void bfs(int s){
   }
 }
 
-void enqueue(int x){ /* キューの末尾に要素 x を追加 */
+void enqueue(int x){ /*  x  */
   Q[tail] = x;
   if (tail + 1 == n) tail = 0;
   else tail++;
 }
 
-int dequeue(void){ /* キューの先頭から要素を取り出す */
+int dequeue(void){ /*  */
   int x;
   x = Q[head];
   if (head + 1 == n) head = 0;

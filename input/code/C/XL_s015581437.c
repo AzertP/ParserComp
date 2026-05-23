@@ -1,14 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
-#define MAX_ORDER_LENGTH 100
-#define NUM_DICE_FACE    6
-#define END_LOOP         0
-#define NUM_DICE         2
 
-#define TRUE             1
-#define FALSE            0
 
 typedef unsigned char   U1;
 typedef unsigned short  U2;
@@ -27,9 +18,9 @@ struct Dice {
 };
 
 /********************************************************************************/
-/* 関数名   | inputDiceInfo                                                     */
-/* 戻り値   | 無し                                                              */
-/* 備考     | 無し                                                              */
+/*    | inputDiceInfo                                                     */
+/*    |                                                               */
+/*      |                                                               */
 /********************************************************************************/
 void inputDiceInfo(U1 *u1DiceInfo)
 {
@@ -43,9 +34,9 @@ void inputDiceInfo(U1 *u1DiceInfo)
 }
 
 /********************************************************************************/
-/* 関数名   | inputDiceInfo                                                     */
-/* 戻り値   | 無し                                                              */
-/* 備考     | 無し                                                              */
+/*    | inputDiceInfo                                                     */
+/*    |                                                               */
+/*      |                                                               */
 /********************************************************************************/
 void inputCommand(char *chCommand)
 {
@@ -53,9 +44,9 @@ void inputCommand(char *chCommand)
 }
 
 /********************************************************************************/
-/* 関数名   | initData                                                          */
-/* 戻り値   | 無し                                                              */
-/* 備考     | 無し                                                              */
+/*    | initData                                                          */
+/*    |                                                               */
+/*      |                                                               */
 /********************************************************************************/
 void initData(struct Dice *stDice, U1 *u1DiceInfo)
 {
@@ -73,9 +64,9 @@ void initData(struct Dice *stDice, U1 *u1DiceInfo)
 }
 
 /********************************************************************************/
-/* 関数名   | cpyDice                                                           */
-/* 戻り値   | 無し                                                              */
-/* 備考     | 無し                                                              */
+/*    | cpyDice                                                           */
+/*    |                                                               */
+/*      |                                                               */
 /********************************************************************************/
 void cpyDice(struct Dice *stCopyDice, struct Dice *stPasteDice)
 {
@@ -88,9 +79,9 @@ void cpyDice(struct Dice *stCopyDice, struct Dice *stPasteDice)
 }
 
 /********************************************************************************/
-/* 関数名   | chngDice                                                          */
-/* 戻り値   | 無し                                                              */
-/* 備考     | 無し                                                              */
+/*    | chngDice                                                          */
+/*    |                                                               */
+/*      |                                                               */
 /********************************************************************************/
 void chngDice(struct Dice *stDice, char chCommand)
 {
@@ -142,10 +133,10 @@ void chngDice(struct Dice *stDice, char chCommand)
 }
 
 /********************************************************************************/
-/* 関数名   | judgeDiceExceptTop                                                */
-/* 戻り値   | TRUE:サイコロの上面以外が一致                                     */
-/*          | FALSE:サイコロの上面以外が不一致                                  */
-/* 備考     | サイコロの上面以外を比較する                                      */
+/*    | judgeDiceExceptTop                                                */
+/*    | TRUE:                                     */
+/*          | FALSE:                                  */
+/*      |                                       */
 /********************************************************************************/
 U1 judgeDiceExceptTop(struct Dice *stDice1, struct Dice *stDice2)
 {
@@ -153,10 +144,10 @@ U1 judgeDiceExceptTop(struct Dice *stDice1, struct Dice *stDice2)
 	U1 u1Ret;
 
 	u1Ret = FALSE;
-	/* bottomの比較 */
+	/* bottom */
 	if (stDice1->u1Bottom == stDice2->u1Bottom)
 	{
-		/* topとbottom以外の比較 */
+		/* topbottom */
 		for (u1FaceCnt = 0; u1FaceCnt < 4; u1FaceCnt++)
 		{
 			if ((stDice1->u1South == stDice2->u1South) &&
@@ -177,10 +168,10 @@ U1 judgeDiceExceptTop(struct Dice *stDice1, struct Dice *stDice2)
 }
 
 /********************************************************************************/
-/* 関数名   | judgeSameDices                                                    */
-/* 戻り値   | TRUE:サイコロの全面が一致                                         */
-/*          | FALSE:サイコロの全面が不一致                                      */
-/* 備考     | サイコロの全面を比較する                                          */
+/*    | judgeSameDices                                                    */
+/*    | TRUE:                                         */
+/*          | FALSE:                                      */
+/*      |                                           */
 /********************************************************************************/
 U1 judgeSameDices(struct Dice stDice[])
 {
@@ -195,10 +186,10 @@ U1 judgeSameDices(struct Dice stDice[])
         cpyDice(&stDice[u1DiceCnt],&stTmpDice[u1DiceCnt]);
 	}
 
-	/* Topの比較 */
+	/* Top */
 	for (u1DiceCnt = 1; u1DiceCnt < NUM_DICE; u1DiceCnt++)
 	{
-        /* Top-Topの比較 */
+        /* Top-Top */
 		if (stTmpDice[0].u1Top == stTmpDice[u1DiceCnt].u1Top)
 		{
 			u1Ret = judgeDiceExceptTop(&stTmpDice[0], &stTmpDice[u1DiceCnt]);
@@ -287,9 +278,9 @@ U1 judgeSameDices(struct Dice stDice[])
 }
 
 /********************************************************************************/
-/* 関数名   | outputJudgeResult                                                 */
-/* 戻り値   | 無し                                                              */
-/* 備考     | 無し                                                              */
+/*    | outputJudgeResult                                                 */
+/*    |                                                               */
+/*      |                                                               */
 /********************************************************************************/
 void outputJudgeResult(U1 u1Result)
 {
@@ -304,10 +295,10 @@ void outputJudgeResult(U1 u1Result)
 }
 
 /********************************************************************************/
-/* 関数名   | main                                                              */
-/* 引数     | 無し                                                              */
-/* 戻り値   | 無し                                                              */
-/* 備考     | 無し                                                              */
+/*    | main                                                              */
+/*      |                                                               */
+/*    |                                                               */
+/*      |                                                               */
 /********************************************************************************/
 int main(void)
 {
@@ -316,17 +307,17 @@ int main(void)
 	U1 u1DiceCnt;
 	U1 u1JudgeDice;
 
-	/* 入力部 */
+	/*  */
 	for (u1DiceCnt = 0; u1DiceCnt < NUM_DICE; u1DiceCnt++)
 	{
 		inputDiceInfo(&u1DiceInfo[u1DiceCnt][0]);
 		initData(&stDice[u1DiceCnt], &u1DiceInfo[u1DiceCnt][0]);
 	}
 
-	/* 制御部 */
+	/*  */
 	u1JudgeDice = judgeSameDices(&stDice);
 
-	/* 出力部 */
+	/*  */
 	outputJudgeResult(u1JudgeDice);
 }
 

@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
 
 int compare_unsigned_int(const void *a, const void *b)
 {

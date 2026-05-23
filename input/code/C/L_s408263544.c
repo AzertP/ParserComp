@@ -1,8 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
-#define DEF_ELM_MAX 20001
 char pStr[DEF_ELM_MAX];
 
 typedef struct _PAIR {

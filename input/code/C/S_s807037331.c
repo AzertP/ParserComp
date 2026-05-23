@@ -1,6 +1,4 @@
-#include <stdio.h>
 
-#define MAX 45
 
 int F[MAX];
 

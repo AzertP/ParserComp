@@ -1,5 +1,3 @@
-#include <stdio.h>
-#define INF 100000000
 
 int n,G[103][103];
 
@@ -11,14 +9,14 @@ int main()
 
   scanf("%d",&n);
 
-  /* 重みつきグラフが与えられる。辺がないときは-1 */
+  /* -1 */
   for(i = 1;i <= n;i++){
     for(j = 1;j <= n;j++){
       scanf("%d",&G[i][j]);
     }
   }
 
-  /* 辺がないときをInfにする */
+  /* Inf */
    for(i = 1;i <= n;i++){
     for(j = 1;j <= n;j++){
       if(G[i][j] == -1) G[i][j] = INF;
@@ -38,7 +36,7 @@ int prim(void)
   char color[103];
   int total = 0;
 
-  /* 初期化 */
+  /*  */
   for(u = 1;u <= n;u++){
     d[u] = INF;
     pi[u] = -2;

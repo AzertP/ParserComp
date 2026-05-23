@@ -1,4 +1,3 @@
-#include <stdio.h>
 int main(void){
    int nowTime;
    int later;

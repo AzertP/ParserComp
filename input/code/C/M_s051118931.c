@@ -1,4 +1,3 @@
-#include <stdio.h>
 
 int cal(int a[],int b[],char str[][1],int i)
 {

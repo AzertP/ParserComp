@@ -1,4 +1,3 @@
-#include<stdio.h>
 
 int Order(int *, int);
 int T[101][101];

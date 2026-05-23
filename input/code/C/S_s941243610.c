@@ -1,6 +1,5 @@
 //http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_5_A&lang=ja
 
-    #include <stdio.h>
     
     int main(void){
         int w,h,i,j;

@@ -1,7 +1,4 @@
-#include <stdio.h>          // printf(), scanf()
-#include <stdbool.h>
 
-#define N 8
 
 int max, min;
 int d[N];

@@ -1,4 +1,3 @@
-#include <stdio.h>
 
 void change(int,int);
 int muki = 0,flag = 0;

@@ -1,10 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
 
-#define MAX 12
-#define MAX_ORDER 16777216
 
 char dec[MAX_ORDER][MAX];
 

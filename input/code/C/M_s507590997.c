@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 void push(int );
 int pop (void);
 int top,a[100];

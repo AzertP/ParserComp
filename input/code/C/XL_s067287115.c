@@ -1,12 +1,4 @@
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
-#include <stdlib.h>
 
-#define llong long long
-#define fr(i,l,r) for(i=(l);i<(r);i++)
-#define min(p,q) ((p)<(q)?(p):(q))
-#define max(p,q) ((p)>(q)?(p):(q))
 
 
 
@@ -14,17 +6,17 @@ static llong int heap[100010];
 int sz=-1;
 
 void push(llong int x){
-	//自分のノード番号
+	//
 	int i;
 	sz++;
 	i=sz;
 	
 	while(i>0){
-		//親のノード番号
+		//
 		int p=(i-1)/2;
-		//もう逆転していないなら抜ける
+		//
 		if(heap[p]>=x) break;
-		//親のノードの数字を下ろして、自分は上に
+		//
 		heap[i]=heap[p];
 		i=p;
 	}
@@ -36,20 +28,20 @@ llong int pop(){
 	int a,b;
 	llong int x;
 	int i;
-	//最小値
+	//
 	ret=heap[0];
-	//根に持ってくる値
+	//
 	x=heap[sz];
 	sz=sz-1;
-	//根からおろしていく
+	//
 	i=0;
 	while(i*2+1<=sz){
 		a=i*2+1;
 		b=i*2+2;
 		if(b<sz&&heap[b]>heap[a]) a=b;
-		//もう逆転していないなら終わり
+		//
 		if(heap[a]<=x) break;
-		//子の数字を持ち上げる
+		//
 		heap[i]=heap[a];
 		i=a;
 	}
@@ -64,18 +56,18 @@ static llong int heapup[100010];
 int szup=-1;
  
 void pushup(llong int x){
-	//自分のノード番号
+	//
 	int i;
 	int p;
 	szup++;
 	i=szup;
 	
 	while(i>0){
-		//親のノード番号
+		//
 		p=(i-1)/2;
-		//もう逆転していないなら抜ける
+		//
 		if(heapup[p]>=x) break;
-		//親のノードの数字を下ろして、自分は上に
+		//
 		heapup[i]=heapup[p];
 		i=p;
 	}
@@ -87,22 +79,22 @@ int popup(){
 	int a,b;
 	llong int x;
 	int i;
-	//最小値
+	//
 	ret=heapup[0];
-	//根に持ってくる値
+	//
 	x=heapup[szup];
 	szup=szup-1;
-	//根からおろしていく
+	//
 	i=0;
 	while(i*2+1<=szup){
 		a=i*2+1;
 		b=i*2+2;
 		if(b<=szup&&heapup[b]>heapup[a]) a=b;
-		//もう逆転していないなら終わり
+		//
 		if(heapup[a]<=x) {
 			break;
 		}
-		//子の数字を持ち上げる
+		//
 		heapup[i]=heapup[a];
 		i=a;
 	}
@@ -114,7 +106,7 @@ int popup(){
  
  int main(void)
 {
-	//変数の宣言
+	//
 	int n;
 	llong int c;
 	static llong int x[100010];
@@ -127,7 +119,7 @@ int popup(){
 	static llong int lmax[100010];
 	
 	
-	//よく使う変数
+	//
 	int i,j,k,l;
 	int flag=0;
 	llong int ans=0;
@@ -135,7 +127,7 @@ int popup(){
 	llong int temp,temp1,temp2;
 	int max,min;
 	int len;
-	//データの読み込み
+	//
 	
 	scanf("%d %lld",&n,&c);
 	
@@ -148,9 +140,9 @@ int popup(){
 //	}
 	
 	
-//	printf("nは%dです\n", n);
-//	printf("データの読み込み終了\n");
-	//実際の処理
+//	printf("n%d\n", n);
+//	printf("\n");
+	//
 	
 //	printf("v[0]=%lld,x[0]=%lld\n",v[0],x[0]);
 	for(i=0;i<n;i++){
@@ -223,12 +215,12 @@ int popup(){
 		if(ans<temp) ans=temp;
 	}
 	
-//	printf("計算部分終了\n");
-	//出力
+//	printf("\n");
+	//
 	
 	printf("%lld",ans);
 	
-//	printf("結果の出力終了\n");
+//	printf("\n");
 	
 	return 0;
 	

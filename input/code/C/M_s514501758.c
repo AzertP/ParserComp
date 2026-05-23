@@ -1,6 +1,3 @@
-#include <stdio.h>
-#define A 20
-#define M 200
 
 
 int solve(int, int);

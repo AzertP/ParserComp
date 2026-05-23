@@ -1,4 +1,3 @@
-#include<stdio.h>
 int selectionSort(int A[],int N);
 
 int main(){

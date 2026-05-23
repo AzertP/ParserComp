@@ -4,3090 +4,935 @@
   "rules": {
     "<OWS>": [
       [],
-      [
-        " ",
-        "<OWS>"
-      ],
-      [
-        "\t",
-        "<OWS>"
-      ],
-      [
-        "\n",
-        "<OWS>"
-      ],
-      [
-        "\r",
-        "<OWS>"
-      ],
-      [
-        "<TraditionalComment>",
-        "<OWS>"
-      ],
-      [
-        "<LineComment>",
-        "\n",
-        "<OWS>"
-      ]
+      [ " ", "<OWS>" ],
+      [ "\t", "<OWS>" ],
+      [ "\n", "<OWS>" ],
+      [ "\r", "<OWS>" ],
+      [ "<TraditionalComment>", "<OWS>" ],
+      [ "<LineComment>", "\n", "<OWS>" ]
     ],
     "<TraditionalComment>": [
-      [
-        "/",
-        "*",
-        "<CommentTail>"
-      ]
+      [ "/", "*", "<CommentTail>" ]
     ],
     "<CommentTail>": [
-      [
-        "*",
-        "<CommentTailStar>"
-      ],
-      [
-        "<NotStar>",
-        "<CommentTail>"
-      ]
+      [ "*", "<CommentTailStar>" ],
+      [ "<NotStar>", "<CommentTail>" ]
     ],
     "<CommentTailStar>": [
-      [
-        "/"
-      ],
-      [
-        "*",
-        "<CommentTailStar>"
-      ],
-      [
-        "<NotStarNotSlash>",
-        "<CommentTail>"
-      ]
+      [ "/" ],
+      [ "*", "<CommentTailStar>" ],
+      [ "<NotStarNotSlash>", "<CommentTail>" ]
     ],
     "<LineComment>": [
-      [
-        "/",
-        "/",
-        "<LineCommentChars>"
-      ]
+      [ "/", "/", "<LineCommentChars>" ]
     ],
     "<LineCommentChars>": [
       [],
-      [
-        "<NotNewline>",
-        "<LineCommentChars>"
-      ]
+      [ "<NotNewline>", "<LineCommentChars>" ]
     ],
     "<NotStar>": [
-      [
-        " "
-      ],
-      [
-        "\t"
-      ],
-      [
-        "\n"
-      ],
-      [
-        "\r"
-      ],
-      [
-        "!"
-      ],
-      [
-        "\""
-      ],
-      [
-        "#"
-      ],
-      [
-        "$"
-      ],
-      [
-        "%"
-      ],
-      [
-        "&"
-      ],
-      [
-        "'"
-      ],
-      [
-        "("
-      ],
-      [
-        ")"
-      ],
-      [
-        "+"
-      ],
-      [
-        ","
-      ],
-      [
-        "-"
-      ],
-      [
-        "."
-      ],
-      [
-        "/"
-      ],
-      [
-        "0"
-      ],
-      [
-        "1"
-      ],
-      [
-        "2"
-      ],
-      [
-        "3"
-      ],
-      [
-        "4"
-      ],
-      [
-        "5"
-      ],
-      [
-        "6"
-      ],
-      [
-        "7"
-      ],
-      [
-        "8"
-      ],
-      [
-        "9"
-      ],
-      [
-        ":"
-      ],
-      [
-        ";"
-      ],
-      [
-        "<"
-      ],
-      [
-        "="
-      ],
-      [
-        ">"
-      ],
-      [
-        "?"
-      ],
-      [
-        "@"
-      ],
-      [
-        "A"
-      ],
-      [
-        "B"
-      ],
-      [
-        "C"
-      ],
-      [
-        "D"
-      ],
-      [
-        "E"
-      ],
-      [
-        "F"
-      ],
-      [
-        "G"
-      ],
-      [
-        "H"
-      ],
-      [
-        "I"
-      ],
-      [
-        "J"
-      ],
-      [
-        "K"
-      ],
-      [
-        "L"
-      ],
-      [
-        "M"
-      ],
-      [
-        "N"
-      ],
-      [
-        "O"
-      ],
-      [
-        "P"
-      ],
-      [
-        "Q"
-      ],
-      [
-        "R"
-      ],
-      [
-        "S"
-      ],
-      [
-        "T"
-      ],
-      [
-        "U"
-      ],
-      [
-        "V"
-      ],
-      [
-        "W"
-      ],
-      [
-        "X"
-      ],
-      [
-        "Y"
-      ],
-      [
-        "Z"
-      ],
-      [
-        "["
-      ],
-      [
-        "\\"
-      ],
-      [
-        "]"
-      ],
-      [
-        "^"
-      ],
-      [
-        "_"
-      ],
-      [
-        "`"
-      ],
-      [
-        "a"
-      ],
-      [
-        "b"
-      ],
-      [
-        "c"
-      ],
-      [
-        "d"
-      ],
-      [
-        "e"
-      ],
-      [
-        "f"
-      ],
-      [
-        "g"
-      ],
-      [
-        "h"
-      ],
-      [
-        "i"
-      ],
-      [
-        "j"
-      ],
-      [
-        "k"
-      ],
-      [
-        "l"
-      ],
-      [
-        "m"
-      ],
-      [
-        "n"
-      ],
-      [
-        "o"
-      ],
-      [
-        "p"
-      ],
-      [
-        "q"
-      ],
-      [
-        "r"
-      ],
-      [
-        "s"
-      ],
-      [
-        "t"
-      ],
-      [
-        "u"
-      ],
-      [
-        "v"
-      ],
-      [
-        "w"
-      ],
-      [
-        "x"
-      ],
-      [
-        "y"
-      ],
-      [
-        "z"
-      ],
-      [
-        "{"
-      ],
-      [
-        "|"
-      ],
-      [
-        "}"
-      ],
-      [
-        "~"
-      ]
+      [ " " ],
+      [ "\t" ],
+      [ "\n" ],
+      [ "\r" ],
+      [ "!" ],
+      [ "\"" ],
+      [ "#" ],
+      [ "$" ],
+      [ "%" ],
+      [ "&" ],
+      [ "'" ],
+      [ "(" ],
+      [ ")" ],
+      [ "+" ],
+      [ "," ],
+      [ "-" ],
+      [ "." ],
+      [ "/" ],
+      [ "0" ],
+      [ "1" ],
+      [ "2" ],
+      [ "3" ],
+      [ "4" ],
+      [ "5" ],
+      [ "6" ],
+      [ "7" ],
+      [ "8" ],
+      [ "9" ],
+      [ ":" ],
+      [ ";" ],
+      [ "<" ],
+      [ "=" ],
+      [ ">" ],
+      [ "?" ],
+      [ "@" ],
+      [ "A" ],
+      [ "B" ],
+      [ "C" ],
+      [ "D" ],
+      [ "E" ],
+      [ "F" ],
+      [ "G" ],
+      [ "H" ],
+      [ "I" ],
+      [ "J" ],
+      [ "K" ],
+      [ "L" ],
+      [ "M" ],
+      [ "N" ],
+      [ "O" ],
+      [ "P" ],
+      [ "Q" ],
+      [ "R" ],
+      [ "S" ],
+      [ "T" ],
+      [ "U" ],
+      [ "V" ],
+      [ "W" ],
+      [ "X" ],
+      [ "Y" ],
+      [ "Z" ],
+      [ "[" ],
+      [ "\\" ],
+      [ "]" ],
+      [ "^" ],
+      [ "_" ],
+      [ "`" ],
+      [ "a" ],
+      [ "b" ],
+      [ "c" ],
+      [ "d" ],
+      [ "e" ],
+      [ "f" ],
+      [ "g" ],
+      [ "h" ],
+      [ "i" ],
+      [ "j" ],
+      [ "k" ],
+      [ "l" ],
+      [ "m" ],
+      [ "n" ],
+      [ "o" ],
+      [ "p" ],
+      [ "q" ],
+      [ "r" ],
+      [ "s" ],
+      [ "t" ],
+      [ "u" ],
+      [ "v" ],
+      [ "w" ],
+      [ "x" ],
+      [ "y" ],
+      [ "z" ],
+      [ "{" ],
+      [ "|" ],
+      [ "}" ],
+      [ "~" ]
     ],
     "<NotStarNotSlash>": [
-      [
-        " "
-      ],
-      [
-        "\t"
-      ],
-      [
-        "\n"
-      ],
-      [
-        "\r"
-      ],
-      [
-        "!"
-      ],
-      [
-        "\""
-      ],
-      [
-        "#"
-      ],
-      [
-        "$"
-      ],
-      [
-        "%"
-      ],
-      [
-        "&"
-      ],
-      [
-        "'"
-      ],
-      [
-        "("
-      ],
-      [
-        ")"
-      ],
-      [
-        "+"
-      ],
-      [
-        ","
-      ],
-      [
-        "-"
-      ],
-      [
-        "."
-      ],
-      [
-        "0"
-      ],
-      [
-        "1"
-      ],
-      [
-        "2"
-      ],
-      [
-        "3"
-      ],
-      [
-        "4"
-      ],
-      [
-        "5"
-      ],
-      [
-        "6"
-      ],
-      [
-        "7"
-      ],
-      [
-        "8"
-      ],
-      [
-        "9"
-      ],
-      [
-        ":"
-      ],
-      [
-        ";"
-      ],
-      [
-        "<"
-      ],
-      [
-        "="
-      ],
-      [
-        ">"
-      ],
-      [
-        "?"
-      ],
-      [
-        "@"
-      ],
-      [
-        "A"
-      ],
-      [
-        "B"
-      ],
-      [
-        "C"
-      ],
-      [
-        "D"
-      ],
-      [
-        "E"
-      ],
-      [
-        "F"
-      ],
-      [
-        "G"
-      ],
-      [
-        "H"
-      ],
-      [
-        "I"
-      ],
-      [
-        "J"
-      ],
-      [
-        "K"
-      ],
-      [
-        "L"
-      ],
-      [
-        "M"
-      ],
-      [
-        "N"
-      ],
-      [
-        "O"
-      ],
-      [
-        "P"
-      ],
-      [
-        "Q"
-      ],
-      [
-        "R"
-      ],
-      [
-        "S"
-      ],
-      [
-        "T"
-      ],
-      [
-        "U"
-      ],
-      [
-        "V"
-      ],
-      [
-        "W"
-      ],
-      [
-        "X"
-      ],
-      [
-        "Y"
-      ],
-      [
-        "Z"
-      ],
-      [
-        "["
-      ],
-      [
-        "\\"
-      ],
-      [
-        "]"
-      ],
-      [
-        "^"
-      ],
-      [
-        "_"
-      ],
-      [
-        "`"
-      ],
-      [
-        "a"
-      ],
-      [
-        "b"
-      ],
-      [
-        "c"
-      ],
-      [
-        "d"
-      ],
-      [
-        "e"
-      ],
-      [
-        "f"
-      ],
-      [
-        "g"
-      ],
-      [
-        "h"
-      ],
-      [
-        "i"
-      ],
-      [
-        "j"
-      ],
-      [
-        "k"
-      ],
-      [
-        "l"
-      ],
-      [
-        "m"
-      ],
-      [
-        "n"
-      ],
-      [
-        "o"
-      ],
-      [
-        "p"
-      ],
-      [
-        "q"
-      ],
-      [
-        "r"
-      ],
-      [
-        "s"
-      ],
-      [
-        "t"
-      ],
-      [
-        "u"
-      ],
-      [
-        "v"
-      ],
-      [
-        "w"
-      ],
-      [
-        "x"
-      ],
-      [
-        "y"
-      ],
-      [
-        "z"
-      ],
-      [
-        "{"
-      ],
-      [
-        "|"
-      ],
-      [
-        "}"
-      ],
-      [
-        "~"
-      ]
+      [ " " ],
+      [ "\t" ],
+      [ "\n" ],
+      [ "\r" ],
+      [ "!" ],
+      [ "\"" ],
+      [ "#" ],
+      [ "$" ],
+      [ "%" ],
+      [ "&" ],
+      [ "'" ],
+      [ "(" ],
+      [ ")" ],
+      [ "+" ],
+      [ "," ],
+      [ "-" ],
+      [ "." ],
+      [ "0" ],
+      [ "1" ],
+      [ "2" ],
+      [ "3" ],
+      [ "4" ],
+      [ "5" ],
+      [ "6" ],
+      [ "7" ],
+      [ "8" ],
+      [ "9" ],
+      [ ":" ],
+      [ ";" ],
+      [ "<" ],
+      [ "=" ],
+      [ ">" ],
+      [ "?" ],
+      [ "@" ],
+      [ "A" ],
+      [ "B" ],
+      [ "C" ],
+      [ "D" ],
+      [ "E" ],
+      [ "F" ],
+      [ "G" ],
+      [ "H" ],
+      [ "I" ],
+      [ "J" ],
+      [ "K" ],
+      [ "L" ],
+      [ "M" ],
+      [ "N" ],
+      [ "O" ],
+      [ "P" ],
+      [ "Q" ],
+      [ "R" ],
+      [ "S" ],
+      [ "T" ],
+      [ "U" ],
+      [ "V" ],
+      [ "W" ],
+      [ "X" ],
+      [ "Y" ],
+      [ "Z" ],
+      [ "[" ],
+      [ "\\" ],
+      [ "]" ],
+      [ "^" ],
+      [ "_" ],
+      [ "`" ],
+      [ "a" ],
+      [ "b" ],
+      [ "c" ],
+      [ "d" ],
+      [ "e" ],
+      [ "f" ],
+      [ "g" ],
+      [ "h" ],
+      [ "i" ],
+      [ "j" ],
+      [ "k" ],
+      [ "l" ],
+      [ "m" ],
+      [ "n" ],
+      [ "o" ],
+      [ "p" ],
+      [ "q" ],
+      [ "r" ],
+      [ "s" ],
+      [ "t" ],
+      [ "u" ],
+      [ "v" ],
+      [ "w" ],
+      [ "x" ],
+      [ "y" ],
+      [ "z" ],
+      [ "{" ],
+      [ "|" ],
+      [ "}" ],
+      [ "~" ]
     ],
     "<NotNewline>": [
-      [
-        " "
-      ],
-      [
-        "\t"
-      ],
-      [
-        "\r"
-      ],
-      [
-        "!"
-      ],
-      [
-        "\""
-      ],
-      [
-        "#"
-      ],
-      [
-        "$"
-      ],
-      [
-        "%"
-      ],
-      [
-        "&"
-      ],
-      [
-        "'"
-      ],
-      [
-        "("
-      ],
-      [
-        ")"
-      ],
-      [
-        "*"
-      ],
-      [
-        "+"
-      ],
-      [
-        ","
-      ],
-      [
-        "-"
-      ],
-      [
-        "."
-      ],
-      [
-        "/"
-      ],
-      [
-        "0"
-      ],
-      [
-        "1"
-      ],
-      [
-        "2"
-      ],
-      [
-        "3"
-      ],
-      [
-        "4"
-      ],
-      [
-        "5"
-      ],
-      [
-        "6"
-      ],
-      [
-        "7"
-      ],
-      [
-        "8"
-      ],
-      [
-        "9"
-      ],
-      [
-        ":"
-      ],
-      [
-        ";"
-      ],
-      [
-        "<"
-      ],
-      [
-        "="
-      ],
-      [
-        ">"
-      ],
-      [
-        "?"
-      ],
-      [
-        "@"
-      ],
-      [
-        "A"
-      ],
-      [
-        "B"
-      ],
-      [
-        "C"
-      ],
-      [
-        "D"
-      ],
-      [
-        "E"
-      ],
-      [
-        "F"
-      ],
-      [
-        "G"
-      ],
-      [
-        "H"
-      ],
-      [
-        "I"
-      ],
-      [
-        "J"
-      ],
-      [
-        "K"
-      ],
-      [
-        "L"
-      ],
-      [
-        "M"
-      ],
-      [
-        "N"
-      ],
-      [
-        "O"
-      ],
-      [
-        "P"
-      ],
-      [
-        "Q"
-      ],
-      [
-        "R"
-      ],
-      [
-        "S"
-      ],
-      [
-        "T"
-      ],
-      [
-        "U"
-      ],
-      [
-        "V"
-      ],
-      [
-        "W"
-      ],
-      [
-        "X"
-      ],
-      [
-        "Y"
-      ],
-      [
-        "Z"
-      ],
-      [
-        "["
-      ],
-      [
-        "\\"
-      ],
-      [
-        "]"
-      ],
-      [
-        "^"
-      ],
-      [
-        "_"
-      ],
-      [
-        "`"
-      ],
-      [
-        "a"
-      ],
-      [
-        "b"
-      ],
-      [
-        "c"
-      ],
-      [
-        "d"
-      ],
-      [
-        "e"
-      ],
-      [
-        "f"
-      ],
-      [
-        "g"
-      ],
-      [
-        "h"
-      ],
-      [
-        "i"
-      ],
-      [
-        "j"
-      ],
-      [
-        "k"
-      ],
-      [
-        "l"
-      ],
-      [
-        "m"
-      ],
-      [
-        "n"
-      ],
-      [
-        "o"
-      ],
-      [
-        "p"
-      ],
-      [
-        "q"
-      ],
-      [
-        "r"
-      ],
-      [
-        "s"
-      ],
-      [
-        "t"
-      ],
-      [
-        "u"
-      ],
-      [
-        "v"
-      ],
-      [
-        "w"
-      ],
-      [
-        "x"
-      ],
-      [
-        "y"
-      ],
-      [
-        "z"
-      ],
-      [
-        "{"
-      ],
-      [
-        "|"
-      ],
-      [
-        "}"
-      ],
-      [
-        "~"
-      ]
+      [ " " ],
+      [ "\t" ],
+      [ "\r" ],
+      [ "!" ],
+      [ "\"" ],
+      [ "#" ],
+      [ "$" ],
+      [ "%" ],
+      [ "&" ],
+      [ "'" ],
+      [ "(" ],
+      [ ")" ],
+      [ "*" ],
+      [ "+" ],
+      [ "," ],
+      [ "-" ],
+      [ "." ],
+      [ "/" ],
+      [ "0" ],
+      [ "1" ],
+      [ "2" ],
+      [ "3" ],
+      [ "4" ],
+      [ "5" ],
+      [ "6" ],
+      [ "7" ],
+      [ "8" ],
+      [ "9" ],
+      [ ":" ],
+      [ ";" ],
+      [ "<" ],
+      [ "=" ],
+      [ ">" ],
+      [ "?" ],
+      [ "@" ],
+      [ "A" ],
+      [ "B" ],
+      [ "C" ],
+      [ "D" ],
+      [ "E" ],
+      [ "F" ],
+      [ "G" ],
+      [ "H" ],
+      [ "I" ],
+      [ "J" ],
+      [ "K" ],
+      [ "L" ],
+      [ "M" ],
+      [ "N" ],
+      [ "O" ],
+      [ "P" ],
+      [ "Q" ],
+      [ "R" ],
+      [ "S" ],
+      [ "T" ],
+      [ "U" ],
+      [ "V" ],
+      [ "W" ],
+      [ "X" ],
+      [ "Y" ],
+      [ "Z" ],
+      [ "[" ],
+      [ "\\" ],
+      [ "]" ],
+      [ "^" ],
+      [ "_" ],
+      [ "`" ],
+      [ "a" ],
+      [ "b" ],
+      [ "c" ],
+      [ "d" ],
+      [ "e" ],
+      [ "f" ],
+      [ "g" ],
+      [ "h" ],
+      [ "i" ],
+      [ "j" ],
+      [ "k" ],
+      [ "l" ],
+      [ "m" ],
+      [ "n" ],
+      [ "o" ],
+      [ "p" ],
+      [ "q" ],
+      [ "r" ],
+      [ "s" ],
+      [ "t" ],
+      [ "u" ],
+      [ "v" ],
+      [ "w" ],
+      [ "x" ],
+      [ "y" ],
+      [ "z" ],
+      [ "{" ],
+      [ "|" ],
+      [ "}" ],
+      [ "~" ]
     ],
     "<translation_unit>": [
-      [
-        "<external_declaration>"
-      ],
-      [
-        "<translation_unit>",
-        "<OWS>",
-        "<external_declaration>"
-      ]
+      [ "<OWS>", "<external_declaration>" ],
+      [ "<translation_unit>", "<OWS>", "<external_declaration>" ]
     ],
     "<external_declaration>": [
-      [
-        "<function_definition>"
-      ],
-      [
-        "<declaration>"
-      ]
+      [ "<function_definition>" ],
+      [ "<declaration>" ],
+      [ ";" ]
     ],
     "<function_definition>": [
-      [
-        "<declaration_specifiers>",
-        "<OWS>",
-        "<declarator>",
-        "<OWS>",
-        "<declaration_list>",
-        "<OWS>",
-        "<compound_statement>"
-      ],
-      [
-        "<declarator>",
-        "<OWS>",
-        "<declaration_list>",
-        "<OWS>",
-        "<compound_statement>"
-      ],
-      [
-        "<declaration_specifiers>",
-        "<OWS>",
-        "<declarator>",
-        "<OWS>",
-        "<compound_statement>"
-      ],
-      [
-        "<declarator>",
-        "<OWS>",
-        "<compound_statement>"
-      ]
+      [ "<declaration_specifiers>", "<OWS>", "<declarator>", "<OWS>", "<declaration_list>", "<OWS>", "<compound_statement>" ],
+      [ "<declarator>", "<OWS>", "<declaration_list>", "<OWS>", "<compound_statement>" ],
+      [ "<declaration_specifiers>", "<OWS>", "<declarator>", "<OWS>", "<compound_statement>" ],
+      [ "<declarator>", "<OWS>", "<compound_statement>" ]
     ],
     "<declaration>": [
-      [
-        "<declaration_specifiers>",
-        "<OWS>",
-        "<init_declarator_list>",
-        "<OWS>",
-        ";"
-      ],
-      [
-        "<declaration_specifiers>",
-        "<OWS>",
-        ";"
-      ]
+      [ "<declaration_specifiers>", "<OWS>", "<init_declarator_list>", "<OWS>", ";" ],
+      [ "<declaration_specifiers>", "<OWS>", ";" ]
     ],
     "<declaration_list>": [
-      [
-        "<declaration>"
-      ],
-      [
-        "<declaration_list>",
-        "<OWS>",
-        "<declaration>"
-      ]
+      [ "<declaration>" ],
+      [ "<declaration_list>", "<OWS>", "<declaration>" ]
     ],
     "<declaration_specifiers>": [
-      [
-        "<storage_class_specifier>",
-        "<OWS>",
-        "<declaration_specifiers>"
-      ],
-      [
-        "<storage_class_specifier>"
-      ],
-      [
-        "<type_specifier>",
-        "<OWS>",
-        "<declaration_specifiers>"
-      ],
-      [
-        "<type_specifier>"
-      ],
-      [
-        "<type_qualifier>",
-        "<OWS>",
-        "<declaration_specifiers>"
-      ],
-      [
-        "<type_qualifier>"
-      ]
+      [ "<storage_class_specifier>", "<OWS>", "<declaration_specifiers>" ],
+      [ "<storage_class_specifier>" ],
+      [ "<type_specifier>", "<OWS>", "<declaration_specifiers>" ],
+      [ "<type_specifier>" ],
+      [ "<type_qualifier>", "<OWS>", "<declaration_specifiers>" ],
+      [ "<type_qualifier>" ]
     ],
     "<storage_class_specifier>": [
-      [
-        "a",
-        "u",
-        "t",
-        "o"
-      ],
-      [
-        "r",
-        "e",
-        "g",
-        "i",
-        "s",
-        "t",
-        "e",
-        "r"
-      ],
-      [
-        "s",
-        "t",
-        "a",
-        "t",
-        "i",
-        "c"
-      ],
-      [
-        "e",
-        "x",
-        "t",
-        "e",
-        "r",
-        "n"
-      ],
-      [
-        "t",
-        "y",
-        "p",
-        "e",
-        "d",
-        "e",
-        "f"
-      ]
+      [ "a", "u", "t", "o" ],
+      [ "r", "e", "g", "i", "s", "t", "e", "r" ],
+      [ "s", "t", "a", "t", "i", "c" ],
+      [ "e", "x", "t", "e", "r", "n" ],
+      [ "t", "y", "p", "e", "d", "e", "f" ]
     ],
     "<type_specifier>": [
-      [
-        "v",
-        "o",
-        "i",
-        "d"
-      ],
-      [
-        "c",
-        "h",
-        "a",
-        "r"
-      ],
-      [
-        "s",
-        "h",
-        "o",
-        "r",
-        "t"
-      ],
-      [
-        "i",
-        "n",
-        "t"
-      ],
-      [
-        "l",
-        "o",
-        "n",
-        "g"
-      ],
-      [
-        "f",
-        "l",
-        "o",
-        "a",
-        "t"
-      ],
-      [
-        "d",
-        "o",
-        "u",
-        "b",
-        "l",
-        "e"
-      ],
-      [
-        "s",
-        "i",
-        "g",
-        "n",
-        "e",
-        "d"
-      ],
-      [
-        "u",
-        "n",
-        "s",
-        "i",
-        "g",
-        "n",
-        "e",
-        "d"
-      ],
-      [
-        "<struct_or_union_specifier>"
-      ],
-      [
-        "<enum_specifier>"
-      ],
-      [
-        "<typedef_name>"
-      ]
+      [ "v", "o", "i", "d" ],
+      [ "c", "h", "a", "r" ],
+      [ "s", "h", "o", "r", "t" ],
+      [ "i", "n", "t" ],
+      [ "l", "o", "n", "g" ],
+      [ "f", "l", "o", "a", "t" ],
+      [ "d", "o", "u", "b", "l", "e" ],
+      [ "s", "i", "g", "n", "e", "d" ],
+      [ "u", "n", "s", "i", "g", "n", "e", "d" ],
+      [ "<struct_or_union_specifier>" ],
+      [ "<enum_specifier>" ],
+      [ "<typedef_name>" ]
     ],
     "<type_qualifier>": [
-      [
-        "c",
-        "o",
-        "n",
-        "s",
-        "t"
-      ],
-      [
-        "v",
-        "o",
-        "l",
-        "a",
-        "t",
-        "i",
-        "l",
-        "e"
-      ]
+      [ "c", "o", "n", "s", "t" ],
+      [ "v", "o", "l", "a", "t", "i", "l", "e" ]
     ],
     "<struct_or_union_specifier>": [
-      [
-        "<struct_or_union>",
-        "<OWS>",
-        "<identifier>",
-        "<OWS>",
-        "{",
-        "<OWS>",
-        "<struct_declaration_list>",
-        "<OWS>",
-        "}"
-      ],
-      [
-        "<struct_or_union>",
-        "<OWS>",
-        "{",
-        "<OWS>",
-        "<struct_declaration_list>",
-        "<OWS>",
-        "}"
-      ],
-      [
-        "<struct_or_union>",
-        "<OWS>",
-        "<identifier>"
-      ]
+      [ "<struct_or_union>", "<OWS>", "<identifier>", "<OWS>", "{", "<OWS>", "<struct_declaration_list>", "<OWS>", "}" ],
+      [ "<struct_or_union>", "<OWS>", "{", "<OWS>", "<struct_declaration_list>", "<OWS>", "}" ],
+      [ "<struct_or_union>", "<OWS>", "<identifier>" ]
     ],
     "<struct_or_union>": [
-      [
-        "s",
-        "t",
-        "r",
-        "u",
-        "c",
-        "t"
-      ],
-      [
-        "u",
-        "n",
-        "i",
-        "o",
-        "n"
-      ]
+      [ "s", "t", "r", "u", "c", "t" ],
+      [ "u", "n", "i", "o", "n" ]
     ],
     "<struct_declaration_list>": [
-      [
-        "<struct_declaration>"
-      ],
-      [
-        "<struct_declaration_list>",
-        "<OWS>",
-        "<struct_declaration>"
-      ]
+      [ "<struct_declaration>" ],
+      [ "<struct_declaration_list>", "<OWS>", "<struct_declaration>" ]
     ],
     "<init_declarator_list>": [
-      [
-        "<init_declarator>"
-      ],
-      [
-        "<init_declarator_list>",
-        "<OWS>",
-        ",",
-        "<OWS>",
-        "<init_declarator>"
-      ]
+      [ "<init_declarator>" ],
+      [ "<init_declarator_list>", "<OWS>", ",", "<OWS>", "<init_declarator>" ]
     ],
     "<init_declarator>": [
-      [
-        "<declarator>"
-      ],
-      [
-        "<declarator>",
-        "<OWS>",
-        "=",
-        "<OWS>",
-        "<initializer>"
-      ]
+      [ "<declarator>" ],
+      [ "<declarator>", "<OWS>", "=", "<OWS>", "<initializer>" ]
     ],
     "<struct_declaration>": [
-      [
-        "<specifier_qualifier_list>",
-        "<OWS>",
-        "<struct_declarator_list>",
-        "<OWS>",
-        ";"
-      ]
+      [ "<specifier_qualifier_list>", "<OWS>", "<struct_declarator_list>", "<OWS>", ";" ]
     ],
     "<specifier_qualifier_list>": [
-      [
-        "<type_specifier>",
-        "<OWS>",
-        "<specifier_qualifier_list>"
-      ],
-      [
-        "<type_specifier>"
-      ],
-      [
-        "<type_qualifier>",
-        "<OWS>",
-        "<specifier_qualifier_list>"
-      ],
-      [
-        "<type_qualifier>"
-      ]
+      [ "<type_specifier>", "<OWS>", "<specifier_qualifier_list>" ],
+      [ "<type_specifier>" ],
+      [ "<type_qualifier>", "<OWS>", "<specifier_qualifier_list>" ],
+      [ "<type_qualifier>" ]
     ],
     "<struct_declarator_list>": [
-      [
-        "<struct_declarator>"
-      ],
-      [
-        "<struct_declarator_list>",
-        "<OWS>",
-        ",",
-        "<OWS>",
-        "<struct_declarator>"
-      ]
+      [ "<struct_declarator>" ],
+      [ "<struct_declarator_list>", "<OWS>", ",", "<OWS>", "<struct_declarator>" ]
     ],
     "<struct_declarator>": [
-      [
-        "<declarator>"
-      ],
-      [
-        "<declarator>",
-        "<OWS>",
-        ":",
-        "<OWS>",
-        "<constant_expression>"
-      ],
-      [
-        ":",
-        "<OWS>",
-        "<constant_expression>"
-      ]
+      [ "<declarator>" ],
+      [ "<declarator>", "<OWS>", ":", "<OWS>", "<constant_expression>" ],
+      [ ":", "<OWS>", "<constant_expression>" ]
     ],
     "<enum_specifier>": [
-      [
-        "e",
-        "n",
-        "u",
-        "m",
-        "<OWS>",
-        "<identifier>",
-        "<OWS>",
-        "{",
-        "<OWS>",
-        "<enumerator_list>",
-        "<OWS>",
-        "}"
-      ],
-      [
-        "e",
-        "n",
-        "u",
-        "m",
-        "<OWS>",
-        "{",
-        "<OWS>",
-        "<enumerator_list>",
-        "<OWS>",
-        "}"
-      ],
-      [
-        "e",
-        "n",
-        "u",
-        "m",
-        "<OWS>",
-        "<identifier>"
-      ]
+      [ "e", "n", "u", "m", "<OWS>", "<identifier>", "<OWS>", "{", "<OWS>", "<enumerator_list>", "<OWS>", "}" ],
+      [ "e", "n", "u", "m", "<OWS>", "{", "<OWS>", "<enumerator_list>", "<OWS>", "}" ],
+      [ "e", "n", "u", "m", "<OWS>", "<identifier>" ]
     ],
     "<enumerator_list>": [
-      [
-        "<enumerator>"
-      ],
-      [
-        "<enumerator_list>",
-        "<OWS>",
-        ",",
-        "<OWS>",
-        "<enumerator>"
-      ]
+      [ "<enumerator>" ],
+      [ "<enumerator_list>", "<OWS>", ",", "<OWS>", "<enumerator>" ]
     ],
     "<enumerator>": [
-      [
-        "<identifier>"
-      ],
-      [
-        "<identifier>",
-        "<OWS>",
-        "=",
-        "<OWS>",
-        "<constant_expression>"
-      ]
+      [ "<identifier>" ],
+      [ "<identifier>", "<OWS>", "=", "<OWS>", "<constant_expression>" ]
     ],
     "<declarator>": [
-      [
-        "<pointer>",
-        "<OWS>",
-        "<direct_declarator>"
-      ],
-      [
-        "<direct_declarator>"
-      ]
+      [ "<pointer>", "<OWS>", "<direct_declarator>" ],
+      [ "<direct_declarator>" ]
     ],
     "<direct_declarator>": [
-      [
-        "<identifier>"
-      ],
-      [
-        "(",
-        "<OWS>",
-        "<declarator>",
-        "<OWS>",
-        ")"
-      ],
-      [
-        "<direct_declarator>",
-        "<OWS>",
-        "[",
-        "<OWS>",
-        "<constant_expression>",
-        "<OWS>",
-        "]"
-      ],
-      [
-        "<direct_declarator>",
-        "<OWS>",
-        "[",
-        "]"
-      ],
-      [
-        "<direct_declarator>",
-        "<OWS>",
-        "(",
-        "<OWS>",
-        "<parameter_type_list>",
-        "<OWS>",
-        ")"
-      ],
-      [
-        "<direct_declarator>",
-        "<OWS>",
-        "(",
-        "<OWS>",
-        "<identifier_list>",
-        "<OWS>",
-        ")"
-      ],
-      [
-        "<direct_declarator>",
-        "<OWS>",
-        "(",
-        ")"
-      ]
+      [ "<identifier>" ],
+      [ "(", "<OWS>", "<declarator>", "<OWS>", ")" ],
+      [ "<direct_declarator>", "<OWS>", "[", "<OWS>", "<constant_expression>", "<OWS>", "]" ],
+      [ "<direct_declarator>", "<OWS>", "[", "<OWS>", "]" ],
+      [ "<direct_declarator>", "<OWS>", "(", "<OWS>", "<parameter_type_list>", "<OWS>", ")" ],
+      [ "<direct_declarator>", "<OWS>", "(", "<OWS>", "<identifier_list>", "<OWS>", ")" ],
+      [ "<direct_declarator>", "<OWS>", "(", "<OWS>", ")" ]
     ],
     "<pointer>": [
-      [
-        "*",
-        "<OWS>",
-        "<type_qualifier_list>"
-      ],
-      [
-        "*"
-      ],
-      [
-        "*",
-        "<OWS>",
-        "<type_qualifier_list>",
-        "<OWS>",
-        "<pointer>"
-      ],
-      [
-        "*",
-        "<OWS>",
-        "<pointer>"
-      ]
+      [ "*", "<OWS>", "<type_qualifier_list>" ],
+      [ "*" ],
+      [ "*", "<OWS>", "<type_qualifier_list>", "<OWS>", "<pointer>" ],
+      [ "*", "<OWS>", "<pointer>" ]
     ],
     "<type_qualifier_list>": [
-      [
-        "<type_qualifier>"
-      ],
-      [
-        "<type_qualifier_list>",
-        "<OWS>",
-        "<type_qualifier>"
-      ]
+      [ "<type_qualifier>" ],
+      [ "<type_qualifier_list>", "<OWS>", "<type_qualifier>" ]
     ],
     "<parameter_type_list>": [
-      [
-        "<parameter_list>"
-      ],
-      [
-        "<parameter_list>",
-        "<OWS>",
-        ",",
-        ".",
-        ".",
-        "."
-      ]
+      [ "<parameter_list>" ],
+      [ "<parameter_list>", "<OWS>", ",", ".", ".", "." ]
     ],
     "<parameter_list>": [
-      [
-        "<parameter_declaration>"
-      ],
-      [
-        "<parameter_list>",
-        "<OWS>",
-        ",",
-        "<OWS>",
-        "<parameter_declaration>"
-      ]
+      [ "<parameter_declaration>" ],
+      [ "<parameter_list>", "<OWS>", ",", "<OWS>", "<parameter_declaration>" ]
     ],
     "<parameter_declaration>": [
-      [
-        "<declaration_specifiers>",
-        "<OWS>",
-        "<declarator>"
-      ],
-      [
-        "<declaration_specifiers>",
-        "<OWS>",
-        "<abstract_declarator>"
-      ],
-      [
-        "<declaration_specifiers>"
-      ]
+      [ "<declaration_specifiers>", "<OWS>", "<declarator>" ],
+      [ "<declaration_specifiers>", "<OWS>", "<abstract_declarator>" ],
+      [ "<declaration_specifiers>" ]
     ],
     "<identifier_list>": [
-      [
-        "<identifier>"
-      ],
-      [
-        "<identifier_list>",
-        "<OWS>",
-        ",",
-        "<OWS>",
-        "<identifier>"
-      ]
+      [ "<identifier>" ],
+      [ "<identifier_list>", "<OWS>", ",", "<OWS>", "<identifier>" ]
     ],
     "<initializer>": [
-      [
-        "<assignment_expression>"
-      ],
-      [
-        "{",
-        "<OWS>",
-        "<initializer_list>",
-        "<OWS>",
-        "}"
-      ],
-      [
-        "{",
-        "<OWS>",
-        "<initializer_list>",
-        "<OWS>",
-        ",",
-        "}"
-      ]
+      [ "<assignment_expression>" ],
+      [ "{", "<OWS>", "<initializer_list>", "<OWS>", "}" ],
+      [ "{", "<OWS>", "<initializer_list>", "<OWS>", ",", "}" ]
     ],
     "<initializer_list>": [
-      [
-        "<initializer>"
-      ],
-      [
-        "<initializer_list>",
-        "<OWS>",
-        ",",
-        "<OWS>",
-        "<initializer>"
-      ]
+      [ "<initializer>" ],
+      [ "<initializer_list>", "<OWS>", ",", "<OWS>", "<initializer>" ]
     ],
     "<type_name>": [
-      [
-        "<specifier_qualifier_list>",
-        "<OWS>",
-        "<abstract_declarator>"
-      ],
-      [
-        "<specifier_qualifier_list>"
-      ]
+      [ "<specifier_qualifier_list>", "<OWS>", "<abstract_declarator>" ],
+      [ "<specifier_qualifier_list>" ]
     ],
     "<abstract_declarator>": [
-      [
-        "<pointer>"
-      ],
-      [
-        "<pointer>",
-        "<OWS>",
-        "<direct_abstract_declarator>"
-      ],
-      [
-        "<direct_abstract_declarator>"
-      ]
+      [ "<pointer>" ],
+      [ "<pointer>", "<OWS>", "<direct_abstract_declarator>" ],
+      [ "<direct_abstract_declarator>" ]
     ],
     "<direct_abstract_declarator>": [
-      [
-        "(",
-        "<OWS>",
-        "<abstract_declarator>",
-        "<OWS>",
-        ")"
-      ],
-      [
-        "<direct_abstract_declarator>",
-        "<OWS>",
-        "[",
-        "<OWS>",
-        "<constant_expression>",
-        "<OWS>",
-        "]"
-      ],
-      [
-        "[",
-        "<OWS>",
-        "<constant_expression>",
-        "<OWS>",
-        "]"
-      ],
-      [
-        "<direct_abstract_declarator>",
-        "<OWS>",
-        "[",
-        "]"
-      ],
-      [
-        "[",
-        "]"
-      ],
-      [
-        "<direct_abstract_declarator>",
-        "<OWS>",
-        "(",
-        "<OWS>",
-        "<parameter_type_list>",
-        "<OWS>",
-        ")"
-      ],
-      [
-        "(",
-        "<OWS>",
-        "<parameter_type_list>",
-        "<OWS>",
-        ")"
-      ],
-      [
-        "<direct_abstract_declarator>",
-        "<OWS>",
-        "(",
-        ")"
-      ],
-      [
-        "(",
-        ")"
-      ]
+      [ "(", "<OWS>", "<abstract_declarator>", "<OWS>", ")" ],
+      [ "<direct_abstract_declarator>", "<OWS>", "[", "<OWS>", "<constant_expression>", "<OWS>", "]" ],
+      [ "[", "<OWS>", "<constant_expression>", "<OWS>", "]" ],
+      [ "<direct_abstract_declarator>", "<OWS>", "[", "]" ],
+      [ "[", "]" ],
+      [ "<direct_abstract_declarator>", "<OWS>", "(", "<OWS>", "<parameter_type_list>", "<OWS>", ")" ],
+      [ "(", "<OWS>", "<parameter_type_list>", "<OWS>", ")" ],
+      [ "<direct_abstract_declarator>", "<OWS>", "(", "<OWS>", ")" ],
+      [ "(", "<OWS>", ")" ]
     ],
     "<statement>": [
-      [
-        "<labeled_statement>"
-      ],
-      [
-        "<expression_statement>"
-      ],
-      [
-        "<compound_statement>"
-      ],
-      [
-        "<selection_statement>"
-      ],
-      [
-        "<iteration_statement>"
-      ],
-      [
-        "<jump_statement>"
-      ]
+      [ "<labeled_statement>" ],
+      [ "<expression_statement>" ],
+      [ "<compound_statement>" ],
+      [ "<selection_statement>" ],
+      [ "<iteration_statement>" ],
+      [ "<jump_statement>" ]
     ],
     "<labeled_statement>": [
-      [
-        "<identifier>",
-        "<OWS>",
-        ":",
-        "<OWS>",
-        "<statement>"
-      ],
-      [
-        "c",
-        "a",
-        "s",
-        "e",
-        "<OWS>",
-        "<constant_expression>",
-        "<OWS>",
-        ":",
-        "<OWS>",
-        "<statement>"
-      ],
-      [
-        "d",
-        "e",
-        "f",
-        "a",
-        "u",
-        "l",
-        "t",
-        "<OWS>",
-        ":",
-        "<OWS>",
-        "<statement>"
-      ]
+      [ "<identifier>", "<OWS>", ":", "<OWS>", "<statement>" ],
+      [ "c", "a", "s", "e", "<OWS>", "<constant_expression>", "<OWS>", ":", "<OWS>", "<statement>" ],
+      [ "d", "e", "f", "a", "u", "l", "t", "<OWS>", ":", "<OWS>", "<statement>" ]
     ],
     "<expression_statement>": [
-      [
-        "<expression>",
-        "<OWS>",
-        ";"
-      ],
-      [
-        ";"
-      ]
+      [ "<expression>", "<OWS>", ";" ],
+      [ ";" ]
     ],
     "<compound_statement>": [
-      [
-        "{",
-        "<OWS>",
-        "<declaration_list>",
-        "<OWS>",
-        "<statement_list>",
-        "<OWS>",
-        "}"
-      ],
-      [
-        "{",
-        "<OWS>",
-        "<statement_list>",
-        "<OWS>",
-        "}"
-      ],
-      [
-        "{",
-        "<OWS>",
-        "<declaration_list>",
-        "<OWS>",
-        "}"
-      ],
-      [
-        "{",
-        "}"
-      ]
+      [ "{", "<OWS>", "<block_item_list>", "<OWS>", "}" ],
+      [ "{", "<OWS>", "}" ],
+      [ "{", "}" ]
     ],
-    "<statement_list>": [
-      [
-        "<statement>"
-      ],
-      [
-        "<statement_list>",
-        "<OWS>",
-        "<statement>"
-      ]
+    "<block_item_list>": [
+      [ "<block_item>" ],
+      [ "<block_item_list>", "<OWS>", "<block_item>" ]
+    ],
+    "<block_item>": [
+      [ "<declaration>" ],
+      [ "<statement>" ]
     ],
     "<selection_statement>": [
-      [
-        "i",
-        "f",
-        "<OWS>",
-        "(",
-        "<OWS>",
-        "<expression>",
-        "<OWS>",
-        ")",
-        "<OWS>",
-        "<statement>"
-      ],
-      [
-        "i",
-        "f",
-        "<OWS>",
-        "(",
-        "<OWS>",
-        "<expression>",
-        "<OWS>",
-        ")",
-        "<OWS>",
-        "<statement>",
-        "<OWS>",
-        "e",
-        "l",
-        "s",
-        "e",
-        "<OWS>",
-        "<statement>"
-      ],
-      [
-        "s",
-        "w",
-        "i",
-        "t",
-        "c",
-        "h",
-        "<OWS>",
-        "(",
-        "<OWS>",
-        "<expression>",
-        "<OWS>",
-        ")",
-        "<OWS>",
-        "<statement>"
-      ]
+      [ "i", "f", "<OWS>", "(", "<OWS>", "<expression>", "<OWS>", ")", "<OWS>", "<statement>" ],
+      [ "i", "f", "<OWS>", "(", "<OWS>", "<expression>", "<OWS>", ")", "<OWS>", "<statement>", "<OWS>", "e", "l", "s", "e", "<OWS>", "<statement>" ],
+      [ "s", "w", "i", "t", "c", "h", "<OWS>", "(", "<OWS>", "<expression>", "<OWS>", ")", "<OWS>", "<statement>" ]
     ],
     "<iteration_statement>": [
-      [
-        "w",
-        "h",
-        "i",
-        "l",
-        "e",
-        "<OWS>",
-        "(",
-        "<OWS>",
-        "<expression>",
-        "<OWS>",
-        ")",
-        "<OWS>",
-        "<statement>"
-      ],
-      [
-        "d",
-        "o",
-        "<OWS>",
-        "<statement>",
-        "<OWS>",
-        "w",
-        "h",
-        "i",
-        "l",
-        "e",
-        "<OWS>",
-        "(",
-        "<OWS>",
-        "<expression>",
-        "<OWS>",
-        ")"
-      ],
-      [
-        "f",
-        "o",
-        "r",
-        "<OWS>",
-        "(",
-        "<OWS>",
-        "<expression>",
-        "<OWS>",
-        ";",
-        "<OWS>",
-        "<expression>",
-        "<OWS>",
-        ";",
-        "<OWS>",
-        "<expression>",
-        "<OWS>",
-        ")",
-        "<OWS>",
-        "<statement>"
-      ],
-      [
-        "f",
-        "o",
-        "r",
-        "<OWS>",
-        "(",
-        "<OWS>",
-        "<expression>",
-        "<OWS>",
-        ";",
-        "<OWS>",
-        "<expression>",
-        "<OWS>",
-        ";",
-        ")",
-        "<OWS>",
-        "<statement>"
-      ],
-      [
-        "f",
-        "o",
-        "r",
-        "<OWS>",
-        "(",
-        "<OWS>",
-        "<expression>",
-        "<OWS>",
-        ";",
-        ";",
-        "<OWS>",
-        "<expression>",
-        "<OWS>",
-        ")",
-        "<OWS>",
-        "<statement>"
-      ],
-      [
-        "f",
-        "o",
-        "r",
-        "<OWS>",
-        "(",
-        "<OWS>",
-        "<expression>",
-        "<OWS>",
-        ";",
-        ";",
-        ")",
-        "<OWS>",
-        "<statement>"
-      ],
-      [
-        "f",
-        "o",
-        "r",
-        "<OWS>",
-        "(",
-        ";",
-        "<OWS>",
-        "<expression>",
-        "<OWS>",
-        ";",
-        "<OWS>",
-        "<expression>",
-        "<OWS>",
-        ")",
-        "<OWS>",
-        "<statement>"
-      ],
-      [
-        "f",
-        "o",
-        "r",
-        "<OWS>",
-        "(",
-        ";",
-        "<OWS>",
-        "<expression>",
-        "<OWS>",
-        ";",
-        ")",
-        "<OWS>",
-        "<statement>"
-      ],
-      [
-        "f",
-        "o",
-        "r",
-        "<OWS>",
-        "(",
-        ";",
-        ";",
-        "<OWS>",
-        "<expression>",
-        "<OWS>",
-        ")",
-        "<OWS>",
-        "<statement>"
-      ],
-      [
-        "f",
-        "o",
-        "r",
-        "<OWS>",
-        "(",
-        ";",
-        ";",
-        ")",
-        "<OWS>",
-        "<statement>"
-      ]
+      [ "w", "h", "i", "l", "e", "<OWS>", "(", "<OWS>", "<expression>", "<OWS>", ")", "<OWS>", "<statement>" ],
+      [ "d", "o", "<OWS>", "<statement>", "<OWS>", "w", "h", "i", "l", "e", "<OWS>", "(", "<OWS>", "<expression>", "<OWS>", ")" ],
+      [ "f", "o", "r", "<OWS>", "(", "<OWS>", "<expression>", "<OWS>", ";", "<OWS>", "<expression>", "<OWS>", ";", "<OWS>", "<expression>", "<OWS>", ")", "<OWS>", "<statement>" ],
+      [ "f", "o", "r", "<OWS>", "(", "<OWS>", "<expression>", "<OWS>", ";", "<OWS>", "<expression>", "<OWS>", ";", "<OWS>", ")", "<OWS>", "<statement>" ],
+      [ "f", "o", "r", "<OWS>", "(", "<OWS>", "<expression>", "<OWS>", ";", "<OWS>", ";", "<OWS>", "<expression>", "<OWS>", ")", "<OWS>", "<statement>" ],
+      [ "f", "o", "r", "<OWS>", "(", "<OWS>", "<expression>", "<OWS>", ";", "<OWS>", ";", "<OWS>", ")", "<OWS>", "<statement>" ],
+      [ "f", "o", "r", "<OWS>", "(", "<OWS>", ";", "<OWS>", "<expression>", "<OWS>", ";", "<OWS>", "<expression>", "<OWS>", ")", "<OWS>", "<statement>" ],
+      [ "f", "o", "r", "<OWS>", "(", "<OWS>", ";", "<OWS>", "<expression>", "<OWS>", ";", "<OWS>", ")", "<OWS>", "<statement>" ],
+      [ "f", "o", "r", "<OWS>", "(", "<OWS>", ";", "<OWS>", ";", "<OWS>", "<expression>", "<OWS>", ")", "<OWS>", "<statement>" ],
+      [ "f", "o", "r", "<OWS>", "(", "<OWS>", ";", "<OWS>", ";", "<OWS>", ")", "<OWS>", "<statement>" ],
+      [ "f", "o", "r", "<OWS>", "(", "<OWS>", "<declaration>", "<OWS>", "<expression>", "<OWS>", ";", "<OWS>", "<expression>", "<OWS>", ")", "<OWS>", "<statement>" ],
+      [ "f", "o", "r", "<OWS>", "(", "<OWS>", "<declaration>", "<OWS>", "<expression>", "<OWS>", ";", "<OWS>", ")", "<OWS>", "<statement>" ],
+      [ "f", "o", "r", "<OWS>", "(", "<OWS>", "<declaration>", "<OWS>", ";", "<OWS>", "<expression>", "<OWS>", ")", "<OWS>", "<statement>" ],
+      [ "f", "o", "r", "<OWS>", "(", "<OWS>", "<declaration>", "<OWS>", ";", "<OWS>", ")", "<OWS>", "<statement>" ]
     ],
     "<jump_statement>": [
-      [
-        "g",
-        "o",
-        "t",
-        "o",
-        "<OWS>",
-        "<identifier>",
-        "<OWS>",
-        ";"
-      ],
-      [
-        "c",
-        "o",
-        "n",
-        "t",
-        "i",
-        "n",
-        "u",
-        "e",
-        "<OWS>",
-        ";"
-      ],
-      [
-        "b",
-        "r",
-        "e",
-        "a",
-        "k",
-        "<OWS>",
-        ";"
-      ],
-      [
-        "r",
-        "e",
-        "t",
-        "u",
-        "r",
-        "n",
-        "<OWS>",
-        "<expression>",
-        "<OWS>",
-        ";"
-      ],
-      [
-        "r",
-        "e",
-        "t",
-        "u",
-        "r",
-        "n",
-        "<OWS>",
-        ";"
-      ]
+      [ "g", "o", "t", "o", "<OWS>", "<identifier>", "<OWS>", ";" ],
+      [ "c", "o", "n", "t", "i", "n", "u", "e", "<OWS>", ";" ],
+      [ "b", "r", "e", "a", "k", "<OWS>", ";" ],
+      [ "r", "e", "t", "u", "r", "n", "<OWS>", "<expression>", "<OWS>", ";" ],
+      [ "r", "e", "t", "u", "r", "n", "<OWS>", ";" ]
     ],
     "<expression>": [
-      [
-        "<assignment_expression>"
-      ],
-      [
-        "<expression>",
-        "<OWS>",
-        ",",
-        "<OWS>",
-        "<assignment_expression>"
-      ]
+      [ "<assignment_expression>" ],
+      [ "<expression>", "<OWS>", ",", "<OWS>", "<assignment_expression>" ]
     ],
     "<assignment_expression>": [
-      [
-        "<conditional_expression>"
-      ],
-      [
-        "<unary_expression>",
-        "<OWS>",
-        "<assignment_operator>",
-        "<OWS>",
-        "<assignment_expression>"
-      ]
+      [ "<conditional_expression>" ],
+      [ "<unary_expression>", "<OWS>", "<assignment_operator>", "<OWS>", "<assignment_expression>" ]
     ],
     "<assignment_operator>": [
-      [
-        "="
-      ],
-      [
-        "*",
-        "="
-      ],
-      [
-        "/",
-        "="
-      ],
-      [
-        "%",
-        "="
-      ],
-      [
-        "+",
-        "="
-      ],
-      [
-        "-",
-        "="
-      ],
-      [
-        "<",
-        "<",
-        "="
-      ],
-      [
-        ">",
-        ">",
-        "="
-      ],
-      [
-        "&",
-        "="
-      ],
-      [
-        "^",
-        "="
-      ],
-      [
-        "|",
-        "="
-      ]
+      [ "=" ],
+      [ "*", "=" ],
+      [ "/", "=" ],
+      [ "%", "=" ],
+      [ "+", "=" ],
+      [ "-", "=" ],
+      [ "<", "<", "=" ],
+      [ ">", ">", "=" ],
+      [ "&", "=" ],
+      [ "^", "=" ],
+      [ "|", "=" ]
     ],
     "<conditional_expression>": [
-      [
-        "<logical_or_expression>"
-      ],
-      [
-        "<logical_or_expression>",
-        "<OWS>",
-        "?",
-        "<OWS>",
-        "<expression>",
-        "<OWS>",
-        ":",
-        "<OWS>",
-        "<conditional_expression>"
-      ]
+      [ "<logical_or_expression>" ],
+      [ "<logical_or_expression>", "<OWS>", "?", "<OWS>", "<expression>", "<OWS>", ":", "<OWS>", "<conditional_expression>" ]
     ],
     "<constant_expression>": [
-      [
-        "<conditional_expression>"
-      ]
+      [ "<conditional_expression>" ]
     ],
     "<logical_or_expression>": [
-      [
-        "<logical_and_expression>"
-      ],
-      [
-        "<logical_or_expression>",
-        "<OWS>",
-        "|",
-        "|",
-        "<OWS>",
-        "<logical_and_expression>"
-      ]
+      [ "<logical_and_expression>" ],
+      [ "<logical_or_expression>", "<OWS>", "|", "|", "<OWS>", "<logical_and_expression>" ]
     ],
     "<logical_and_expression>": [
-      [
-        "<inclusive_or_expression>"
-      ],
-      [
-        "<logical_and_expression>",
-        "<OWS>",
-        "&",
-        "&",
-        "<OWS>",
-        "<inclusive_or_expression>"
-      ]
+      [ "<inclusive_or_expression>" ],
+      [ "<logical_and_expression>", "<OWS>", "&", "&", "<OWS>", "<inclusive_or_expression>" ]
     ],
     "<inclusive_or_expression>": [
-      [
-        "<exclusive_or_expression>"
-      ],
-      [
-        "<inclusive_or_expression>",
-        "<OWS>",
-        "|",
-        "<OWS>",
-        "<exclusive_or_expression>"
-      ]
+      [ "<exclusive_or_expression>" ],
+      [ "<inclusive_or_expression>", "<OWS>", "|", "<OWS>", "<exclusive_or_expression>" ]
     ],
     "<exclusive_or_expression>": [
-      [
-        "<and_expression>"
-      ],
-      [
-        "<exclusive_or_expression>",
-        "<OWS>",
-        "^",
-        "<OWS>",
-        "<and_expression>"
-      ]
+      [ "<and_expression>" ],
+      [ "<exclusive_or_expression>", "<OWS>", "^", "<OWS>", "<and_expression>" ]
     ],
     "<and_expression>": [
-      [
-        "<equality_expression>"
-      ],
-      [
-        "<and_expression>",
-        "<OWS>",
-        "&",
-        "<OWS>",
-        "<equality_expression>"
-      ]
+      [ "<equality_expression>" ],
+      [ "<and_expression>", "<OWS>", "&", "<OWS>", "<equality_expression>" ]
     ],
     "<equality_expression>": [
-      [
-        "<relational_expression>"
-      ],
-      [
-        "<equality_expression>",
-        "<OWS>",
-        "=",
-        "=",
-        "<OWS>",
-        "<relational_expression>"
-      ],
-      [
-        "<equality_expression>"
-      ]
+      [ "<relational_expression>" ],
+      [ "<equality_expression>", "<OWS>", "=", "=", "<OWS>", "<relational_expression>" ],
+      [ "<equality_expression>", "<OWS>", "!", "=", "<OWS>", "<relational_expression>" ]
     ],
     "<relational_expression>": [
-      [
-        "<shift_expression>"
-      ],
-      [
-        "<relational_expression>",
-        "<OWS>",
-        "<",
-        "<OWS>",
-        "<shift_expression>"
-      ],
-      [
-        "<relational_expression>",
-        "<OWS>",
-        ">",
-        "<OWS>",
-        "<shift_expression>"
-      ],
-      [
-        "<relational_expression>",
-        "<OWS>",
-        "<",
-        "=",
-        "<OWS>",
-        "<shift_expression>"
-      ],
-      [
-        "<relational_expression>",
-        "<OWS>",
-        ">",
-        "=",
-        "<OWS>",
-        "<shift_expression>"
-      ]
+      [ "<shift_expression>" ],
+      [ "<relational_expression>", "<OWS>", "<", "<OWS>", "<shift_expression>" ],
+      [ "<relational_expression>", "<OWS>", ">", "<OWS>", "<shift_expression>" ],
+      [ "<relational_expression>", "<OWS>", "<", "=", "<OWS>", "<shift_expression>" ],
+      [ "<relational_expression>", "<OWS>", ">", "=", "<OWS>", "<shift_expression>" ]
     ],
     "<shift_expression>": [
-      [
-        "<additive_expression>"
-      ],
-      [
-        "<shift_expression>",
-        "<OWS>",
-        "<",
-        "<",
-        "<OWS>",
-        "<additive_expression>"
-      ],
-      [
-        "<shift_expression>",
-        "<OWS>",
-        ">",
-        ">",
-        "<OWS>",
-        "<additive_expression>"
-      ]
+      [ "<additive_expression>" ],
+      [ "<shift_expression>", "<OWS>", "<", "<", "<OWS>", "<additive_expression>" ],
+      [ "<shift_expression>", "<OWS>", ">", ">", "<OWS>", "<additive_expression>" ]
     ],
     "<additive_expression>": [
-      [
-        "<multiplicative_expression>"
-      ],
-      [
-        "<additive_expression>",
-        "<OWS>",
-        "+",
-        "<OWS>",
-        "<multiplicative_expression>"
-      ],
-      [
-        "<additive_expression>",
-        "<OWS>",
-        "-",
-        "<OWS>",
-        "<multiplicative_expression>"
-      ]
+      [ "<multiplicative_expression>" ],
+      [ "<additive_expression>", "<OWS>", "+", "<OWS>", "<multiplicative_expression>" ],
+      [ "<additive_expression>", "<OWS>", "-", "<OWS>", "<multiplicative_expression>" ]
     ],
     "<multiplicative_expression>": [
-      [
-        "<cast_expression>"
-      ],
-      [
-        "<multiplicative_expression>",
-        "<OWS>",
-        "*",
-        "<OWS>",
-        "<cast_expression>"
-      ],
-      [
-        "<multiplicative_expression>",
-        "<OWS>",
-        "/",
-        "<OWS>",
-        "<cast_expression>"
-      ],
-      [
-        "<multiplicative_expression>",
-        "<OWS>",
-        "%",
-        "<OWS>",
-        "<cast_expression>"
-      ]
+      [ "<cast_expression>" ],
+      [ "<multiplicative_expression>", "<OWS>", "*", "<OWS>", "<cast_expression>" ],
+      [ "<multiplicative_expression>", "<OWS>", "/", "<OWS>", "<cast_expression>" ],
+      [ "<multiplicative_expression>", "<OWS>", "%", "<OWS>", "<cast_expression>" ]
     ],
     "<cast_expression>": [
-      [
-        "<unary_expression>"
-      ],
-      [
-        "(",
-        "<OWS>",
-        "<type_name>",
-        "<OWS>",
-        ")",
-        "<OWS>",
-        "<cast_expression>"
-      ]
+      [ "<unary_expression>" ],
+      [ "(", "<OWS>", "<type_name>", "<OWS>", ")", "<OWS>", "<cast_expression>" ]
     ],
     "<unary_expression>": [
-      [
-        "<postfix_expression>"
-      ],
-      [
-        "+",
-        "+",
-        "<OWS>",
-        "<unary_expression>"
-      ],
-      [
-        "-",
-        "-",
-        "<OWS>",
-        "<unary_expression>"
-      ],
-      [
-        "<unary_operator>",
-        "<OWS>",
-        "<cast_expression>"
-      ],
-      [
-        "s",
-        "i",
-        "z",
-        "e",
-        "o",
-        "f",
-        "<OWS>",
-        "<unary_expression>"
-      ],
-      [
-        "s",
-        "i",
-        "z",
-        "e",
-        "o",
-        "f",
-        "<OWS>",
-        "(",
-        "<OWS>",
-        "<type_name>",
-        "<OWS>",
-        ")"
-      ]
+      [ "<postfix_expression>" ],
+      [ "+", "+", "<OWS>", "<unary_expression>" ],
+      [ "-", "-", "<OWS>", "<unary_expression>" ],
+      [ "<unary_operator>", "<OWS>", "<cast_expression>" ],
+      [ "s", "i", "z", "e", "o", "f", "<OWS>", "<unary_expression>" ],
+      [ "s", "i", "z", "e", "o", "f", "<OWS>", "(", "<OWS>", "<type_name>", "<OWS>", ")" ]
     ],
     "<unary_operator>": [
-      [
-        "&"
-      ],
-      [
-        "*"
-      ],
-      [
-        "+"
-      ],
-      [
-        "-"
-      ],
-      [
-        "~"
-      ],
+      [ "&" ],
+      [ "*" ],
+      [ "+" ],
+      [ "-" ],
+      [ "~" ],
+      [ "!" ],
       []
     ],
     "<postfix_expression>": [
-      [
-        "<primary_expression>"
-      ],
-      [
-        "<postfix_expression>",
-        "<OWS>",
-        "[",
-        "<OWS>",
-        "<expression>",
-        "<OWS>",
-        "]"
-      ],
-      [
-        "<postfix_expression>",
-        "<OWS>",
-        "(",
-        "<OWS>",
-        "<argument_expression_list>",
-        "<OWS>",
-        ")"
-      ],
-      [
-        "<postfix_expression>",
-        "<OWS>",
-        "(",
-        ")"
-      ],
-      [
-        "<postfix_expression>",
-        "<OWS>",
-        ".",
-        "<OWS>",
-        "<identifier>"
-      ],
-      [
-        "<postfix_expression>",
-        "<OWS>",
-        "-",
-        ">",
-        "<OWS>",
-        "<identifier>"
-      ],
-      [
-        "<postfix_expression>",
-        "<OWS>",
-        "+",
-        "+"
-      ],
-      [
-        "<postfix_expression>",
-        "<OWS>",
-        "-",
-        "-"
-      ]
+      [ "<primary_expression>" ],
+      [ "<postfix_expression>", "<OWS>", "[", "<OWS>", "<expression>", "<OWS>", "]" ],
+      [ "<postfix_expression>", "<OWS>", "(", "<OWS>", "<argument_expression_list>", "<OWS>", ")" ],
+      [ "<postfix_expression>", "<OWS>", "(", "<OWS>", ")" ],
+      [ "<postfix_expression>", "<OWS>", ".", "<OWS>", "<identifier>" ],
+      [ "<postfix_expression>", "<OWS>", "-", ">", "<OWS>", "<identifier>" ],
+      [ "<postfix_expression>", "<OWS>", "+", "+" ],
+      [ "<postfix_expression>", "<OWS>", "-", "-" ]
     ],
     "<primary_expression>": [
-      [
-        "<identifier>"
-      ],
-      [
-        "<constant>"
-      ],
-      [
-        "<string>"
-      ],
-      [
-        "(",
-        "<OWS>",
-        "<expression>",
-        "<OWS>",
-        ")"
-      ]
+      [ "<identifier>" ],
+      [ "<constant>" ],
+      [ "<string>" ],
+      [ "(", "<OWS>", "<expression>", "<OWS>", ")" ]
     ],
     "<argument_expression_list>": [
-      [
-        "<assignment_expression>"
-      ],
-      [
-        "<argument_expression_list>",
-        "<OWS>",
-        ",",
-        "<OWS>",
-        "<assignment_expression>"
-      ]
+      [ "<assignment_expression>" ],
+      [ "<argument_expression_list>", "<OWS>", ",", "<OWS>", "<assignment_expression>" ]
     ],
     "<constant>": [
-      [
-        "<integer_constant>"
-      ],
-      [
-        "<character_constant>"
-      ],
-      [
-        "<floating_constant>"
-      ],
-      [
-        "<enumeration_constant>"
-      ]
+      [ "<integer_constant>" ],
+      [ "<character_constant>" ],
+      [ "<floating_constant>" ],
+      [ "<enumeration_constant>" ]
     ],
     "<identifier>": [
-      [
-        "<ID>"
-      ]
+      [ "<ID>" ]
     ],
     "<string>": [
-      [
-        "<STRING>"
-      ],
-      [
-        "<string>",
-        "<OWS>",
-        "<STRING>"
-      ]
+      [ "<STRING>" ],
+      [ "<string>", "<STRING>" ]
     ],
     "<integer_constant>": [
-      [
-        "<INTEGER>"
-      ]
+      [ "<INTEGER>" ],
+      [ "<HEX_INTEGER>" ]
+    ],
+    "<HEX_INTEGER>": [
+      [ "0", "x", "<hex_digit>", "<hex_rest>" ],
+      [ "0", "X", "<hex_digit>", "<hex_rest>" ]
+    ],
+    "<hex_rest>": [
+      [ "<hex_digit>", "<hex_rest>" ],
+      []
+    ],
+    "<hex_digit>": [
+      [ "0" ], [ "1" ], [ "2" ], [ "3" ], [ "4" ],
+      [ "5" ], [ "6" ], [ "7" ], [ "8" ], [ "9" ],
+      [ "a" ], [ "b" ], [ "c" ], [ "d" ], [ "e" ], [ "f" ],
+      [ "A" ], [ "B" ], [ "C" ], [ "D" ], [ "E" ], [ "F" ]
     ],
     "<character_constant>": [
-      [
-        "<STRING>"
-      ]
+      [ "'", "<char_lit_char>", "'" ]
+    ],
+    "<char_lit_char>": [
+      [ "<string_char>" ],
+      [ "\\", "<string_char>" ],
+      [ "\"" ]
     ],
     "<floating_constant>": [
-      [
-        "<REAL>"
-      ]
+      [ "<REAL>" ]
     ],
     "<enumeration_constant>": [
-      [
-        "<ENUM_ID>"
-      ]
+      [ "<ENUM_ID>" ]
     ],
     "<typedef_name>": [
-      [
-        "<ID>"
-      ],
-      [
-        "<TYPE_ID>"
-      ]
+      [ "<ID>" ],
+      [ "<TYPE_ID>" ]
     ],
     "<STRING>": [
-      [
-        "\"",
-        "<OWS>",
-        "<string_chars>",
-        "<OWS>",
-        "\""
-      ]
+      [ "\"", "<OWS>", "<string_chars>", "<OWS>", "\"" ]
     ],
     "<string_chars>": [
-      [
-        "<string_char>",
-        "<OWS>",
-        "<string_chars>"
-      ],
+      [ "<string_char>", "<OWS>", "<string_chars>" ],
       []
     ],
     "<string_char>": [
-      [
-        " "
-      ],
-      [
-        "!"
-      ],
-      [
-        "#"
-      ],
-      [
-        "$"
-      ],
-      [
-        "%"
-      ],
-      [
-        "&"
-      ],
-      [
-        "'"
-      ],
-      [
-        "("
-      ],
-      [
-        ")"
-      ],
-      [
-        "*"
-      ],
-      [
-        "+"
-      ],
-      [
-        ","
-      ],
-      [
-        "-"
-      ],
-      [
-        "."
-      ],
-      [
-        "/"
-      ],
-      [
-        "0"
-      ],
-      [
-        "1"
-      ],
-      [
-        "2"
-      ],
-      [
-        "3"
-      ],
-      [
-        "4"
-      ],
-      [
-        "5"
-      ],
-      [
-        "6"
-      ],
-      [
-        "7"
-      ],
-      [
-        "8"
-      ],
-      [
-        "9"
-      ],
-      [
-        ":"
-      ],
-      [
-        ";"
-      ],
-      [
-        "<"
-      ],
-      [
-        "="
-      ],
-      [
-        ">"
-      ],
-      [
-        "?"
-      ],
-      [
-        "@"
-      ],
-      [
-        "A"
-      ],
-      [
-        "B"
-      ],
-      [
-        "C"
-      ],
-      [
-        "D"
-      ],
-      [
-        "E"
-      ],
-      [
-        "F"
-      ],
-      [
-        "G"
-      ],
-      [
-        "H"
-      ],
-      [
-        "I"
-      ],
-      [
-        "J"
-      ],
-      [
-        "K"
-      ],
-      [
-        "L"
-      ],
-      [
-        "M"
-      ],
-      [
-        "N"
-      ],
-      [
-        "O"
-      ],
-      [
-        "P"
-      ],
-      [
-        "Q"
-      ],
-      [
-        "R"
-      ],
-      [
-        "S"
-      ],
-      [
-        "T"
-      ],
-      [
-        "U"
-      ],
-      [
-        "V"
-      ],
-      [
-        "W"
-      ],
-      [
-        "X"
-      ],
-      [
-        "Y"
-      ],
-      [
-        "Z"
-      ],
-      [
-        "["
-      ],
-      [
-        "]"
-      ],
-      [
-        "^"
-      ],
-      [
-        "_"
-      ],
-      [
-        "`"
-      ],
-      [
-        "a"
-      ],
-      [
-        "b"
-      ],
-      [
-        "c"
-      ],
-      [
-        "d"
-      ],
-      [
-        "e"
-      ],
-      [
-        "f"
-      ],
-      [
-        "g"
-      ],
-      [
-        "h"
-      ],
-      [
-        "i"
-      ],
-      [
-        "j"
-      ],
-      [
-        "k"
-      ],
-      [
-        "l"
-      ],
-      [
-        "m"
-      ],
-      [
-        "n"
-      ],
-      [
-        "o"
-      ],
-      [
-        "p"
-      ],
-      [
-        "q"
-      ],
-      [
-        "r"
-      ],
-      [
-        "s"
-      ],
-      [
-        "t"
-      ],
-      [
-        "u"
-      ],
-      [
-        "v"
-      ],
-      [
-        "w"
-      ],
-      [
-        "x"
-      ],
-      [
-        "y"
-      ],
-      [
-        "z"
-      ],
-      [
-        "{"
-      ],
-      [
-        "|"
-      ],
-      [
-        "}"
-      ],
-      [
-        "~"
-      ]
+      [ " " ],
+      [ "!" ],
+      [ "#" ],
+      [ "$" ],
+      [ "%" ],
+      [ "&" ],
+      [ "'" ],
+      [ "(" ],
+      [ ")" ],
+      [ "*" ],
+      [ "+" ],
+      [ "," ],
+      [ "-" ],
+      [ "." ],
+      [ "/" ],
+      [ "0" ],
+      [ "1" ],
+      [ "2" ],
+      [ "3" ],
+      [ "4" ],
+      [ "5" ],
+      [ "6" ],
+      [ "7" ],
+      [ "8" ],
+      [ "9" ],
+      [ ":" ],
+      [ ";" ],
+      [ "<" ],
+      [ "=" ],
+      [ ">" ],
+      [ "?" ],
+      [ "@" ],
+      [ "A" ],
+      [ "B" ],
+      [ "C" ],
+      [ "D" ],
+      [ "E" ],
+      [ "F" ],
+      [ "G" ],
+      [ "H" ],
+      [ "I" ],
+      [ "J" ],
+      [ "K" ],
+      [ "L" ],
+      [ "M" ],
+      [ "N" ],
+      [ "O" ],
+      [ "P" ],
+      [ "Q" ],
+      [ "R" ],
+      [ "S" ],
+      [ "T" ],
+      [ "U" ],
+      [ "V" ],
+      [ "W" ],
+      [ "X" ],
+      [ "Y" ],
+      [ "Z" ],
+      [ "[" ],
+      [ "\\" ],
+      [ "]" ],
+      [ "^" ],
+      [ "_" ],
+      [ "`" ],
+      [ "a" ],
+      [ "b" ],
+      [ "c" ],
+      [ "d" ],
+      [ "e" ],
+      [ "f" ],
+      [ "g" ],
+      [ "h" ],
+      [ "i" ],
+      [ "j" ],
+      [ "k" ],
+      [ "l" ],
+      [ "m" ],
+      [ "n" ],
+      [ "o" ],
+      [ "p" ],
+      [ "q" ],
+      [ "r" ],
+      [ "s" ],
+      [ "t" ],
+      [ "u" ],
+      [ "v" ],
+      [ "w" ],
+      [ "x" ],
+      [ "y" ],
+      [ "z" ],
+      [ "{" ],
+      [ "|" ],
+      [ "}" ],
+      [ "~" ]
     ],
     "<INTEGER>": [
-      [
-        "<digit>",
-        "<OWS>",
-        "<integer_rest>"
-      ]
+      [ "<digit>", "<integer_rest>" ]
     ],
     "<integer_rest>": [
-      [
-        "<digit>",
-        "<OWS>",
-        "<integer_rest>"
-      ],
+      [ "<digit>", "<integer_rest>" ],
       []
     ],
     "<REAL>": [
-      [
-        "<INTEGER>",
-        "<OWS>",
-        ".",
-        "<OWS>",
-        "<INTEGER>"
-      ],
-      [
-        "<INTEGER>",
-        "<OWS>",
-        ".",
-        "<OWS>",
-        "<INTEGER>",
-        "<OWS>",
-        "e",
-        "<OWS>",
-        "<sign>",
-        "<OWS>",
-        "<INTEGER>"
-      ],
-      [
-        "<INTEGER>",
-        "<OWS>",
-        ".",
-        "<OWS>",
-        "<INTEGER>",
-        "<OWS>",
-        "E",
-        "<OWS>",
-        "<sign>",
-        "<OWS>",
-        "<INTEGER>"
-      ]
+      [ "<INTEGER>", ".", "<INTEGER>" ],
+      [ "<INTEGER>", ".", "<INTEGER>", "e", "<sign>", "<INTEGER>" ],
+      [ "<INTEGER>", ".", "<INTEGER>", "E", "<sign>", "<INTEGER>" ]
     ],
     "<sign>": [
-      [
-        "+"
-      ],
-      [
-        "-"
-      ],
+      [ "+" ],
+      [ "-" ],
       []
     ],
     "<ID>": [
-      [
-        "<letter>",
-        "<OWS>",
-        "<id_rest>"
-      ]
+      [ "<letter>", "<id_rest>" ],
+      [ "_", "<id_rest>" ]
     ],
     "<id_rest>": [
-      [
-        "<id_char>",
-        "<OWS>",
-        "<id_rest>"
-      ],
+      [ "<id_char>", "<id_rest>" ],
       []
     ],
     "<id_char>": [
-      [
-        "<letter>"
-      ],
-      [
-        "<digit>"
-      ],
-      [
-        "_"
-      ]
+      [ "<letter>" ],
+      [ "<digit>" ],
+      [ "_" ]
     ],
     "<letter>": [
-      [
-        "a"
-      ],
-      [
-        "b"
-      ],
-      [
-        "c"
-      ],
-      [
-        "d"
-      ],
-      [
-        "e"
-      ],
-      [
-        "f"
-      ],
-      [
-        "g"
-      ],
-      [
-        "h"
-      ],
-      [
-        "i"
-      ],
-      [
-        "j"
-      ],
-      [
-        "k"
-      ],
-      [
-        "l"
-      ],
-      [
-        "m"
-      ],
-      [
-        "n"
-      ],
-      [
-        "o"
-      ],
-      [
-        "p"
-      ],
-      [
-        "q"
-      ],
-      [
-        "r"
-      ],
-      [
-        "s"
-      ],
-      [
-        "t"
-      ],
-      [
-        "u"
-      ],
-      [
-        "v"
-      ],
-      [
-        "w"
-      ],
-      [
-        "x"
-      ],
-      [
-        "y"
-      ],
-      [
-        "z"
-      ],
-      [
-        "A"
-      ],
-      [
-        "B"
-      ],
-      [
-        "C"
-      ],
-      [
-        "D"
-      ],
-      [
-        "E"
-      ],
-      [
-        "F"
-      ],
-      [
-        "G"
-      ],
-      [
-        "H"
-      ],
-      [
-        "I"
-      ],
-      [
-        "J"
-      ],
-      [
-        "K"
-      ],
-      [
-        "L"
-      ],
-      [
-        "M"
-      ],
-      [
-        "N"
-      ],
-      [
-        "O"
-      ],
-      [
-        "P"
-      ],
-      [
-        "Q"
-      ],
-      [
-        "R"
-      ],
-      [
-        "S"
-      ],
-      [
-        "T"
-      ],
-      [
-        "U"
-      ],
-      [
-        "V"
-      ],
-      [
-        "W"
-      ],
-      [
-        "X"
-      ],
-      [
-        "Y"
-      ],
-      [
-        "Z"
-      ]
+      [ "a" ],
+      [ "b" ],
+      [ "c" ],
+      [ "d" ],
+      [ "e" ],
+      [ "f" ],
+      [ "g" ],
+      [ "h" ],
+      [ "i" ],
+      [ "j" ],
+      [ "k" ],
+      [ "l" ],
+      [ "m" ],
+      [ "n" ],
+      [ "o" ],
+      [ "p" ],
+      [ "q" ],
+      [ "r" ],
+      [ "s" ],
+      [ "t" ],
+      [ "u" ],
+      [ "v" ],
+      [ "w" ],
+      [ "x" ],
+      [ "y" ],
+      [ "z" ],
+      [ "A" ],
+      [ "B" ],
+      [ "C" ],
+      [ "D" ],
+      [ "E" ],
+      [ "F" ],
+      [ "G" ],
+      [ "H" ],
+      [ "I" ],
+      [ "J" ],
+      [ "K" ],
+      [ "L" ],
+      [ "M" ],
+      [ "N" ],
+      [ "O" ],
+      [ "P" ],
+      [ "Q" ],
+      [ "R" ],
+      [ "S" ],
+      [ "T" ],
+      [ "U" ],
+      [ "V" ],
+      [ "W" ],
+      [ "X" ],
+      [ "Y" ],
+      [ "Z" ]
     ],
     "<TYPE_ID>": [
-      [
-        "<ID>"
-      ]
+      [ "<ID>" ]
     ],
     "<ENUM_ID>": [
-      [
-        "<ID>"
-      ]
+      [ "<ID>" ]
     ],
     "<digit>": [
-      [
-        "0"
-      ],
-      [
-        "1"
-      ],
-      [
-        "2"
-      ],
-      [
-        "3"
-      ],
-      [
-        "4"
-      ],
-      [
-        "5"
-      ],
-      [
-        "6"
-      ],
-      [
-        "7"
-      ],
-      [
-        "8"
-      ],
-      [
-        "9"
-      ]
+      [ "0" ],
+      [ "1" ],
+      [ "2" ],
+      [ "3" ],
+      [ "4" ],
+      [ "5" ],
+      [ "6" ],
+      [ "7" ],
+      [ "8" ],
+      [ "9" ]
     ]
   },
-  "tests": []
+  "tests": [
+  ]
 }

@@ -1,8 +1,4 @@
-#include <stdio.h>
-#include <string.h>
  
-#define SENTINEL 100000000
-#define N 100000
  
 typedef struct{
     char c;

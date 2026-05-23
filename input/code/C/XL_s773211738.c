@@ -1,13 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#include <limits.h>
 
-#define REP(i,n) for(i=0;i<n;i++)
 
-#define MAX 1000000
-#define MOD 1000000007
 
 long long fac[MAX], finv[MAX], inv[MAX];
 
@@ -99,7 +91,7 @@ void s_out(char *s) {
 }
 
 /*
-    int型の最大公約数
+    int
 */
 
 int gcd(int a, int b) {
@@ -122,7 +114,7 @@ int gcd(int a, int b) {
 }
 
 /*
-    int型の最小公倍数
+    int
 */
 
 int lcm(int a, int b) {
@@ -132,7 +124,7 @@ int lcm(int a, int b) {
 }
 
 /*
-    long long型の最大公約数
+    long long
 */
 
 long long ll_gcd(long long a, long long b) {
@@ -155,7 +147,7 @@ long long ll_gcd(long long a, long long b) {
 }
 
 /*
-    long long型の最小公倍数
+    long long
 */
 
 long long ll_lcm(long long a, long long b) {
@@ -165,7 +157,7 @@ long long ll_lcm(long long a, long long b) {
 }
 
 /*
-    int型の昇順ソート
+    int
 */
 
 void sort_asc(int *a) {
@@ -173,7 +165,7 @@ void sort_asc(int *a) {
 }
 
 /*
-    int型の降順ソート
+    int
 */
 
 void sort_desc(int *a) {
@@ -181,7 +173,7 @@ void sort_desc(int *a) {
 }
 
 /*
-    int型の昇順用比較関数
+    int
 */
 
 int asc(const void *a, const void *b) {
@@ -189,7 +181,7 @@ int asc(const void *a, const void *b) {
 }
 
 /*
-    int型の降順用比較関数
+    int
 */
 
 int desc(const void *a, const void *b) {
@@ -197,7 +189,7 @@ int desc(const void *a, const void *b) {
 }
 
 /*
-    long long型の昇順ソート
+    long long
 */
 
 void ll_sort_asc(long long *a) {
@@ -205,7 +197,7 @@ void ll_sort_asc(long long *a) {
 }
 
 /*
-    long long型の降順ソート
+    long long
 */
 
 void ll_sort_desc(long long *a) {
@@ -213,7 +205,7 @@ void ll_sort_desc(long long *a) {
 }
 
 /*
-    long long型の昇順用比較関数
+    long long
 */
 
 int ll_asc(const void *a, const void *b) {
@@ -225,7 +217,7 @@ int ll_asc(const void *a, const void *b) {
 }
 
 /*
-    long long型の降順用比較関数
+    long long
 */
 
 int ll_desc(const void *a, const void *b) {
@@ -237,7 +229,7 @@ int ll_desc(const void *a, const void *b) {
 }
 
 /*
-    弧度法を度数法に
+    
 */
 
 double to_deg(double rad) {
@@ -245,7 +237,7 @@ double to_deg(double rad) {
 }
 
 /*
-    二点間の距離
+    
 */
 
 double distance(int xi, int yi, int xj, int yj) {
@@ -253,7 +245,7 @@ double distance(int xi, int yi, int xj, int yj) {
 }
 
 /*
-    組み合わせ用配列の初期化
+    
 */
 
 void initComb() {
@@ -268,7 +260,7 @@ void initComb() {
 }
 
 /*
-    nCkの組み合わせ計算
+    nCk
 */
 
 long long comb(int n, int k){

@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <stdbool.h>
 
-#define	BUFFER_LENGTH	(256)
 
 int
 main(int argc, const char *argv[])

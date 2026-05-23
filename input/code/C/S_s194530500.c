@@ -1,5 +1,3 @@
-#include<stdio.h>
-#include<math.h>
 
 int main(){
 	int a[1145][2],n,s,i,j,cnt,num,total;

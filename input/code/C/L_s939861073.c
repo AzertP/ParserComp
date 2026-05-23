@@ -1,8 +1,7 @@
-#include<stdio.h>
 int main()
 {
-    long long int n,k; //n是总长，k是制约数目
-    long long int r,s,p; //各自得分点
+    long long int n,k; //nk
+    long long int r,s,p; //
     long long int ans=0;
     char t[200000],ne[200000];
     scanf("%lld %lld",&n,&k);

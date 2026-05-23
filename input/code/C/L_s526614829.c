@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#define MAX 200
 
 typedef struct{
   int top;

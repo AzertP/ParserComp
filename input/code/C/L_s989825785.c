@@ -1,9 +1,4 @@
-#include<stdio.h>
-#include<string.h>
 
-#define M 1046527
-#define NIL (-1)
-#define L 14
 
 char H[M][L];
 

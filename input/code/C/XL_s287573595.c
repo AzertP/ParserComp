@@ -1,14 +1,5 @@
 //set many funcs template
 //Ver.20190714
-#include<stdio.h>
-#include<string.h>
-#include<stdlib.h>
-#include<stdbool.h>
-#include<time.h>
-#define inf 1072114514
-#define llinf 4154118101919364364
-#define mod 1000000007
-#define pi 3.1415926535897932384
 
 int max(int a,int b){if(a>b){return a;}return b;}
 int min(int a,int b){if(a<b){return a;}return b;}

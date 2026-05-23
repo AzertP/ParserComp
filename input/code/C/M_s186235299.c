@@ -1,10 +1,8 @@
-#include <stdio.h>
-#include<string.h>
 int main(void)
 {
-    char s[100000]={};
+    char s[100000]={0};
     scanf("%s",s);
-    int a[100000]={};
+    int a[100000]={0};
     int count=0;
     int p=0;
     int po=0;

@@ -1,5 +1,3 @@
-#include<stdio.h>
-#define MAX 100000
 
 int A[MAX],n;
 

@@ -1,4 +1,3 @@
-#include <stdio.h>
 
 int main(void){
     long int oni_A, hito_B;
@@ -7,9 +6,9 @@ int main(void){
     scanf("%ld %ld",&oni_A,&v_oni);
     scanf("%ld %ld",&hito_B,&v_hito);
     scanf("%ld",&Time);
-    //最大10^9 + 10^9+10^9 < long int(8bite) 
+    //10^9 + 10^9+10^9 < long int(8bite) 
     long int Aed,Bed;
-    //正の方に逃げる
+    //
     if(oni_A < hito_B){
         Aed = oni_A + Time*v_oni;
         Bed = hito_B + Time*v_hito;

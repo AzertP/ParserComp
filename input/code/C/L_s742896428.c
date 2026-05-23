@@ -1,12 +1,11 @@
-#include<stdio.h>
 
 
-//二次元配列quicksort 参考http://www.math.u-ryukyu.ac.jp/~suga/C/2004/13/node6.html
+//quicksort http://www.math.u-ryukyu.ac.jp/~suga/C/2004/13/node6.html
 //http://d.hatena.ne.jp/lagos_on/20090517/1242586942
 void qsort(int list1[],int list2[], int left, int right) {
     int l = left;
     int r = right;
-    int pivot = list1[(left + right) / 2]; // 中央からピボットを選択
+    int pivot = list1[(left + right) / 2]; // 
     int temp;
 
     while (1) {
@@ -15,7 +14,7 @@ void qsort(int list1[],int list2[], int left, int right) {
 
         if (l > r) break;
 
-        // pivotより小さい値を左、大きい値を右に入れ替え
+        // pivot
         temp = list1[l];
         list1[l] = list1[r];
         list1[r] = temp;
@@ -28,7 +27,7 @@ void qsort(int list1[],int list2[], int left, int right) {
         l++, r--;
     };
 
-    // pivotより小さい領域と大きい領域をそれぞれ再帰的にソート
+    // pivot
     if (left < r)  qsort(list1,list2 ,left, r);
     if (l < right) qsort(list1,list2, l, right);
 }

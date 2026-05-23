@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 struct node{
   int key;
@@ -15,7 +12,7 @@ int deleteX(int);
 void deleteFirst(void);
 void deleteLast(void);
 
-node *sentinel; /* 番兵 */
+node *sentinel; /*  */
 
 
 int main() {
@@ -83,17 +80,17 @@ int deleteX(int x) {
   
   node *delNode;
 
-  /* deleteKeyと一致するノードをさがす */
+  /* deleteKey */
   for( delNode=sentinel->next; delNode!=sentinel; delNode=delNode->next) {
     if(delNode->key == x) {
       break;
     }
   }
-  if(delNode==sentinel){ /*該当するノードは存在しない */
+  if(delNode==sentinel){ /* */
     return 0;
   }
 
-  /* ノードを削除する */
+  /*  */
   delNode->prev->next = delNode->next;
   delNode->next->prev = delNode->prev;
 

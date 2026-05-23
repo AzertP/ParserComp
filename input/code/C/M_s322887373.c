@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <ctype.h>
 
 /** Application main entry point. */
 int

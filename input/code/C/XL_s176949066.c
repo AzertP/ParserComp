@@ -1,25 +1,6 @@
-#define _CRT_SECURE_NO_WARNINGS
 
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <inttypes.h>
-#include <limits.h>
-#include <ctype.h>
-#include <stdint.h>
-#include <string.h>
-#include <wchar.h>
-#include <math.h>
 
-#define N_MAX (100)
-#define P_MAX (100)
-#define DP_ARRAY_SIZE (N_MAX * P_MAX / 32 + 1)
 
-#define MIN(a, b) ((a) < (b) ? (a) : (b))
-#define MAX(a, b) ((a) > (b) ? (a) : (b))
-#define ABS(a) ((a) < 0 ? -(a) : (a))
-#define ABSS(a, b) ((a) > (b) ? (a) - (b) : (b) - (a))
-#define SWAP(type, a, b) { const type tmp = a; a = b; b = tmp; }
 
 int compare_sz_asc(const void* a, const void* b) {
     return *((size_t*)a) < *((size_t*)b) ? -1 : 1;
@@ -230,9 +211,7 @@ typedef struct {
     uint64_t val;
 }BHeap_Val;
 
-#define BHEAP_VAL_TYPE BHeap_Val
 
-#define BHEAP_INVALID_NODE ((size_t)100000000)
 
 typedef struct {
     BHEAP_VAL_TYPE val;
@@ -389,7 +368,6 @@ typedef struct {
     size_t maxNumChild;
 } Tree_Node;
 
-#define TREE_INIT_ALLOC (128)
 
 static Tree_Node tree_Node[200000];
 
@@ -438,7 +416,6 @@ static void _bHeap_NotifyNodeChange_Desc(const BHeap_Ctx* const ctx, const size_
     }
 }
 
-#define UF_ROOT ((size_t)10000000)
 
 typedef struct {
     size_t parent;
@@ -542,7 +519,6 @@ static void sha1(const char* str, uint64_t len, uint32_t* hash) {
     hash[0] = h[4];
 }
 
-#define MOD_VAL (UINT64_C(1000000007))
 
 typedef struct {
     uint64_t strListSize;
@@ -554,7 +530,7 @@ static HMap hMap[1000000];
 int main(void) {
     uint64_t L, R, d;
 
-    scanf("%"PRIu64"%"PRIu64"%"PRIu64, &L, &R, &d);
+    scanf("%d%d%d", &L, &R, &d);
 
     uint64_t r = 0;
     for (uint64_t v = L; v <= R; v++) {
@@ -563,7 +539,7 @@ int main(void) {
         }
     }
 
-    printf("%"PRIu64, r);
+    printf("%d", r);
 
     return 0;
 }

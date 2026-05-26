@@ -293,6 +293,7 @@ fn load_inputs(source: &InputSource) -> Vec<(String, String)> {
                         .into_owned();
                     let content = fs::read_to_string(&path)
                         .unwrap_or_else(|_| panic!("Failed to read file: {:?}", path));
+                    let content = content.trim().to_string();
                     files.push((content, filename));
                 }
             }
@@ -333,18 +334,15 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
         .expect("Failed to load grammar");
     println!("✓ Grammar loaded.");
 
-    // Generate or reuse GLR/LR tables
+    // Generate or reuse GLR tables
     if config.generate_table {
-        println!("✓ Generating GLR and LR tables...");
+        println!("✓ Generating GLR table...");
         fs::create_dir_all("table")?;
         let table_gen = table_generator::TableGenerator::new(&grammar);
         table_gen
             .export_to_csv_numeric(config.table_path)
             .expect("Failed to export GLR table");
-        table_gen
-            .export_lr1_to_csv(config.lr_table_path)
-            .expect("Failed to export LR table");
-        println!("✓ GLR and LR tables generated.");
+        println!("✓ GLR table generated.");
     } else {
         println!("✓ Skipping table generation (using existing tables)...");
     }
@@ -373,6 +371,7 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
     );
 
     let mut failed_parsers: HashSet<String> = HashSet::new();
+    let total_inputs = inputs.len();
 
     for (idx, (content, source_file)) in inputs.iter().enumerate() {
         let input_len = content.len();
@@ -381,12 +380,16 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
         let tokens = match grammar.tokenize(content) {
             Some(t) => t,
             None => {
-                eprintln!(
-                    "  [SKIP] Input #{} ({}): failed to tokenize",
-                    idx + 1,
-                    source_file
-                );
-                continue;
+                let label = if source_file.is_empty() {
+                    format!("#{}", idx + 1)
+                } else {
+                    source_file.clone()
+                };
+                eprintln!("\n[FATAL] Tokenization failed for '{}' — stopping.", label);
+                return Err(std::io::Error::new(
+                    std::io::ErrorKind::Other,
+                    format!("Tokenize failure: file={}", label),
+                ));
             }
         };
         let token_count = tokens.len();
@@ -406,7 +409,9 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
             .map(|c| if c == '\n' || c == '\r' { ' ' } else { c })
             .collect();
         println!(
-            "\n  [{}] {} bytes, {} tokens: {}",
+            "\n  [{}/{}] [{}] {} bytes, {} tokens: {}",
+            idx + 1,
+            total_inputs,
             display,
             input_len,
             token_count,
@@ -432,10 +437,47 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
                 continue;
             }
 
+            // Helper macro: check recognition first; bail out immediately on failure.
+            macro_rules! check_and_bail {
+                ($parse_expr:expr) => {{
+                    let (recognized, parse_correct) =
+                        check_correctness(|| $parse_expr, content);
+                    if !recognized {
+                        let fail_result = BenchmarkResult {
+                            parser: parser_name.to_string(),
+                            input_length: input_len,
+                            token_count,
+                            median_time_ns: 0.0,
+                            mad_ns: 0.0,
+                            peak_memory_bytes: 0,
+                            iterations: 0,
+                            recognized: false,
+                            parse_correct: false,
+                            status: "PARSE_FAIL".to_string(),
+                            source_file: source_file.clone(),
+                        };
+                        writeln!(csv_file, "{}", fail_result.to_csv_row())?;
+                        csv_file.flush()?;
+                        eprintln!(
+                            "\n[FATAL] Parser '{}' failed to recognize '{}' — stopping.",
+                            parser_name, display
+                        );
+                        return Err(std::io::Error::new(
+                            std::io::ErrorKind::Other,
+                            format!(
+                                "Parse failure: parser={}, file={}",
+                                parser_name, display
+                            ),
+                        ));
+                    }
+                    (recognized, parse_correct)
+                }};
+            }
+
             let result = match *parser_name {
                 "Leo" => {
                     let (recognized, parse_correct) =
-                        check_correctness(|| leo.parse(tokens.clone()), content);
+                        check_and_bail!(leo.parse(tokens.clone()));
                     let peak_mem = measure_peak_memory(|| leo.parse(tokens.clone()));
                     let (median, mad, iters) = measure(|| leo.parse(tokens.clone()));
                     BenchmarkResult {
@@ -454,7 +496,7 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
                 }
                 "GLL" => {
                     let (recognized, parse_correct) =
-                        check_correctness(|| gll_parser.parse(&tokens), content);
+                        check_and_bail!(gll_parser.parse(&tokens));
                     let peak_mem = measure_peak_memory(|| gll_parser.parse(&tokens));
                     let (median, mad, iters) = measure(|| gll_parser.parse(&tokens));
                     BenchmarkResult {
@@ -473,7 +515,7 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
                 }
                 "RNGLR" => {
                     let (recognized, parse_correct) =
-                        check_correctness(|| rnglr.parse(&glr_tokens), content);
+                        check_and_bail!(rnglr.parse(&glr_tokens));
                     let peak_mem = measure_peak_memory(|| rnglr.parse(&glr_tokens));
                     let (median, mad, iters) = measure(|| rnglr.parse(&glr_tokens));
                     BenchmarkResult {
@@ -492,7 +534,7 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
                 }
                 "BRNGLR" => {
                     let (recognized, parse_correct) =
-                        check_correctness(|| brnglr.parse(&glr_tokens), content);
+                        check_and_bail!(brnglr.parse(&glr_tokens));
                     let peak_mem = measure_peak_memory(|| brnglr.parse(&glr_tokens));
                     let (median, mad, iters) = measure(|| brnglr.parse(&glr_tokens));
                     BenchmarkResult {
@@ -518,19 +560,6 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
                 "    [{}|{}] {:8}: {:>12.0} ns ± {:>8.0} ns ({} iters)",
                 r, p, result.parser, result.median_time_ns, result.mad_ns, result.iterations
             );
-
-            if !result.recognized {
-                eprintln!(
-                    "    [WARN] {} failed to recognize {} ({} bytes, {} tokens)",
-                    result.parser, display, result.input_length, result.token_count
-                );
-            }
-            if !result.parse_correct {
-                eprintln!(
-                    "    [WARN] {} produced incorrect parse tree for {} ({} bytes, {} tokens)",
-                    result.parser, display, result.input_length, result.token_count
-                );
-            }
 
             writeln!(csv_file, "{}", result.to_csv_row())?;
             csv_file.flush()?;

@@ -825,29 +825,27 @@ impl<'a> ForestBuilder<'a> {
         let mut results = Vec::new();
 
         // Standard Chart Candidates
-        let mut split_candidates: Vec<usize> = Vec::new();
+        // Bug 2 fix: use HashSet to deduplicate split points — multiple completion rules for the
+        // same symbol can produce the same s_col value, which would otherwise cause the same
+        // derivation to be processed (and counted) multiple times.
+        let mut split_candidates: HashSet<usize> = HashSet::default();
         match child_sym {
             NumSymbol::Terminal(_) => {
                 let k = current_end.saturating_sub(1);
-                split_candidates.push(k);
+                split_candidates.insert(k);
             },
             NumSymbol::NonTerminal(_) => {
                 for st in &self.parser.chart.columns[current_end].states {
                     let st_rule = &self.parser.grammar.rules[st.rule_id.0];
                     if st_rule.lhs == child_sym && st.dot >= st_rule.rhs.len() {
-                        split_candidates.push(st.s_col.0);
+                        split_candidates.insert(st.s_col.0);
                     }
                 }
             }
         };
 
         // Virtual Candidates (from Leo Optimization)
-        // Pred state: The parent state at dot-1, residing at 'current_end' (conceptually)
-        // Actually, uniq_postdot logic hooks: Parent(at dot-1) -> Child(complete).
-        // The Parent(at dot-1) is independent of 'current_end' or 'child'.
-        // It is `State { rule_id, dot: dot-1, s_col: target_start }`.
-        
-        // We look for children that reduced to this specific parent state.
+        // We look for children that reduced to this specific parent state via postdots.
         let pred_state = State { rule_id, dot: dot - 1, s_col: ColumnID(target_start) };
         let mut virtual_matches = Vec::new();
         
@@ -855,14 +853,14 @@ impl<'a> ForestBuilder<'a> {
             for (child_state, child_end_col) in virtual_children {
                 if child_end_col.0 == current_end {
                      virtual_matches.push((child_state.s_col.0, *child_state));
-                     // Also add to split_candidates to trigger recursion?
-                     // If we add to split_candidates, we lose the 'state' info needed for the hint.
-                     // So we handle virtuals separately.
                 }
             }
         }
         
         // Process Standard
+        // Track which split points were successfully processed so the virtual path
+        // doesn't re-process the same k and produce duplicate derivations (Bug 1 fix).
+        let mut processed_k: HashSet<usize> = HashSet::default();
         for k in &split_candidates {
             if *k < target_start { continue; }
             let prev_st = State { rule_id, dot: dot - 1, s_col: ColumnID(target_start) };
@@ -874,13 +872,18 @@ impl<'a> ForestBuilder<'a> {
                         results.push(path);
                         if self.single { return results; }
                     }
+                    processed_k.insert(*k);
                 }
             }
         }
         
         // Process Virtuals (Lazy Expansion from Postdots)
+        // Bug 1 fix: skip k values already successfully handled by the standard path above.
+        // When Leo fires and records a child in postdots, expand_chart() later re-adds that
+        // same child to the standard chart, so both paths would find the same derivation.
         for (k, child_state) in virtual_matches {
             if k < target_start { continue; }
+            if processed_k.contains(&k) { continue; }
              if let Some(child_node) = self.find_node(child_sym, k, current_end, Some(child_state)) {
                 let prefix_paths = self.walk_back(rule_id, dot - 1, k, target_start);
                 for mut path in prefix_paths {

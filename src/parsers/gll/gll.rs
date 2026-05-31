@@ -1071,6 +1071,103 @@ impl GLLParser {
             None
         }
     }
+
+    /// Enumerate ALL parse trees from an SPPF node by taking the cartesian product
+    /// across all packing node alternatives at each ambiguous node.
+    /// Returns `Vec<Vec<ParseTree>>` where each inner Vec is one complete child list
+    /// (intermediate/flat nodes stay flat; only LHS nodes wrap into a named tree).
+    fn flatten_tree_all(
+        &self,
+        node_id: SPPFNodeId,
+        visited: &mut HashSet<SPPFNodeId>,
+    ) -> Vec<Vec<ParseTree>> {
+        // Cycle guard — same role as in flatten_tree_first
+        if visited.contains(&node_id) {
+            return vec![];
+        }
+        visited.insert(node_id);
+
+        let node = self.sppf.get(node_id);
+        let g_node = self.g_grammar.get(node.gn);
+
+        // Base case: leaf node (no packing nodes)
+        if node.pack_ns.is_empty() {
+            let result = match g_node.kind {
+                GKind::Terminal(t_id) => {
+                    let name = self.grammar.terminal_str(t_id).unwrap_or("?").to_string();
+                    vec![vec![ParseTree::leaf(&name)]]
+                }
+                GKind::Epsilon => vec![vec![ParseTree::leaf("ε")]],
+                _ => vec![vec![]],
+            };
+            visited.remove(&node_id);
+            return result;
+        }
+
+        let pack_ids: Vec<PackID> = node.pack_ns.iter().cloned().collect();
+        let mut all_child_lists: Vec<Vec<ParseTree>> = Vec::new();
+
+        for pack_id in pack_ids {
+            let (left_c, right_c) = {
+                let pack = &self.sppf.pack_nodes[pack_id.0];
+                (pack.left_c, pack.right_c)
+            };
+
+            let left_options: Vec<Vec<ParseTree>> = match left_c {
+                Some(left_id) => self.flatten_tree_all(left_id, visited),
+                None => vec![vec![]],
+            };
+            let right_options = self.flatten_tree_all(right_c, visited);
+
+            // Cartesian product: every left child-list paired with every right child-list
+            for left_children in &left_options {
+                for right_children in &right_options {
+                    let mut children = left_children.clone();
+                    children.extend_from_slice(right_children);
+                    all_child_lists.push(children);
+                }
+            }
+        }
+
+        // Only LHS nodes wrap into a named ParseTree; all others stay flat
+        let result = match g_node.kind {
+            GKind::LHS(nt_id) => {
+                let name = self
+                    .grammar
+                    .non_terminal_str(nt_id)
+                    .unwrap_or("?")
+                    .to_string();
+                all_child_lists
+                    .into_iter()
+                    .map(|children| {
+                        vec![ParseTree::new(ParseSymbol::NonTerminal(name.clone()), children)]
+                    })
+                    .collect()
+            }
+            _ => all_child_lists,
+        };
+
+        visited.remove(&node_id);
+        result
+    }
+
+    /// Parse and return ALL parse trees (for ambiguous grammars).
+    /// Returns an empty Vec if the input is not accepted.
+    pub fn parse_all(&mut self, input: &Vec<u32>) -> Vec<ParseTree> {
+        let accepted = self.parse_on(input.to_vec());
+        if !accepted {
+            return vec![];
+        }
+
+        let start_gn = *self.g_grammar.headers.get(&self.grammar.start).unwrap();
+        let root_id = self.sppf.find(start_gn, 0, self.input.len() as u32);
+
+        let mut visited = HashSet::default();
+        self.flatten_tree_all(root_id, &mut visited)
+            .into_iter()
+            .flatten()
+            .collect()
+    }
 }
 
 mod tests {
@@ -1162,5 +1259,32 @@ mod tests {
             }
             None => println!("\n✗ Parse failed!"),
         }
+    }
+
+    #[test]
+    fn test_gll_parse_all_ambiguous() {
+        // Classic ambiguous grammar: E → E + E | id
+        // "id + id + id" has 2 parse trees (left and right associativity)
+        let json = r#"{
+            "name": "ambig_expr",
+            "start": "<E>",
+            "rules": {
+                "<E>": [["<E>", "+", "<E>"], ["id"]]
+            }
+        }"#;
+        let grammar = grammars::load_grammar_from_str(json).unwrap();
+        let mut parser = GLLParser::new(&grammar);
+
+        let id  = grammar.terminals.get_id("id").expect("id");
+        let plus = grammar.terminals.get_id("+").expect("+");
+        // id + id + id
+        let input = vec![id, plus, id, plus, id];
+
+        let trees = parser.parse_all(&input);
+        println!("parse_all found {} tree(s):", trees.len());
+        for (i, t) in trees.iter().enumerate() {
+            println!("Tree {}:\n{}", i + 1, t.display());
+        }
+        assert_eq!(trees.len(), 2, "Expected exactly 2 parse trees for id+id+id");
     }
 }

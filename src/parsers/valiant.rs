@@ -386,6 +386,18 @@ impl ValiantParser {
     pub fn parse_on(&mut self, text: &[u32], start_symbol: u32) -> Option<ParseTree> {
         let length = text.len();
         if length == 0 {
+            // Valiant's algorithm requires n ≥ 1; use `start_nullable` for ε.
+            if self.grammar.start_nullable {
+                return Some(ParseTree::new(
+                    ParseSymbol::NonTerminal(
+                        self.grammar
+                            .non_terminal_str(start_symbol)
+                            .unwrap_or("S")
+                            .to_string(),
+                    ),
+                    vec![],
+                ));
+            }
             return None;
         }
 

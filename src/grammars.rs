@@ -109,6 +109,9 @@ pub struct NumericGrammar {
     pub tests: Vec<Vec<u32>>,
     pub terminals: SymbolTable,
     pub non_terminals: SymbolTable,
+    /// True if the start symbol can derive the empty string (ε).
+    /// Set on CNF grammars by `to_cnf()` so that CYK/Valiant can handle ε.
+    pub start_nullable: bool,
 }
 
 impl NumericGrammar {
@@ -121,6 +124,7 @@ impl NumericGrammar {
             tests: Vec::new(),
             terminals: SymbolTable::new(),
             non_terminals: SymbolTable::new(),
+            start_nullable: false,
         }
     }
 
@@ -728,18 +732,44 @@ impl StrGrammar {
 
 // Converting grammars to CNF
 impl NumericGrammar {
+    /// Returns `true` if the given non-terminal can derive the empty string.
+    pub fn nt_derives_epsilon(&self, nt: u32) -> bool {
+        let mut nullable: HashSet<u32> = HashSet::new();
+        let mut changed = true;
+        while changed {
+            changed = false;
+            for (lhs, prods) in &self.rules {
+                if nullable.contains(lhs) {
+                    continue;
+                }
+                for prod in prods {
+                    let derives_eps = prod.is_empty()
+                        || prod.iter().all(|sym| match sym {
+                            NumSymbol::Terminal(_) => false,
+                            NumSymbol::NonTerminal(id) => nullable.contains(id),
+                        });
+                    if derives_eps {
+                        nullable.insert(*lhs);
+                        changed = true;
+                        break;
+                    }
+                }
+            }
+        }
+        nullable.contains(&nt)
+    }
+
     /// Convert the grammar to Chomsky Normal Form (CNF)
     pub fn to_cnf(&self) -> NumericGrammar {
+        let start_nullable = self.nt_derives_epsilon(self.start);
         let mut cnf_grammar = self.to_str_grammar();
         cnf_grammar = cnf_grammar.replace_terminal_symbols();
         cnf_grammar = cnf_grammar.decompose_grammar();
         cnf_grammar = cnf_grammar.eliminate_epsilon();
         cnf_grammar = cnf_grammar.remove_unit_rules();
-        // g3 = balance_grammar(g2)
-        // g3['<>'] = [[]]
-        // g4 = eliminate_epsilon(g3)
-        // g5 = remove_unit_rules(g4)
-        cnf_grammar.to_numeric_grammar()
+        let mut result = cnf_grammar.to_numeric_grammar();
+        result.start_nullable = start_nullable;
+        result
     }
 }
 

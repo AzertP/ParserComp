@@ -154,6 +154,19 @@ impl CYKParser {
     pub fn parse_on(&self, text: &[u32], start_symbol: u32) -> Option<ParseTree> {
         let length = text.len();
         if length == 0 {
+            // Standard CYK cannot handle ε; defer to the `start_nullable` flag
+            // that `to_cnf()` sets when the original start symbol derives ε.
+            if self.grammar.start_nullable {
+                return Some(ParseTree::new(
+                    ParseSymbol::NonTerminal(
+                        self.grammar
+                            .non_terminal_str(start_symbol)
+                            .unwrap_or("S")
+                            .to_string(),
+                    ),
+                    vec![],
+                ));
+            }
             return None;
         }
 

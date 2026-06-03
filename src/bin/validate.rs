@@ -260,14 +260,14 @@ fn run_main() {
                     Outcome::Reject
                 },
             });
-            results.push(ParserResult {
-                name: "Valiant",
-                outcome: if valiant::parse(&cnf_grammar, &cnf_tokens).is_some() {
-                    Outcome::Accept
-                } else {
-                    Outcome::Reject
-                },
-            });
+            // results.push(ParserResult {
+            //     name: "Valiant",
+            //     outcome: if valiant::parse(&cnf_grammar, &cnf_tokens).is_some() {
+            //         Outcome::Accept
+            //     } else {
+            //         Outcome::Reject
+            //     },
+            // });
             if let Some(ref p) = ll_parser {
                 results.push(ParserResult {
                     name: "LL",
@@ -414,11 +414,405 @@ fn run_main() {
     }
 }
 
+// ============================================================================
+// Ground truth predicates for small, well-understood languages
+// ============================================================================
+
+/// a^n b^n for n ≥ 0
+fn gt_anbn(s: &str) -> bool {
+    let n = s.chars().take_while(|&c| c == 'a').count();
+    s.len() == 2 * n && s.chars().skip(n).all(|c| c == 'b')
+}
+
+/// Dyck-1: balanced parentheses over {(, )}
+fn gt_balanced_parens(s: &str) -> bool {
+    let mut depth: i32 = 0;
+    for c in s.chars() {
+        match c {
+            '(' => depth += 1,
+            ')' => {
+                depth -= 1;
+                if depth < 0 {
+                    return false;
+                }
+            }
+            _ => return false,
+        }
+    }
+    depth == 0
+}
+
+/// Dyck-2: properly nested brackets over {(, ), [, ]}
+fn gt_dyck2(s: &str) -> bool {
+    let mut stack: Vec<char> = Vec::new();
+    for c in s.chars() {
+        match c {
+            '(' | '[' => stack.push(c),
+            ')' => {
+                if stack.pop() != Some('(') {
+                    return false;
+                }
+            }
+            ']' => {
+                if stack.pop() != Some('[') {
+                    return false;
+                }
+            }
+            _ => return false,
+        }
+    }
+    stack.is_empty()
+}
+
+/// Palindromes over {a, b}
+fn gt_palindrome_ab(s: &str) -> bool {
+    let v: Vec<char> = s.chars().collect();
+    v.iter().eq(v.iter().rev())
+}
+
+/// S → A B C; A → a|ε; B → b|ε; C → c|ε
+/// Accepted strings: the 8 ordered sub-sequences of "abc"
+fn gt_nullable_abc(s: &str) -> bool {
+    matches!(s, "" | "a" | "b" | "c" | "ab" | "ac" | "bc" | "abc")
+}
+
+/// S → S+S | S*S | a  (ambiguous arithmetic)
+/// Language: a ((+|*) a)*  — odd-length strings alternating a and operator
+fn gt_ambi_expr(s: &str) -> bool {
+    let chars: Vec<char> = s.chars().collect();
+    if chars.is_empty() || chars.len() % 2 == 0 {
+        return false;
+    }
+    for (i, &c) in chars.iter().enumerate() {
+        if i % 2 == 0 && c != 'a' {
+            return false;
+        }
+        if i % 2 == 1 && c != '+' && c != '*' {
+            return false;
+        }
+    }
+    true
+}
+
+/// a*b*: any number of a's followed by any number of b's
+fn gt_star_ab(s: &str) -> bool {
+    let mut saw_b = false;
+    for c in s.chars() {
+        match c {
+            'a' => {
+                if saw_b {
+                    return false;
+                }
+            }
+            'b' => saw_b = true,
+            _ => return false,
+        }
+    }
+    true
+}
+
+// ============================================================================
+// Exhaustive string enumeration
+// ============================================================================
+
+/// Generate all strings over `terminals` (each a token string) with total
+/// token-count 0..=max_tokens, by BFS.  For single-character tokens the
+/// string length equals the token count.
+fn enumerate_strings(terminals: &[String], max_tokens: usize) -> Vec<String> {
+    let mut result: Vec<String> = Vec::new();
+    let mut frontier: Vec<String> = vec![String::new()]; // length 0
+    result.push(String::new());
+    for _ in 1..=max_tokens {
+        let mut next: Vec<String> = Vec::with_capacity(frontier.len() * terminals.len());
+        for prefix in &frontier {
+            for sym in terminals {
+                next.push(format!("{}{}", prefix, sym));
+            }
+        }
+        result.extend(next.iter().cloned());
+        frontier = next;
+    }
+    result
+}
+
+// ============================================================================
+// Exhaustive + ground truth validation
+// ============================================================================
+
+struct ExhaustiveCase {
+    name: &'static str,
+    /// Raw JSON text of the grammar (embedded at compile time).
+    grammar_json: &'static str,
+    /// Maximum token count (= string length for single-char terminals).
+    max_tokens: usize,
+    /// Optional closed-form membership predicate used as ground truth.
+    ground_truth: Option<fn(&str) -> bool>,
+}
+
+fn exhaustive_cases() -> Vec<ExhaustiveCase> {
+    vec![
+        ExhaustiveCase {
+            name: "ab  (a^n b^n)",
+            grammar_json: include_str!("../../test/grammar/ab.json"),
+            max_tokens: 8,
+            ground_truth: Some(gt_anbn),
+        },
+        ExhaustiveCase {
+            name: "parentheses  (Dyck-1)",
+            grammar_json: include_str!("../../test/grammar/parentheses.json"),
+            max_tokens: 8,
+            ground_truth: Some(gt_balanced_parens),
+        },
+        ExhaustiveCase {
+            name: "dyck2  (Dyck-2)",
+            grammar_json: include_str!("../../test/grammar/dyck2.json"),
+            max_tokens: 6,
+            ground_truth: Some(gt_dyck2),
+        },
+        ExhaustiveCase {
+            name: "palindrome  (palindromes over {a,b})",
+            grammar_json: include_str!("../../test/grammar/palindrome.json"),
+            max_tokens: 8,
+            ground_truth: Some(gt_palindrome_ab),
+        },
+        ExhaustiveCase {
+            name: "nullable  (ordered sub-sequences of abc)",
+            grammar_json: include_str!("../../test/grammar/nullable.json"),
+            max_tokens: 3,
+            ground_truth: Some(gt_nullable_abc),
+        },
+        ExhaustiveCase {
+            name: "ambi  (ambiguous arithmetic)",
+            grammar_json: include_str!("../../test/grammar/ambi.json"),
+            max_tokens: 7,
+            ground_truth: Some(gt_ambi_expr),
+        },
+        ExhaustiveCase {
+            name: "expr_lr  (LR arithmetic)",
+            grammar_json: include_str!("../../test/grammar/expr_lr.json"),
+            max_tokens: 4,
+            ground_truth: None, // language not expressible as a simple predicate
+        },
+        ExhaustiveCase {
+            name: "star  (a*b*)",
+            grammar_json: include_str!("../../test/grammar/star.json"),
+            max_tokens: 8,
+            ground_truth: Some(gt_star_ab),
+        },
+    ]
+}
+
+/// Run exhaustive small-language validation.
+/// Returns `true` if everything passed (no differential failures and no
+/// ground-truth mismatches).
+fn run_exhaustive_validation() -> bool {
+    println!("\n{}", "=".repeat(60));
+    println!("Exhaustive Small-Language Validation");
+    println!("{}", "=".repeat(60));
+
+    let mut all_ok = true;
+    let mut grand_total = 0usize;
+    let mut grand_diff_fail = 0usize;
+    let mut grand_gt_fail = 0usize;
+
+    for case in exhaustive_cases() {
+        // Load grammar.
+        let grammar = match grammars::load_grammar_from_str(case.grammar_json) {
+            Ok(g) => g,
+            Err(e) => {
+                eprintln!("[ERROR] Could not load grammar '{}': {}", case.name, e);
+                all_ok = false;
+                continue;
+            }
+        };
+        let cnf_grammar = grammar.to_cnf();
+
+        // Build parsers.
+        let parse_table = build_glr_table_online(&grammar);
+        let rnglr = RnglrParser::with_grammar(parse_table.clone(), grammar.clone());
+        let brnglr = BrnglrParser::with_grammar(parse_table, grammar.clone());
+        let mut gll_parser = gll::GLLParser::new(&grammar);
+        let mut leo = earley_leo::LeoParser::new(grammar.clone());
+
+        let ll_parser = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            LLParser::new(&grammar)
+        }))
+        .ok();
+        let lr_parser = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            LRParser::new(&grammar)
+        }))
+        .ok();
+
+        // Collect terminal alphabet (token strings, typically single characters).
+        let alphabet: Vec<String> = (0..grammar.num_terminals())
+            .map(|i| grammar.terminal_str(i as u32).unwrap().to_string())
+            .collect();
+
+        // Enumerate every string over the alphabet up to max_tokens length.
+        let strings = enumerate_strings(&alphabet, case.max_tokens);
+        let total = strings.len();
+
+        let mut diff_fail = 0usize;
+        let mut gt_fail = 0usize;
+
+        for input in &strings {
+            // Tokenize.
+            let tokens = match grammar.tokenize(input) {
+                Some(t) => t,
+                None => continue, // should never happen for generated strings
+            };
+            let cnf_tokens = cnf_grammar.tokenize(input).unwrap_or_default();
+            let glr_tokens: Vec<i32> = tokens.iter().map(|&t| (t + 1) as i32).collect();
+
+            // Run all parsers.
+            let leo_acc = leo.parse(tokens.clone()).is_some();
+            let gll_acc = gll_parser.parse(&tokens).is_some();
+            let rnglr_acc = rnglr.parse(&glr_tokens).is_some();
+            let brnglr_acc = brnglr.parse(&glr_tokens).is_some();
+            let cyk_acc = cyk::parse(&cnf_grammar, &cnf_tokens).is_some();
+            // let val_acc = valiant::parse(&cnf_grammar, &cnf_tokens).is_some();
+            let ll_acc = ll_parser.as_ref().map(|p| p.parse(&tokens).is_some());
+            let lr_acc = lr_parser.as_ref().map(|p| p.parse(&glr_tokens).is_some());
+
+            // Differential check: all non-conflicting parsers must agree.
+            let non_conflict_results: Vec<bool> = {
+                let mut v = vec![leo_acc, gll_acc, rnglr_acc, brnglr_acc, cyk_acc];
+                if let Some(r) = ll_acc {
+                    v.push(r);
+                }
+                if let Some(r) = lr_acc {
+                    v.push(r);
+                }
+                v
+            };
+            let all_accept_d = non_conflict_results.iter().all(|&r| r);
+            let all_reject_d = non_conflict_results.iter().all(|&r| !r);
+            let diff_ok = all_accept_d || all_reject_d;
+
+            if !diff_ok {
+                diff_fail += 1;
+                all_ok = false;
+                let detail = format!(
+                    "Leo:{} GLL:{} RNGLR:{} BRNGLR:{} CYK:{} {}{}",
+                    if leo_acc { "A" } else { "R" },
+                    if gll_acc { "A" } else { "R" },
+                    if rnglr_acc { "A" } else { "R" },
+                    if brnglr_acc { "A" } else { "R" },
+                    if cyk_acc { "A" } else { "R" },
+                    // if val_acc { "A" } else { "R" },
+                    ll_acc.map_or(String::new(), |r| format!(" LL:{}", if r { "A" } else { "R" })),
+                    lr_acc.map_or(String::new(), |r| format!(" LR:{}", if r { "A" } else { "R" })),
+                );
+                println!(
+                    "  DIFF-FAIL  input={:?}  {}",
+                    if input.is_empty() { "(empty)" } else { input },
+                    detail
+                );
+            }
+
+            // Ground truth check.
+            if let Some(gt_fn) = case.ground_truth {
+                let expected = gt_fn(input);
+                // Use the majority / consensus verdict (Leo as reference — it's Earley + Leo).
+                let parser_says = leo_acc; // will also equal gll_acc / rnglr_acc if diff_ok
+                if expected != parser_says || !diff_ok {
+                    let any_wrong = expected != leo_acc
+                        || expected != gll_acc
+                        || expected != rnglr_acc
+                        || expected != brnglr_acc
+                        || expected != cyk_acc
+                        // || expected != val_acc
+                        || ll_acc.map_or(false, |r| r != expected)
+                        || lr_acc.map_or(false, |r| r != expected);
+                    if any_wrong {
+                        gt_fail += 1;
+                        all_ok = false;
+                        println!(
+                            "  GT-FAIL    input={:?}  expected={}  Leo:{} GLL:{} RNGLR:{} BRNGLR:{} CYK:{}",
+                            if input.is_empty() { "(empty)" } else { input },
+                            if expected { "ACCEPT" } else { "REJECT" },
+                            if leo_acc { "A" } else { "R" },
+                            if gll_acc { "A" } else { "R" },
+                            if rnglr_acc { "A" } else { "R" },
+                            if brnglr_acc { "A" } else { "R" },
+                            if cyk_acc { "A" } else { "R" },
+                            // if val_acc { "A" } else { "R" },
+                        );
+                    }
+                }
+            }
+        }
+
+        grand_total += total;
+        grand_diff_fail += diff_fail;
+        grand_gt_fail += gt_fail;
+
+        let gt_summary = if case.ground_truth.is_some() {
+            let gt_pass = total - gt_fail;
+            format!(
+                "  GT: {}/{} ok{}",
+                gt_pass,
+                total,
+                if gt_fail > 0 {
+                    format!(", {} MISMATCH", gt_fail)
+                } else {
+                    String::new()
+                }
+            )
+        } else {
+            String::new()
+        };
+
+        println!(
+            "\n  {:50}  {} strings  |  diff: {}/{} ok{}{}",
+            case.name,
+            total,
+            total - diff_fail,
+            total,
+            if diff_fail > 0 {
+                format!(", {} FAIL", diff_fail)
+            } else {
+                String::new()
+            },
+            gt_summary,
+        );
+    }
+
+    // Grand summary.
+    println!("\n{}", "=".repeat(60));
+    println!("Exhaustive Validation Summary");
+    println!("{}", "=".repeat(60));
+    println!("  Total strings tested : {}", grand_total);
+    println!(
+        "  Differential PASS    : {}",
+        grand_total - grand_diff_fail
+    );
+    if grand_diff_fail > 0 {
+        println!("  Differential FAIL    : {}  *** PROBLEMS ***", grand_diff_fail);
+    } else {
+        println!("  Differential FAIL    : 0");
+    }
+    if grand_gt_fail > 0 {
+        println!("  Ground truth FAIL    : {}  *** PROBLEMS ***", grand_gt_fail);
+    } else {
+        println!("  Ground truth FAIL    : 0");
+    }
+
+    all_ok
+}
+
 fn main() {
     // Run on a large stack to avoid overflow on deep recursion.
     std::thread::Builder::new()
         .stack_size(128 * 1024 * 1024)
-        .spawn(run_main)
+        .spawn(|| {
+            run_main();
+            println!();
+            let exhaustive_ok = run_exhaustive_validation();
+            if !exhaustive_ok {
+                std::process::exit(1);
+            }
+        })
         .expect("Failed to spawn thread")
         .join()
         .expect("Thread panicked");

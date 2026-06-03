@@ -337,17 +337,18 @@ impl LeoParser {
 
     /// Recursively finds the top-most item in a deterministic right-recursive chain.
     fn get_top(&mut self, state_a: State, current_col_idx: usize) -> Option<State> {
-        // 1. Find the unique parent (state_b_inc) that satisfies deterministic constraints
-        let st_b_inc = self.uniq_postdot(state_a, current_col_idx)?;
-        
         let lhs_a = self.grammar.rules[state_a.rule_id.0].lhs;
         let col_s1_idx = state_a.s_col.0;
 
-        // 2. Memoization Check: Did we already find the top for this symbol at that start column?
-        // Note: We check col_s1 (where A started) for transitives of *A* (the child)
+        // 1. Memoization Check: Did we already find the top for this symbol at that start column?
+        // Must be checked BEFORE calling uniq_postdot to avoid recording redundant postdots entries
+        // when the same Leo chain is traversed more than once.
         if let Some(&cached_top) = self.chart.columns[col_s1_idx].transitives.get(&lhs_a) {
              return Some(cached_top);
         }
+
+        // 2. Find the unique parent (state_b_inc) that satisfies deterministic constraints
+        let st_b_inc = self.uniq_postdot(state_a, current_col_idx)?;
 
         // 3. Advance the parent to create the completed B state
         let st_b = self.advance(&st_b_inc);
@@ -915,8 +916,11 @@ impl<'a> ForestBuilder<'a> {
                     for &k in cols {
                         if k < target_start || k > current_end { continue; }
 
-                        // Try each rule for child_sym
-                        for &c_rule_id in child_rules {
+                        // Try each rule for child_sym.
+                        // We break after the first rule that yields a derivation: since
+                        // find_node memoises by (symbol, start, end), a second matching rule
+                        // would return the identical cached node and produce exact duplicates.
+                        'rule_loop: for &c_rule_id in child_rules {
                             // Virtual state C must be complete (dot at end)
                             // C starts at k. Ends at current_end.
                             // Condition: check_deterministic_parent(C) == expected_parent
@@ -929,10 +933,13 @@ impl<'a> ForestBuilder<'a> {
                                     
                                     if let Some(child_node) = self.find_node(child_sym, k, current_end, Some(c_state)) {
                                         let prefix_paths = self.walk_back(rule_id, dot - 1, k, target_start);
-                                        for mut path in prefix_paths {
-                                            path.push(child_node.clone());
-                                            results.push(path);
-                                            if self.single { return results; }
+                                        if !prefix_paths.is_empty() {
+                                            for mut path in prefix_paths {
+                                                path.push(child_node.clone());
+                                                results.push(path);
+                                                if self.single { return results; }
+                                            }
+                                            break 'rule_loop; // derivation found for this k; skip remaining rules
                                         }
                                     }
                                 }

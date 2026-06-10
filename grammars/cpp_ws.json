@@ -823,12 +823,12 @@
       [ "[", "<OWS>", "]" ]
     ],
     "<template_declaration>": [
-      [ "e", "x", "p", "o", "r", "t", "t", "e", "m", "p", "l", "a", "t", "e", "<OWS>", "<", "<OWS>", "<template_argument_list>", "<OWS>", ">", "<OWS>", "<declaration>" ],
-      [ "t", "e", "m", "p", "l", "a", "t", "e", "<OWS>", "<", "<OWS>", "<template_argument_list>", "<OWS>", ">", "<OWS>", "<declaration>" ]
+      [ "e", "x", "p", "o", "r", "t", "t", "e", "m", "p", "l", "a", "t", "e", "<OWS>", "<", "<OWS>", "<template_parameter_list>", "<OWS>", ">", "<OWS>", "<declaration>" ],
+      [ "t", "e", "m", "p", "l", "a", "t", "e", "<OWS>", "<", "<OWS>", "<template_parameter_list>", "<OWS>", ">", "<OWS>", "<declaration>" ]
     ],
     "<template_parameter_list>": [
       [ "<template_parameter>" ],
-      [ "<template_parameter_list>", "<OWS>", ",", "<OWS>", "<template_argument>" ]
+      [ "<template_parameter_list>", "<OWS>", ",", "<OWS>", "<template_parameter>" ]
     ],
     "<template_parameter>": [
       [ "<type_parameter>" ],
@@ -845,8 +845,7 @@
       [ "t", "y", "p", "e", "n", "a", "m", "e", "<OWS>", "=", "<OWS>", "<type_id>" ],
       [ "t", "e", "m", "p", "l", "a", "t", "e", "<OWS>", "<", "<OWS>", "<template_parameter_list>", "<OWS>", ">", "<OWS>", "c", "l", "a", "s", "s", "<OWS>", "<identifier>" ],
       [ "t", "e", "m", "p", "l", "a", "t", "e", "<OWS>", "<", "<OWS>", "<template_parameter_list>", "<OWS>", ">", "<OWS>", "c", "l", "a", "s", "s" ],
-      [ "t", "e", "m", "p", "l", "a", "t", "e", "<OWS>", "<", "<OWS>", "<template_parameter_list>", "<OWS>", ">", "<OWS>", "c", "l", "a", "s", "s", "<OWS>", "<identifier>" ],
-      [ "=", "<OWS>", "<id_expression>" ],
+      [ "t", "e", "m", "p", "l", "a", "t", "e", "<OWS>", "<", "<OWS>", "<template_parameter_list>", "<OWS>", ">", "<OWS>", "c", "l", "a", "s", "s", "<OWS>", "<identifier>", "<OWS>", "=", "<OWS>", "<id_expression>" ],
       [ "t", "e", "m", "p", "l", "a", "t", "e", "<OWS>", "<", "<OWS>", "<template_parameter_list>", "<OWS>", ">", "<OWS>", "c", "l", "a", "s", "s", "<OWS>", "=", "<OWS>", "<id_expression>" ]
     ],
     "<template_id>": [

@@ -1,0 +1,78 @@
+{
+  "skip": [
+    "^[ \\t\\r\\n]+",
+    "^//[^\\n]*(?:\\n|$)",
+    "^/\\*[^*]*\\*+(?:[^/*][^*]*\\*+)*/",
+    "^#[^\\n]*(?:\\\\\\n[^\\n]*)*"
+  ],
+  "tokens": [
+    ["STRING", "^(?:u8|[uUL])?R\"[^()\\\\ \\t\\r\\n]*\\((?s:.*?)\\)[^()\\\\ \\t\\r\\n]*\""],
+    ["STRING", "^(?:u8|[uUL])?'(?:\\\\.|[^\\\\'\\n])+'"],
+    ["STRING", "^(?:u8|[uUL])?\"(?:\\\\.|[^\\\\\"\\n])*\""],
+
+    ["REAL", "^(?:(?:[0-9](?:'?[0-9])*)\\.(?:[0-9](?:'?[0-9])*)?|\\.(?:[0-9](?:'?[0-9])*))(?:[eE][+-]?[0-9](?:'?[0-9])*)?[fFlL]?"],
+    ["REAL", "^(?:[0-9](?:'?[0-9])*)[eE][+-]?[0-9](?:'?[0-9])*[fFlL]?"],
+    ["REAL", "^0[xX](?:(?:[0-9A-Fa-f](?:'?[0-9A-Fa-f])*)\\.(?:[0-9A-Fa-f](?:'?[0-9A-Fa-f])*)?|\\.(?:[0-9A-Fa-f](?:'?[0-9A-Fa-f])*)|(?:[0-9A-Fa-f](?:'?[0-9A-Fa-f])*))[pP][+-]?[0-9](?:'?[0-9])*[fFlL]?"],
+
+    ["INTEGER", "^0[bB][01](?:'?[01])*(?:(?:[uU](?:ll|LL|l|L)?)|(?:(?:ll|LL|l|L)[uU]?))?"],
+    ["INTEGER", "^0[xX][0-9A-Fa-f](?:'?[0-9A-Fa-f])*(?:(?:[uU](?:ll|LL|l|L)?)|(?:(?:ll|LL|l|L)[uU]?))?"],
+    ["INTEGER", "^0(?:'?[0-7])*(?:(?:[uU](?:ll|LL|l|L)?)|(?:(?:ll|LL|l|L)[uU]?))?"],
+    ["INTEGER", "^[1-9](?:'?[0-9])*(?:(?:[uU](?:ll|LL|l|L)?)|(?:(?:ll|LL|l|L)[uU]?))?"],
+
+    ["ID_OR_KEYWORD", "^[A-Za-z_][A-Za-z0-9_]*"],
+
+    ["OP", "^\\.\\.\\."],
+    ["OP", "^>>="],
+    ["OP", "^<<="],
+    ["OP", "^->\\*"],
+    ["OP", "^\\.\\*"],
+    ["OP", "^::"],
+    ["OP", "^->"],
+    ["OP", "^\\+\\+"],
+    ["OP", "^--"],
+    ["OP", "^&&"],
+    ["OP", "^\\|\\|"],
+    ["OP", "^<="],
+    ["OP", "^>="],
+    ["OP", "^=="],
+    ["OP", "^!="],
+    ["OP", "^\\+="],
+    ["OP", "^-="],
+    ["OP", "^\\*="],
+    ["OP", "^/="],
+    ["OP", "^%="],
+    ["OP", "^&="],
+    ["OP", "^\\|="],
+    ["OP", "^\\^="],
+    ["OP", "^<<"],
+
+    ["OP", "^[{}()\\[\\];,.:?~!+\\-*/%&|^=<>]"]
+  ],
+  "keywords": [
+    "asm", "auto", "bool", "break", "case", "catch",
+    "char", "class", "const", "const_cast", "continue",
+    "default", "delete", "do", "double", "dynamic_cast",
+    "else", "enum", "explicit", "export", "extern", "false",
+    "float", "for", "friend", "goto", "if", "inline", "int",
+    "long", "mutable", "namespace", "new", "operator", "private",
+    "protected", "public", "register", "reinterpret_cast", "return",
+    "short", "signed", "sizeof", "static", "static_assert",
+    "static_cast", "struct", "switch", "template", "this", "throw",
+    "true", "try", "typedef", "typeid", "typename", "union",
+    "unsigned", "using", "virtual", "void", "volatile", "wchar_t",
+    "while"
+  ],
+  "aliases": {
+    "and": "&&",
+    "and_eq": "&=",
+    "bitand": "&",
+    "bitor": "|",
+    "compl": "~",
+    "not": "!",
+    "not_eq": "!=",
+    "or": "||",
+    "or_eq": "|=",
+    "xor": "^",
+    "xor_eq": "^="
+  }
+}

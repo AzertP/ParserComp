@@ -1,0 +1,1786 @@
+{
+  "name": "java_tok",
+  "start": "<CompilationUnit>",
+  "rules": {
+    "<Literal>": [
+      ["IntegerLiteral"],
+      ["FloatingPointLiteral"],
+      ["BooleanLiteral"],
+      ["CharacterLiteral"],
+      ["StringLiteral"],
+      ["TextBlock"],
+      ["NullLiteral"]
+    ],
+    "<Identifier>": [
+      ["Identifier"],
+      ["exports"],
+      ["module"],
+      ["open"],
+      ["opens"],
+      ["permits"],
+      ["provides"],
+      ["record"],
+      ["requires"],
+      ["sealed"],
+      ["to"],
+      ["transitive"],
+      ["uses"],
+      ["var"],
+      ["with"],
+      ["yield"]
+    ],
+    "<TypeIdentifier>": [
+      ["Identifier"],
+      ["exports"],
+      ["module"],
+      ["open"],
+      ["opens"],
+      ["provides"],
+      ["requires"],
+      ["to"],
+      ["transitive"],
+      ["uses"],
+      ["with"]
+    ],
+    "<UnqualifiedMethodIdentifier>": [
+      ["Identifier"],
+      ["exports"],
+      ["module"],
+      ["open"],
+      ["opens"],
+      ["permits"],
+      ["provides"],
+      ["record"],
+      ["requires"],
+      ["sealed"],
+      ["to"],
+      ["transitive"],
+      ["uses"],
+      ["var"],
+      ["with"]
+    ],
+    "<VariableAccess>": [
+      ["<ExpressionName>"],
+      ["<FieldAccess>"]
+    ],
+    "<Type>": [
+      ["<PrimitiveType>"],
+      ["<ReferenceType>"]
+    ],
+    "<PrimitiveType>": [
+      ["<PrimitiveType_g0>", "<NumericType>"],
+      ["<PrimitiveType_g1>", "boolean"]
+    ],
+    "<PrimitiveType_g0>": [
+      [],
+      ["<Annotation>", "<PrimitiveType_g0>"]
+    ],
+    "<PrimitiveType_g1>": [
+      [],
+      ["<Annotation>", "<PrimitiveType_g1>"]
+    ],
+    "<NumericType>": [
+      ["<IntegralType>"],
+      ["<FloatingPointType>"]
+    ],
+    "<IntegralType>": [
+      ["byte"],
+      ["short"],
+      ["int"],
+      ["long"],
+      ["char"]
+    ],
+    "<FloatingPointType>": [
+      ["float"],
+      ["double"]
+    ],
+    "<ReferenceType>": [
+      ["<ClassOrInterfaceType>"],
+      ["<TypeVariable>"],
+      ["<ArrayType>"]
+    ],
+    "<ClassOrInterfaceType>": [
+      ["<ClassType>"],
+      ["<InterfaceType>"]
+    ],
+    "<ClassType>": [
+      ["<ClassType_g0>", "<TypeIdentifier>", "<ClassType_g1>"],
+      ["<PackageName>", ".", "<ClassType_g2>", "<TypeIdentifier>", "<ClassType_g3>"],
+      ["<ClassOrInterfaceType>", ".", "<ClassType_g4>", "<TypeIdentifier>", "<ClassType_g5>"]
+    ],
+    "<ClassType_g0>": [
+      [],
+      ["<Annotation>", "<ClassType_g0>"]
+    ],
+    "<ClassType_g1>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<ClassType_g2>": [
+      [],
+      ["<Annotation>", "<ClassType_g2>"]
+    ],
+    "<ClassType_g3>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<ClassType_g4>": [
+      [],
+      ["<Annotation>", "<ClassType_g4>"]
+    ],
+    "<ClassType_g5>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<InterfaceType>": [
+      ["<ClassType>"]
+    ],
+    "<TypeVariable>": [
+      ["<TypeVariable_g0>", "<TypeIdentifier>"]
+    ],
+    "<TypeVariable_g0>": [
+      [],
+      ["<Annotation>", "<TypeVariable_g0>"]
+    ],
+    "<ArrayType>": [
+      ["<PrimitiveType>", "<Dims>"],
+      ["<ClassOrInterfaceType>", "<Dims>"],
+      ["<TypeVariable>", "<Dims>"]
+    ],
+    "<Dims>": [
+      ["<Dims_g0>", "[", "]", "<Dims_g2>"]
+    ],
+    "<Dims_g0>": [
+      [],
+      ["<Annotation>", "<Dims_g0>"]
+    ],
+    "<Dims_g1>": [
+      [],
+      ["<Annotation>", "<Dims_g1>"]
+    ],
+    "<Dims_g2>": [
+      [],
+      ["<Dims_g1>", "[", "]", "<Dims_g2>"]
+    ],
+    "<TypeParameter>": [
+      ["<TypeParameter_g0>", "<TypeIdentifier>", "<TypeParameter_g1>"]
+    ],
+    "<TypeParameter_g0>": [
+      [],
+      ["<TypeParameterModifier>", "<TypeParameter_g0>"]
+    ],
+    "<TypeParameter_g1>": [
+      [],
+      ["<TypeBound>"]
+    ],
+    "<TypeParameterModifier>": [
+      ["<Annotation>"]
+    ],
+    "<TypeBound>": [
+      ["extends", "<TypeVariable>"],
+      ["extends", "<ClassOrInterfaceType>", "<TypeBound_g0>"]
+    ],
+    "<TypeBound_g0>": [
+      [],
+      ["<AdditionalBound>", "<TypeBound_g0>"]
+    ],
+    "<AdditionalBound>": [
+      ["&", "<InterfaceType>"]
+    ],
+    "<TypeArguments>": [
+      ["<", "<TypeArgumentList>", ">"]
+    ],
+    "<TypeArgumentList>": [
+      ["<TypeArgument>", "<TypeArgumentList_g0>"]
+    ],
+    "<TypeArgumentList_g0>": [
+      [],
+      [",", "<TypeArgument>", "<TypeArgumentList_g0>"]
+    ],
+    "<TypeArgument>": [
+      ["<ReferenceType>"],
+      ["<Wildcard>"]
+    ],
+    "<Wildcard>": [
+      ["<Wildcard_g0>", "?", "<Wildcard_g1>"]
+    ],
+    "<Wildcard_g0>": [
+      [],
+      ["<Annotation>", "<Wildcard_g0>"]
+    ],
+    "<Wildcard_g1>": [
+      [],
+      ["<WildcardBounds>"]
+    ],
+    "<WildcardBounds>": [
+      ["extends", "<ReferenceType>"],
+      ["super", "<ReferenceType>"]
+    ],
+    "<ModuleName>": [
+      ["<Identifier>"],
+      ["<ModuleName>", ".", "<Identifier>"]
+    ],
+    "<PackageName>": [
+      ["<Identifier>"],
+      ["<PackageName>", ".", "<Identifier>"]
+    ],
+    "<TypeName>": [
+      ["<TypeIdentifier>"],
+      ["<PackageOrTypeName>", ".", "<TypeIdentifier>"]
+    ],
+    "<ExpressionName>": [
+      ["<Identifier>"],
+      ["<AmbiguousName>", ".", "<Identifier>"]
+    ],
+    "<MethodName>": [
+      ["<UnqualifiedMethodIdentifier>"]
+    ],
+    "<PackageOrTypeName>": [
+      ["<Identifier>"],
+      ["<PackageOrTypeName>", ".", "<Identifier>"]
+    ],
+    "<AmbiguousName>": [
+      ["<Identifier>"],
+      ["<AmbiguousName>", ".", "<Identifier>"]
+    ],
+    "<CompilationUnit>": [
+      ["<OrdinaryCompilationUnit>"],
+      ["<ModularCompilationUnit>"]
+    ],
+    "<OrdinaryCompilationUnit>": [
+      ["<OrdinaryCompilationUnit_g0>", "<OrdinaryCompilationUnit_g1>", "<OrdinaryCompilationUnit_g2>"]
+    ],
+    "<OrdinaryCompilationUnit_g0>": [
+      [],
+      ["<PackageDeclaration>"]
+    ],
+    "<OrdinaryCompilationUnit_g1>": [
+      [],
+      ["<ImportDeclaration>", "<OrdinaryCompilationUnit_g1>"]
+    ],
+    "<OrdinaryCompilationUnit_g2>": [
+      [],
+      ["<TopLevelClassOrInterfaceDeclaration>", "<OrdinaryCompilationUnit_g2>"]
+    ],
+    "<ModularCompilationUnit>": [
+      ["<ModularCompilationUnit_g0>", "<ModuleDeclaration>"]
+    ],
+    "<ModularCompilationUnit_g0>": [
+      [],
+      ["<ImportDeclaration>", "<ModularCompilationUnit_g0>"]
+    ],
+    "<PackageDeclaration>": [
+      ["<PackageDeclaration_g0>", "package", "<Identifier>", "<PackageDeclaration_g1>", ";"]
+    ],
+    "<PackageDeclaration_g0>": [
+      [],
+      ["<PackageModifier>", "<PackageDeclaration_g0>"]
+    ],
+    "<PackageDeclaration_g1>": [
+      [],
+      [".", "<Identifier>", "<PackageDeclaration_g1>"]
+    ],
+    "<PackageModifier>": [
+      ["<Annotation>"]
+    ],
+    "<ImportDeclaration>": [
+      ["<SingleTypeImportDeclaration>"],
+      ["<TypeImportOnDemandDeclaration>"],
+      ["<SingleStaticImportDeclaration>"],
+      ["<StaticImportOnDemandDeclaration>"]
+    ],
+    "<SingleTypeImportDeclaration>": [
+      ["import", "<TypeName>", ";"]
+    ],
+    "<TypeImportOnDemandDeclaration>": [
+      ["import", "<PackageOrTypeName>", ".", "*", ";"]
+    ],
+    "<SingleStaticImportDeclaration>": [
+      ["import", "static", "<TypeName>", ".", "<Identifier>", ";"]
+    ],
+    "<StaticImportOnDemandDeclaration>": [
+      ["import", "static", "<TypeName>", ".", "*", ";"]
+    ],
+    "<TopLevelClassOrInterfaceDeclaration>": [
+      ["<ClassDeclaration>"],
+      ["<InterfaceDeclaration>"],
+      [";"]
+    ],
+    "<ModuleDeclaration>": [
+      ["<ModuleDeclaration_g0>", "<ModuleDeclaration_g1>", "module", "<Identifier>", "<ModuleDeclaration_g2>", "{", "<ModuleDeclaration_g3>", "}"]
+    ],
+    "<ModuleDeclaration_g0>": [
+      [],
+      ["<Annotation>", "<ModuleDeclaration_g0>"]
+    ],
+    "<ModuleDeclaration_g1>": [
+      [],
+      ["open"]
+    ],
+    "<ModuleDeclaration_g2>": [
+      [],
+      [".", "<Identifier>", "<ModuleDeclaration_g2>"]
+    ],
+    "<ModuleDeclaration_g3>": [
+      [],
+      ["<ModuleDirective>", "<ModuleDeclaration_g3>"]
+    ],
+    "<ModuleDirective>": [
+      ["requires", "<ModuleDirective_g0>", "<ModuleName>", ";"],
+      ["exports", "<PackageName>", "<ModuleDirective_g2>", ";"],
+      ["opens", "<PackageName>", "<ModuleDirective_g4>", ";"],
+      ["uses", "<TypeName>", ";"],
+      ["provides", "<TypeName>", "with", "<TypeName>", "<ModuleDirective_g5>", ";"]
+    ],
+    "<ModuleDirective_g0>": [
+      [],
+      ["<RequiresModifier>", "<ModuleDirective_g0>"]
+    ],
+    "<ModuleDirective_g1>": [
+      [],
+      [",", "<ModuleName>"]
+    ],
+    "<ModuleDirective_g2>": [
+      [],
+      ["to", "<ModuleName>", "<ModuleDirective_g1>", "<ModuleDirective_g2>"]
+    ],
+    "<ModuleDirective_g3>": [
+      [],
+      [",", "<ModuleName>"]
+    ],
+    "<ModuleDirective_g4>": [
+      [],
+      ["to", "<ModuleName>", "<ModuleDirective_g3>", "<ModuleDirective_g4>"]
+    ],
+    "<ModuleDirective_g5>": [
+      [],
+      [",", "<TypeName>", "<ModuleDirective_g5>"]
+    ],
+    "<RequiresModifier>": [
+      ["transitive"],
+      ["static"]
+    ],
+    "<ClassDeclaration>": [
+      ["<NormalClassDeclaration>"],
+      ["<EnumDeclaration>"],
+      ["<RecordDeclaration>"]
+    ],
+    "<NormalClassDeclaration>": [
+      ["<NormalClassDeclaration_g0>", "class", "<TypeIdentifier>", "<NormalClassDeclaration_g1>", "<NormalClassDeclaration_g2>", "<NormalClassDeclaration_g3>", "<NormalClassDeclaration_g4>", "<ClassBody>"]
+    ],
+    "<NormalClassDeclaration_g0>": [
+      [],
+      ["<ClassModifier>", "<NormalClassDeclaration_g0>"]
+    ],
+    "<NormalClassDeclaration_g1>": [
+      [],
+      ["<TypeParameters>"]
+    ],
+    "<NormalClassDeclaration_g2>": [
+      [],
+      ["<ClassExtends>"]
+    ],
+    "<NormalClassDeclaration_g3>": [
+      [],
+      ["<ClassImplements>"]
+    ],
+    "<NormalClassDeclaration_g4>": [
+      [],
+      ["<ClassPermits>"]
+    ],
+    "<ClassModifier>": [
+      ["<Annotation>"],
+      ["public"],
+      ["protected"],
+      ["private"],
+      ["abstract"],
+      ["static"],
+      ["final"],
+      ["sealed"],
+      ["non-sealed"],
+      ["strictfp"]
+    ],
+    "<TypeParameters>": [
+      ["<", "<TypeParameterList>", ">"]
+    ],
+    "<TypeParameterList>": [
+      ["<TypeParameter>", "<TypeParameterList_g0>"]
+    ],
+    "<TypeParameterList_g0>": [
+      [],
+      [",", "<TypeParameter>", "<TypeParameterList_g0>"]
+    ],
+    "<ClassExtends>": [
+      ["extends", "<ClassType>"]
+    ],
+    "<ClassImplements>": [
+      ["implements", "<InterfaceTypeList>"]
+    ],
+    "<InterfaceTypeList>": [
+      ["<InterfaceType>", "<InterfaceTypeList_g0>"]
+    ],
+    "<InterfaceTypeList_g0>": [
+      [],
+      [",", "<InterfaceType>", "<InterfaceTypeList_g0>"]
+    ],
+    "<ClassPermits>": [
+      ["permits", "<TypeName>", "<ClassPermits_g0>"]
+    ],
+    "<ClassPermits_g0>": [
+      [],
+      [",", "<TypeName>", "<ClassPermits_g0>"]
+    ],
+    "<ClassBody>": [
+      ["{", "<ClassBody_g0>", "}"]
+    ],
+    "<ClassBody_g0>": [
+      [],
+      ["<ClassBodyDeclaration>", "<ClassBody_g0>"]
+    ],
+    "<ClassBodyDeclaration>": [
+      ["<ClassMemberDeclaration>"],
+      ["<InstanceInitializer>"],
+      ["<StaticInitializer>"],
+      ["<ConstructorDeclaration>"]
+    ],
+    "<ClassMemberDeclaration>": [
+      ["<FieldDeclaration>"],
+      ["<MethodDeclaration>"],
+      ["<ClassDeclaration>"],
+      ["<InterfaceDeclaration>"],
+      [";"]
+    ],
+    "<FieldDeclaration>": [
+      ["<FieldDeclaration_g0>", "<UnannType>", "<VariableDeclaratorList>", ";"]
+    ],
+    "<FieldDeclaration_g0>": [
+      [],
+      ["<FieldModifier>", "<FieldDeclaration_g0>"]
+    ],
+    "<FieldModifier>": [
+      ["<Annotation>"],
+      ["public"],
+      ["protected"],
+      ["private"],
+      ["static"],
+      ["final"],
+      ["transient"],
+      ["volatile"]
+    ],
+    "<VariableDeclaratorList>": [
+      ["<VariableDeclarator>", "<VariableDeclaratorList_g0>"]
+    ],
+    "<VariableDeclaratorList_g0>": [
+      [],
+      [",", "<VariableDeclarator>", "<VariableDeclaratorList_g0>"]
+    ],
+    "<VariableDeclarator>": [
+      ["<VariableDeclaratorId>", "<VariableDeclarator_g0>"]
+    ],
+    "<VariableDeclarator_g0>": [
+      [],
+      ["=", "<VariableInitializer>"]
+    ],
+    "<VariableDeclaratorId>": [
+      ["<Identifier>", "<VariableDeclaratorId_g0>"]
+    ],
+    "<VariableDeclaratorId_g0>": [
+      [],
+      ["<Dims>"]
+    ],
+    "<VariableInitializer>": [
+      ["<Expression>"],
+      ["<ArrayInitializer>"]
+    ],
+    "<UnannType>": [
+      ["<UnannPrimitiveType>"],
+      ["<UnannReferenceType>"]
+    ],
+    "<UnannPrimitiveType>": [
+      ["<NumericType>"],
+      ["boolean"]
+    ],
+    "<UnannReferenceType>": [
+      ["<UnannClassOrInterfaceType>"],
+      ["<UnannTypeVariable>"],
+      ["<UnannArrayType>"]
+    ],
+    "<UnannClassOrInterfaceType>": [
+      ["<UnannClassType>"],
+      ["<UnannInterfaceType>"]
+    ],
+    "<UnannClassType>": [
+      ["<TypeIdentifier>", "<UnannClassType_g0>"],
+      ["<PackageName>", ".", "<UnannClassType_g1>", "<TypeIdentifier>", "<UnannClassType_g2>"],
+      ["<UnannClassOrInterfaceType>", ".", "<UnannClassType_g3>", "<TypeIdentifier>", "<UnannClassType_g4>"]
+    ],
+    "<UnannClassType_g0>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<UnannClassType_g1>": [
+      [],
+      ["<Annotation>", "<UnannClassType_g1>"]
+    ],
+    "<UnannClassType_g2>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<UnannClassType_g3>": [
+      [],
+      ["<Annotation>", "<UnannClassType_g3>"]
+    ],
+    "<UnannClassType_g4>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<UnannInterfaceType>": [
+      ["<UnannClassType>"]
+    ],
+    "<UnannTypeVariable>": [
+      ["<TypeIdentifier>"]
+    ],
+    "<UnannArrayType>": [
+      ["<UnannPrimitiveType>", "<Dims>"],
+      ["<UnannClassOrInterfaceType>", "<Dims>"],
+      ["<UnannTypeVariable>", "<Dims>"]
+    ],
+    "<MethodDeclaration>": [
+      ["<MethodDeclaration_g0>", "<MethodHeader>", "<MethodBody>"]
+    ],
+    "<MethodDeclaration_g0>": [
+      [],
+      ["<MethodModifier>", "<MethodDeclaration_g0>"]
+    ],
+    "<MethodModifier>": [
+      ["<Annotation>"],
+      ["public"],
+      ["protected"],
+      ["private"],
+      ["abstract"],
+      ["static"],
+      ["final"],
+      ["synchronized"],
+      ["native"],
+      ["strictfp"]
+    ],
+    "<MethodHeader>": [
+      ["<Result>", "<MethodDeclarator>", "<MethodHeader_g0>"],
+      ["<TypeParameters>", "<MethodHeader_g1>", "<Result>", "<MethodDeclarator>", "<MethodHeader_g2>"]
+    ],
+    "<MethodHeader_g0>": [
+      [],
+      ["<Throws>"]
+    ],
+    "<MethodHeader_g1>": [
+      [],
+      ["<Annotation>", "<MethodHeader_g1>"]
+    ],
+    "<MethodHeader_g2>": [
+      [],
+      ["<Throws>"]
+    ],
+    "<Result>": [
+      ["<UnannType>"],
+      ["void"]
+    ],
+    "<MethodDeclarator>": [
+      ["<Identifier>", "(", "<MethodDeclarator_g0>", "<MethodDeclarator_g1>", ")", "<MethodDeclarator_g2>"]
+    ],
+    "<MethodDeclarator_g0>": [
+      [],
+      ["<ReceiverParameter>", ","]
+    ],
+    "<MethodDeclarator_g1>": [
+      [],
+      ["<FormalParameterList>"]
+    ],
+    "<MethodDeclarator_g2>": [
+      [],
+      ["<Dims>"]
+    ],
+    "<ReceiverParameter>": [
+      ["<ReceiverParameter_g0>", "<UnannType>", "<ReceiverParameter_g1>", "this"]
+    ],
+    "<ReceiverParameter_g0>": [
+      [],
+      ["<Annotation>", "<ReceiverParameter_g0>"]
+    ],
+    "<ReceiverParameter_g1>": [
+      [],
+      ["<Identifier>", "."]
+    ],
+    "<FormalParameterList>": [
+      ["<FormalParameter>", "<FormalParameterList_g0>"]
+    ],
+    "<FormalParameterList_g0>": [
+      [],
+      [",", "<FormalParameter>", "<FormalParameterList_g0>"]
+    ],
+    "<FormalParameter>": [
+      ["<FormalParameter_g0>", "<UnannType>", "<VariableDeclaratorId>"],
+      ["<VariableArityParameter>"]
+    ],
+    "<FormalParameter_g0>": [
+      [],
+      ["<VariableModifier>", "<FormalParameter_g0>"]
+    ],
+    "<VariableArityParameter>": [
+      ["<VariableArityParameter_g0>", "<UnannType>", "<VariableArityParameter_g1>", "...", "<Identifier>"]
+    ],
+    "<VariableArityParameter_g0>": [
+      [],
+      ["<VariableModifier>", "<VariableArityParameter_g0>"]
+    ],
+    "<VariableArityParameter_g1>": [
+      [],
+      ["<Annotation>", "<VariableArityParameter_g1>"]
+    ],
+    "<VariableModifier>": [
+      ["<Annotation>"],
+      ["final"]
+    ],
+    "<Throws>": [
+      ["throws", "<ExceptionTypeList>"]
+    ],
+    "<ExceptionTypeList>": [
+      ["<ExceptionType>", "<ExceptionTypeList_g0>"]
+    ],
+    "<ExceptionTypeList_g0>": [
+      [],
+      [",", "<ExceptionType>", "<ExceptionTypeList_g0>"]
+    ],
+    "<ExceptionType>": [
+      ["<ClassType>"],
+      ["<TypeVariable>"]
+    ],
+    "<MethodBody>": [
+      ["<Block>"],
+      [";"]
+    ],
+    "<InstanceInitializer>": [
+      ["<Block>"]
+    ],
+    "<StaticInitializer>": [
+      ["static", "<Block>"]
+    ],
+    "<ConstructorDeclaration>": [
+      ["<ConstructorDeclaration_g0>", "<ConstructorDeclarator>", "<ConstructorDeclaration_g1>", "<ConstructorBody>"]
+    ],
+    "<ConstructorDeclaration_g0>": [
+      [],
+      ["<ConstructorModifier>", "<ConstructorDeclaration_g0>"]
+    ],
+    "<ConstructorDeclaration_g1>": [
+      [],
+      ["<Throws>"]
+    ],
+    "<ConstructorModifier>": [
+      ["<Annotation>"],
+      ["public"],
+      ["protected"],
+      ["private"]
+    ],
+    "<ConstructorDeclarator>": [
+      ["<ConstructorDeclarator_g0>", "<SimpleTypeName>", "(", "<ConstructorDeclarator_g1>", "<ConstructorDeclarator_g2>", ")"]
+    ],
+    "<ConstructorDeclarator_g0>": [
+      [],
+      ["<TypeParameters>"]
+    ],
+    "<ConstructorDeclarator_g1>": [
+      [],
+      ["<ReceiverParameter>", ","]
+    ],
+    "<ConstructorDeclarator_g2>": [
+      [],
+      ["<FormalParameterList>"]
+    ],
+    "<SimpleTypeName>": [
+      ["<TypeIdentifier>"]
+    ],
+    "<ConstructorBody>": [
+      ["{", "<ConstructorBody_g0>", "<ConstructorBody_g1>", "}"]
+    ],
+    "<ConstructorBody_g0>": [
+      [],
+      ["<ExplicitConstructorInvocation>"]
+    ],
+    "<ConstructorBody_g1>": [
+      [],
+      ["<BlockStatements>"]
+    ],
+    "<ExplicitConstructorInvocation>": [
+      ["<ExplicitConstructorInvocation_g0>", "this", "(", "<ExplicitConstructorInvocation_g1>", ")", ";"],
+      ["<ExplicitConstructorInvocation_g2>", "super", "(", "<ExplicitConstructorInvocation_g3>", ")", ";"],
+      ["<ExpressionName>", ".", "<ExplicitConstructorInvocation_g4>", "super", "(", "<ExplicitConstructorInvocation_g5>", ")", ";"],
+      ["<Primary>", ".", "<ExplicitConstructorInvocation_g6>", "super", "(", "<ExplicitConstructorInvocation_g7>", ")", ";"]
+    ],
+    "<ExplicitConstructorInvocation_g0>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<ExplicitConstructorInvocation_g1>": [
+      [],
+      ["<ArgumentList>"]
+    ],
+    "<ExplicitConstructorInvocation_g2>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<ExplicitConstructorInvocation_g3>": [
+      [],
+      ["<ArgumentList>"]
+    ],
+    "<ExplicitConstructorInvocation_g4>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<ExplicitConstructorInvocation_g5>": [
+      [],
+      ["<ArgumentList>"]
+    ],
+    "<ExplicitConstructorInvocation_g6>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<ExplicitConstructorInvocation_g7>": [
+      [],
+      ["<ArgumentList>"]
+    ],
+    "<EnumDeclaration>": [
+      ["<EnumDeclaration_g0>", "enum", "<TypeIdentifier>", "<EnumDeclaration_g1>", "<EnumBody>"]
+    ],
+    "<EnumDeclaration_g0>": [
+      [],
+      ["<ClassModifier>", "<EnumDeclaration_g0>"]
+    ],
+    "<EnumDeclaration_g1>": [
+      [],
+      ["<ClassImplements>"]
+    ],
+    "<EnumBody>": [
+      ["{", "<EnumBody_g0>", "<EnumBody_g1>", "<EnumBody_g2>", "}"]
+    ],
+    "<EnumBody_g0>": [
+      [],
+      ["<EnumConstantList>"]
+    ],
+    "<EnumBody_g1>": [
+      [],
+      [","]
+    ],
+    "<EnumBody_g2>": [
+      [],
+      ["<EnumBodyDeclarations>"]
+    ],
+    "<EnumConstantList>": [
+      ["<EnumConstant>", "<EnumConstantList_g0>"]
+    ],
+    "<EnumConstantList_g0>": [
+      [],
+      [",", "<EnumConstant>", "<EnumConstantList_g0>"]
+    ],
+    "<EnumConstant>": [
+      ["<EnumConstant_g0>", "<Identifier>", "<EnumConstant_g2>", "<EnumConstant_g3>"]
+    ],
+    "<EnumConstant_g0>": [
+      [],
+      ["<EnumConstantModifier>", "<EnumConstant_g0>"]
+    ],
+    "<EnumConstant_g1>": [
+      [],
+      ["<ArgumentList>"]
+    ],
+    "<EnumConstant_g2>": [
+      [],
+      ["(", "<EnumConstant_g1>", ")"]
+    ],
+    "<EnumConstant_g3>": [
+      [],
+      ["<ClassBody>"]
+    ],
+    "<EnumConstantModifier>": [
+      ["<Annotation>"]
+    ],
+    "<EnumBodyDeclarations>": [
+      [";", "<EnumBodyDeclarations_g0>"]
+    ],
+    "<EnumBodyDeclarations_g0>": [
+      [],
+      ["<ClassBodyDeclaration>", "<EnumBodyDeclarations_g0>"]
+    ],
+    "<RecordDeclaration>": [
+      ["<RecordDeclaration_g0>", "record", "<TypeIdentifier>", "<RecordDeclaration_g1>", "<RecordHeader>", "<RecordDeclaration_g2>", "<RecordBody>"]
+    ],
+    "<RecordDeclaration_g0>": [
+      [],
+      ["<ClassModifier>", "<RecordDeclaration_g0>"]
+    ],
+    "<RecordDeclaration_g1>": [
+      [],
+      ["<TypeParameters>"]
+    ],
+    "<RecordDeclaration_g2>": [
+      [],
+      ["<ClassImplements>"]
+    ],
+    "<RecordHeader>": [
+      ["(", "<RecordHeader_g0>", ")"]
+    ],
+    "<RecordHeader_g0>": [
+      [],
+      ["<RecordComponentList>"]
+    ],
+    "<RecordComponentList>": [
+      ["<RecordComponent>", "<RecordComponentList_g0>"]
+    ],
+    "<RecordComponentList_g0>": [
+      [],
+      [",", "<RecordComponent>", "<RecordComponentList_g0>"]
+    ],
+    "<RecordComponent>": [
+      ["<RecordComponent_g0>", "<UnannType>", "<Identifier>"],
+      ["<VariableArityRecordComponent>"]
+    ],
+    "<RecordComponent_g0>": [
+      [],
+      ["<RecordComponentModifier>", "<RecordComponent_g0>"]
+    ],
+    "<VariableArityRecordComponent>": [
+      ["<VariableArityRecordComponent_g0>", "<UnannType>", "<VariableArityRecordComponent_g1>", "...", "<Identifier>"]
+    ],
+    "<VariableArityRecordComponent_g0>": [
+      [],
+      ["<RecordComponentModifier>", "<VariableArityRecordComponent_g0>"]
+    ],
+    "<VariableArityRecordComponent_g1>": [
+      [],
+      ["<Annotation>", "<VariableArityRecordComponent_g1>"]
+    ],
+    "<RecordComponentModifier>": [
+      ["<Annotation>"]
+    ],
+    "<RecordBody>": [
+      ["{", "<RecordBody_g0>", "}"]
+    ],
+    "<RecordBody_g0>": [
+      [],
+      ["<RecordBodyDeclaration>", "<RecordBody_g0>"]
+    ],
+    "<RecordBodyDeclaration>": [
+      ["<ClassBodyDeclaration>"],
+      ["<CompactConstructorDeclaration>"]
+    ],
+    "<CompactConstructorDeclaration>": [
+      ["<CompactConstructorDeclaration_g0>", "<SimpleTypeName>", "<ConstructorBody>"]
+    ],
+    "<CompactConstructorDeclaration_g0>": [
+      [],
+      ["<ConstructorModifier>", "<CompactConstructorDeclaration_g0>"]
+    ],
+    "<InterfaceDeclaration>": [
+      ["<NormalInterfaceDeclaration>"],
+      ["<AnnotationInterfaceDeclaration>"]
+    ],
+    "<NormalInterfaceDeclaration>": [
+      ["<NormalInterfaceDeclaration_g0>", "interface", "<TypeIdentifier>", "<NormalInterfaceDeclaration_g1>", "<NormalInterfaceDeclaration_g2>", "<NormalInterfaceDeclaration_g3>", "<InterfaceBody>"]
+    ],
+    "<NormalInterfaceDeclaration_g0>": [
+      [],
+      ["<InterfaceModifier>", "<NormalInterfaceDeclaration_g0>"]
+    ],
+    "<NormalInterfaceDeclaration_g1>": [
+      [],
+      ["<TypeParameters>"]
+    ],
+    "<NormalInterfaceDeclaration_g2>": [
+      [],
+      ["<InterfaceExtends>"]
+    ],
+    "<NormalInterfaceDeclaration_g3>": [
+      [],
+      ["<InterfacePermits>"]
+    ],
+    "<InterfaceModifier>": [
+      ["<Annotation>"],
+      ["public"],
+      ["protected"],
+      ["private"],
+      ["abstract"],
+      ["static"],
+      ["sealed"],
+      ["non-sealed"],
+      ["strictfp"]
+    ],
+    "<InterfaceExtends>": [
+      ["extends", "<InterfaceTypeList>"]
+    ],
+    "<InterfacePermits>": [
+      ["permits", "<TypeName>", "<InterfacePermits_g0>"]
+    ],
+    "<InterfacePermits_g0>": [
+      [],
+      [",", "<TypeName>", "<InterfacePermits_g0>"]
+    ],
+    "<InterfaceBody>": [
+      ["{", "<InterfaceBody_g0>", "}"]
+    ],
+    "<InterfaceBody_g0>": [
+      [],
+      ["<InterfaceMemberDeclaration>", "<InterfaceBody_g0>"]
+    ],
+    "<InterfaceMemberDeclaration>": [
+      ["<ConstantDeclaration>"],
+      ["<InterfaceMethodDeclaration>"],
+      ["<ClassDeclaration>"],
+      ["<InterfaceDeclaration>"],
+      [";"]
+    ],
+    "<ConstantDeclaration>": [
+      ["<ConstantDeclaration_g0>", "<UnannType>", "<VariableDeclaratorList>", ";"]
+    ],
+    "<ConstantDeclaration_g0>": [
+      [],
+      ["<ConstantModifier>", "<ConstantDeclaration_g0>"]
+    ],
+    "<ConstantModifier>": [
+      ["<Annotation>"],
+      ["public"],
+      ["static"],
+      ["final"]
+    ],
+    "<InterfaceMethodDeclaration>": [
+      ["<InterfaceMethodDeclaration_g0>", "<MethodHeader>", "<MethodBody>"]
+    ],
+    "<InterfaceMethodDeclaration_g0>": [
+      [],
+      ["<InterfaceMethodModifier>", "<InterfaceMethodDeclaration_g0>"]
+    ],
+    "<InterfaceMethodModifier>": [
+      ["<Annotation>"],
+      ["public"],
+      ["private"],
+      ["abstract"],
+      ["default"],
+      ["static"],
+      ["strictfp"]
+    ],
+    "<AnnotationInterfaceDeclaration>": [
+      ["<AnnotationInterfaceDeclaration_g0>", "@", "interface", "<TypeIdentifier>", "<AnnotationInterfaceBody>"]
+    ],
+    "<AnnotationInterfaceDeclaration_g0>": [
+      [],
+      ["<InterfaceModifier>", "<AnnotationInterfaceDeclaration_g0>"]
+    ],
+    "<AnnotationInterfaceBody>": [
+      ["{", "<AnnotationInterfaceBody_g0>", "}"]
+    ],
+    "<AnnotationInterfaceBody_g0>": [
+      [],
+      ["<AnnotationInterfaceMemberDeclaration>", "<AnnotationInterfaceBody_g0>"]
+    ],
+    "<AnnotationInterfaceMemberDeclaration>": [
+      ["<AnnotationInterfaceElementDeclaration>"],
+      ["<ConstantDeclaration>"],
+      ["<ClassDeclaration>"],
+      ["<InterfaceDeclaration>"],
+      [";"]
+    ],
+    "<AnnotationInterfaceElementDeclaration>": [
+      ["<AnnotationInterfaceElementDeclaration_g0>", "<UnannType>", "<Identifier>", "(", ")", "<AnnotationInterfaceElementDeclaration_g1>", "<AnnotationInterfaceElementDeclaration_g2>", ";"]
+    ],
+    "<AnnotationInterfaceElementDeclaration_g0>": [
+      [],
+      ["<AnnotationInterfaceElementModifier>", "<AnnotationInterfaceElementDeclaration_g0>"]
+    ],
+    "<AnnotationInterfaceElementDeclaration_g1>": [
+      [],
+      ["<Dims>"]
+    ],
+    "<AnnotationInterfaceElementDeclaration_g2>": [
+      [],
+      ["<DefaultValue>"]
+    ],
+    "<AnnotationInterfaceElementModifier>": [
+      ["<Annotation>"],
+      ["public"],
+      ["abstract"]
+    ],
+    "<DefaultValue>": [
+      ["default", "<ElementValue>"]
+    ],
+    "<Annotation>": [
+      ["<NormalAnnotation>"],
+      ["<MarkerAnnotation>"],
+      ["<SingleElementAnnotation>"]
+    ],
+    "<NormalAnnotation>": [
+      ["@", "<TypeName>", "(", "<NormalAnnotation_g0>", ")"]
+    ],
+    "<NormalAnnotation_g0>": [
+      [],
+      ["<ElementValuePairList>"]
+    ],
+    "<ElementValuePairList>": [
+      ["<ElementValuePair>", "<ElementValuePairList_g0>"]
+    ],
+    "<ElementValuePairList_g0>": [
+      [],
+      [",", "<ElementValuePair>", "<ElementValuePairList_g0>"]
+    ],
+    "<ElementValuePair>": [
+      ["<Identifier>", "=", "<ElementValue>"]
+    ],
+    "<ElementValue>": [
+      ["<ConditionalExpression>"],
+      ["<ElementValueArrayInitializer>"],
+      ["<Annotation>"]
+    ],
+    "<ElementValueArrayInitializer>": [
+      ["{", "<ElementValueArrayInitializer_g0>", "<ElementValueArrayInitializer_g1>", "}"]
+    ],
+    "<ElementValueArrayInitializer_g0>": [
+      [],
+      ["<ElementValueList>"]
+    ],
+    "<ElementValueArrayInitializer_g1>": [
+      [],
+      [","]
+    ],
+    "<ElementValueList>": [
+      ["<ElementValue>", "<ElementValueList_g0>"]
+    ],
+    "<ElementValueList_g0>": [
+      [],
+      [",", "<ElementValue>", "<ElementValueList_g0>"]
+    ],
+    "<MarkerAnnotation>": [
+      ["@", "<TypeName>"]
+    ],
+    "<SingleElementAnnotation>": [
+      ["@", "<TypeName>", "(", "<ElementValue>", ")"]
+    ],
+    "<ArrayInitializer>": [
+      ["{", "<ArrayInitializer_g0>", "<ArrayInitializer_g1>", "}"]
+    ],
+    "<ArrayInitializer_g0>": [
+      [],
+      ["<VariableInitializerList>"]
+    ],
+    "<ArrayInitializer_g1>": [
+      [],
+      [","]
+    ],
+    "<VariableInitializerList>": [
+      ["<VariableInitializer>", "<VariableInitializerList_g0>"]
+    ],
+    "<VariableInitializerList_g0>": [
+      [],
+      [",", "<VariableInitializer>", "<VariableInitializerList_g0>"]
+    ],
+    "<Block>": [
+      ["{", "<Block_g0>", "}"]
+    ],
+    "<Block_g0>": [
+      [],
+      ["<BlockStatements>"]
+    ],
+    "<BlockStatements>": [
+      ["<BlockStatement>", "<BlockStatements_g0>"]
+    ],
+    "<BlockStatements_g0>": [
+      [],
+      ["<BlockStatement>", "<BlockStatements_g0>"]
+    ],
+    "<BlockStatement>": [
+      ["<LocalClassOrInterfaceDeclaration>"],
+      ["<LocalVariableDeclarationStatement>"],
+      ["<Statement>"]
+    ],
+    "<LocalClassOrInterfaceDeclaration>": [
+      ["<ClassDeclaration>"],
+      ["<NormalInterfaceDeclaration>"]
+    ],
+    "<LocalVariableDeclarationStatement>": [
+      ["<LocalVariableDeclaration>", ";"]
+    ],
+    "<LocalVariableDeclaration>": [
+      ["<LocalVariableDeclaration_g0>", "<LocalVariableType>", "<VariableDeclaratorList>"]
+    ],
+    "<LocalVariableDeclaration_g0>": [
+      [],
+      ["<VariableModifier>", "<LocalVariableDeclaration_g0>"]
+    ],
+    "<LocalVariableType>": [
+      ["<UnannType>"],
+      ["var"]
+    ],
+    "<Statement>": [
+      ["<StatementWithoutTrailingSubstatement>"],
+      ["<LabeledStatement>"],
+      ["<IfThenStatement>"],
+      ["<IfThenElseStatement>"],
+      ["<WhileStatement>"],
+      ["<ForStatement>"]
+    ],
+    "<StatementNoShortIf>": [
+      ["<StatementWithoutTrailingSubstatement>"],
+      ["<LabeledStatementNoShortIf>"],
+      ["<IfThenElseStatementNoShortIf>"],
+      ["<WhileStatementNoShortIf>"],
+      ["<ForStatementNoShortIf>"]
+    ],
+    "<StatementWithoutTrailingSubstatement>": [
+      ["<Block>"],
+      ["<EmptyStatement>"],
+      ["<ExpressionStatement>"],
+      ["<AssertStatement>"],
+      ["<SwitchStatement>"],
+      ["<DoStatement>"],
+      ["<BreakStatement>"],
+      ["<ContinueStatement>"],
+      ["<ReturnStatement>"],
+      ["<SynchronizedStatement>"],
+      ["<ThrowStatement>"],
+      ["<TryStatement>"],
+      ["<YieldStatement>"]
+    ],
+    "<EmptyStatement>": [
+      [";"]
+    ],
+    "<LabeledStatement>": [
+      ["<Identifier>", ":", "<Statement>"]
+    ],
+    "<LabeledStatementNoShortIf>": [
+      ["<Identifier>", ":", "<StatementNoShortIf>"]
+    ],
+    "<ExpressionStatement>": [
+      ["<StatementExpression>", ";"]
+    ],
+    "<StatementExpression>": [
+      ["<Assignment>"],
+      ["<PreIncrementExpression>"],
+      ["<PreDecrementExpression>"],
+      ["<PostIncrementExpression>"],
+      ["<PostDecrementExpression>"],
+      ["<MethodInvocation>"],
+      ["<ClassInstanceCreationExpression>"]
+    ],
+    "<IfThenStatement>": [
+      ["if", "(", "<Expression>", ")", "<Statement>"]
+    ],
+    "<IfThenElseStatement>": [
+      ["if", "(", "<Expression>", ")", "<StatementNoShortIf>", "else", "<Statement>"]
+    ],
+    "<IfThenElseStatementNoShortIf>": [
+      ["if", "(", "<Expression>", ")", "<StatementNoShortIf>", "else", "<StatementNoShortIf>"]
+    ],
+    "<AssertStatement>": [
+      ["assert", "<Expression>", ";"],
+      ["assert", "<Expression>", ":", "<Expression>", ";"]
+    ],
+    "<SwitchStatement>": [
+      ["switch", "(", "<Expression>", ")", "<SwitchBlock>"]
+    ],
+    "<SwitchBlock>": [
+      ["{", "<SwitchRule>", "<SwitchBlock_g0>", "}"],
+      ["{", "<SwitchBlock_g1>", "<SwitchBlock_g2>", "}"]
+    ],
+    "<SwitchBlock_g0>": [
+      [],
+      ["<SwitchRule>", "<SwitchBlock_g0>"]
+    ],
+    "<SwitchBlock_g1>": [
+      [],
+      ["<SwitchBlockStatementGroup>", "<SwitchBlock_g1>"]
+    ],
+    "<SwitchBlock_g2>": [
+      [],
+      ["<SwitchLabel>", ":", "<SwitchBlock_g2>"]
+    ],
+    "<SwitchRule>": [
+      ["<SwitchLabel>", "->", "<Expression>", ";"],
+      ["<SwitchLabel>", "->", "<Block>"],
+      ["<SwitchLabel>", "->", "<ThrowStatement>"]
+    ],
+    "<SwitchBlockStatementGroup>": [
+      ["<SwitchLabel>", ":", "<SwitchBlockStatementGroup_g0>", "<BlockStatements>"]
+    ],
+    "<SwitchBlockStatementGroup_g0>": [
+      [],
+      ["<SwitchLabel>", ":", "<SwitchBlockStatementGroup_g0>"]
+    ],
+    "<SwitchLabel>": [
+      ["case", "<CaseConstant>", "<SwitchLabel_g0>"],
+      ["default"]
+    ],
+    "<SwitchLabel_g0>": [
+      [],
+      [",", "<CaseConstant>", "<SwitchLabel_g0>"]
+    ],
+    "<CaseConstant>": [
+      ["<ConditionalExpression>"]
+    ],
+    "<WhileStatement>": [
+      ["while", "(", "<Expression>", ")", "<Statement>"]
+    ],
+    "<WhileStatementNoShortIf>": [
+      ["while", "(", "<Expression>", ")", "<StatementNoShortIf>"]
+    ],
+    "<DoStatement>": [
+      ["do", "<Statement>", "while", "(", "<Expression>", ")", ";"]
+    ],
+    "<ForStatement>": [
+      ["<BasicForStatement>"],
+      ["<EnhancedForStatement>"]
+    ],
+    "<ForStatementNoShortIf>": [
+      ["<BasicForStatementNoShortIf>"],
+      ["<EnhancedForStatementNoShortIf>"]
+    ],
+    "<BasicForStatement>": [
+      ["for", "(", "<BasicForStatement_g0>", ";", "<BasicForStatement_g1>", ";", "<BasicForStatement_g2>", ")", "<Statement>"]
+    ],
+    "<BasicForStatement_g0>": [
+      [],
+      ["<ForInit>"]
+    ],
+    "<BasicForStatement_g1>": [
+      [],
+      ["<Expression>"]
+    ],
+    "<BasicForStatement_g2>": [
+      [],
+      ["<ForUpdate>"]
+    ],
+    "<BasicForStatementNoShortIf>": [
+      ["for", "(", "<BasicForStatementNoShortIf_g0>", ";", "<BasicForStatementNoShortIf_g1>", ";", "<BasicForStatementNoShortIf_g2>", ")", "<StatementNoShortIf>"]
+    ],
+    "<BasicForStatementNoShortIf_g0>": [
+      [],
+      ["<ForInit>"]
+    ],
+    "<BasicForStatementNoShortIf_g1>": [
+      [],
+      ["<Expression>"]
+    ],
+    "<BasicForStatementNoShortIf_g2>": [
+      [],
+      ["<ForUpdate>"]
+    ],
+    "<ForInit>": [
+      ["<StatementExpressionList>"],
+      ["<LocalVariableDeclaration>"]
+    ],
+    "<ForUpdate>": [
+      ["<StatementExpressionList>"]
+    ],
+    "<StatementExpressionList>": [
+      ["<StatementExpression>", "<StatementExpressionList_g0>"]
+    ],
+    "<StatementExpressionList_g0>": [
+      [],
+      [",", "<StatementExpression>", "<StatementExpressionList_g0>"]
+    ],
+    "<EnhancedForStatement>": [
+      ["for", "(", "<LocalVariableDeclaration>", ":", "<Expression>", ")", "<Statement>"]
+    ],
+    "<EnhancedForStatementNoShortIf>": [
+      ["for", "(", "<LocalVariableDeclaration>", ":", "<Expression>", ")", "<StatementNoShortIf>"]
+    ],
+    "<BreakStatement>": [
+      ["break", "<BreakStatement_g0>", ";"]
+    ],
+    "<BreakStatement_g0>": [
+      [],
+      ["<Identifier>"]
+    ],
+    "<YieldStatement>": [
+      ["yield", "<Expression>", ";"]
+    ],
+    "<ContinueStatement>": [
+      ["continue", "<ContinueStatement_g0>", ";"]
+    ],
+    "<ContinueStatement_g0>": [
+      [],
+      ["<Identifier>"]
+    ],
+    "<ReturnStatement>": [
+      ["return", "<ReturnStatement_g0>", ";"]
+    ],
+    "<ReturnStatement_g0>": [
+      [],
+      ["<Expression>"]
+    ],
+    "<ThrowStatement>": [
+      ["throw", "<Expression>", ";"]
+    ],
+    "<SynchronizedStatement>": [
+      ["synchronized", "(", "<Expression>", ")", "<Block>"]
+    ],
+    "<TryStatement>": [
+      ["try", "<Block>", "<Catches>"],
+      ["try", "<Block>", "<TryStatement_g0>", "<Finally>"],
+      ["<TryWithResourcesStatement>"]
+    ],
+    "<TryStatement_g0>": [
+      [],
+      ["<Catches>"]
+    ],
+    "<Catches>": [
+      ["<CatchClause>", "<Catches_g0>"]
+    ],
+    "<Catches_g0>": [
+      [],
+      ["<CatchClause>", "<Catches_g0>"]
+    ],
+    "<CatchClause>": [
+      ["catch", "(", "<CatchFormalParameter>", ")", "<Block>"]
+    ],
+    "<CatchFormalParameter>": [
+      ["<CatchFormalParameter_g0>", "<CatchType>", "<VariableDeclaratorId>"]
+    ],
+    "<CatchFormalParameter_g0>": [
+      [],
+      ["<VariableModifier>", "<CatchFormalParameter_g0>"]
+    ],
+    "<CatchType>": [
+      ["<UnannClassType>", "<CatchType_g0>"]
+    ],
+    "<CatchType_g0>": [
+      [],
+      ["|", "<ClassType>", "<CatchType_g0>"]
+    ],
+    "<Finally>": [
+      ["finally", "<Block>"]
+    ],
+    "<TryWithResourcesStatement>": [
+      ["try", "<ResourceSpecification>", "<Block>", "<TryWithResourcesStatement_g0>", "<TryWithResourcesStatement_g1>"]
+    ],
+    "<TryWithResourcesStatement_g0>": [
+      [],
+      ["<Catches>"]
+    ],
+    "<TryWithResourcesStatement_g1>": [
+      [],
+      ["<Finally>"]
+    ],
+    "<ResourceSpecification>": [
+      ["(", "<ResourceList>", "<ResourceSpecification_g0>", ")"]
+    ],
+    "<ResourceSpecification_g0>": [
+      [],
+      [";"]
+    ],
+    "<ResourceList>": [
+      ["<Resource>", "<ResourceList_g0>"]
+    ],
+    "<ResourceList_g0>": [
+      [],
+      [";", "<Resource>", "<ResourceList_g0>"]
+    ],
+    "<Resource>": [
+      ["<LocalVariableDeclaration>"],
+      ["<VariableAccess>"]
+    ],
+    "<Pattern>": [
+      ["<TypePattern>"]
+    ],
+    "<TypePattern>": [
+      ["<LocalVariableDeclaration>"]
+    ],
+    "<Primary>": [
+      ["<PrimaryNoNewArray>"],
+      ["<ArrayCreationExpression>"]
+    ],
+    "<PrimaryNoNewArray>": [
+      ["<Literal>"],
+      ["<ClassLiteral>"],
+      ["this"],
+      ["<TypeName>", ".", "this"],
+      ["(", "<Expression>", ")"],
+      ["<ClassInstanceCreationExpression>"],
+      ["<FieldAccess>"],
+      ["<ArrayAccess>"],
+      ["<MethodInvocation>"],
+      ["<MethodReference>"]
+    ],
+    "<ClassLiteral>": [
+      ["<TypeName>", "<ClassLiteral_g0>", ".", "class"],
+      ["<NumericType>", "<ClassLiteral_g1>", ".", "class"],
+      ["boolean", "<ClassLiteral_g2>", ".", "class"],
+      ["void", ".", "class"]
+    ],
+    "<ClassLiteral_g0>": [
+      [],
+      ["[", "]", "<ClassLiteral_g0>"]
+    ],
+    "<ClassLiteral_g1>": [
+      [],
+      ["[", "]", "<ClassLiteral_g1>"]
+    ],
+    "<ClassLiteral_g2>": [
+      [],
+      ["[", "]", "<ClassLiteral_g2>"]
+    ],
+    "<ClassInstanceCreationExpression>": [
+      ["<UnqualifiedClassInstanceCreationExpression>"],
+      ["<ExpressionName>", ".", "<UnqualifiedClassInstanceCreationExpression>"],
+      ["<Primary>", ".", "<UnqualifiedClassInstanceCreationExpression>"]
+    ],
+    "<UnqualifiedClassInstanceCreationExpression>": [
+      ["new", "<UnqualifiedClassInstanceCreationExpression_g0>", "<ClassOrInterfaceTypeToInstantiate>", "(", "<UnqualifiedClassInstanceCreationExpression_g1>", ")", "<UnqualifiedClassInstanceCreationExpression_g2>"]
+    ],
+    "<UnqualifiedClassInstanceCreationExpression_g0>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<UnqualifiedClassInstanceCreationExpression_g1>": [
+      [],
+      ["<ArgumentList>"]
+    ],
+    "<UnqualifiedClassInstanceCreationExpression_g2>": [
+      [],
+      ["<ClassBody>"]
+    ],
+    "<ClassOrInterfaceTypeToInstantiate>": [
+      ["<ClassOrInterfaceTypeToInstantiate_g0>", "<Identifier>", "<ClassOrInterfaceTypeToInstantiate_g2>", "<ClassOrInterfaceTypeToInstantiate_g3>"]
+    ],
+    "<ClassOrInterfaceTypeToInstantiate_g0>": [
+      [],
+      ["<Annotation>", "<ClassOrInterfaceTypeToInstantiate_g0>"]
+    ],
+    "<ClassOrInterfaceTypeToInstantiate_g1>": [
+      [],
+      ["<Annotation>", "<ClassOrInterfaceTypeToInstantiate_g1>"]
+    ],
+    "<ClassOrInterfaceTypeToInstantiate_g2>": [
+      [],
+      [".", "<ClassOrInterfaceTypeToInstantiate_g1>", "<Identifier>", "<ClassOrInterfaceTypeToInstantiate_g2>"]
+    ],
+    "<ClassOrInterfaceTypeToInstantiate_g3>": [
+      [],
+      ["<TypeArgumentsOrDiamond>"]
+    ],
+    "<TypeArgumentsOrDiamond>": [
+      ["<TypeArguments>"],
+      ["<", ">"]
+    ],
+    "<ArrayCreationExpression>": [
+      ["<ArrayCreationExpressionWithoutInitializer>"],
+      ["<ArrayCreationExpressionWithInitializer>"]
+    ],
+    "<ArrayCreationExpressionWithoutInitializer>": [
+      ["new", "<PrimitiveType>", "<DimExprs>", "<ArrayCreationExpressionWithoutInitializer_g0>"],
+      ["new", "<ClassOrInterfaceType>", "<DimExprs>", "<ArrayCreationExpressionWithoutInitializer_g1>"]
+    ],
+    "<ArrayCreationExpressionWithoutInitializer_g0>": [
+      [],
+      ["<Dims>"]
+    ],
+    "<ArrayCreationExpressionWithoutInitializer_g1>": [
+      [],
+      ["<Dims>"]
+    ],
+    "<ArrayCreationExpressionWithInitializer>": [
+      ["new", "<PrimitiveType>", "<Dims>", "<ArrayInitializer>"],
+      ["new", "<ClassOrInterfaceType>", "<Dims>", "<ArrayInitializer>"]
+    ],
+    "<DimExprs>": [
+      ["<DimExpr>", "<DimExprs_g0>"]
+    ],
+    "<DimExprs_g0>": [
+      [],
+      ["<DimExpr>", "<DimExprs_g0>"]
+    ],
+    "<DimExpr>": [
+      ["<DimExpr_g0>", "[", "<Expression>", "]"]
+    ],
+    "<DimExpr_g0>": [
+      [],
+      ["<Annotation>", "<DimExpr_g0>"]
+    ],
+    "<ArrayAccess>": [
+      ["<ExpressionName>", "[", "<Expression>", "]"],
+      ["<PrimaryNoNewArray>", "[", "<Expression>", "]"],
+      ["<ArrayCreationExpressionWithInitializer>", "[", "<Expression>", "]"]
+    ],
+    "<FieldAccess>": [
+      ["<Primary>", ".", "<Identifier>"],
+      ["super", ".", "<Identifier>"],
+      ["<TypeName>", ".", "super", ".", "<Identifier>"]
+    ],
+    "<MethodInvocation>": [
+      ["<MethodName>", "(", "<MethodInvocation_g0>", ")"],
+      ["<TypeName>", ".", "<MethodInvocation_g1>", "<Identifier>", "(", "<MethodInvocation_g2>", ")"],
+      ["<ExpressionName>", ".", "<MethodInvocation_g3>", "<Identifier>", "(", "<MethodInvocation_g4>", ")"],
+      ["<Primary>", ".", "<MethodInvocation_g5>", "<Identifier>", "(", "<MethodInvocation_g6>", ")"],
+      ["super", ".", "<MethodInvocation_g7>", "<Identifier>", "(", "<MethodInvocation_g8>", ")"],
+      ["<TypeName>", ".", "super", ".", "<MethodInvocation_g9>", "<Identifier>", "(", "<MethodInvocation_g10>", ")"]
+    ],
+    "<MethodInvocation_g0>": [
+      [],
+      ["<ArgumentList>"]
+    ],
+    "<MethodInvocation_g1>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<MethodInvocation_g2>": [
+      [],
+      ["<ArgumentList>"]
+    ],
+    "<MethodInvocation_g3>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<MethodInvocation_g4>": [
+      [],
+      ["<ArgumentList>"]
+    ],
+    "<MethodInvocation_g5>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<MethodInvocation_g6>": [
+      [],
+      ["<ArgumentList>"]
+    ],
+    "<MethodInvocation_g7>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<MethodInvocation_g8>": [
+      [],
+      ["<ArgumentList>"]
+    ],
+    "<MethodInvocation_g9>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<MethodInvocation_g10>": [
+      [],
+      ["<ArgumentList>"]
+    ],
+    "<ArgumentList>": [
+      ["<Expression>", "<ArgumentList_g0>"]
+    ],
+    "<ArgumentList_g0>": [
+      [],
+      [",", "<Expression>", "<ArgumentList_g0>"]
+    ],
+    "<MethodReference>": [
+      ["<ExpressionName>", "::", "<MethodReference_g0>", "<Identifier>"],
+      ["<Primary>", "::", "<MethodReference_g1>", "<Identifier>"],
+      ["<ReferenceType>", "::", "<MethodReference_g2>", "<Identifier>"],
+      ["super", "::", "<MethodReference_g3>", "<Identifier>"],
+      ["<TypeName>", ".", "super", "::", "<MethodReference_g4>", "<Identifier>"],
+      ["<ClassType>", "::", "<MethodReference_g5>", "new"],
+      ["<ArrayType>", "::", "new"]
+    ],
+    "<MethodReference_g0>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<MethodReference_g1>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<MethodReference_g2>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<MethodReference_g3>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<MethodReference_g4>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<MethodReference_g5>": [
+      [],
+      ["<TypeArguments>"]
+    ],
+    "<Expression>": [
+      ["<LambdaExpression>"],
+      ["<AssignmentExpression>"]
+    ],
+    "<LambdaExpression>": [
+      ["<LambdaParameters>", "->", "<LambdaBody>"]
+    ],
+    "<LambdaParameters>": [
+      ["(", "<LambdaParameters_g0>", ")"],
+      ["<Identifier>"]
+    ],
+    "<LambdaParameters_g0>": [
+      [],
+      ["<LambdaParameterList>"]
+    ],
+    "<LambdaParameterList>": [
+      ["<LambdaParameter>", "<LambdaParameterList_g0>"],
+      ["<Identifier>", "<LambdaParameterList_g1>"]
+    ],
+    "<LambdaParameterList_g0>": [
+      [],
+      [",", "<LambdaParameter>", "<LambdaParameterList_g0>"]
+    ],
+    "<LambdaParameterList_g1>": [
+      [],
+      [",", "<Identifier>", "<LambdaParameterList_g1>"]
+    ],
+    "<LambdaParameter>": [
+      ["<LambdaParameter_g0>", "<LambdaParameterType>", "<VariableDeclaratorId>"],
+      ["<VariableArityParameter>"]
+    ],
+    "<LambdaParameter_g0>": [
+      [],
+      ["<VariableModifier>", "<LambdaParameter_g0>"]
+    ],
+    "<LambdaParameterType>": [
+      ["<UnannType>"],
+      ["var"]
+    ],
+    "<LambdaBody>": [
+      ["<Expression>"],
+      ["<Block>"]
+    ],
+    "<AssignmentExpression>": [
+      ["<ConditionalExpression>"],
+      ["<Assignment>"]
+    ],
+    "<Assignment>": [
+      ["<LeftHandSide>", "<AssignmentOperator>", "<Expression>"]
+    ],
+    "<LeftHandSide>": [
+      ["<ExpressionName>"],
+      ["<FieldAccess>"],
+      ["<ArrayAccess>"]
+    ],
+    "<AssignmentOperator>": [
+      ["="],
+      ["*="],
+      ["/="],
+      ["%="],
+      ["+="],
+      ["-="],
+      ["<<="],
+      [">>="],
+      [">>>="],
+      ["&="],
+      ["^="],
+      ["|="]
+    ],
+    "<ConditionalExpression>": [
+      ["<ConditionalOrExpression>"],
+      ["<ConditionalOrExpression>", "?", "<Expression>", ":", "<ConditionalExpression>"],
+      ["<ConditionalOrExpression>", "?", "<Expression>", ":", "<LambdaExpression>"]
+    ],
+    "<ConditionalOrExpression>": [
+      ["<ConditionalAndExpression>"],
+      ["<ConditionalOrExpression>", "||", "<ConditionalAndExpression>"]
+    ],
+    "<ConditionalAndExpression>": [
+      ["<InclusiveOrExpression>"],
+      ["<ConditionalAndExpression>", "&&", "<InclusiveOrExpression>"]
+    ],
+    "<InclusiveOrExpression>": [
+      ["<ExclusiveOrExpression>"],
+      ["<InclusiveOrExpression>", "|", "<ExclusiveOrExpression>"]
+    ],
+    "<ExclusiveOrExpression>": [
+      ["<AndExpression>"],
+      ["<ExclusiveOrExpression>", "^", "<AndExpression>"]
+    ],
+    "<AndExpression>": [
+      ["<EqualityExpression>"],
+      ["<AndExpression>", "&", "<EqualityExpression>"]
+    ],
+    "<EqualityExpression>": [
+      ["<RelationalExpression>"],
+      ["<EqualityExpression>", "==", "<RelationalExpression>"],
+      ["<EqualityExpression>", "!=", "<RelationalExpression>"]
+    ],
+    "<RelationalExpression>": [
+      ["<ShiftExpression>"],
+      ["<RelationalExpression>", "<", "<ShiftExpression>"],
+      ["<RelationalExpression>", ">", "<ShiftExpression>"],
+      ["<RelationalExpression>", "<=", "<ShiftExpression>"],
+      ["<RelationalExpression>", ">=", "<ShiftExpression>"],
+      ["<InstanceofExpression>"]
+    ],
+    "<InstanceofExpression>": [
+      ["<RelationalExpression>", "instanceof", "<ReferenceType>"],
+      ["<RelationalExpression>", "instanceof", "<Pattern>"]
+    ],
+    "<ShiftExpression>": [
+      ["<AdditiveExpression>"],
+      ["<ShiftExpression>", "<<", "<AdditiveExpression>"],
+      ["<ShiftExpression>", ">", ">", "<AdditiveExpression>"],
+      ["<ShiftExpression>", ">", ">", ">", "<AdditiveExpression>"]
+    ],
+    "<AdditiveExpression>": [
+      ["<MultiplicativeExpression>"],
+      ["<AdditiveExpression>", "+", "<MultiplicativeExpression>"],
+      ["<AdditiveExpression>", "-", "<MultiplicativeExpression>"]
+    ],
+    "<MultiplicativeExpression>": [
+      ["<UnaryExpression>"],
+      ["<MultiplicativeExpression>", "*", "<UnaryExpression>"],
+      ["<MultiplicativeExpression>", "/", "<UnaryExpression>"],
+      ["<MultiplicativeExpression>", "%", "<UnaryExpression>"]
+    ],
+    "<UnaryExpression>": [
+      ["<PreIncrementExpression>"],
+      ["<PreDecrementExpression>"],
+      ["+", "<UnaryExpression>"],
+      ["-", "<UnaryExpression>"],
+      ["<UnaryExpressionNotPlusMinus>"]
+    ],
+    "<PreIncrementExpression>": [
+      ["++", "<UnaryExpression>"]
+    ],
+    "<PreDecrementExpression>": [
+      ["--", "<UnaryExpression>"]
+    ],
+    "<UnaryExpressionNotPlusMinus>": [
+      ["<PostfixExpression>"],
+      ["~", "<UnaryExpression>"],
+      ["!", "<UnaryExpression>"],
+      ["<CastExpression>"],
+      ["<SwitchExpression>"]
+    ],
+    "<PostfixExpression>": [
+      ["<Primary>"],
+      ["<ExpressionName>"],
+      ["<PostIncrementExpression>"],
+      ["<PostDecrementExpression>"]
+    ],
+    "<PostIncrementExpression>": [
+      ["<PostfixExpression>", "++"]
+    ],
+    "<PostDecrementExpression>": [
+      ["<PostfixExpression>", "--"]
+    ],
+    "<CastExpression>": [
+      ["(", "<PrimitiveType>", ")", "<UnaryExpression>"],
+      ["(", "<ReferenceType>", "<CastExpression_g0>", ")", "<UnaryExpressionNotPlusMinus>"],
+      ["(", "<ReferenceType>", "<CastExpression_g1>", ")", "<LambdaExpression>"]
+    ],
+    "<CastExpression_g0>": [
+      [],
+      ["<AdditionalBound>", "<CastExpression_g0>"]
+    ],
+    "<CastExpression_g1>": [
+      [],
+      ["<AdditionalBound>", "<CastExpression_g1>"]
+    ],
+    "<SwitchExpression>": [
+      ["switch", "(", "<Expression>", ")", "<SwitchBlock>"]
+    ],
+    "<ConstantExpression>": [
+      ["<Expression>"]
+    ]
+  }
+}

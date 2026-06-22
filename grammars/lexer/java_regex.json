@@ -1,0 +1,68 @@
+{
+  "identifier_kind": "Identifier",
+  "skip": [
+    "^[ \\t\\r\\n]+",
+    "^//[^\\n]*(?:\\n|$)",
+    "^/\\*[^*]*\\*+(?:[^/*][^*]*\\*+)*/"
+  ],
+  "tokens": [
+    ["TextBlock", "^\"\"\"(?s:.*?)\"\"\""],
+    ["StringLiteral", "^\"(?:\\\\.|[^\\\\\"\\r\\n])*\""],
+    ["CharacterLiteral", "^'(?:\\\\.|[^\\\\'\\r\\n])+'"],
+
+    ["FloatingPointLiteral", "^0[xX](?:(?:[0-9A-Fa-f](?:_?[0-9A-Fa-f])*)?\\.(?:[0-9A-Fa-f](?:_?[0-9A-Fa-f])*)|(?:[0-9A-Fa-f](?:_?[0-9A-Fa-f])*)\\.)(?:[pP][+-]?[0-9](?:_?[0-9])*)[fFdD]?"],
+    ["FloatingPointLiteral", "^0[xX](?:[0-9A-Fa-f](?:_?[0-9A-Fa-f])*)[pP][+-]?[0-9](?:_?[0-9])*[fFdD]?"],
+    ["FloatingPointLiteral", "^(?:(?:[0-9](?:_?[0-9])*)\\.(?:[0-9](?:_?[0-9])*)?|\\.(?:[0-9](?:_?[0-9])*))(?:[eE][+-]?[0-9](?:_?[0-9])*)?[fFdD]?"],
+    ["FloatingPointLiteral", "^(?:[0-9](?:_?[0-9])*)[eE][+-]?[0-9](?:_?[0-9])*[fFdD]?"],
+    ["FloatingPointLiteral", "^(?:[0-9](?:_?[0-9])*)[fFdD]"],
+
+    ["IntegerLiteral", "^0[bB][01](?:_?[01])*[lL]?"],
+    ["IntegerLiteral", "^0[xX][0-9A-Fa-f](?:_?[0-9A-Fa-f])*[lL]?"],
+    ["IntegerLiteral", "^0(?:_?[0-7])*[lL]?"],
+    ["IntegerLiteral", "^[1-9](?:_?[0-9])*[lL]?"],
+
+    ["BooleanLiteral", "^(?:true|false)\\b"],
+    ["NullLiteral", "^null\\b"],
+    ["non-sealed", "^non-sealed\\b"],
+    ["ID_OR_KEYWORD", "^[A-Za-z_$][A-Za-z0-9_$]*"],
+
+    ["OP", "^\\.\\.\\."],
+    ["OP", "^>>>="],
+    ["OP", "^<<="],
+    ["OP", "^<<"],
+    ["OP", "^>>="],
+    ["OP", "^::"],
+    ["OP", "^->"],
+    ["OP", "^\\+\\+"],
+    ["OP", "^--"],
+    ["OP", "^&&"],
+    ["OP", "^\\|\\|"],
+    ["OP", "^<="],
+    ["OP", "^>="],
+    ["OP", "^=="],
+    ["OP", "^!="],
+    ["OP", "^\\+="],
+    ["OP", "^-="],
+    ["OP", "^\\*="],
+    ["OP", "^/="],
+    ["OP", "^%="],
+    ["OP", "^&="],
+    ["OP", "^\\|="],
+    ["OP", "^\\^="],
+
+    ["OP", "^[{}()\\[\\];,.@:?~!+\\-*/%&|^=<>]"]
+  ],
+  "keywords": [
+    "abstract", "assert", "boolean", "break", "byte", "case",
+    "catch", "char", "class", "continue", "default", "do",
+    "double", "else", "enum", "extends", "final", "finally",
+    "float", "for", "if", "implements", "import", "instanceof",
+    "int", "interface", "long", "native", "new", "package",
+    "private", "protected", "public", "return", "short", "static",
+    "strictfp", "super", "switch", "synchronized", "this", "throw",
+    "throws", "transient", "try", "void", "volatile", "while",
+    "exports", "module", "open", "opens", "permits", "provides",
+    "record", "requires", "sealed", "to", "transitive", "uses",
+    "var", "with", "yield"
+  ]
+}

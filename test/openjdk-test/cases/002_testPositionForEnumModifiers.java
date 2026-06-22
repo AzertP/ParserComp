@@ -1,0 +1,1 @@
+package test; public enum Test {A;}

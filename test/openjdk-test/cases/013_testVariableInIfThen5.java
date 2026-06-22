@@ -1,0 +1,1 @@
+package t; class Test { private static void t() { if (true) } }

@@ -1,0 +1,1 @@
+package test; public class ErrorTest { int numDays; void m1(int i) { switchh {i} { case 1: numDays = 31; break; } } }

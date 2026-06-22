@@ -1,0 +1,1 @@
+package t; class Test { private static void t(String name) { if (name != null) class X {} } }

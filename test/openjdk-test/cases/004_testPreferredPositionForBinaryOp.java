@@ -1,0 +1,1 @@
+package test; public class Test {private void test() {Object o = null; boolean b = o != null && o instanceof String;} private Test() {}}

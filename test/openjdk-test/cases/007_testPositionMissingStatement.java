@@ -1,0 +1,1 @@
+class C { void t() { if (true) } }

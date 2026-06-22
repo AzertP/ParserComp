@@ -1,0 +1,1 @@
+class T { void t() { for (n : ns) { } } }

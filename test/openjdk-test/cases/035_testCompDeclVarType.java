@@ -1,0 +1,1 @@
+package test; public class Test {private void test() {var v1 = 10,v2 = 12;} private Test() {}}

@@ -1,0 +1,1 @@
+package test; public class ErrorTest { void method() { int x = y  z } }

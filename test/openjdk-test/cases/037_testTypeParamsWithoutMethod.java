@@ -1,0 +1,1 @@
+package test; class Test { /**javadoc*/ public <T> }

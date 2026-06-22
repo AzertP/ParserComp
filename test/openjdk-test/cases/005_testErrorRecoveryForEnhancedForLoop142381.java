@@ -1,0 +1,1 @@
+package test; class Test { private void method() { java.util.Set<String> s = null; for (a : s) {} } }

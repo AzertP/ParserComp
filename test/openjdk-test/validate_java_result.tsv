@@ -1,0 +1,333 @@
+file	method	source_line	has_expected_diagnostics	expected_diagnostics	has_erroneous_tree_check	bytes	chars	lexed_tokens	encoded_tokens	parser	status	accepted	elapsed_ms	note
+cases/001_testPositionForSuperConstructorCalls.java	testPositionForSuperConstructorCalls	164	false		false	58	58	18	18	Leo	ACCEPT	true	1.469	
+cases/001_testPositionForSuperConstructorCalls.java	testPositionForSuperConstructorCalls	164	false		false	58	58	18	18	GLL	ACCEPT	true	6.623	
+cases/001_testPositionForSuperConstructorCalls.java	testPositionForSuperConstructorCalls	164	false		false	58	58	18	18	RNGLR	ACCEPT	true	0.329	
+cases/001_testPositionForSuperConstructorCalls.java	testPositionForSuperConstructorCalls	164	false		false	58	58	18	18	BRNGLR	ACCEPT	true	0.264	
+cases/002_testPositionForEnumModifiers.java	testPositionForEnumModifiers	203	false		false	35	35	10	10	Leo	ACCEPT	true	0.660	
+cases/002_testPositionForEnumModifiers.java	testPositionForEnumModifiers	203	false		false	35	35	10	10	GLL	ACCEPT	true	5.254	
+cases/002_testPositionForEnumModifiers.java	testPositionForEnumModifiers	203	false		false	35	35	10	10	RNGLR	ACCEPT	true	0.233	
+cases/002_testPositionForEnumModifiers.java	testPositionForEnumModifiers	203	false		false	35	35	10	10	BRNGLR	ACCEPT	true	0.199	
+cases/003_testNewClassWithEnclosing.java	testNewClassWithEnclosing	224	false		false	95	95	30	30	Leo	ACCEPT	true	1.011	
+cases/003_testNewClassWithEnclosing.java	testNewClassWithEnclosing	224	false		false	95	95	30	30	GLL	ACCEPT	true	6.805	
+cases/003_testNewClassWithEnclosing.java	testNewClassWithEnclosing	224	false		false	95	95	30	30	RNGLR	ACCEPT	true	1.159	
+cases/003_testNewClassWithEnclosing.java	testNewClassWithEnclosing	224	false		false	95	95	30	30	BRNGLR	ACCEPT	true	0.649	
+cases/004_testPreferredPositionForBinaryOp.java	testPreferredPositionForBinaryOp	248	false		false	136	136	37	37	Leo	ACCEPT	true	1.715	
+cases/004_testPreferredPositionForBinaryOp.java	testPreferredPositionForBinaryOp	248	false		false	136	136	37	37	GLL	ACCEPT	true	5.841	
+cases/004_testPreferredPositionForBinaryOp.java	testPreferredPositionForBinaryOp	248	false		false	136	136	37	37	RNGLR	ACCEPT	true	0.649	
+cases/004_testPreferredPositionForBinaryOp.java	testPreferredPositionForBinaryOp	248	false		false	136	136	37	37	BRNGLR	ACCEPT	true	0.410	
+cases/005_testErrorRecoveryForEnhancedForLoop142381.java	testErrorRecoveryForEnhancedForLoop142381	268	false		false	101	101	34	34	Leo	REJECT	false	0.644	
+cases/005_testErrorRecoveryForEnhancedForLoop142381.java	testErrorRecoveryForEnhancedForLoop142381	268	false		false	101	101	34	34	GLL	REJECT	false	6.079	
+cases/005_testErrorRecoveryForEnhancedForLoop142381.java	testErrorRecoveryForEnhancedForLoop142381	268	false		false	101	101	34	34	RNGLR	REJECT	false	1.134	
+cases/005_testErrorRecoveryForEnhancedForLoop142381.java	testErrorRecoveryForEnhancedForLoop142381	268	false		false	101	101	34	34	BRNGLR	REJECT	false	0.461	
+cases/006_testPositionAnnotationNoPackage187551.java	testPositionAnnotationNoPackage187551	296	false		false	19	19	5	5	Leo	ACCEPT	true	0.389	
+cases/006_testPositionAnnotationNoPackage187551.java	testPositionAnnotationNoPackage187551	296	false		false	19	19	5	5	GLL	ACCEPT	true	5.166	
+cases/006_testPositionAnnotationNoPackage187551.java	testPositionAnnotationNoPackage187551	296	false		false	19	19	5	5	RNGLR	ACCEPT	true	0.219	
+cases/006_testPositionAnnotationNoPackage187551.java	testPositionAnnotationNoPackage187551	296	false		false	19	19	5	5	BRNGLR	ACCEPT	true	0.441	
+cases/007_testPositionMissingStatement.java	testPositionMissingStatement	311	false		false	34	34	14	14	Leo	REJECT	false	0.426	
+cases/007_testPositionMissingStatement.java	testPositionMissingStatement	311	false		false	34	34	14	14	GLL	REJECT	false	5.310	
+cases/007_testPositionMissingStatement.java	testPositionMissingStatement	311	false		false	34	34	14	14	RNGLR	REJECT	false	0.541	
+cases/007_testPositionMissingStatement.java	testPositionMissingStatement	311	false		false	34	34	14	14	BRNGLR	REJECT	false	0.498	
+cases/008_testStartPositionForMethodWithoutModifiers.java	testStartPositionForMethodWithoutModifiers	559	false		false	41	41	16	16	Leo	ACCEPT	true	0.553	
+cases/008_testStartPositionForMethodWithoutModifiers.java	testStartPositionForMethodWithoutModifiers	559	false		false	41	41	16	16	GLL	ACCEPT	true	4.373	
+cases/008_testStartPositionForMethodWithoutModifiers.java	testStartPositionForMethodWithoutModifiers	559	false		false	41	41	16	16	RNGLR	ACCEPT	true	0.260	
+cases/008_testStartPositionForMethodWithoutModifiers.java	testStartPositionForMethodWithoutModifiers	559	false		false	41	41	16	16	BRNGLR	ACCEPT	true	0.278	
+cases/009_testVariableInIfThen1.java	testVariableInIfThen1	577	true	compiler.err.variable.not.allowed	false	107	107	32	32	Leo	REJECT	false	0.556	
+cases/009_testVariableInIfThen1.java	testVariableInIfThen1	577	true	compiler.err.variable.not.allowed	false	107	107	32	32	GLL	REJECT	false	5.249	
+cases/009_testVariableInIfThen1.java	testVariableInIfThen1	577	true	compiler.err.variable.not.allowed	false	107	107	32	32	RNGLR	REJECT	false	0.345	
+cases/009_testVariableInIfThen1.java	testVariableInIfThen1	577	true	compiler.err.variable.not.allowed	false	107	107	32	32	BRNGLR	REJECT	false	0.274	
+cases/010_testVariableInIfThen2.java	testVariableInIfThen2	603	true	compiler.err.class.not.allowed	false	93	93	27	27	Leo	REJECT	false	0.525	
+cases/010_testVariableInIfThen2.java	testVariableInIfThen2	603	true	compiler.err.class.not.allowed	false	93	93	27	27	GLL	REJECT	false	6.163	
+cases/010_testVariableInIfThen2.java	testVariableInIfThen2	603	true	compiler.err.class.not.allowed	false	93	93	27	27	RNGLR	REJECT	false	0.205	
+cases/010_testVariableInIfThen2.java	testVariableInIfThen2	603	true	compiler.err.class.not.allowed	false	93	93	27	27	BRNGLR	REJECT	false	0.188	
+cases/011_testVariableInIfThen3.java	testVariableInIfThen3	626	true	compiler.err.class.not.allowed	false	82	82	24	24	Leo	REJECT	false	0.476	
+cases/011_testVariableInIfThen3.java	testVariableInIfThen3	626	true	compiler.err.class.not.allowed	false	82	82	24	24	GLL	REJECT	false	5.807	
+cases/011_testVariableInIfThen3.java	testVariableInIfThen3	626	true	compiler.err.class.not.allowed	false	82	82	24	24	RNGLR	REJECT	false	0.176	
+cases/011_testVariableInIfThen3.java	testVariableInIfThen3	626	true	compiler.err.class.not.allowed	false	82	82	24	24	BRNGLR	REJECT	false	0.174	
+cases/012_testVariableInIfThen4.java	testVariableInIfThen4	649	true	compiler.err.class.not.allowed	false	97	97	27	27	Leo	REJECT	false	0.521	
+cases/012_testVariableInIfThen4.java	testVariableInIfThen4	649	true	compiler.err.class.not.allowed	false	97	97	27	27	GLL	REJECT	false	7.318	
+cases/012_testVariableInIfThen4.java	testVariableInIfThen4	649	true	compiler.err.class.not.allowed	false	97	97	27	27	RNGLR	REJECT	false	0.205	
+cases/012_testVariableInIfThen4.java	testVariableInIfThen4	649	true	compiler.err.class.not.allowed	false	97	97	27	27	BRNGLR	REJECT	false	0.198	
+cases/013_testVariableInIfThen5.java	testVariableInIfThen5	672	true	compiler.err.illegal.start.of.stmt	false	63	63	19	19	Leo	REJECT	false	0.471	
+cases/013_testVariableInIfThen5.java	testVariableInIfThen5	672	true	compiler.err.illegal.start.of.stmt	false	63	63	19	19	GLL	REJECT	false	5.622	
+cases/013_testVariableInIfThen5.java	testVariableInIfThen5	672	true	compiler.err.illegal.start.of.stmt	false	63	63	19	19	RNGLR	REJECT	false	0.254	
+cases/013_testVariableInIfThen5.java	testVariableInIfThen5	672	true	compiler.err.illegal.start.of.stmt	false	63	63	19	19	BRNGLR	REJECT	false	0.170	
+cases/014_testMissingExponent.java	testMissingExponent	697	false		false	43	43	16	16	Leo	REJECT	false	0.495	
+cases/014_testMissingExponent.java	testMissingExponent	697	false		false	43	43	16	16	GLL	REJECT	false	5.607	
+cases/014_testMissingExponent.java	testMissingExponent	697	false		false	43	43	16	16	RNGLR	REJECT	false	0.209	
+cases/014_testMissingExponent.java	testMissingExponent	697	false		false	43	43	16	16	BRNGLR	REJECT	false	0.197	
+cases/015_testTryResourcePos.java	testTryResourcePos	708	false		false	69	69	22	22	Leo	ACCEPT	true	1.298	
+cases/015_testTryResourcePos.java	testTryResourcePos	708	false		false	69	69	22	22	GLL	ACCEPT	true	5.327	
+cases/015_testTryResourcePos.java	testTryResourcePos	708	false		false	69	69	22	22	RNGLR	ACCEPT	true	0.523	
+cases/015_testTryResourcePos.java	testTryResourcePos	708	false		false	69	69	22	22	BRNGLR	ACCEPT	true	0.417	
+cases/016_testVarPos.java	testVarPos	729	false		false	60	60	18	18	Leo	ACCEPT	true	1.096	
+cases/016_testVarPos.java	testVarPos	729	false		false	60	60	18	18	GLL	ACCEPT	true	6.145	
+cases/016_testVarPos.java	testVarPos	729	false		false	60	60	18	18	RNGLR	ACCEPT	true	1.052	
+cases/016_testVarPos.java	testVarPos	729	false		false	60	60	18	18	BRNGLR	ACCEPT	true	0.281	
+cases/017_testOperatorMissingError.java	testOperatorMissingError	752	false		true	71	71	19	19	Leo	REJECT	false	0.554	
+cases/017_testOperatorMissingError.java	testOperatorMissingError	752	false		true	71	71	19	19	GLL	REJECT	false	5.341	
+cases/017_testOperatorMissingError.java	testOperatorMissingError	752	false		true	71	71	19	19	RNGLR	REJECT	false	0.184	
+cases/017_testOperatorMissingError.java	testOperatorMissingError	752	false		true	71	71	19	19	BRNGLR	REJECT	false	0.219	
+cases/018_testMissingParenthesisError.java	testMissingParenthesisError	778	false		true	75	75	20	20	Leo	REJECT	false	0.561	
+cases/018_testMissingParenthesisError.java	testMissingParenthesisError	778	false		true	75	75	20	20	GLL	REJECT	false	7.158	
+cases/018_testMissingParenthesisError.java	testMissingParenthesisError	778	false		true	75	75	20	20	RNGLR	REJECT	false	0.207	
+cases/018_testMissingParenthesisError.java	testMissingParenthesisError	778	false		true	75	75	20	20	BRNGLR	REJECT	false	0.203	
+cases/019_testMissingClassError.java	testMissingClassError	803	false		true	70	70	21	21	Leo	REJECT	false	0.834	
+cases/019_testMissingClassError.java	testMissingClassError	803	false		true	70	70	21	21	GLL	REJECT	false	4.429	
+cases/019_testMissingClassError.java	testMissingClassError	803	false		true	70	70	21	21	RNGLR	REJECT	false	0.257	
+cases/019_testMissingClassError.java	testMissingClassError	803	false		true	70	70	21	21	BRNGLR	REJECT	false	0.169	
+cases/020_testSwitchError.java	testSwitchError	828	false		true	117	117	34	34	Leo	REJECT	false	0.501	
+cases/020_testSwitchError.java	testSwitchError	828	false		true	117	117	34	34	GLL	REJECT	false	4.979	
+cases/020_testSwitchError.java	testSwitchError	828	false		true	117	117	34	34	RNGLR	REJECT	false	0.251	
+cases/020_testSwitchError.java	testSwitchError	828	false		true	117	117	34	34	BRNGLR	REJECT	false	0.194	
+cases/021_testMethodError.java	testMethodError	854	false		true	83	83	22	22	Leo	REJECT	false	0.386	
+cases/021_testMethodError.java	testMethodError	854	false		true	83	83	22	22	GLL	REJECT	false	5.719	
+cases/021_testMethodError.java	testMethodError	854	false		true	83	83	22	22	RNGLR	REJECT	false	0.136	
+cases/021_testMethodError.java	testMethodError	854	false		true	83	83	22	22	BRNGLR	REJECT	false	0.135	
+cases/022_testPositionBrokenSource126732a_return_runnable.java	testPositionBrokenSource126732a	887	false		false	145	145	28	28	Leo	REJECT	false	0.516	
+cases/022_testPositionBrokenSource126732a_return_runnable.java	testPositionBrokenSource126732a	887	false		false	145	145	28	28	GLL	REJECT	false	5.094	
+cases/022_testPositionBrokenSource126732a_return_runnable.java	testPositionBrokenSource126732a	887	false		false	145	145	28	28	RNGLR	REJECT	false	0.268	
+cases/022_testPositionBrokenSource126732a_return_runnable.java	testPositionBrokenSource126732a	887	false		false	145	145	28	28	BRNGLR	REJECT	false	0.197	
+cases/023_testPositionBrokenSource126732a_do_while_true.java	testPositionBrokenSource126732a	887	false		false	147	147	31	31	Leo	REJECT	false	0.528	
+cases/023_testPositionBrokenSource126732a_do_while_true.java	testPositionBrokenSource126732a	887	false		false	147	147	31	31	GLL	REJECT	false	5.945	
+cases/023_testPositionBrokenSource126732a_do_while_true.java	testPositionBrokenSource126732a	887	false		false	147	147	31	31	RNGLR	REJECT	false	0.223	
+cases/023_testPositionBrokenSource126732a_do_while_true.java	testPositionBrokenSource126732a	887	false		false	147	147	31	31	BRNGLR	REJECT	false	0.192	
+cases/024_testPositionBrokenSource126732a_throw_unsupportedoperationexception.java	testPositionBrokenSource126732a	887	false		false	165	165	28	28	Leo	REJECT	false	0.959	
+cases/024_testPositionBrokenSource126732a_throw_unsupportedoperationexception.java	testPositionBrokenSource126732a	887	false		false	165	165	28	28	GLL	REJECT	false	5.019	
+cases/024_testPositionBrokenSource126732a_throw_unsupportedoperationexception.java	testPositionBrokenSource126732a	887	false		false	165	165	28	28	RNGLR	REJECT	false	0.254	
+cases/024_testPositionBrokenSource126732a_throw_unsupportedoperationexception.java	testPositionBrokenSource126732a	887	false		false	165	165	28	28	BRNGLR	REJECT	false	0.174	
+cases/025_testPositionBrokenSource126732a_assert_true.java	testPositionBrokenSource126732a	887	false		false	139	139	26	26	Leo	REJECT	false	0.479	
+cases/025_testPositionBrokenSource126732a_assert_true.java	testPositionBrokenSource126732a	887	false		false	139	139	26	26	GLL	REJECT	false	4.842	
+cases/025_testPositionBrokenSource126732a_assert_true.java	testPositionBrokenSource126732a	887	false		false	139	139	26	26	RNGLR	REJECT	false	0.923	
+cases/025_testPositionBrokenSource126732a_assert_true.java	testPositionBrokenSource126732a	887	false		false	139	139	26	26	BRNGLR	REJECT	false	0.360	
+cases/026_testPositionBrokenSource126732a_1_1.java	testPositionBrokenSource126732a	887	false		false	133	133	27	27	Leo	REJECT	false	0.658	
+cases/026_testPositionBrokenSource126732a_1_1.java	testPositionBrokenSource126732a	887	false		false	133	133	27	27	GLL	REJECT	false	4.406	
+cases/026_testPositionBrokenSource126732a_1_1.java	testPositionBrokenSource126732a	887	false		false	133	133	27	27	RNGLR	REJECT	false	0.144	
+cases/026_testPositionBrokenSource126732a_1_1.java	testPositionBrokenSource126732a	887	false		false	133	133	27	27	BRNGLR	REJECT	false	0.132	
+cases/027_testPositionBrokenSource126732b_break.java	testPositionBrokenSource126732b	926	false		false	170	170	31	31	Leo	REJECT	false	0.906	
+cases/027_testPositionBrokenSource126732b_break.java	testPositionBrokenSource126732b	926	false		false	170	170	31	31	GLL	REJECT	false	5.606	
+cases/027_testPositionBrokenSource126732b_break.java	testPositionBrokenSource126732b	926	false		false	170	170	31	31	RNGLR	REJECT	false	0.201	
+cases/027_testPositionBrokenSource126732b_break.java	testPositionBrokenSource126732b	926	false		false	170	170	31	31	BRNGLR	REJECT	false	0.192	
+cases/028_testPositionBrokenSource126732b_break_a.java	testPositionBrokenSource126732b	926	false		false	172	172	32	32	Leo	REJECT	false	0.498	
+cases/028_testPositionBrokenSource126732b_break_a.java	testPositionBrokenSource126732b	926	false		false	172	172	32	32	GLL	REJECT	false	6.279	
+cases/028_testPositionBrokenSource126732b_break_a.java	testPositionBrokenSource126732b	926	false		false	172	172	32	32	RNGLR	REJECT	false	0.188	
+cases/028_testPositionBrokenSource126732b_break_a.java	testPositionBrokenSource126732b	926	false		false	172	172	32	32	BRNGLR	REJECT	false	0.158	
+cases/029_testPositionBrokenSource126732b_continue.java	testPositionBrokenSource126732b	926	false		false	174	174	31	31	Leo	REJECT	false	0.488	
+cases/029_testPositionBrokenSource126732b_continue.java	testPositionBrokenSource126732b	926	false		false	174	174	31	31	GLL	REJECT	false	4.672	
+cases/029_testPositionBrokenSource126732b_continue.java	testPositionBrokenSource126732b	926	false		false	174	174	31	31	RNGLR	REJECT	false	0.228	
+cases/029_testPositionBrokenSource126732b_continue.java	testPositionBrokenSource126732b	926	false		false	174	174	31	31	BRNGLR	REJECT	false	0.244	
+cases/030_testPositionBrokenSource126732b_continue_a.java	testPositionBrokenSource126732b	926	false		false	175	175	32	32	Leo	REJECT	false	0.739	
+cases/030_testPositionBrokenSource126732b_continue_a.java	testPositionBrokenSource126732b	926	false		false	175	175	32	32	GLL	REJECT	false	4.433	
+cases/030_testPositionBrokenSource126732b_continue_a.java	testPositionBrokenSource126732b	926	false		false	175	175	32	32	RNGLR	REJECT	false	0.668	
+cases/030_testPositionBrokenSource126732b_continue_a.java	testPositionBrokenSource126732b	926	false		false	175	175	32	32	BRNGLR	REJECT	false	0.727	
+cases/031_testStartPositionEnumConstantInit.java	testStartPositionEnumConstantInit	961	false		false	29	29	9	9	Leo	ACCEPT	true	0.862	
+cases/031_testStartPositionEnumConstantInit.java	testStartPositionEnumConstantInit	961	false		false	29	29	9	9	GLL	ACCEPT	true	4.288	
+cases/031_testStartPositionEnumConstantInit.java	testStartPositionEnumConstantInit	961	false		false	29	29	9	9	RNGLR	ACCEPT	true	0.166	
+cases/031_testStartPositionEnumConstantInit.java	testStartPositionEnumConstantInit	961	false		false	29	29	9	9	BRNGLR	ACCEPT	true	0.162	
+cases/032_testVoidLambdaParameter.java	testVoidLambdaParameter	977	false		false	54	54	18	18	Leo	REJECT	false	0.794	
+cases/032_testVoidLambdaParameter.java	testVoidLambdaParameter	977	false		false	54	54	18	18	GLL	REJECT	false	5.109	
+cases/032_testVoidLambdaParameter.java	testVoidLambdaParameter	977	false		false	54	54	18	18	RNGLR	REJECT	false	0.159	
+cases/032_testVoidLambdaParameter.java	testVoidLambdaParameter	977	false		false	54	54	18	18	BRNGLR	REJECT	false	0.143	
+cases/033_testWrongFirstToken.java	testWrongFirstToken	1014	true	compiler.err.class.method.or.field.expected	false	1	1	1	1	Leo	REJECT	false	0.315	
+cases/033_testWrongFirstToken.java	testWrongFirstToken	1014	true	compiler.err.class.method.or.field.expected	false	1	1	1	1	GLL	REJECT	false	5.886	
+cases/033_testWrongFirstToken.java	testWrongFirstToken	1014	true	compiler.err.class.method.or.field.expected	false	1	1	1	1	RNGLR	REJECT	false	0.106	
+cases/033_testWrongFirstToken.java	testWrongFirstToken	1014	true	compiler.err.class.method.or.field.expected	false	1	1	1	1	BRNGLR	REJECT	false	0.093	
+cases/034_testForInit.java	testForInit	1029	true	compiler.err.bad.initializer	false	41	41	18	18	Leo	REJECT	false	0.414	
+cases/034_testForInit.java	testForInit	1029	true	compiler.err.bad.initializer	false	41	41	18	18	GLL	REJECT	false	5.536	
+cases/034_testForInit.java	testForInit	1029	true	compiler.err.bad.initializer	false	41	41	18	18	RNGLR	REJECT	false	0.158	
+cases/034_testForInit.java	testForInit	1029	true	compiler.err.bad.initializer	false	41	41	18	18	BRNGLR	REJECT	false	0.153	
+cases/035_testCompDeclVarType.java	testCompDeclVarType	1059	false		false	94	94	30	30	Leo	ACCEPT	true	1.106	
+cases/035_testCompDeclVarType.java	testCompDeclVarType	1059	false		false	94	94	30	30	GLL	ACCEPT	true	6.356	
+cases/035_testCompDeclVarType.java	testCompDeclVarType	1059	false		false	94	94	30	30	RNGLR	ACCEPT	true	0.423	
+cases/035_testCompDeclVarType.java	testCompDeclVarType	1059	false		false	94	94	30	30	BRNGLR	ACCEPT	true	0.282	
+cases/036_testCaseBodyStatements.java	testCaseBodyStatements	1081	true	compiler.err.switch.case.unexpected.statement	false	755	755	175	175	Leo	REJECT	false	0.785	
+cases/036_testCaseBodyStatements.java	testCaseBodyStatements	1081	true	compiler.err.switch.case.unexpected.statement	false	755	755	175	175	GLL	REJECT	false	5.338	
+cases/036_testCaseBodyStatements.java	testCaseBodyStatements	1081	true	compiler.err.switch.case.unexpected.statement	false	755	755	175	175	RNGLR	REJECT	false	0.615	
+cases/036_testCaseBodyStatements.java	testCaseBodyStatements	1081	true	compiler.err.switch.case.unexpected.statement	false	755	755	175	175	BRNGLR	REJECT	false	0.567	
+cases/037_testTypeParamsWithoutMethod.java	testTypeParamsWithoutMethod	1212	false		true	52	52	11	11	Leo	REJECT	false	0.492	
+cases/037_testTypeParamsWithoutMethod.java	testTypeParamsWithoutMethod	1212	false		true	52	52	11	11	GLL	REJECT	false	4.314	
+cases/037_testTypeParamsWithoutMethod.java	testTypeParamsWithoutMethod	1212	false		true	52	52	11	11	RNGLR	REJECT	false	0.154	
+cases/037_testTypeParamsWithoutMethod.java	testTypeParamsWithoutMethod	1212	false		true	52	52	11	11	BRNGLR	REJECT	false	0.187	
+cases/038_testAnalyzeParensWithComma1.java	testAnalyzeParensWithComma1	1245	false		false	39	39	12	12	Leo	REJECT	false	1.100	
+cases/038_testAnalyzeParensWithComma1.java	testAnalyzeParensWithComma1	1245	false		false	39	39	12	12	GLL	REJECT	false	4.867	
+cases/038_testAnalyzeParensWithComma1.java	testAnalyzeParensWithComma1	1245	false		false	39	39	12	12	RNGLR	REJECT	false	0.185	
+cases/038_testAnalyzeParensWithComma1.java	testAnalyzeParensWithComma1	1245	false		false	39	39	12	12	BRNGLR	REJECT	false	0.173	
+cases/039_testAnalyzeParensWithComma2.java	testAnalyzeParensWithComma2	1278	false		false	41	41	14	14	Leo	REJECT	false	0.468	
+cases/039_testAnalyzeParensWithComma2.java	testAnalyzeParensWithComma2	1278	false		false	41	41	14	14	GLL	REJECT	false	5.114	
+cases/039_testAnalyzeParensWithComma2.java	testAnalyzeParensWithComma2	1278	false		false	41	41	14	14	RNGLR	REJECT	false	0.392	
+cases/039_testAnalyzeParensWithComma2.java	testAnalyzeParensWithComma2	1278	false		false	41	41	14	14	BRNGLR	REJECT	false	0.212	
+cases/040_testBrokenEnum1.java	testBrokenEnum1	1311	true	compiler.err.expected3	false	57	57	23	23	Leo	REJECT	false	0.387	
+cases/040_testBrokenEnum1.java	testBrokenEnum1	1311	true	compiler.err.expected3	false	57	57	23	23	GLL	REJECT	false	5.732	
+cases/040_testBrokenEnum1.java	testBrokenEnum1	1311	true	compiler.err.expected3	false	57	57	23	23	RNGLR	REJECT	false	0.497	
+cases/040_testBrokenEnum1.java	testBrokenEnum1	1311	true	compiler.err.expected3	false	57	57	23	23	BRNGLR	REJECT	false	0.224	
+cases/041_testBrokenEnum2.java	testBrokenEnum2	1347	true	compiler.err.expected3	false	59	59	22	22	Leo	REJECT	false	0.375	
+cases/041_testBrokenEnum2.java	testBrokenEnum2	1347	true	compiler.err.expected3	false	59	59	22	22	GLL	REJECT	false	4.335	
+cases/041_testBrokenEnum2.java	testBrokenEnum2	1347	true	compiler.err.expected3	false	59	59	22	22	RNGLR	REJECT	false	0.127	
+cases/041_testBrokenEnum2.java	testBrokenEnum2	1347	true	compiler.err.expected3	false	59	59	22	22	BRNGLR	REJECT	false	0.134	
+cases/042_testBrokenEnum3.java	testBrokenEnum3	1382	true	compiler.err.expected2	false	53	53	18	18	Leo	REJECT	false	0.390	
+cases/042_testBrokenEnum3.java	testBrokenEnum3	1382	true	compiler.err.expected2	false	53	53	18	18	GLL	REJECT	false	4.513	
+cases/042_testBrokenEnum3.java	testBrokenEnum3	1382	true	compiler.err.expected2	false	53	53	18	18	RNGLR	REJECT	false	0.140	
+cases/042_testBrokenEnum3.java	testBrokenEnum3	1382	true	compiler.err.expected2	false	53	53	18	18	BRNGLR	REJECT	false	0.126	
+cases/043_testBrokenEnum4.java	testBrokenEnum4	1415	true	compiler.err.enum.constant.expected	false	60	60	23	23	Leo	REJECT	false	0.384	
+cases/043_testBrokenEnum4.java	testBrokenEnum4	1415	true	compiler.err.enum.constant.expected	false	60	60	23	23	GLL	REJECT	false	5.539	
+cases/043_testBrokenEnum4.java	testBrokenEnum4	1415	true	compiler.err.enum.constant.expected	false	60	60	23	23	RNGLR	REJECT	false	0.153	
+cases/043_testBrokenEnum4.java	testBrokenEnum4	1415	true	compiler.err.enum.constant.expected	false	60	60	23	23	BRNGLR	REJECT	false	0.141	
+cases/044_testBrokenEnum5.java	testBrokenEnum5	1450	true	compiler.err.enum.constant.not.expected	false	57	57	21	21	Leo	REJECT	false	0.426	
+cases/044_testBrokenEnum5.java	testBrokenEnum5	1450	true	compiler.err.enum.constant.not.expected	false	57	57	21	21	GLL	REJECT	false	4.757	
+cases/044_testBrokenEnum5.java	testBrokenEnum5	1450	true	compiler.err.enum.constant.not.expected	false	57	57	21	21	RNGLR	REJECT	false	0.233	
+cases/044_testBrokenEnum5.java	testBrokenEnum5	1450	true	compiler.err.enum.constant.not.expected	false	57	57	21	21	BRNGLR	REJECT	false	0.198	
+cases/045_testCompoundAssignment.java	testCompoundAssignment	1484	true	compiler.err.expected	false	37	37	12	12	Leo	REJECT	false	0.473	
+cases/045_testCompoundAssignment.java	testCompoundAssignment	1484	true	compiler.err.expected	false	37	37	12	12	GLL	REJECT	false	5.478	
+cases/045_testCompoundAssignment.java	testCompoundAssignment	1484	true	compiler.err.expected	false	37	37	12	12	RNGLR	REJECT	false	0.152	
+cases/045_testCompoundAssignment.java	testCompoundAssignment	1484	true	compiler.err.expected	false	37	37	12	12	BRNGLR	REJECT	false	0.189	
+cases/046_testStartAndEndPositionForClassesInPermitsClause.java	testStartAndEndPositionForClassesInPermitsClause	1510	false		false	116	116	26	26	Leo	ACCEPT	true	0.718	
+cases/046_testStartAndEndPositionForClassesInPermitsClause.java	testStartAndEndPositionForClassesInPermitsClause	1510	false		false	116	116	26	26	GLL	ACCEPT	true	4.654	
+cases/046_testStartAndEndPositionForClassesInPermitsClause.java	testStartAndEndPositionForClassesInPermitsClause	1510	false		false	116	116	26	26	RNGLR	ACCEPT	true	0.417	
+cases/046_testStartAndEndPositionForClassesInPermitsClause.java	testStartAndEndPositionForClassesInPermitsClause	1510	false		false	116	116	26	26	BRNGLR	ACCEPT	true	0.227	
+cases/047_testErrorRecoveryClassNotBrace.java	testErrorRecoveryClassNotBrace	1545	false		false	97	97	20	20	Leo	REJECT	false	0.380	
+cases/047_testErrorRecoveryClassNotBrace.java	testErrorRecoveryClassNotBrace	1545	false		false	97	97	20	20	GLL	REJECT	false	5.213	
+cases/047_testErrorRecoveryClassNotBrace.java	testErrorRecoveryClassNotBrace	1545	false		false	97	97	20	20	RNGLR	REJECT	false	0.290	
+cases/047_testErrorRecoveryClassNotBrace.java	testErrorRecoveryClassNotBrace	1545	false		false	97	97	20	20	BRNGLR	REJECT	false	0.149	
+cases/048_testElseRecovery.java	testElseRecovery	1583	true	compiler.err.expected,compiler.err.not.stmt	false	155	155	35	35	Leo	REJECT	false	0.534	
+cases/048_testElseRecovery.java	testElseRecovery	1583	true	compiler.err.expected,compiler.err.not.stmt	false	155	155	35	35	GLL	REJECT	false	6.747	
+cases/048_testElseRecovery.java	testElseRecovery	1583	true	compiler.err.expected,compiler.err.not.stmt	false	155	155	35	35	RNGLR	REJECT	false	0.208	
+cases/048_testElseRecovery.java	testElseRecovery	1583	true	compiler.err.expected,compiler.err.not.stmt	false	155	155	35	35	BRNGLR	REJECT	false	0.180	
+cases/049_testAtRecovery.java	testAtRecovery	1630	true	compiler.err.expected	false	140	140	33	33	Leo	REJECT	false	0.403	
+cases/049_testAtRecovery.java	testAtRecovery	1630	true	compiler.err.expected	false	140	140	33	33	GLL	REJECT	false	5.147	
+cases/049_testAtRecovery.java	testAtRecovery	1630	true	compiler.err.expected	false	140	140	33	33	RNGLR	REJECT	false	0.200	
+cases/049_testAtRecovery.java	testAtRecovery	1630	true	compiler.err.expected	false	140	140	33	33	BRNGLR	REJECT	false	0.167	
+cases/050_testBasedAnonymous.java	testBasedAnonymous	1673	false		false	86	86	27	27	Leo	ACCEPT	true	0.797	
+cases/050_testBasedAnonymous.java	testBasedAnonymous	1673	false		false	86	86	27	27	GLL	ACCEPT	true	6.399	
+cases/050_testBasedAnonymous.java	testBasedAnonymous	1673	false		false	86	86	27	27	RNGLR	ACCEPT	true	0.280	
+cases/050_testBasedAnonymous.java	testBasedAnonymous	1673	false		false	86	86	27	27	BRNGLR	ACCEPT	true	0.259	
+cases/051_testBrokenUnicodeEscape.java	testBrokenUnicodeEscape	1707	true	compiler.err.illegal.unicode.esc	false	90	90	0	0	Leo	LEX_FAIL	false	0.000	Unexpected input at byte 81: "\\uaaa;\n}\n"
+cases/051_testBrokenUnicodeEscape.java	testBrokenUnicodeEscape	1707	true	compiler.err.illegal.unicode.esc	false	90	90	0	0	GLL	LEX_FAIL	false	0.000	Unexpected input at byte 81: "\\uaaa;\n}\n"
+cases/051_testBrokenUnicodeEscape.java	testBrokenUnicodeEscape	1707	true	compiler.err.illegal.unicode.esc	false	90	90	0	0	RNGLR	LEX_FAIL	false	0.000	Unexpected input at byte 81: "\\uaaa;\n}\n"
+cases/051_testBrokenUnicodeEscape.java	testBrokenUnicodeEscape	1707	true	compiler.err.illegal.unicode.esc	false	90	90	0	0	BRNGLR	LEX_FAIL	false	0.000	Unexpected input at byte 81: "\\uaaa;\n}\n"
+cases/052_testUsupportedTextBlock.java	testUsupportedTextBlock	1741	true	compiler.err.feature.not.supported.in.source.plural	false	80	80	13	13	Leo	ACCEPT	true	0.551	
+cases/052_testUsupportedTextBlock.java	testUsupportedTextBlock	1741	true	compiler.err.feature.not.supported.in.source.plural	false	80	80	13	13	GLL	ACCEPT	true	5.669	
+cases/052_testUsupportedTextBlock.java	testUsupportedTextBlock	1741	true	compiler.err.feature.not.supported.in.source.plural	false	80	80	13	13	RNGLR	ACCEPT	true	0.291	
+cases/052_testUsupportedTextBlock.java	testUsupportedTextBlock	1741	true	compiler.err.feature.not.supported.in.source.plural	false	80	80	13	13	BRNGLR	ACCEPT	true	0.433	
+cases/053_testSyntheticConstructorReturnType.java	testSyntheticConstructorReturnType	1774	false		false	36	36	8	8	Leo	ACCEPT	true	0.480	
+cases/053_testSyntheticConstructorReturnType.java	testSyntheticConstructorReturnType	1774	false		false	36	36	8	8	GLL	ACCEPT	true	5.783	
+cases/053_testSyntheticConstructorReturnType.java	testSyntheticConstructorReturnType	1774	false		false	36	36	8	8	RNGLR	ACCEPT	true	0.157	
+cases/053_testSyntheticConstructorReturnType.java	testSyntheticConstructorReturnType	1774	false		false	36	36	8	8	BRNGLR	ACCEPT	true	0.138	
+cases/054_testVarArgArrayParameter.java	testVarArgArrayParameter	1791	false		false	74	74	20	20	Leo	ACCEPT	true	0.842	
+cases/054_testVarArgArrayParameter.java	testVarArgArrayParameter	1791	false		false	74	74	20	20	GLL	ACCEPT	true	5.416	
+cases/054_testVarArgArrayParameter.java	testVarArgArrayParameter	1791	false		false	74	74	20	20	RNGLR	ACCEPT	true	0.287	
+cases/054_testVarArgArrayParameter.java	testVarArgArrayParameter	1791	false		false	74	74	20	20	BRNGLR	ACCEPT	true	0.316	
+cases/055_testX.java	testX	1812	false		true	73	73	14	14	Leo	REJECT	false	0.360	
+cases/055_testX.java	testX	1812	false		true	73	73	14	14	GLL	REJECT	false	5.782	
+cases/055_testX.java	testX	1812	false		true	73	73	14	14	RNGLR	REJECT	false	0.134	
+cases/055_testX.java	testX	1812	false		true	73	73	14	14	BRNGLR	REJECT	false	0.368	
+cases/056_testDefaultTagPosition.java	testDefaultTagPosition	1837	false		false	1055	1055	212	212	Leo	REJECT	false	0.989	
+cases/056_testDefaultTagPosition.java	testDefaultTagPosition	1837	false		false	1055	1055	212	212	GLL	REJECT	false	4.853	
+cases/056_testDefaultTagPosition.java	testDefaultTagPosition	1837	false		false	1055	1055	212	212	RNGLR	REJECT	false	0.296	
+cases/056_testDefaultTagPosition.java	testDefaultTagPosition	1837	false		false	1055	1055	212	212	BRNGLR	REJECT	false	0.275	
+cases/057_testImplicitFinalInTryWithResources.java	testImplicitFinalInTryWithResources	1924	false		false	370	370	78	78	Leo	ACCEPT	true	1.911	
+cases/057_testImplicitFinalInTryWithResources.java	testImplicitFinalInTryWithResources	1924	false		false	370	370	78	78	GLL	ACCEPT	true	5.166	
+cases/057_testImplicitFinalInTryWithResources.java	testImplicitFinalInTryWithResources	1924	false		false	370	370	78	78	RNGLR	ACCEPT	true	0.478	
+cases/057_testImplicitFinalInTryWithResources.java	testImplicitFinalInTryWithResources	1924	false		false	370	370	78	78	BRNGLR	ACCEPT	true	1.454	
+cases/058_testModuleInfoProvidesRecovery.java	testModuleInfoProvidesRecovery	2005	false		false	28	28	5	5	Leo	REJECT	false	0.329	
+cases/058_testModuleInfoProvidesRecovery.java	testModuleInfoProvidesRecovery	2005	false		false	28	28	5	5	GLL	REJECT	false	4.463	
+cases/058_testModuleInfoProvidesRecovery.java	testModuleInfoProvidesRecovery	2005	false		false	28	28	5	5	RNGLR	REJECT	false	0.129	
+cases/058_testModuleInfoProvidesRecovery.java	testModuleInfoProvidesRecovery	2005	false		false	28	28	5	5	BRNGLR	REJECT	false	0.105	
+cases/059_testGuardRecovery.java	testGuardRecovery	2250	true	compiler.err.guard.not.allowed	true	343	343	73	73	Leo	REJECT	false	0.636	
+cases/059_testGuardRecovery.java	testGuardRecovery	2250	true	compiler.err.guard.not.allowed	true	343	343	73	73	GLL	REJECT	false	5.465	
+cases/059_testGuardRecovery.java	testGuardRecovery	2250	true	compiler.err.guard.not.allowed	true	343	343	73	73	RNGLR	REJECT	false	0.240	
+cases/059_testGuardRecovery.java	testGuardRecovery	2250	true	compiler.err.guard.not.allowed	true	343	343	73	73	BRNGLR	REJECT	false	0.194	
+cases/060_testUnnamedClassPositions.java	testUnnamedClassPositions	2305	false		false	15	15	6	6	Leo	REJECT	false	0.320	
+cases/060_testUnnamedClassPositions.java	testUnnamedClassPositions	2305	false		false	15	15	6	6	GLL	REJECT	false	6.097	
+cases/060_testUnnamedClassPositions.java	testUnnamedClassPositions	2305	false		false	15	15	6	6	RNGLR	REJECT	false	0.112	
+cases/060_testUnnamedClassPositions.java	testUnnamedClassPositions	2305	false		false	15	15	6	6	BRNGLR	REJECT	false	0.103	
+cases/061_testJavadoc.java	testJavadoc	2327	false		false	56	56	11	11	Leo	ACCEPT	true	0.496	
+cases/061_testJavadoc.java	testJavadoc	2327	false		false	56	56	11	11	GLL	ACCEPT	true	5.103	
+cases/061_testJavadoc.java	testJavadoc	2327	false		false	56	56	11	11	RNGLR	ACCEPT	true	0.237	
+cases/061_testJavadoc.java	testJavadoc	2327	false		false	56	56	11	11	BRNGLR	ACCEPT	true	0.219	
+cases/062_testDanglingElse.java	testDanglingElse	2355	true	compiler.err.else.without.if	false	27	27	8	8	Leo	REJECT	false	0.362	
+cases/062_testDanglingElse.java	testDanglingElse	2355	true	compiler.err.else.without.if	false	27	27	8	8	GLL	REJECT	false	4.583	
+cases/062_testDanglingElse.java	testDanglingElse	2355	true	compiler.err.else.without.if	false	27	27	8	8	RNGLR	REJECT	false	0.245	
+cases/062_testDanglingElse.java	testDanglingElse	2355	true	compiler.err.else.without.if	false	27	27	8	8	BRNGLR	REJECT	false	0.108	
+cases/063_testPartialTopLevelModifiers.java	testPartialTopLevelModifiers	2393	false		true	21	21	4	4	Leo	REJECT	false	1.263	
+cases/063_testPartialTopLevelModifiers.java	testPartialTopLevelModifiers	2393	false		true	21	21	4	4	GLL	REJECT	false	4.727	
+cases/063_testPartialTopLevelModifiers.java	testPartialTopLevelModifiers	2393	false		true	21	21	4	4	RNGLR	REJECT	false	0.111	
+cases/063_testPartialTopLevelModifiers.java	testPartialTopLevelModifiers	2393	false		true	21	21	4	4	BRNGLR	REJECT	false	0.105	
+cases/064_testStatementsInClass.java	testStatementsInClass	2415	true	compiler.err.statement.not.expected	true	274	274	65	65	Leo	REJECT	false	0.360	
+cases/064_testStatementsInClass.java	testStatementsInClass	2415	true	compiler.err.statement.not.expected	true	274	274	65	65	GLL	REJECT	false	5.086	
+cases/064_testStatementsInClass.java	testStatementsInClass	2415	true	compiler.err.statement.not.expected	true	274	274	65	65	RNGLR	REJECT	false	0.250	
+cases/064_testStatementsInClass.java	testStatementsInClass	2415	true	compiler.err.statement.not.expected	true	274	274	65	65	BRNGLR	REJECT	false	0.141	
+cases/065_testImplicitlyDeclaredClassesConfusion1.java	testImplicitlyDeclaredClassesConfusion1	2489	true	compiler.err.expected2	true	182	182	29	29	Leo	REJECT	false	0.448	
+cases/065_testImplicitlyDeclaredClassesConfusion1.java	testImplicitlyDeclaredClassesConfusion1	2489	true	compiler.err.expected2	true	182	182	29	29	GLL	REJECT	false	6.290	
+cases/065_testImplicitlyDeclaredClassesConfusion1.java	testImplicitlyDeclaredClassesConfusion1	2489	true	compiler.err.expected2	true	182	182	29	29	RNGLR	REJECT	false	0.179	
+cases/065_testImplicitlyDeclaredClassesConfusion1.java	testImplicitlyDeclaredClassesConfusion1	2489	true	compiler.err.expected2	true	182	182	29	29	BRNGLR	REJECT	false	0.145	
+cases/066_testImplicitlyDeclaredClassesConfusion2.java	testImplicitlyDeclaredClassesConfusion2	2536	true	compiler.err.expected2	true	179	179	25	25	Leo	REJECT	false	0.405	
+cases/066_testImplicitlyDeclaredClassesConfusion2.java	testImplicitlyDeclaredClassesConfusion2	2536	true	compiler.err.expected2	true	179	179	25	25	GLL	REJECT	false	4.598	
+cases/066_testImplicitlyDeclaredClassesConfusion2.java	testImplicitlyDeclaredClassesConfusion2	2536	true	compiler.err.expected2	true	179	179	25	25	RNGLR	REJECT	false	0.152	
+cases/066_testImplicitlyDeclaredClassesConfusion2.java	testImplicitlyDeclaredClassesConfusion2	2536	true	compiler.err.expected2	true	179	179	25	25	BRNGLR	REJECT	false	0.142	
+cases/067_testImplicitlyDeclaredClassesConfusion3.java	testImplicitlyDeclaredClassesConfusion3	2580	true	compiler.err.expected2	true	93	93	14	14	Leo	REJECT	false	0.583	
+cases/067_testImplicitlyDeclaredClassesConfusion3.java	testImplicitlyDeclaredClassesConfusion3	2580	true	compiler.err.expected2	true	93	93	14	14	GLL	REJECT	false	4.530	
+cases/067_testImplicitlyDeclaredClassesConfusion3.java	testImplicitlyDeclaredClassesConfusion3	2580	true	compiler.err.expected2	true	93	93	14	14	RNGLR	REJECT	false	0.163	
+cases/067_testImplicitlyDeclaredClassesConfusion3.java	testImplicitlyDeclaredClassesConfusion3	2580	true	compiler.err.expected2	true	93	93	14	14	BRNGLR	REJECT	false	0.174	
+cases/068_testImplicitlyDeclaredClassesConfusion4.java	testImplicitlyDeclaredClassesConfusion4	2617	true	compiler.err.expected2	true	99	99	15	15	Leo	REJECT	false	1.171	
+cases/068_testImplicitlyDeclaredClassesConfusion4.java	testImplicitlyDeclaredClassesConfusion4	2617	true	compiler.err.expected2	true	99	99	15	15	GLL	REJECT	false	4.813	
+cases/068_testImplicitlyDeclaredClassesConfusion4.java	testImplicitlyDeclaredClassesConfusion4	2617	true	compiler.err.expected2	true	99	99	15	15	RNGLR	REJECT	false	0.150	
+cases/068_testImplicitlyDeclaredClassesConfusion4.java	testImplicitlyDeclaredClassesConfusion4	2617	true	compiler.err.expected2	true	99	99	15	15	BRNGLR	REJECT	false	0.141	
+cases/069_testImplicitlyDeclaredClassesConfusion5.java	testImplicitlyDeclaredClassesConfusion5	2656	true	compiler.err.expected,compiler.err.illegal.start.of.type	true	88	88	19	19	Leo	REJECT	false	0.426	
+cases/069_testImplicitlyDeclaredClassesConfusion5.java	testImplicitlyDeclaredClassesConfusion5	2656	true	compiler.err.expected,compiler.err.illegal.start.of.type	true	88	88	19	19	GLL	REJECT	false	4.680	
+cases/069_testImplicitlyDeclaredClassesConfusion5.java	testImplicitlyDeclaredClassesConfusion5	2656	true	compiler.err.expected,compiler.err.illegal.start.of.type	true	88	88	19	19	RNGLR	REJECT	false	0.193	
+cases/069_testImplicitlyDeclaredClassesConfusion5.java	testImplicitlyDeclaredClassesConfusion5	2656	true	compiler.err.expected,compiler.err.illegal.start.of.type	true	88	88	19	19	BRNGLR	REJECT	false	0.241	
+cases/070_testImplicitlyDeclaredClassesConfusion6.java	testImplicitlyDeclaredClassesConfusion6	2697	true	compiler.err.expected,compiler.err.expected3	true	134	134	24	24	Leo	REJECT	false	0.438	
+cases/070_testImplicitlyDeclaredClassesConfusion6.java	testImplicitlyDeclaredClassesConfusion6	2697	true	compiler.err.expected,compiler.err.expected3	true	134	134	24	24	GLL	REJECT	false	5.037	
+cases/070_testImplicitlyDeclaredClassesConfusion6.java	testImplicitlyDeclaredClassesConfusion6	2697	true	compiler.err.expected,compiler.err.expected3	true	134	134	24	24	RNGLR	REJECT	false	0.761	
+cases/070_testImplicitlyDeclaredClassesConfusion6.java	testImplicitlyDeclaredClassesConfusion6	2697	true	compiler.err.expected,compiler.err.expected3	true	134	134	24	24	BRNGLR	REJECT	false	0.165	
+cases/071_testImplicitlyDeclaredClassesConfusion7.java	testImplicitlyDeclaredClassesConfusion7	2743	true	compiler.err.expected	true	76	76	16	16	Leo	REJECT	false	0.416	
+cases/071_testImplicitlyDeclaredClassesConfusion7.java	testImplicitlyDeclaredClassesConfusion7	2743	true	compiler.err.expected	true	76	76	16	16	GLL	REJECT	false	4.483	
+cases/071_testImplicitlyDeclaredClassesConfusion7.java	testImplicitlyDeclaredClassesConfusion7	2743	true	compiler.err.expected	true	76	76	16	16	RNGLR	REJECT	false	0.571	
+cases/071_testImplicitlyDeclaredClassesConfusion7.java	testImplicitlyDeclaredClassesConfusion7	2743	true	compiler.err.expected	true	76	76	16	16	BRNGLR	REJECT	false	0.562	
+cases/072_testImplicitlyDeclaredClassesConfusion10.java	testImplicitlyDeclaredClassesConfusion10	2780	true	compiler.err.expected2	true	212	212	38	38	Leo	REJECT	false	0.636	
+cases/072_testImplicitlyDeclaredClassesConfusion10.java	testImplicitlyDeclaredClassesConfusion10	2780	true	compiler.err.expected2	true	212	212	38	38	GLL	REJECT	false	5.243	
+cases/072_testImplicitlyDeclaredClassesConfusion10.java	testImplicitlyDeclaredClassesConfusion10	2780	true	compiler.err.expected2	true	212	212	38	38	RNGLR	REJECT	false	0.153	
+cases/072_testImplicitlyDeclaredClassesConfusion10.java	testImplicitlyDeclaredClassesConfusion10	2780	true	compiler.err.expected2	true	212	212	38	38	BRNGLR	REJECT	false	0.147	
+cases/073_testImplicitlyDeclaredClassesConfusion11.java	testImplicitlyDeclaredClassesConfusion11	2829	true	compiler.err.expected2	true	194	194	30	30	Leo	REJECT	false	0.434	
+cases/073_testImplicitlyDeclaredClassesConfusion11.java	testImplicitlyDeclaredClassesConfusion11	2829	true	compiler.err.expected2	true	194	194	30	30	GLL	REJECT	false	5.853	
+cases/073_testImplicitlyDeclaredClassesConfusion11.java	testImplicitlyDeclaredClassesConfusion11	2829	true	compiler.err.expected2	true	194	194	30	30	RNGLR	REJECT	false	0.144	
+cases/073_testImplicitlyDeclaredClassesConfusion11.java	testImplicitlyDeclaredClassesConfusion11	2829	true	compiler.err.expected2	true	194	194	30	30	BRNGLR	REJECT	false	0.132	
+cases/074_testImplicitlyDeclaredClassesConfusion12.java	testImplicitlyDeclaredClassesConfusion12	2874	true	compiler.err.expected2	true	218	218	39	39	Leo	REJECT	false	0.415	
+cases/074_testImplicitlyDeclaredClassesConfusion12.java	testImplicitlyDeclaredClassesConfusion12	2874	true	compiler.err.expected2	true	218	218	39	39	GLL	REJECT	false	5.716	
+cases/074_testImplicitlyDeclaredClassesConfusion12.java	testImplicitlyDeclaredClassesConfusion12	2874	true	compiler.err.expected2	true	218	218	39	39	RNGLR	REJECT	false	0.166	
+cases/074_testImplicitlyDeclaredClassesConfusion12.java	testImplicitlyDeclaredClassesConfusion12	2874	true	compiler.err.expected2	true	218	218	39	39	BRNGLR	REJECT	false	0.147	
+cases/075_testImplicitlyDeclaredClassesConfusion13.java	testImplicitlyDeclaredClassesConfusion13	2923	true	compiler.err.expected2	true	201	201	31	31	Leo	REJECT	false	0.417	
+cases/075_testImplicitlyDeclaredClassesConfusion13.java	testImplicitlyDeclaredClassesConfusion13	2923	true	compiler.err.expected2	true	201	201	31	31	GLL	REJECT	false	7.609	
+cases/075_testImplicitlyDeclaredClassesConfusion13.java	testImplicitlyDeclaredClassesConfusion13	2923	true	compiler.err.expected2	true	201	201	31	31	RNGLR	REJECT	false	0.240	
+cases/075_testImplicitlyDeclaredClassesConfusion13.java	testImplicitlyDeclaredClassesConfusion13	2923	true	compiler.err.expected2	true	201	201	31	31	BRNGLR	REJECT	false	0.144	
+cases/076_testImplicitlyDeclaredClassesConfusion14.java	testImplicitlyDeclaredClassesConfusion14	2968	true	compiler.err.expected2,compiler.err.illegal.start.of.expr	true	240	240	41	41	Leo	REJECT	false	1.169	
+cases/076_testImplicitlyDeclaredClassesConfusion14.java	testImplicitlyDeclaredClassesConfusion14	2968	true	compiler.err.expected2,compiler.err.illegal.start.of.expr	true	240	240	41	41	GLL	REJECT	false	18.505	
+cases/076_testImplicitlyDeclaredClassesConfusion14.java	testImplicitlyDeclaredClassesConfusion14	2968	true	compiler.err.expected2,compiler.err.illegal.start.of.expr	true	240	240	41	41	RNGLR	REJECT	false	0.173	
+cases/076_testImplicitlyDeclaredClassesConfusion14.java	testImplicitlyDeclaredClassesConfusion14	2968	true	compiler.err.expected2,compiler.err.illegal.start.of.expr	true	240	240	41	41	BRNGLR	REJECT	false	0.149	
+cases/077_testVeryBrokenTypeWithAnnotations.java	testVeryBrokenTypeWithAnnotations	3020	true	compiler.err.dot.class.expected,compiler.err.expected,compiler.err.expected2,compiler.err.illegal.start.of.type,compiler.err.not.stmt,compiler.err.premature.eof	true	117	117	29	29	Leo	REJECT	false	3.401	
+cases/077_testVeryBrokenTypeWithAnnotations.java	testVeryBrokenTypeWithAnnotations	3020	true	compiler.err.dot.class.expected,compiler.err.expected,compiler.err.expected2,compiler.err.illegal.start.of.type,compiler.err.not.stmt,compiler.err.premature.eof	true	117	117	29	29	GLL	REJECT	false	16.447	
+cases/077_testVeryBrokenTypeWithAnnotations.java	testVeryBrokenTypeWithAnnotations	3020	true	compiler.err.dot.class.expected,compiler.err.expected,compiler.err.expected2,compiler.err.illegal.start.of.type,compiler.err.not.stmt,compiler.err.premature.eof	true	117	117	29	29	RNGLR	REJECT	false	0.721	
+cases/077_testVeryBrokenTypeWithAnnotations.java	testVeryBrokenTypeWithAnnotations	3020	true	compiler.err.dot.class.expected,compiler.err.expected,compiler.err.expected2,compiler.err.illegal.start.of.type,compiler.err.not.stmt,compiler.err.premature.eof	true	117	117	29	29	BRNGLR	REJECT	false	0.366	
+cases/078_testVeryBrokenTypeWithAnnotationsMinimal.java	testVeryBrokenTypeWithAnnotationsMinimal	3069	false		false	13	13	11	11	Leo	REJECT	false	1.048	
+cases/078_testVeryBrokenTypeWithAnnotationsMinimal.java	testVeryBrokenTypeWithAnnotationsMinimal	3069	false		false	13	13	11	11	GLL	REJECT	false	7.035	
+cases/078_testVeryBrokenTypeWithAnnotationsMinimal.java	testVeryBrokenTypeWithAnnotationsMinimal	3069	false		false	13	13	11	11	RNGLR	REJECT	false	0.112	
+cases/078_testVeryBrokenTypeWithAnnotationsMinimal.java	testVeryBrokenTypeWithAnnotationsMinimal	3069	false		false	13	13	11	11	BRNGLR	REJECT	false	0.095	
+cases/079_testCompactSourceFileMultiField1.java	testCompactSourceFileMultiField1	3083	false		false	28	28	13	13	Leo	REJECT	false	0.330	
+cases/079_testCompactSourceFileMultiField1.java	testCompactSourceFileMultiField1	3083	false		false	28	28	13	13	GLL	REJECT	false	5.873	
+cases/079_testCompactSourceFileMultiField1.java	testCompactSourceFileMultiField1	3083	false		false	28	28	13	13	RNGLR	REJECT	false	0.100	
+cases/079_testCompactSourceFileMultiField1.java	testCompactSourceFileMultiField1	3083	false		false	28	28	13	13	BRNGLR	REJECT	false	0.092	
+cases/080_testCompactSourceFileMultiField2.java	testCompactSourceFileMultiField2	3107	false		false	36	36	17	17	Leo	REJECT	false	0.322	
+cases/080_testCompactSourceFileMultiField2.java	testCompactSourceFileMultiField2	3107	false		false	36	36	17	17	GLL	REJECT	false	8.257	
+cases/080_testCompactSourceFileMultiField2.java	testCompactSourceFileMultiField2	3107	false		false	36	36	17	17	RNGLR	REJECT	false	0.115	
+cases/080_testCompactSourceFileMultiField2.java	testCompactSourceFileMultiField2	3107	false		false	36	36	17	17	BRNGLR	REJECT	false	0.101	
+cases/081_testTypeAnnotationBrokenMethodRef.java	testTypeAnnotationBrokenMethodRef	3131	true	compiler.err.illegal.start.of.type	false	96	96	29	29	Leo	REJECT	false	1.012	
+cases/081_testTypeAnnotationBrokenMethodRef.java	testTypeAnnotationBrokenMethodRef	3131	true	compiler.err.illegal.start.of.type	false	96	96	29	29	GLL	REJECT	false	6.939	
+cases/081_testTypeAnnotationBrokenMethodRef.java	testTypeAnnotationBrokenMethodRef	3131	true	compiler.err.illegal.start.of.type	false	96	96	29	29	RNGLR	REJECT	false	0.214	
+cases/081_testTypeAnnotationBrokenMethodRef.java	testTypeAnnotationBrokenMethodRef	3131	true	compiler.err.illegal.start.of.type	false	96	96	29	29	BRNGLR	REJECT	false	0.184	
+cases/082_testVarPositions.java	testVarPositions	3158	false		true	59	59	14	14	Leo	REJECT	false	0.450	
+cases/082_testVarPositions.java	testVarPositions	3158	false		true	59	59	14	14	GLL	REJECT	false	6.741	
+cases/082_testVarPositions.java	testVarPositions	3158	false		true	59	59	14	14	RNGLR	REJECT	false	0.149	
+cases/082_testVarPositions.java	testVarPositions	3158	false		true	59	59	14	14	BRNGLR	REJECT	false	0.140	
+cases/083_testDeepNestingNoClose.java	testDeepNestingNoClose	1527	true	compiler.err.premature.eof	false	1214	1214	306	306	Leo	REJECT	false	1.947	
+cases/083_testDeepNestingNoClose.java	testDeepNestingNoClose	1527	true	compiler.err.premature.eof	false	1214	1214	306	306	GLL	REJECT	false	5.406	
+cases/083_testDeepNestingNoClose.java	testDeepNestingNoClose	1527	true	compiler.err.premature.eof	false	1214	1214	306	306	RNGLR	REJECT	false	0.282	
+cases/083_testDeepNestingNoClose.java	testDeepNestingNoClose	1527	true	compiler.err.premature.eof	false	1214	1214	306	306	BRNGLR	REJECT	false	0.238	

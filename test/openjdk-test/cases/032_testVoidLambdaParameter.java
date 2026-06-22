@@ -1,0 +1,1 @@
+package t; class Test { Runnable r = (void v) -> { };}

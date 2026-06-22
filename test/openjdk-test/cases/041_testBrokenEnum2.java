@@ -1,0 +1,1 @@
+package test; class Test { enum E { A, B, C void t() {} } }

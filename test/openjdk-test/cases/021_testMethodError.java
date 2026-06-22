@@ -1,0 +1,1 @@
+package Test; class ErrorTest {  static final void f) {String s = new String(); } }

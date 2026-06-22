@@ -1,0 +1,1 @@
+package t; class Test { <T> void t() {} }

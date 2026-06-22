@@ -1,0 +1,1 @@
+package test; class Test { class d {} private void method() { Object o = Test.this.new d(); } }

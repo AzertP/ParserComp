@@ -1,0 +1,1 @@
+package test; class Test { v += v v;}

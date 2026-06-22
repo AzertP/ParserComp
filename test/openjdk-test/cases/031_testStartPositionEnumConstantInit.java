@@ -1,0 +1,1 @@
+package t; enum Test { AAA; }

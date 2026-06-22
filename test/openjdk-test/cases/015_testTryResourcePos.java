@@ -1,0 +1,1 @@
+package t; class Test { { try (java.io.InputStream in = null) { } } }

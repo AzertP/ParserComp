@@ -6,15 +6,16 @@
 //!
 //! Token classification rules
 //! ---------------------------
+//!  - `ID_OR_KEYWORD` + alias word    →  the alias terminal (e.g. `"or"` → `"||"`)
 //!  - `ID_OR_KEYWORD` + keyword word  →  the keyword string itself (e.g. `"int"`)
-//!  - `ID_OR_KEYWORD` + non-keyword   →  `"ID"`
+//!  - `ID_OR_KEYWORD` + non-keyword   →  configured identifier terminal, default `"ID"`
 //!  - `OP`                            →  the matched operator text (e.g. `";"`, `"->"`)
 //!  - `STRING`, `INTEGER`, `REAL`     →  the token-type name unchanged
 
 use crate::grammars::NumericGrammar;
 use regex::Regex;
 use serde::Deserialize;
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::fs;
 use std::path::Path;
 
@@ -44,6 +45,10 @@ struct LexerSpecJson {
     tokens: Vec<Vec<String>>,
     #[serde(default)]
     keywords: Vec<String>,
+    #[serde(default)]
+    aliases: HashMap<String, String>,
+    #[serde(default)]
+    identifier_kind: Option<String>,
 }
 
 // ============================================================================
@@ -56,6 +61,8 @@ pub struct Lexer {
     /// Token patterns in priority order: `(kind, compiled_regex)`.
     token_patterns: Vec<(String, Regex)>,
     keywords: HashSet<String>,
+    aliases: HashMap<String, String>,
+    identifier_kind: String,
 }
 
 impl Lexer {
@@ -100,6 +107,8 @@ impl Lexer {
             skip_patterns,
             token_patterns,
             keywords,
+            aliases: spec.aliases,
+            identifier_kind: spec.identifier_kind.unwrap_or_else(|| "ID".to_string()),
         })
     }
 
@@ -173,10 +182,12 @@ impl Lexer {
     fn resolve_kind(&self, raw_kind: String, text: &str) -> String {
         match raw_kind.as_str() {
             "ID_OR_KEYWORD" => {
-                if self.keywords.contains(text) {
+                if let Some(kind) = self.aliases.get(text) {
+                    kind.clone()
+                } else if self.keywords.contains(text) {
                     text.to_string() // emit the keyword itself, e.g. "int"
                 } else {
-                    "ID".to_string()
+                    self.identifier_kind.clone()
                 }
             }
             "OP" => text.to_string(), // emit the operator text, e.g. ";" or "->"

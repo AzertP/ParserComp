@@ -1,7 +1,9 @@
 // Earley parser implementation with Leo Optimizations
-use crate::grammars::{NumSymbol, NumericGrammar, load_grammar_from_file};
+#[cfg(test)]
+use crate::grammars::{load_grammar_from_file, load_grammar_from_str};
+use crate::grammars::{NumSymbol, NumericGrammar};
+use crate::parse_tree::{ParseSymbol, ParseTree};
 use std::rc::Rc;
-use crate::parse_tree::{ParseTree, ParseSymbol};
 
 use rustc_hash::{FxHashMap, FxHashSet};
 
@@ -24,7 +26,7 @@ struct Grammar {
 impl Grammar {
     fn from_numeric(grammar: &NumericGrammar) -> Self {
         let mut rules = Vec::new();
-        
+
         let mut lhs_keys: Vec<_> = grammar.rules.keys().collect();
         let mut lookup: HashMap<NumSymbol, Vec<RuleID>> = HashMap::default();
         lhs_keys.sort();
@@ -59,11 +61,9 @@ impl Grammar {
                     continue;
                 }
 
-                let is_nullable = rule.rhs.iter().all(|sym| {
-                    match sym {
-                        NumSymbol::Terminal(_) => false,
-                        NumSymbol::NonTerminal(_) => nullables.contains(sym),
-                    }
+                let is_nullable = rule.rhs.iter().all(|sym| match sym {
+                    NumSymbol::Terminal(_) => false,
+                    NumSymbol::NonTerminal(_) => nullables.contains(sym),
                 });
 
                 if is_nullable {
@@ -86,7 +86,11 @@ struct State {
 
 impl State {
     fn new(rule_id: RuleID, dot: usize, s_col: ColumnID) -> Self {
-        State { rule_id, dot, s_col }
+        State {
+            rule_id,
+            dot,
+            s_col,
+        }
     }
 }
 
@@ -151,15 +155,12 @@ pub struct LeoParser {
     nullables: HashSet<NumSymbol>,
     input: Vec<NumSymbol>,
     chart: Chart,
-    
+
     // Leo Optimization: _postdots
     // Tracks the parent-child relationship in deterministic reductions.
     // Key: The Parent State (at the dot before reduction)
     // Value: List of Child States (completed) that reduced to this parent, along with their end column.
     postdots: HashMap<State, Vec<(State, ColumnID)>>,
-    
-    // Track states that were added via Leo optimization, to speed up expansion.
-    leo_events: Vec<(State, usize)>,
 
     // Reverse Index: Maps a State to the list of Column IDs (indices) where it appears.
     // Used for efficient Implicit Reconstruction lookup.
@@ -171,16 +172,15 @@ impl LeoParser {
         let num_grammar = grammar.clone();
         let grammar_converted = Grammar::from_numeric(&grammar);
         let nullables = grammar_converted.calculate_nullables();
-        
-        LeoParser { 
-            grammar: grammar_converted, 
+
+        LeoParser {
+            grammar: grammar_converted,
             num_grammar,
             start_symbol: NumSymbol::NonTerminal(grammar.start),
             nullables,
             input: Vec::new(),
             chart: Chart::new(0),
             postdots: HashMap::default(),
-            leo_events: Vec::new(),
             state_to_cols: HashMap::default(),
         }
     }
@@ -188,14 +188,13 @@ impl LeoParser {
     fn chart_parse(&mut self, input: Vec<NumSymbol>) {
         self.input = input;
         self.postdots.clear(); // Reset optimizations for new parse
-        self.leo_events.clear();
 
         let mut chart = Chart::new(self.input.len() + 1);
 
         // Initialize Column 0
         let first_column = Column::new(ColumnID(0), None);
         chart.columns.push(first_column);
-        
+
         // Initialize other columns
         for (i, token) in self.input.iter().enumerate() {
             let column = Column::new(ColumnID(i + 1), Some(*token));
@@ -228,7 +227,7 @@ impl LeoParser {
         }
         false
     }
-    
+
     #[inline]
     fn add_state(&mut self, col_idx: usize, state: State) -> bool {
         self.chart.columns[col_idx].add_state(state)
@@ -244,8 +243,8 @@ impl LeoParser {
             let mut j = 0;
             // Note: self.chart.columns[i].states grows during iteration
             while j < self.chart.columns[i].states.len() {
-                let state = self.chart.columns[i].states[j]; 
-                
+                let state = self.chart.columns[i].states[j];
+
                 if self.is_complete(&state) {
                     self.leo_complete(i, state);
                 } else {
@@ -325,7 +324,6 @@ impl LeoParser {
     fn leo_complete(&mut self, col_idx: usize, state: State) {
         if let Some(top_state) = self.deterministic_reduction(state, col_idx) {
             self.add_state(col_idx, top_state);
-            self.leo_events.push((top_state, col_idx));
         } else {
             self.earley_complete(col_idx, state);
         }
@@ -341,10 +339,12 @@ impl LeoParser {
         let col_s1_idx = state_a.s_col.0;
 
         // 1. Memoization Check: Did we already find the top for this symbol at that start column?
-        // Must be checked BEFORE calling uniq_postdot to avoid recording redundant postdots entries
-        // when the same Leo chain is traversed more than once.
+        // Even on cache hits, record the current child-to-parent link. The same transitive
+        // item can be reused at different end columns, and forest reconstruction needs
+        // each occurrence to rebuild a tree after Leo skips the intermediate completions.
         if let Some(&cached_top) = self.chart.columns[col_s1_idx].transitives.get(&lhs_a) {
-             return Some(cached_top);
+            let _ = self.uniq_postdot(state_a, current_col_idx);
+            return Some(cached_top);
         }
 
         // 2. Find the unique parent (state_b_inc) that satisfies deterministic constraints
@@ -377,19 +377,19 @@ impl LeoParser {
         // Find unique parent in s_col waiting for lhs_a (avoid Vec allocation)
         let mut unique_parent: Option<State> = None;
         for s in &self.chart.columns[col_s1_idx].states {
-             if let Some(next) = self.next_symbol(s) {
-                 if *next == lhs_a {
-                     if unique_parent.is_some() {
-                         return None; // More than one parent — not deterministic
-                     }
-                     unique_parent = Some(*s);
-                 }
-             }
+            if let Some(next) = self.next_symbol(s) {
+                if *next == lhs_a {
+                    if unique_parent.is_some() {
+                        return None; // More than one parent — not deterministic
+                    }
+                    unique_parent = Some(*s);
+                }
+            }
         }
-        
+
         let parent = unique_parent?;
         // ... match remainder ...
-        
+
         // Constraint 2: The parent must be "at the end" after consuming A.
         // i.e., dot is at penultimate position.
         let parent_rule_len = self.grammar.rules[parent.rule_id.0].rhs.len();
@@ -400,83 +400,30 @@ impl LeoParser {
 
         // Record that 'parent' was completed by 'state_a' ending at 'current_col_idx'.
         // This is needed later to "expand" the optimized forest.
-        self.postdots.entry(parent).or_default()
-            .push((state_a, ColumnID(current_col_idx)));
+        let child_link = (state_a, ColumnID(current_col_idx));
+        let children = self.postdots.entry(parent).or_default();
+        if !children.contains(&child_link) {
+            children.push(child_link);
+        }
 
         Some(parent)
     }
-    
-    /// Pure version of checking for a deterministic reduction parent check.
-    /// Used by ForestBuilder to reconstruct virtual states.
-    fn check_deterministic_parent(&self, child_rule_id: RuleID, child_start_col: usize) -> Option<State> {
-        let lhs_a = self.grammar.rules[child_rule_id.0].lhs;
-        let col_s1_idx = child_start_col;
-        
-        // Find unique parent in s_col waiting for lhs_a (avoid Vec allocation)
-        let mut unique_parent: Option<State> = None;
-        for s in &self.chart.columns[col_s1_idx].states {
-             if let Some(next) = self.next_symbol(s) {
-                 if *next == lhs_a {
-                     if unique_parent.is_some() {
-                         return None;
-                     }
-                     unique_parent = Some(*s);
-                 }
-             }
+
+    /// Checks whether a specific parent can be reconstructed with `child_sym`
+    /// as its final RHS symbol. This is intentionally not a uniqueness check:
+    /// SPPF reconstruction may need to replay an exact Leo-skipped parent even
+    /// when the column has other parents waiting for the same non-terminal.
+    fn can_reconstruct_leo_child(&self, parent: State, child_sym: NumSymbol) -> bool {
+        if self.next_symbol(&parent) != Some(&child_sym) {
+            return false;
         }
-        
-        let parent = unique_parent?;
+
         let parent_rule_len = self.grammar.rules[parent.rule_id.0].rhs.len();
         if parent.dot != parent_rule_len - 1 {
-            return None;
+            return false;
         }
 
-        Some(parent)
-    }
-
-    // =========================================================================
-    // Forest Expansion (Un-Optimization)
-    // =========================================================================
-
-    /// Re-populates the chart with intermediate states skipped by Leo optimization.
-    /// Must be called before SPPF construction.
-    fn expand_chart(&mut self) {
-        let mut visited = HashSet::default();
-        
-        // Optimize: Only iterate states that were actually added by Leo optimization.
-        // We traverse them in reverse order (LIFO) to respect dependencies, although
-        // recursive_expand handles dependencies vertically.
-        for (state, col_idx) in self.leo_events.clone().into_iter().rev() {
-            self.recursive_expand(state, col_idx, &mut visited);
-        }
-    }
-
-    fn recursive_expand(&mut self, state: State, end_col_idx: usize, visited: &mut HashSet<(State, usize)>) {
-        if visited.contains(&(state, end_col_idx)) {
-            return;
-        }
-        visited.insert((state, end_col_idx));
-
-        let back_state = self.back(&state);
-
-        // Retrieve children that reduced to `back_state`
-        // We clone to allow mutation of chart in loop
-        let children_opt = self.postdots.get(&back_state).cloned();
-
-        if let Some(children) = children_opt {
-            for (child_state, child_end_col) in children {
-                // Time constraint: Parent cannot end before child
-                if end_col_idx < child_end_col.0 {
-                    continue;
-                }
-
-                // Add the missing child to the chart
-                self.chart.columns[child_end_col.0].add_state(child_state);
-                
-                // Recurse to expand the child's own history
-                self.recursive_expand(child_state, child_end_col.0, visited);
-            }
-        }
+        true
     }
 
     // =========================================================================
@@ -504,15 +451,6 @@ impl LeoParser {
         }
     }
 
-    #[inline]
-    fn back(&self, state: &State) -> State {
-        State {
-            rule_id: state.rule_id,
-            dot: state.dot.saturating_sub(1),
-            s_col: state.s_col,
-        }
-    }
-    
     // =========================================================================
     // Public API
     // =========================================================================
@@ -529,7 +467,6 @@ impl LeoParser {
     pub fn parse_all(&mut self, input: Vec<u32>) -> Vec<ParseTree> {
         let symbols: Vec<NumSymbol> = input.iter().map(|&id| NumSymbol::Terminal(id)).collect();
         if self.recognize_on(symbols) {
-            self.expand_chart();
             self.extract_all_trees()
         } else {
             Vec::new()
@@ -560,16 +497,20 @@ impl LeoParser {
     }
 
     pub fn build_sppf(&mut self) -> Option<Rc<SPPFNode>> {
-        if self.chart.columns.is_empty() { return None; }
-        
-        let last_col = self.chart.columns.len() - 1;
-        let success = self.chart.columns[last_col].states.iter().any(|s| 
-            self.is_complete(s) 
-            && self.grammar.rules[s.rule_id.0].lhs == self.start_symbol
-            && s.s_col.0 == 0
-        );
+        if self.chart.columns.is_empty() {
+            return None;
+        }
 
-        if !success { return None; }
+        let last_col = self.chart.columns.len() - 1;
+        let success = self.chart.columns[last_col].states.iter().any(|s| {
+            self.is_complete(s)
+                && self.grammar.rules[s.rule_id.0].lhs == self.start_symbol
+                && s.s_col.0 == 0
+        });
+
+        if !success {
+            return None;
+        }
 
         // Build reverse index lazily before forest construction
         self.build_state_to_cols();
@@ -579,16 +520,20 @@ impl LeoParser {
     }
 
     pub fn build_sppf_single(&mut self) -> Option<Rc<SPPFNode>> {
-        if self.chart.columns.is_empty() { return None; }
-        
-        let last_col = self.chart.columns.len() - 1;
-        let success = self.chart.columns[last_col].states.iter().any(|s| 
-            self.is_complete(s) 
-            && self.grammar.rules[s.rule_id.0].lhs == self.start_symbol
-            && s.s_col.0 == 0
-        );
+        if self.chart.columns.is_empty() {
+            return None;
+        }
 
-        if !success { return None; }
+        let last_col = self.chart.columns.len() - 1;
+        let success = self.chart.columns[last_col].states.iter().any(|s| {
+            self.is_complete(s)
+                && self.grammar.rules[s.rule_id.0].lhs == self.start_symbol
+                && s.s_col.0 == 0
+        });
+
+        if !success {
+            return None;
+        }
 
         self.build_state_to_cols();
 
@@ -602,7 +547,8 @@ impl LeoParser {
         if node.derivations.is_empty() {
             ParseTree::leaf(&node.symbol.to_string().trim_matches('\''))
         } else {
-            let children = node.derivations[0].iter()
+            let children = node.derivations[0]
+                .iter()
                 .map(|c| self.sppf_to_tree_single(c))
                 .collect();
             ParseTree::new(node.symbol.clone(), children)
@@ -624,7 +570,9 @@ impl LeoParser {
     }
 
     fn cartesian_product(&self, nodes: &[Rc<SPPFNode>]) -> Vec<Vec<ParseTree>> {
-        if nodes.is_empty() { return vec![vec![]]; }
+        if nodes.is_empty() {
+            return vec![vec![]];
+        }
         let first_trees = self.sppf_to_trees_all(&nodes[0]);
         let rest_lists = self.cartesian_product(&nodes[1..]);
         let mut result = Vec::new();
@@ -641,16 +589,21 @@ impl LeoParser {
     pub fn debug_chart(&self) {
         println!("Chart Debug:");
         for (i, col) in self.chart.columns.iter().enumerate() {
-            println!("Column {}: Token: {:?}", i, 
-                col.token.map(|t| self.num_grammar.symbol_to_str(&t).unwrap_or("?"))
+            println!(
+                "Column {}: Token: {:?}",
+                i,
+                col.token
+                    .map(|t| self.num_grammar.symbol_to_str(&t).unwrap_or("?"))
             );
             for state in &col.states {
                 let rule = &self.grammar.rules[state.rule_id.0];
                 let lhs = self.num_grammar.symbol_to_str(&rule.lhs).unwrap_or("?");
-                let rhs: Vec<String> = rule.rhs.iter().map(|s| 
-                    self.num_grammar.symbol_to_str(s).unwrap_or("?").to_string()
-                ).collect();
-                
+                let rhs: Vec<String> = rule
+                    .rhs
+                    .iter()
+                    .map(|s| self.num_grammar.symbol_to_str(s).unwrap_or("?").to_string())
+                    .collect();
+
                 // Format: LHS -> . RHS (RuleID) from s_col
                 let mut rhs_str = String::new();
                 for (k, sym) in rhs.iter().enumerate() {
@@ -663,8 +616,11 @@ impl LeoParser {
                 if state.dot == rhs.len() {
                     rhs_str.push_str("•");
                 }
-                
-                println!("  {} -> {} ({:?}) from {}", lhs, rhs_str, state.rule_id, state.s_col.0);
+
+                println!(
+                    "  {} -> {} ({:?}) from {}",
+                    lhs, rhs_str, state.rule_id, state.s_col.0
+                );
             }
         }
     }
@@ -691,7 +647,7 @@ impl SPPFNode {
             derivations: Vec::new(),
         }
     }
-    
+
     fn add_derivation(&mut self, children: Vec<Rc<SPPFNode>>) {
         self.derivations.push(children);
     }
@@ -731,13 +687,19 @@ impl<'a> ForestBuilder<'a> {
         self.find_node(root_symbol, 0, end, None)
     }
 
-    fn find_node(&mut self, sym: NumSymbol, start: usize, end: usize, hint_state: Option<State>) -> Option<Rc<SPPFNode>> {
+    fn find_node(
+        &mut self,
+        sym: NumSymbol,
+        start: usize,
+        end: usize,
+        hint_state: Option<State>,
+    ) -> Option<Rc<SPPFNode>> {
         let key = (sym.id(), sym.is_terminal(), start, end);
-        
+
         if let Some(node) = self.memo.get(&key) {
             return Some(node.clone());
         }
-        
+
         // Limit retries per key to prevent infinite loops from repeated
         // failed find_node calls in ambiguous grammars
         let count = self.attempt_count.entry(key).or_insert(0);
@@ -745,64 +707,73 @@ impl<'a> ForestBuilder<'a> {
         if *count > 20 {
             return None;
         }
-        
-        if self.in_progress.contains(&key) { return None; }
+
+        if self.in_progress.contains(&key) {
+            return None;
+        }
         self.in_progress.insert(key);
 
         let parse_sym = match sym {
-            NumSymbol::Terminal(id) => ParseSymbol::Terminal(
-                self.parser.num_grammar.terminal_str(id)?.to_string()
-            ),
-            NumSymbol::NonTerminal(id) => ParseSymbol::NonTerminal(
-                self.parser.num_grammar.non_terminal_str(id)?.to_string()
-            ),
+            NumSymbol::Terminal(id) => {
+                ParseSymbol::Terminal(self.parser.num_grammar.terminal_str(id)?.to_string())
+            }
+            NumSymbol::NonTerminal(id) => {
+                ParseSymbol::NonTerminal(self.parser.num_grammar.non_terminal_str(id)?.to_string())
+            }
         };
 
         let mut node = SPPFNode::new(parse_sym, start, end);
         let mut added = false;
-        
+
         // 1. Hint Processing (Virtual States)
         if let Some(state) = hint_state {
             let rule = &self.parser.grammar.rules[state.rule_id.0];
             // Ensure hint matches request
             if rule.lhs == sym && state.s_col.0 == start {
-                 let paths = self.walk_back(state.rule_id, rule.rhs.len(), end, start);
-                 for children in paths {
-                     node.add_derivation(children);
-                     added = true;
-                     if self.single { break; }
-                 }
+                let paths = self.walk_back(state.rule_id, rule.rhs.len(), end, start);
+                for children in paths {
+                    node.add_derivation(children);
+                    added = true;
+                    if self.single {
+                        break;
+                    }
+                }
             }
         }
 
         // 2. Chart Processing (Existing States)
         if !(self.single && added) {
-        match sym {
-            NumSymbol::Terminal(_) => {
-                if start + 1 == end && self.parser.input.get(start) == Some(&sym) {
-                    node.add_derivation(vec![]); 
-                    added = true;
+            match sym {
+                NumSymbol::Terminal(_) => {
+                    if start + 1 == end && self.parser.input.get(start) == Some(&sym) {
+                        node.add_derivation(vec![]);
+                        added = true;
+                    }
                 }
-            }
-            NumSymbol::NonTerminal(_) => {
-                let col = &self.parser.chart.columns[end];
-                for state in &col.states {
-                    // Check for completion of this symbol starting at 'start'
-                    if state.s_col.0 == start {
-                        let rule = &self.parser.grammar.rules[state.rule_id.0];
-                        if rule.lhs == sym && state.dot >= rule.rhs.len() {
-                            let paths = self.walk_back(state.rule_id, rule.rhs.len(), end, start);
-                            for children in paths {
-                                node.add_derivation(children);
-                                added = true;
-                                if self.single { break; }
+                NumSymbol::NonTerminal(_) => {
+                    let col = &self.parser.chart.columns[end];
+                    for state in &col.states {
+                        // Check for completion of this symbol starting at 'start'
+                        if state.s_col.0 == start {
+                            let rule = &self.parser.grammar.rules[state.rule_id.0];
+                            if rule.lhs == sym && state.dot >= rule.rhs.len() {
+                                let paths =
+                                    self.walk_back(state.rule_id, rule.rhs.len(), end, start);
+                                for children in paths {
+                                    node.add_derivation(children);
+                                    added = true;
+                                    if self.single {
+                                        break;
+                                    }
+                                }
+                                if self.single && added {
+                                    break;
+                                }
                             }
-                            if self.single && added { break; }
                         }
                     }
                 }
             }
-        }
         }
 
         self.in_progress.remove(&key);
@@ -816,9 +787,19 @@ impl<'a> ForestBuilder<'a> {
         }
     }
 
-    fn walk_back(&mut self, rule_id: RuleID, dot: usize, current_end: usize, target_start: usize) -> Vec<Vec<Rc<SPPFNode>>> {
+    fn walk_back(
+        &mut self,
+        rule_id: RuleID,
+        dot: usize,
+        current_end: usize,
+        target_start: usize,
+    ) -> Vec<Vec<Rc<SPPFNode>>> {
         if dot == 0 {
-            return if current_end == target_start { vec![vec![]] } else { vec![] };
+            return if current_end == target_start {
+                vec![vec![]]
+            } else {
+                vec![]
+            };
         }
 
         let rule = &self.parser.grammar.rules[rule_id.0];
@@ -834,7 +815,7 @@ impl<'a> ForestBuilder<'a> {
             NumSymbol::Terminal(_) => {
                 let k = current_end.saturating_sub(1);
                 split_candidates.insert(k);
-            },
+            }
             NumSymbol::NonTerminal(_) => {
                 for st in &self.parser.chart.columns[current_end].states {
                     let st_rule = &self.parser.grammar.rules[st.rule_id.0];
@@ -847,54 +828,72 @@ impl<'a> ForestBuilder<'a> {
 
         // Virtual Candidates (from Leo Optimization)
         // We look for children that reduced to this specific parent state via postdots.
-        let pred_state = State { rule_id, dot: dot - 1, s_col: ColumnID(target_start) };
+        let pred_state = State {
+            rule_id,
+            dot: dot - 1,
+            s_col: ColumnID(target_start),
+        };
         let mut virtual_matches = Vec::new();
-        
+
         if let Some(virtual_children) = self.parser.postdots.get(&pred_state) {
             for (child_state, child_end_col) in virtual_children {
                 if child_end_col.0 == current_end {
-                     virtual_matches.push((child_state.s_col.0, *child_state));
+                    virtual_matches.push((child_state.s_col.0, *child_state));
                 }
             }
         }
-        
+
         // Process Standard
         // Track which split points were successfully processed so the virtual path
         // doesn't re-process the same k and produce duplicate derivations (Bug 1 fix).
         let mut processed_k: HashSet<usize> = HashSet::default();
         for k in &split_candidates {
-            if *k < target_start { continue; }
-            let prev_st = State { rule_id, dot: dot - 1, s_col: ColumnID(target_start) };
+            if *k < target_start {
+                continue;
+            }
+            let prev_st = State {
+                rule_id,
+                dot: dot - 1,
+                s_col: ColumnID(target_start),
+            };
             if self.parser.chart.columns[*k].lookup.contains_key(&prev_st) {
-                 if let Some(child_node) = self.find_node(child_sym, *k, current_end, None) {
+                if let Some(child_node) = self.find_node(child_sym, *k, current_end, None) {
                     let prefix_paths = self.walk_back(rule_id, dot - 1, *k, target_start);
                     for mut path in prefix_paths {
                         path.push(child_node.clone());
                         results.push(path);
-                        if self.single { return results; }
+                        if self.single {
+                            return results;
+                        }
                     }
                     processed_k.insert(*k);
                 }
             }
         }
-        
+
         // Process Virtuals (Lazy Expansion from Postdots)
         // Bug 1 fix: skip k values already successfully handled by the standard path above.
-        // When Leo fires and records a child in postdots, expand_chart() later re-adds that
-        // same child to the standard chart, so both paths would find the same derivation.
+        // Leo provenance can describe the same span that already exists in the chart, so both
+        // paths would find the same derivation.
         for (k, child_state) in virtual_matches {
-            if k < target_start { continue; }
-            if processed_k.contains(&k) { continue; }
-             if let Some(child_node) = self.find_node(child_sym, k, current_end, Some(child_state)) {
+            if k < target_start {
+                continue;
+            }
+            if processed_k.contains(&k) {
+                continue;
+            }
+            if let Some(child_node) = self.find_node(child_sym, k, current_end, Some(child_state)) {
                 let prefix_paths = self.walk_back(rule_id, dot - 1, k, target_start);
                 for mut path in prefix_paths {
                     path.push(child_node.clone());
                     results.push(path);
-                    if self.single { return results; }
+                    if self.single {
+                        return results;
+                    }
                 }
             }
         }
-        
+
         // 3. Implicit Forest / Leo Reconstruction
         // If we found no matches in the chart or postdots, we might be inside a Leo optimized chain
         // where the intermediate link was not recorded (due to Memoization).
@@ -906,42 +905,59 @@ impl<'a> ForestBuilder<'a> {
             if let NumSymbol::NonTerminal(_) = child_sym {
                 if let Some(child_rules) = self.parser.grammar.lookup.get(&child_sym) {
                     // Implicit Reconstruction: Scan potentially skipped split points
-                    let expected_parent = State { rule_id, dot: dot - 1, s_col: ColumnID(target_start) };
+                    let expected_parent = State {
+                        rule_id,
+                        dot: dot - 1,
+                        s_col: ColumnID(target_start),
+                    };
 
                     // Optimization: Only scan columns k that actually contain the parent state
                     // This avoids O(N) scan.
                     let cols_empty = Vec::new();
-                    let cols = self.parser.state_to_cols.get(&expected_parent).unwrap_or(&cols_empty);
+                    let cols = self
+                        .parser
+                        .state_to_cols
+                        .get(&expected_parent)
+                        .unwrap_or(&cols_empty);
 
                     for &k in cols {
-                        if k < target_start || k > current_end { continue; }
+                        if k < target_start || k > current_end {
+                            continue;
+                        }
 
-                        // Try each rule for child_sym.
-                        // We break after the first rule that yields a derivation: since
-                        // find_node memoises by (symbol, start, end), a second matching rule
-                        // would return the identical cached node and produce exact duplicates.
+                        if !self
+                            .parser
+                            .can_reconstruct_leo_child(expected_parent, child_sym)
+                        {
+                            continue;
+                        }
+
+                        // Try each rule for child_sym. We break after the first
+                        // rule that yields a derivation: find_node memoises by
+                        // (symbol, start, end), so a later matching rule would
+                        // return the same node and duplicate this path.
                         'rule_loop: for &c_rule_id in child_rules {
-                            // Virtual state C must be complete (dot at end)
-                            // C starts at k. Ends at current_end.
-                            // Condition: check_deterministic_parent(C) == expected_parent
-                            if let Some(p) = self.parser.check_deterministic_parent(c_rule_id, k) {
-                                if p == expected_parent {
-                                    // Found correct virtual child!
-                                    // Construct virtual state C
-                                    let c_len = self.parser.grammar.rules[c_rule_id.0].rhs.len();
-                                    let c_state = State { rule_id: c_rule_id, dot: c_len, s_col: ColumnID(k) };
-                                    
-                                    if let Some(child_node) = self.find_node(child_sym, k, current_end, Some(c_state)) {
-                                        let prefix_paths = self.walk_back(rule_id, dot - 1, k, target_start);
-                                        if !prefix_paths.is_empty() {
-                                            for mut path in prefix_paths {
-                                                path.push(child_node.clone());
-                                                results.push(path);
-                                                if self.single { return results; }
-                                            }
-                                            break 'rule_loop; // derivation found for this k; skip remaining rules
+                            let c_len = self.parser.grammar.rules[c_rule_id.0].rhs.len();
+                            let c_state = State {
+                                rule_id: c_rule_id,
+                                dot: c_len,
+                                s_col: ColumnID(k),
+                            };
+
+                            if let Some(child_node) =
+                                self.find_node(child_sym, k, current_end, Some(c_state))
+                            {
+                                let prefix_paths =
+                                    self.walk_back(rule_id, dot - 1, k, target_start);
+                                if !prefix_paths.is_empty() {
+                                    for mut path in prefix_paths {
+                                        path.push(child_node.clone());
+                                        results.push(path);
+                                        if self.single {
+                                            return results;
                                         }
                                     }
+                                    break 'rule_loop;
                                 }
                             }
                         }
@@ -949,19 +965,10 @@ impl<'a> ForestBuilder<'a> {
                 }
             }
         }
-        
+
         results
     }
 }
-
-
-
-
-
-
-
-
-
 
 // ============================================================================
 #[test]
@@ -975,8 +982,56 @@ fn test_leo_parser_sexp() {
 
     let mut parser = LeoParser::new(grammar);
     let result = parser.parse(tokens);
-    
+
     assert!(result.is_some(), "Leo parser should accept S-expression");
     let tree = result.unwrap();
     println!("Parse tree:\n{}", tree.display());
+}
+
+#[test]
+fn test_leo_reconstructs_cached_right_recursive_chain() {
+    let grammar = load_grammar_from_str(
+        r#"{
+          "name": "leo_right_recursive",
+          "start": "<S>",
+          "rules": {
+            "<S>": [["<A>"]],
+            "<A>": [["a", "<A>"], ["a"]]
+          }
+        }"#,
+    )
+    .expect("Failed to load right-recursive grammar");
+
+    let input = grammar.tokenize("aaaa").expect("Failed to tokenize input");
+    let mut parser = LeoParser::new(grammar);
+    let tree = parser
+        .parse(input)
+        .expect("Leo should reconstruct a tree for cached reductions");
+
+    assert_eq!(tree.to_flat_string(), "aaaa");
+}
+
+#[test]
+fn test_leo_parses_gamma2_cached_nullable_chain() {
+    let grammar = load_grammar_from_str(
+        r#"{
+          "name": "gamma2_cached_nullable_chain",
+          "start": "<S>",
+          "rules": {
+            "<S>": [["<B>", "<B>", "<S>", "a"], ["b", "b", "b"]],
+            "<B>": [["b", "b", "<B>"], []]
+          }
+        }"#,
+    )
+    .expect("Failed to load gamma2 grammar");
+
+    let input = grammar
+        .tokenize("bbbbbbbbbbba")
+        .expect("Failed to tokenize gamma2 input");
+    let mut parser = LeoParser::new(grammar);
+    let tree = parser
+        .parse(input)
+        .expect("Leo should reconstruct a gamma2 tree after cached nullable reductions");
+
+    assert_eq!(tree.to_flat_string(), "bbbbbbbbbbba");
 }

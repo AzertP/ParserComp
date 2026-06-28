@@ -1,0 +1,69 @@
+{
+  "identifier_kind": "identifier",
+  "skip": [
+    "^[ \\t\\r\\n]+",
+    "^//[^\\n]*(?:\\n|$)",
+    "^/\\*[^*]*\\*+(?:[^/*][^*]*\\*+)*/"
+  ],
+  "tokens": [
+    ["@interface", "^@interface\\b"],
+    ["non-sealed", "^non-sealed\\b"],
+
+    ["_multiline_string_literal", "^\"\"\"(?s:.*?)\"\"\""],
+    ["_string_literal", "^\"(?:\\\\.|[^\\\\\"\\r\\n])*\""],
+    ["character_literal", "^'(?:\\\\.|[^\\\\'\\r\\n])+'"],
+
+    ["hex_floating_point_literal", "^0[xX](?:(?:[0-9A-Fa-f](?:_?[0-9A-Fa-f])*)?\\.(?:[0-9A-Fa-f](?:_?[0-9A-Fa-f])*)|(?:[0-9A-Fa-f](?:_?[0-9A-Fa-f])*)\\.)(?:[pP][+-]?[0-9](?:_?[0-9])*)[fFdD]?"],
+    ["hex_floating_point_literal", "^0[xX](?:[0-9A-Fa-f](?:_?[0-9A-Fa-f])*)[pP][+-]?[0-9](?:_?[0-9])*[fFdD]?"],
+    ["decimal_floating_point_literal", "^(?:(?:[0-9](?:_?[0-9])*)\\.(?:[0-9](?:_?[0-9])*)?|\\.(?:[0-9](?:_?[0-9])*))(?:[eE][+-]?[0-9](?:_?[0-9])*)?[fFdD]?"],
+    ["decimal_floating_point_literal", "^(?:[0-9](?:_?[0-9])*)[eE][+-]?[0-9](?:_?[0-9])*[fFdD]?"],
+    ["decimal_floating_point_literal", "^(?:[0-9](?:_?[0-9])*)[fFdD]"],
+
+    ["binary_integer_literal", "^0[bB][01](?:_?[01])*[lL]?"],
+    ["hex_integer_literal", "^0[xX][0-9A-Fa-f](?:_?[0-9A-Fa-f])*[lL]?"],
+    ["octal_integer_literal", "^0[oO][0-7](?:_?[0-7])*[lL]?"],
+    ["octal_integer_literal", "^0(?:_?[0-7])*[lL]?"],
+    ["decimal_integer_literal", "^[1-9](?:_?[0-9])*[lL]?"],
+
+    ["ID_OR_KEYWORD", "^[A-Za-z_$][A-Za-z0-9_$]*"],
+
+    ["OP", "^\\.\\.\\."],
+    ["OP", "^>>>="],
+    ["OP", "^<<="],
+    ["OP", "^<<"],
+    ["OP", "^>>="],
+    ["OP", "^::"],
+    ["OP", "^->"],
+    ["OP", "^\\+\\+"],
+    ["OP", "^--"],
+    ["OP", "^&&"],
+    ["OP", "^\\|\\|"],
+    ["OP", "^<="],
+    ["OP", "^>="],
+    ["OP", "^=="],
+    ["OP", "^!="],
+    ["OP", "^\\+="],
+    ["OP", "^-="],
+    ["OP", "^\\*="],
+    ["OP", "^/="],
+    ["OP", "^%="],
+    ["OP", "^&="],
+    ["OP", "^\\|="],
+    ["OP", "^\\^="],
+
+    ["OP", "^[{}()\\[\\];,.@:?~!+\\-*/%&|^=<>]"]
+  ],
+  "keywords": [
+    "abstract", "assert", "boolean", "break", "byte", "case",
+    "catch", "char", "class", "continue", "default", "do",
+    "double", "else", "enum", "exports", "extends", "false",
+    "final", "finally", "float", "for", "if", "implements",
+    "import", "instanceof", "int", "interface", "long", "module",
+    "native", "new", "null", "open", "opens", "package", "permits",
+    "private", "protected", "provides", "public", "record", "requires",
+    "return", "sealed", "short", "static", "strictfp", "super",
+    "switch", "synchronized", "this", "throw", "throws", "to",
+    "transient", "transitive", "true", "try", "uses", "void",
+    "volatile", "when", "while", "with", "yield"
+  ]
+}

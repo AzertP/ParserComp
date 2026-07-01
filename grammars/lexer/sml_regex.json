@@ -1,0 +1,36 @@
+{
+  "identifier_kind": "SML_STRID",
+  "skip": [
+    "^[ \\t\\r\\n\\x0C]+",
+    "^\\(\\*(?s:.*?)\\*\\)"
+  ],
+  "tokens": [
+    ["SML_STRING", "^\"(?:\\\\[ \\t\\r\\n\\x0C]+\\\\|\\\\.|[^\\\\\"\\r\\n])*\""],
+    ["SML_CHAR", "^#\"(?:\\\\[0-9]{3}|\\\\.|[^\\\\\"\\r\\n])\""],
+
+    ["SML_REAL", "^~?(?:(?:[0-9]+\\.[0-9]+)|(?:[0-9]+(?:\\.[0-9]+)?[eE]~?[0-9]+))"],
+    ["SML_WORD", "^0[wW][xX][0-9A-Fa-f]+"],
+    ["SML_WORD", "^0[wW][0-9]+"],
+    ["SML_INT", "^~?0[xX][0-9A-Fa-f]+"],
+    ["SML_INT", "^~?[0-9]+"],
+    ["SML_TYVAR", "^'[A-Za-z0-9_']+"],
+
+    ["OP", "^\\.\\.\\."],
+    ["OP", "^=>"],
+    ["OP", "^->"],
+    ["OP", "^:>"],
+
+    ["ID_OR_KEYWORD", "^[A-Za-z][A-Za-z0-9_']*"],
+    ["SML_SYMID", "^(?:[!%&$+\\\\/<>?@~`^\\-][!%&$#+\\\\/:<=>?@~`^|*\\-]*|[!%&$#+\\\\/:<=>?@~`^|*\\-]{2,})"],
+    ["OP", "^[#{}()\\[\\],;.:_=|*]"]
+  ],
+  "keywords": [
+    "abstype", "and", "andalso", "as", "case", "datatype",
+    "do", "else", "end", "eqtype", "exception", "fn",
+    "fun", "functor", "handle", "if", "in", "include",
+    "infix", "infixr", "let", "local", "nonfix", "of",
+    "op", "open", "orelse", "raise", "rec", "sharing",
+    "sig", "signature", "struct", "structure", "then", "type",
+    "val", "where", "while", "with", "withtype"
+  ]
+}

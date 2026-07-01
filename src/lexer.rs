@@ -127,7 +127,7 @@ impl Lexer {
                 continue;
             }
 
-            // 2. Match the next token (longest-match via pattern priority)
+            // 2. Match the next token (longest match, priority breaks ties)
             if let Some((raw_kind, match_len)) = self.match_token(remaining) {
                 let text = remaining[..match_len].to_string();
                 let kind = self.resolve_kind(raw_kind, &text);
@@ -166,15 +166,25 @@ impl Lexer {
         None
     }
 
-    /// Try each token pattern in order; return `(kind, match_len)` for the
-    /// first one that anchors at position 0, or `None`.
+    /// Return the longest token match anchored at position 0. Pattern order
+    /// breaks ties, so explicit keyword rules still win over identifier rules.
     fn match_token(&self, s: &str) -> Option<(String, usize)> {
+        let mut best: Option<(String, usize)> = None;
+
         for (kind, re) in &self.token_patterns {
             if let Some(m) = re.find(s) {
-                return Some((kind.clone(), m.end()));
+                let len = m.end();
+                if best
+                    .as_ref()
+                    .map(|(_, best_len)| len > *best_len)
+                    .unwrap_or(true)
+                {
+                    best = Some((kind.clone(), len));
+                }
             }
         }
-        None
+
+        best
     }
 
     /// Map a raw token kind + matched text to the terminal name used by the

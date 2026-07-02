@@ -1,6 +1,14 @@
 {
   "name": "pascal_tok",
   "start": "<source_file>",
+  "terminal_aliases": {
+    "ID": [
+      "read",
+      "readln",
+      "write",
+      "writeln"
+    ]
+  },
   "rules": {
     "<source_file>": [
       [

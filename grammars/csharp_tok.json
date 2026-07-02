@@ -209,7 +209,8 @@
       ["internal"],
       ["private"],
       ["abstract"],
-      ["sealed"]
+      ["sealed"],
+      ["static"]
     ],
     "<class_modifiers>": [
       ["<class_modifier>"],
@@ -455,6 +456,7 @@
       ["<exclusive_or_expression>", "^", "<and_expression>"]
     ],
     "<expression>": [
+      ["<lambda_expression>"],
       ["<conditional_expression>"],
       ["<assignment>"]
     ],
@@ -464,6 +466,23 @@
     ],
     "<expression_statement>": [
       ["<statement_expression>", ";"]
+    ],
+    "<lambda_expression>": [
+      ["<lambda_signature>", "=>", "<expression>"],
+      ["<lambda_signature>", "=>", "<block>"]
+    ],
+    "<lambda_parameter>": [
+      ["<identifier>"],
+      ["<type>", "<identifier>"]
+    ],
+    "<lambda_parameter_list>": [
+      ["<lambda_parameter>"],
+      ["<lambda_parameter_list>", ",", "<lambda_parameter>"]
+    ],
+    "<lambda_signature>": [
+      ["<identifier>"],
+      ["(", ")"],
+      ["(", "<lambda_parameter_list>", ")"]
     ],
     "<field_declaration>": [
       ["<type>", "<variable_declarators>", ";"],
@@ -490,9 +509,13 @@
     ],
     "<fixed_parameter>": [
       ["<type>", "<identifier>"],
+      ["<type>", "<identifier>", "=", "<expression>"],
       ["<parameter_modifier>", "<type>", "<identifier>"],
+      ["<parameter_modifier>", "<type>", "<identifier>", "=", "<expression>"],
       ["<attributes>", "<type>", "<identifier>"],
-      ["<attributes>", "<parameter_modifier>", "<type>", "<identifier>"]
+      ["<attributes>", "<type>", "<identifier>", "=", "<expression>"],
+      ["<attributes>", "<parameter_modifier>", "<type>", "<identifier>"],
+      ["<attributes>", "<parameter_modifier>", "<type>", "<identifier>", "=", "<expression>"]
     ],
     "<fixed_parameters>": [
       ["<fixed_parameter>"],
@@ -832,7 +855,9 @@
     ],
     "<namespace_or_type_name>": [
       ["<identifier>"],
-      ["<namespace_or_type_name>", ".", "<identifier>"]
+      ["<identifier>", "<type_argument_list>"],
+      ["<namespace_or_type_name>", ".", "<identifier>"],
+      ["<namespace_or_type_name>", ".", "<identifier>", "<type_argument_list>"]
     ],
     "<non_array_type>": [
       ["<type>"]
@@ -1205,6 +1230,13 @@
     "<type_name>": [
       ["<namespace_or_type_name>"]
     ],
+    "<type_argument_list>": [
+      ["<", "<type_arguments>", ">"]
+    ],
+    "<type_arguments>": [
+      ["<type>"],
+      ["<type_arguments>", ",", "<type>"]
+    ],
     "<typeof_expression>": [
       ["typeof", "(", "<type>", ")"],
       ["typeof", "(", "void", ")"]
@@ -1233,7 +1265,8 @@
     ],
     "<using_directive>": [
       ["<using_alias_directive>"],
-      ["<using_namespace_directive>"]
+      ["<using_namespace_directive>"],
+      ["<using_static_directive>"]
     ],
     "<using_directives>": [
       ["<using_directive>"],
@@ -1241,6 +1274,9 @@
     ],
     "<using_namespace_directive>": [
       ["using", "<namespace_name>", ";"]
+    ],
+    "<using_static_directive>": [
+      ["using", "static", "<namespace_or_type_name>", ";"]
     ],
     "<using_statement>": [
       ["using", "(", "<resource_acquisition>", ")", "<embedded_statement>"]

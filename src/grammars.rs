@@ -789,6 +789,8 @@ enum StrSymbol {
 struct GrammarJson {
     name: String,
     start: String,
+    #[serde(default)]
+    terminal_aliases: HashMap<String, Vec<String>>,
     rules: HashMap<String, Value>,
     #[serde(default)]
     tests: Vec<String>,
@@ -814,8 +816,11 @@ pub fn load_grammar_from_str(json: &str) -> Result<NumericGrammar, String> {
     // First pass: collect all symbols and build tables
     let mut str_rules: HashMap<String, Vec<Vec<StrSymbol>>> = HashMap::new();
 
+    let non_terminal_names: HashSet<String> = parsed.rules.keys().cloned().collect();
+
     for (lhs, rhs_value) in &parsed.rules {
-        let productions = parse_rules(rhs_value)?;
+        let productions = parse_rules(rhs_value, &non_terminal_names)?;
+        let productions = expand_terminal_aliases(productions, &parsed.terminal_aliases);
         str_rules.insert(lhs.clone(), productions);
     }
 
@@ -887,8 +892,60 @@ pub fn load_grammar_from_str(json: &str) -> Result<NumericGrammar, String> {
     Ok(grammar)
 }
 
+fn expand_terminal_aliases(
+    productions: Vec<Vec<StrSymbol>>,
+    terminal_aliases: &HashMap<String, Vec<String>>,
+) -> Vec<Vec<StrSymbol>> {
+    if terminal_aliases.is_empty() {
+        return productions;
+    }
+
+    let mut expanded = Vec::new();
+    let mut seen = HashSet::new();
+
+    for production in productions {
+        let mut alternatives = vec![Vec::new()];
+
+        for symbol in production {
+            let choices: Vec<StrSymbol> = match &symbol {
+                StrSymbol::Terminal(terminal) => terminal_aliases
+                    .get(terminal)
+                    .map(|aliases| {
+                        std::iter::once(terminal.clone())
+                            .chain(aliases.iter().cloned())
+                            .map(StrSymbol::Terminal)
+                            .collect()
+                    })
+                    .unwrap_or_else(|| vec![symbol.clone()]),
+                StrSymbol::NonTerminal(_) => vec![symbol.clone()],
+            };
+
+            let mut next = Vec::with_capacity(alternatives.len() * choices.len());
+            for prefix in alternatives {
+                for choice in &choices {
+                    let mut candidate = prefix.clone();
+                    candidate.push(choice.clone());
+                    next.push(candidate);
+                }
+            }
+            alternatives = next;
+        }
+
+        for alternative in alternatives {
+            if seen.insert(alternative.clone()) {
+                expanded.push(alternative);
+            }
+        }
+    }
+
+    expanded
+}
+
 /// Parse rules from JSON value
-fn parse_rules(value: &Value) -> Result<Vec<Vec<StrSymbol>>, String> {
+fn parse_rules(
+    value: &Value,
+    non_terminal_names: &HashSet<String>,
+) -> Result<Vec<Vec<StrSymbol>>, String> {
     match value {
         // Array of productions: [["a", "<B>"], ["c"]]
         Value::Array(productions) => {
@@ -896,7 +953,7 @@ fn parse_rules(value: &Value) -> Result<Vec<Vec<StrSymbol>>, String> {
             for prod in productions {
                 match prod {
                     Value::Array(symbols) => {
-                        let production = parse_production(symbols)?;
+                        let production = parse_production(symbols, non_terminal_names)?;
                         result.push(production);
                     }
                     _ => return Err("Production must be an array".to_string()),
@@ -951,12 +1008,15 @@ fn parse_rules(value: &Value) -> Result<Vec<Vec<StrSymbol>>, String> {
 }
 
 /// Parse a single production from JSON array
-fn parse_production(symbols: &[Value]) -> Result<Vec<StrSymbol>, String> {
+fn parse_production(
+    symbols: &[Value],
+    non_terminal_names: &HashSet<String>,
+) -> Result<Vec<StrSymbol>, String> {
     symbols
         .iter()
         .map(|s| {
             let sym_str = s.as_str().ok_or("Symbol must be a string")?;
-            if sym_str.starts_with('<') && sym_str.ends_with('>') {
+            if non_terminal_names.contains(sym_str) {
                 Ok(StrSymbol::NonTerminal(sym_str.to_string()))
             } else {
                 Ok(StrSymbol::Terminal(sym_str.to_string()))

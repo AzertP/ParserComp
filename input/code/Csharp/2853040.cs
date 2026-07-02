@@ -1,0 +1,17 @@
+using System;
+
+public class Hello
+{
+    public static void Main()
+    {
+        var n = int.Parse(Console.ReadLine().Trim());
+        string[] line = Console.ReadLine().Trim().Split(' ');
+        for (int i = n-1; i >= 0; i--)
+        {
+            var t = int.Parse(line[i]);
+            if (i == 0) Console.WriteLine(t);
+            else Console.Write("{0} ", t);
+        }
+    }
+}
+

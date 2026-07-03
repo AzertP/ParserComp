@@ -1,4 +1,4 @@
-use std::collections::{VecDeque};
+use std::collections::VecDeque;
 use std::{u32, vec};
 
 use rustc_hash::{FxHashMap, FxHashSet};
@@ -8,7 +8,6 @@ use crate::parse_tree::{ParseSymbol, ParseTree};
 
 type HashMap<K, V> = FxHashMap<K, V>;
 type HashSet<T> = FxHashSet<T>;
-
 
 type GIndex = usize;
 
@@ -333,8 +332,6 @@ impl SPPF {
     }
 }
 
-
-
 // ----------------------------------
 // GLL Parser
 // --------------------------------
@@ -360,7 +357,7 @@ pub struct GLLParser {
     sn: GSSNodeId,
     /// SPPF node index
     dn: Option<SPPFNodeId>,
-    
+
     // First, Follow, and Nullable sets
     first: HashMap<u32, HashSet<u32>>,
     follow: HashMap<u32, HashSet<u32>>,
@@ -372,7 +369,7 @@ pub struct GLLParser {
 impl GLLParser {
     pub fn new(grammar: &NumericGrammar) -> Self {
         let (first, follow, nullable) = Self::compute_first_follow_nullable(grammar);
-        
+
         let mut parser = GLLParser {
             grammar: grammar.clone(),
             gn: 0,
@@ -394,7 +391,7 @@ impl GLLParser {
         };
 
         parser.compute_alt_lookahead();
-        
+
         parser
     }
 
@@ -430,7 +427,7 @@ impl GLLParser {
                     if let Some(nt_first) = self.first.get(&nt_id) {
                         result_first.extend(nt_first);
                     }
-                    
+
                     // If NT is not nullable, the lookahead stops here
                     if !self.nullable.contains(&nt_id) {
                         is_seq_nullable = false;
@@ -456,7 +453,11 @@ impl GLLParser {
     /// Compute FIRST, FOLLOW, and NULLABLE sets
     fn compute_first_follow_nullable(
         grammar: &NumericGrammar,
-    ) -> (HashMap<u32, HashSet<u32>>, HashMap<u32, HashSet<u32>>, HashSet<u32>) {
+    ) -> (
+        HashMap<u32, HashSet<u32>>,
+        HashMap<u32, HashSet<u32>>,
+        HashSet<u32>,
+    ) {
         let mut first: HashMap<u32, HashSet<u32>> = HashMap::default();
         let mut follow: HashMap<u32, HashSet<u32>> = HashMap::default();
         let mut nullable: HashSet<u32> = HashSet::default();
@@ -667,22 +668,23 @@ impl GLLParser {
         let mut current_alt = self.g_grammar.get(lhs_idx).seq;
 
         // --- LOOKAHEAD IMPLEMENTATION ---
-        
+
         // 1. Determine the lookahead token (I[i])
         // If i is out of bounds, we use a sentinel (e.g., 0 or a specific EOS ID)
         // Ensure this matches your tokenizer's End Of String ID.
         let current_token = if (self.i as usize) < self.input.len() {
             Some(self.input[self.i as usize])
         } else {
-            None 
+            None
         };
 
         while current_alt != 0 {
             let alt_node = self.g_grammar.get(current_alt);
             let production_start = alt_node.seq;
-            
+
             // 2. Retrieve pre-computed FIRST set for this alternative
-            let (alpha_first, alpha_nullable) = self.alt_first_cache
+            let (alpha_first, alpha_nullable) = self
+                .alt_first_cache
                 .get(&current_alt)
                 .expect("Cache missing for alt");
 
@@ -703,13 +705,14 @@ impl GLLParser {
                             }
                         }
                     }
-                },
-                None => { // End of Input
-                    // If we are at EOF, we only match if alpha is nullable 
+                }
+                None => {
+                    // End of Input
+                    // If we are at EOF, we only match if alpha is nullable
                     // and EOF is in FOLLOW(A) (or if your grammar treats EOF as a token)
                     if *alpha_nullable {
                         // Check if FOLLOW contains EOF (usually implicitly yes if nullable)
-                         matches = true; 
+                        matches = true;
                     }
                 }
             }
@@ -793,21 +796,25 @@ impl GLLParser {
             }
         }
 
-        let lhs_node_idx = self.g_grammar.get(self.gn).alt.expect("END node must have LHS");
+        let lhs_node_idx = self
+            .g_grammar
+            .get(self.gn)
+            .alt
+            .expect("END node must have LHS");
         let lhs_node = self.g_grammar.get(lhs_node_idx);
-        
+
         // Extract the NonTerminal ID from the LHS node
         let nt_id = match lhs_node.kind {
             GKind::LHS(id) => id,
             _ => panic!("LHS node kind mismatch"),
         };
-        
+
         // LOOKAHEAD check before popping (only if not at end of input)
         if (self.i as usize) < self.input.len() {
             let current_token = self.input[self.i as usize];
             if let Some(follow_set) = self.follow.get(&nt_id) {
                 if !follow_set.contains(&current_token) {
-                    return; 
+                    return;
                 }
             }
         }
@@ -876,13 +883,17 @@ impl GLLParser {
     }
 
     /// Optimized version that returns only the first parse tree
-    fn flatten_tree_first(&self, node_id: SPPFNodeId, visited: &mut HashSet<SPPFNodeId>) -> Option<ParseTree> {
+    fn flatten_tree_first(
+        &self,
+        node_id: SPPFNodeId,
+        visited: &mut HashSet<SPPFNodeId>,
+    ) -> Option<ParseTree> {
         // Check for cycles to prevent infinite recursion
         if visited.contains(&node_id) {
             return None;
         }
         visited.insert(node_id);
-        
+
         let node = self.sppf.get(node_id);
         let g_node = self.g_grammar.get(node.gn);
 
@@ -894,9 +905,7 @@ impl GLLParser {
                     let name = self.grammar.terminal_str(t_id).unwrap_or("?").to_string();
                     Some(ParseTree::leaf(&name))
                 }
-                GKind::Epsilon => {
-                    Some(ParseTree::leaf("ε"))
-                }
+                GKind::Epsilon => Some(ParseTree::leaf("ε")),
                 _ => None,
             };
         }
@@ -959,7 +968,10 @@ impl GLLParser {
                     if children.len() == 1 {
                         children.into_iter().next()
                     } else if !children.is_empty() {
-                        Some(ParseTree::new(ParseSymbol::NonTerminal("_seq".to_string()), children))
+                        Some(ParseTree::new(
+                            ParseSymbol::NonTerminal("_seq".to_string()),
+                            children,
+                        ))
                     } else {
                         None
                     }
@@ -968,7 +980,10 @@ impl GLLParser {
                     if children.len() == 1 {
                         children.into_iter().next()
                     } else if !children.is_empty() {
-                        Some(ParseTree::new(ParseSymbol::NonTerminal("_seq".to_string()), children))
+                        Some(ParseTree::new(
+                            ParseSymbol::NonTerminal("_seq".to_string()),
+                            children,
+                        ))
                     } else {
                         None
                     }
@@ -988,25 +1003,40 @@ impl GLLParser {
         if tree.children.is_empty() {
             match &tree.name {
                 ParseSymbol::Terminal(s) => {
-                    if s == "ε" || s == "epsilon" { 0 } else { s.len() }
+                    if s == "ε" || s == "epsilon" {
+                        0
+                    } else {
+                        s.len()
+                    }
                 }
                 ParseSymbol::NonTerminal(s) => {
-                    if s.starts_with('<') && s.ends_with('>') { 0 } else { s.len() }
+                    if s.starts_with('<') && s.ends_with('>') {
+                        0
+                    } else {
+                        s.len()
+                    }
                 }
             }
         } else {
-            tree.children.iter().map(|c| Self::count_tree_chars(c)).sum()
+            tree.children
+                .iter()
+                .map(|c| Self::count_tree_chars(c))
+                .sum()
         }
     }
 
     /// Recursive helper to flatten binary SPPF nodes into N-ary lists
-    fn flatten_tree(&self, node_id: SPPFNodeId, visited: &mut HashSet<SPPFNodeId>) -> Vec<ParseTree> {
+    fn flatten_tree(
+        &self,
+        node_id: SPPFNodeId,
+        visited: &mut HashSet<SPPFNodeId>,
+    ) -> Vec<ParseTree> {
         // Check for cycles to prevent infinite recursion
         if visited.contains(&node_id) {
             return vec![];
         }
         visited.insert(node_id);
-        
+
         let node = self.sppf.get(node_id);
         let g_node = self.g_grammar.get(node.gn);
 
@@ -1140,7 +1170,10 @@ impl GLLParser {
                 all_child_lists
                     .into_iter()
                     .map(|children| {
-                        vec![ParseTree::new(ParseSymbol::NonTerminal(name.clone()), children)]
+                        vec![ParseTree::new(
+                            ParseSymbol::NonTerminal(name.clone()),
+                            children,
+                        )]
                     })
                     .collect()
             }
@@ -1275,7 +1308,7 @@ mod tests {
         let grammar = grammars::load_grammar_from_str(json).unwrap();
         let mut parser = GLLParser::new(&grammar);
 
-        let id  = grammar.terminals.get_id("id").expect("id");
+        let id = grammar.terminals.get_id("id").expect("id");
         let plus = grammar.terminals.get_id("+").expect("+");
         // id + id + id
         let input = vec![id, plus, id, plus, id];
@@ -1285,6 +1318,10 @@ mod tests {
         for (i, t) in trees.iter().enumerate() {
             println!("Tree {}:\n{}", i + 1, t.display());
         }
-        assert_eq!(trees.len(), 2, "Expected exactly 2 parse trees for id+id+id");
+        assert_eq!(
+            trees.len(),
+            2,
+            "Expected exactly 2 parse trees for id+id+id"
+        );
     }
 }

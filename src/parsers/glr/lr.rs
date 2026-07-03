@@ -1,7 +1,6 @@
-
 use crate::grammars::{Grammar, NumSymbol};
-use crate::parsers::glr::table_generator::{TableGenerator, Action, END_OF_INPUT};
 use crate::parse_tree::ParseTree;
+use crate::parsers::glr::table_generator::{Action, TableGenerator, END_OF_INPUT};
 use rustc_hash::FxHashMap;
 use std::fs::File;
 use std::io::{self, BufRead};
@@ -20,14 +19,17 @@ impl LRParser {
     pub fn new(grammar: &Grammar) -> Self {
         let generator = TableGenerator::new(grammar);
         let table_raw = generator.generate_lr1_table();
-        
+
         // Convert to faster hash map and flattened action
         let mut table = FastHashMap::default();
         for (state, actions) in table_raw {
             let mut state_table = FastHashMap::default();
             for (symbol, acts) in actions {
                 if acts.len() > 1 {
-                    panic!("Conflict detected in LR(1) table at state {}, symbol {:?}: {:?}", state, symbol, acts);
+                    panic!(
+                        "Conflict detected in LR(1) table at state {}, symbol {:?}: {:?}",
+                        state, symbol, acts
+                    );
                 }
                 if !acts.is_empty() {
                     state_table.insert(symbol, acts[0].clone());
@@ -64,7 +66,7 @@ impl LRParser {
                     format!("Invalid symbol in header: {}", e),
                 )
             })?;
-            
+
             let symbol = if val == 0 {
                 NumSymbol::Terminal(END_OF_INPUT)
             } else if val > 0 {
@@ -98,19 +100,22 @@ impl LRParser {
                     format!("Invalid state ID: {}", e),
                 )
             })?;
-            
+
             let mut state_actions = FastHashMap::default();
 
             for (i, part) in parts.iter().skip(1).enumerate() {
                 let action_str = part.trim();
-                
+
                 if action_str.is_empty() {
                     continue;
                 }
-                
+
                 // Check for conflicts in CSV ( multiple actions separated by '/' )
                 if action_str.contains('/') {
-                    panic!("Conflict detected in LR(1) CSV table at state {}, column {}: {}", state_id, i, action_str);
+                    panic!(
+                        "Conflict detected in LR(1) CSV table at state {}, column {}: {}",
+                        state_id, i, action_str
+                    );
                 }
 
                 let first_action_str = action_str;
@@ -168,14 +173,14 @@ impl LRParser {
         let mut stack = vec![0]; // Start state is always 0
         let mut node_stack: Vec<ParseTree> = Vec::new();
         let mut input_idx = 0;
-        
+
         loop {
             // Peek at current state
             let current_state = match stack.last() {
                 Some(&s) => s,
                 None => return None, // Empty stack error
             };
-            
+
             // Get lookahead symbol and raw value for tree construction
             let (lookahead, current_val) = if input_idx < input.len() {
                 let val = input[input_idx];
@@ -189,7 +194,11 @@ impl LRParser {
             };
 
             // Get action from table
-            let action = match self.table.get(&current_state).and_then(|t| t.get(&lookahead)) {
+            let action = match self
+                .table
+                .get(&current_state)
+                .and_then(|t| t.get(&lookahead))
+            {
                 Some(a) => a,
                 None => return None, // No action defined -> Parse Error
             };
@@ -197,19 +206,22 @@ impl LRParser {
             match action {
                 Action::Shift(next_state) => {
                     stack.push(*next_state);
-                    
+
                     // Create tree node for terminal (unless it is EOF)
                     if lookahead != NumSymbol::Terminal(END_OF_INPUT) {
-                         let term_id = (current_val - 1) as usize;
-                         // Get terminal string from grammar or default
-                         let name = self.grammar.terminals.get_str(term_id as u32)
-                             .map(|s| s.to_string())
-                             .unwrap_or_else(|| format!("t{}", term_id));
-                         
-                         // Terminals are leaves
-                         node_stack.push(ParseTree::from_str(&name, vec![]));
+                        let term_id = (current_val - 1) as usize;
+                        // Get terminal string from grammar or default
+                        let name = self
+                            .grammar
+                            .terminals
+                            .get_str(term_id as u32)
+                            .map(|s| s.to_string())
+                            .unwrap_or_else(|| format!("t{}", term_id));
+
+                        // Terminals are leaves
+                        node_stack.push(ParseTree::from_str(&name, vec![]));
                     }
-                    
+
                     input_idx += 1; // Consume input
                 }
                 Action::Reduce(lhs, dot, _) => {
@@ -219,16 +231,19 @@ impl LRParser {
                             return None;
                         }
                     }
-                    
+
                     // Pop |rhs| items from node stack to be children
                     let start = node_stack.len().checked_sub(*dot)?;
                     let children: Vec<ParseTree> = node_stack.drain(start..).collect();
 
                     // Create parent node
-                    let lhs_name = self.grammar.non_terminals.get_str(*lhs)
+                    let lhs_name = self
+                        .grammar
+                        .non_terminals
+                        .get_str(*lhs)
                         .map(|s| s.to_string())
                         .unwrap_or_else(|| format!("<{}>", lhs));
-                    
+
                     let new_node = ParseTree::from_str(&lhs_name, children);
 
                     // Look at state after popping
@@ -236,10 +251,14 @@ impl LRParser {
                         Some(&s) => s,
                         None => return None,
                     };
-                    
+
                     // Perform GOTO
                     let lhs_sym = NumSymbol::NonTerminal(*lhs);
-                    match self.table.get(&after_pop_state).and_then(|t| t.get(&lhs_sym)) {
+                    match self
+                        .table
+                        .get(&after_pop_state)
+                        .and_then(|t| t.get(&lhs_sym))
+                    {
                         Some(Action::Shift(goto_state)) => {
                             stack.push(*goto_state);
                             node_stack.push(new_node);
@@ -256,20 +275,6 @@ impl LRParser {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // ---------------------- TESTS ----------------------
 
@@ -305,9 +310,9 @@ mod tests {
         println!("Exported LR parse table to {}", table_path);
 
         // Import and test parser
-        let parser = LRParser::from_csv(&table_path, &grammar)
-            .expect("Failed to import CSV into parser");
-        
+        let parser =
+            LRParser::from_csv(&table_path, &grammar).expect("Failed to import CSV into parser");
+
         // Test "abc"
         let input = "abc";
         let tokens = grammar.tokenize(input).expect("Failed to tokenize input");
@@ -323,12 +328,12 @@ mod tests {
 
     #[test]
     fn test_lr_calc_grammar() {
-         // Simple arithmetic: E -> E + T | T, T -> T * F | F, F -> ( E ) | n
-         // Simplified to be LR(1) compatible (unambiguous, left-recursive is fine for LR)
-         // E -> E + T
-         // E -> T
-         // T -> n
-         let json = r#"{
+        // Simple arithmetic: E -> E + T | T, T -> T * F | F, F -> ( E ) | n
+        // Simplified to be LR(1) compatible (unambiguous, left-recursive is fine for LR)
+        // E -> E + T
+        // E -> T
+        // T -> n
+        let json = r#"{
             "name": "calc_simple",
             "start": "<E>",
             "rules": {
@@ -342,13 +347,12 @@ mod tests {
         let table_dir = "lr_table";
         fs::create_dir_all(table_dir).ok();
         let table_path = format!("{}/calc_lr_table.csv", table_dir);
-        
+
         table_gen
             .export_lr1_to_csv(&table_path)
             .expect("Failed to export CSV");
 
-        let parser = LRParser::from_csv(&table_path, &grammar)
-            .expect("Failed to import CSV");
+        let parser = LRParser::from_csv(&table_path, &grammar).expect("Failed to import CSV");
 
         // "n + n"
         let input = "n+n";
@@ -356,7 +360,7 @@ mod tests {
         let lr_tokens: Vec<_> = tokens.iter().map(|&t| (t + 1) as i32).collect();
 
         assert!(parser.recognize(&lr_tokens), "Should accept 'n+n'");
-        
+
         // "n + n + n"
         let input2 = "n+n+n";
         let tokens2 = grammar.tokenize(input2).expect("Failed");
@@ -380,13 +384,12 @@ mod tests {
         let table_dir = "lr_table";
         fs::create_dir_all(table_dir).ok();
         let table_path = format!("{}/simple_tree_table.csv", table_dir);
-        
+
         table_gen
             .export_lr1_to_csv(&table_path)
             .expect("Failed to export CSV");
 
-        let parser = LRParser::from_csv(&table_path, &grammar)
-            .expect("Failed to import CSV");
+        let parser = LRParser::from_csv(&table_path, &grammar).expect("Failed to import CSV");
 
         let input = "abc";
         let tokens = grammar.tokenize(input).expect("Failed");
@@ -402,7 +405,7 @@ mod tests {
 
     #[test]
     fn test_lr_calc_tree_display() {
-         let json = r#"{
+        let json = r#"{
             "name": "calc_tree",
             "start": "<E>",
             "rules": {
@@ -416,13 +419,12 @@ mod tests {
         let table_dir = "lr_table";
         fs::create_dir_all(table_dir).ok();
         let table_path = format!("{}/calc_tree_table.csv", table_dir);
-        
+
         table_gen
             .export_lr1_to_csv(&table_path)
             .expect("Failed to export CSV");
 
-        let parser = LRParser::from_csv(&table_path, &grammar)
-            .expect("Failed to import CSV");
+        let parser = LRParser::from_csv(&table_path, &grammar).expect("Failed to import CSV");
 
         let input = "n+n+n";
         let tokens = grammar.tokenize(input).expect("Failed");

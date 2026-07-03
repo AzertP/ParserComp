@@ -1,11 +1,11 @@
 // GLR parser - equivalent to python_files/final_parser/GLR.py
 
-use crate::parsers::glr::table_generator::*;
 use crate::grammars::{Grammar, NumSymbol};
+use crate::parsers::glr::table_generator::*;
 use rustc_hash::{FxHashMap, FxHashSet};
 use std::fmt;
-use std::io;
 use std::fs::File;
+use std::io;
 use std::path::Path;
 
 // use crate::parsers::glr::table_generator::{END_OF_INPUT, EPSILON};
@@ -269,7 +269,7 @@ impl ParserSPPF {
     /// Create a new Parser SPPF with proper epsilon-SPPF structure
     pub fn new_with_grammar(grammar: &Grammar, i_map: HashMap<NullableLabel, usize>) -> Self {
         let nullable = TableGenerator::compute_nullable(grammar);
-        
+
         let mut sppf = ParserSPPF {
             nodes: Vec::new(),
             counter: 0,
@@ -283,37 +283,39 @@ impl ParserSPPF {
 
         // Map from NullableLabel to SPPF node id
         let mut label_to_node: HashMap<NullableLabel, usize> = HashMap::default();
-        
+
         // Step 1: Create nodes for all nullable non-terminals
         let mut sorted_nullable: Vec<u32> = nullable.iter().copied().collect();
         sorted_nullable.sort_unstable();
-        
+
         for nt in sorted_nullable {
             let label = NullableLabel::Single(nt);
             if let Some(&node_id) = i_map.get(&label) {
-                let sppf_label = -(( nt as i64) + 1);  // Encode NT as negative
+                let sppf_label = -((nt as i64) + 1); // Encode NT as negative
                 let id = sppf.create_epsilon_node(sppf_label, -1);
                 sppf.epsilon_sppf.insert(node_id, id);
                 label_to_node.insert(label, id);
             }
         }
-        
+
         // Step 2: Add children based on grammar productions
         for (&lhs, productions) in &grammar.rules {
             if !nullable.contains(&lhs) {
                 continue;
             }
-            
+
             let lhs_label = NullableLabel::Single(lhs);
             let lhs_node_id = match label_to_node.get(&lhs_label) {
                 Some(&id) => id,
                 None => continue,
             };
-            
+
             for rhs in productions {
                 // Empty production - add epsilon child
                 if rhs.is_empty() {
-                    sppf.get_node_mut(lhs_node_id).children.push(SPPFChild::Node(eps_id));
+                    sppf.get_node_mut(lhs_node_id)
+                        .children
+                        .push(SPPFChild::Node(eps_id));
                 }
                 // Check if all symbols in RHS are nullable
                 else {
@@ -330,7 +332,7 @@ impl ParserSPPF {
                                 _ => None,
                             })
                             .collect();
-                        
+
                         // Create packing node with all nullable NTs as children
                         let mut child_ids = Vec::new();
                         for nt_id in &nt_ids {
@@ -340,28 +342,30 @@ impl ParserSPPF {
                             }
                         }
                         if !child_ids.is_empty() {
-                            sppf.get_node_mut(lhs_node_id).children.push(SPPFChild::Packing(child_ids));
+                            sppf.get_node_mut(lhs_node_id)
+                                .children
+                                .push(SPPFChild::Packing(child_ids));
                         }
                     }
                 }
             }
         }
-        
+
         // Step 3: Handle sequence nodes (partial nullable suffixes)
         // These are created for right-nulled positions in productions
         const INTERMEDIATE_THRESHOLD: i64 = i64::MIN / 4;
         for (nullable_label, &node_id) in &i_map {
             if let NullableLabel::Sequence(nt_ids) = nullable_label {
                 if label_to_node.contains_key(nullable_label) {
-                    continue;  // Already created
+                    continue; // Already created
                 }
-                
+
                 // Create intermediate node for this sequence
                 // Use a label below INTERMEDIATE_THRESHOLD so it displays as empty string
                 let sppf_label = INTERMEDIATE_THRESHOLD - (node_id as i64);
                 let id = sppf.create_epsilon_node(sppf_label, -1);
                 sppf.epsilon_sppf.insert(node_id, id);
-                
+
                 // Add each NT in sequence as a child
                 let mut child_ids = Vec::new();
                 for nt_id in nt_ids {
@@ -371,16 +375,18 @@ impl ParserSPPF {
                     }
                 }
                 if !child_ids.is_empty() {
-                    sppf.get_node_mut(id).children.push(SPPFChild::Packing(child_ids));
+                    sppf.get_node_mut(id)
+                        .children
+                        .push(SPPFChild::Packing(child_ids));
                 }
-                
+
                 label_to_node.insert(nullable_label.clone(), id);
             }
         }
 
         sppf
     }
-    
+
     pub fn new(i_map: HashMap<NullableLabel, usize>) -> Self {
         let mut sppf = ParserSPPF {
             nodes: Vec::new(),
@@ -396,7 +402,7 @@ impl ParserSPPF {
         // Create nodes for each entry in i_map and store mappings
         // Map from NullableLabel to actual SPPF node id
         let mut label_to_node: HashMap<NullableLabel, usize> = HashMap::default();
-        
+
         for (nullable_label, &node_id) in &sppf.i_map.clone() {
             if node_id != 0 {
                 // Determine the proper label for this epsilon node
@@ -426,7 +432,9 @@ impl ParserSPPF {
             match nullable_label {
                 NullableLabel::Single(_nt_id) => {
                     // Add epsilon as child
-                    sppf.get_node_mut(sppf_node_id).children.push(SPPFChild::Node(eps_id));
+                    sppf.get_node_mut(sppf_node_id)
+                        .children
+                        .push(SPPFChild::Node(eps_id));
                 }
                 NullableLabel::Sequence(nt_ids) => {
                     // Add each nullable NT in the sequence as a child
@@ -438,7 +446,9 @@ impl ParserSPPF {
                         }
                     }
                     if !child_ids.is_empty() {
-                        sppf.get_node_mut(sppf_node_id).children.push(SPPFChild::Packing(child_ids));
+                        sppf.get_node_mut(sppf_node_id)
+                            .children
+                            .push(SPPFChild::Packing(child_ids));
                     }
                 }
                 NullableLabel::Epsilon => {}

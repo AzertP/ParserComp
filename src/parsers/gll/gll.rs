@@ -836,7 +836,7 @@ impl GLLParser {
         }
     }
 
-    pub fn parse_on(&mut self, input: Vec<u32>) -> bool {
+    fn run_recognizer(&mut self, input: Vec<u32>) -> bool {
         self.initialisation();
         self.input = input;
         self.i = 0;
@@ -877,161 +877,36 @@ impl GLLParser {
         self.accepting
     }
 
+    /// Recognize whether `input` belongs to the grammar.
+    ///
+    /// This builds the GLL SPPF but does not materialize any parse tree, so it is
+    /// the right API for acceptance/corpus checks.
+    pub fn recognize(&mut self, input: &[u32]) -> bool {
+        self.run_recognizer(input.to_vec())
+    }
+
+    /// Compatibility wrapper for older call sites. Prefer [`GLLParser::recognize`].
+    pub fn parse_on(&mut self, input: Vec<u32>) -> bool {
+        self.run_recognizer(input)
+    }
+
     fn sppf_to_tree(&self, root_id: SPPFNodeId) -> Option<ParseTree> {
         let mut visited = HashSet::default();
         self.flatten_tree_first(root_id, &mut visited)
+            .into_iter()
+            .next()
     }
 
-    /// Optimized version that returns only the first parse tree
+    /// Flatten one path through the SPPF by taking the first packed alternative.
+    ///
+    /// `parse_all` is responsible for enumerating ambiguity. This method avoids
+    /// recursively scoring already-materialized trees, which can overflow the
+    /// stack on large accepted inputs.
     fn flatten_tree_first(
         &self,
         node_id: SPPFNodeId,
         visited: &mut HashSet<SPPFNodeId>,
-    ) -> Option<ParseTree> {
-        // Check for cycles to prevent infinite recursion
-        if visited.contains(&node_id) {
-            return None;
-        }
-        visited.insert(node_id);
-
-        let node = self.sppf.get(node_id);
-        let g_node = self.g_grammar.get(node.gn);
-
-        // --- Base Case: Leaf Node (Terminal or Epsilon) ---
-        if node.pack_ns.is_empty() {
-            visited.remove(&node_id);
-            return match g_node.kind {
-                GKind::Terminal(t_id) => {
-                    let name = self.grammar.terminal_str(t_id).unwrap_or("?").to_string();
-                    Some(ParseTree::leaf(&name))
-                }
-                GKind::Epsilon => Some(ParseTree::leaf("ε")),
-                _ => None,
-            };
-        }
-
-        // Try each packed node alternative. When a node has multiple alternatives
-        // (ambiguity), some may produce incomplete trees due to SPPF cycles.
-        // Strategy: try alternatives, preferring ones where both children produce
-        // results. If multiple are "complete", pick the one with the most terminal
-        // characters (matching the expected span width).
-        let expected_len = (node.ri - node.li) as usize;
-        let mut best_children: Option<Vec<ParseTree>> = None;
-        let mut best_count: usize = 0;
-        let mut found_perfect = false;
-        for pack_id in &node.pack_ns {
-            let pack = &self.sppf.pack_nodes[pack_id.0];
-            let mut children = Vec::new();
-
-            if let Some(left_id) = pack.left_c {
-                if let Some(left_tree) = self.flatten_tree_first(left_id, visited) {
-                    if !left_tree.children.is_empty() {
-                        children.extend(left_tree.children);
-                    } else {
-                        children.push(left_tree);
-                    }
-                }
-            }
-
-            if let Some(right_tree) = self.flatten_tree_first(pack.right_c, visited) {
-                children.push(right_tree);
-            }
-
-            // For nodes with a single packed alternative, skip counting
-            if node.pack_ns.len() == 1 {
-                best_children = Some(children);
-                break;
-            }
-
-            let char_count: usize = children.iter().map(|c| Self::count_tree_chars(c)).sum();
-            if char_count == expected_len {
-                best_children = Some(children);
-                found_perfect = true;
-                break;
-            } else if char_count > best_count {
-                best_count = char_count;
-                best_children = Some(children);
-            }
-        }
-
-        let result = if let Some(children) = best_children {
-            match g_node.kind {
-                GKind::LHS(nt_id) => {
-                    let name = self
-                        .grammar
-                        .non_terminal_str(nt_id)
-                        .unwrap_or("?")
-                        .to_string();
-                    Some(ParseTree::new(ParseSymbol::NonTerminal(name), children))
-                }
-                GKind::NonTerminal(_nt_id) => {
-                    if children.len() == 1 {
-                        children.into_iter().next()
-                    } else if !children.is_empty() {
-                        Some(ParseTree::new(
-                            ParseSymbol::NonTerminal("_seq".to_string()),
-                            children,
-                        ))
-                    } else {
-                        None
-                    }
-                }
-                _ => {
-                    if children.len() == 1 {
-                        children.into_iter().next()
-                    } else if !children.is_empty() {
-                        Some(ParseTree::new(
-                            ParseSymbol::NonTerminal("_seq".to_string()),
-                            children,
-                        ))
-                    } else {
-                        None
-                    }
-                }
-            }
-        } else {
-            None
-        };
-
-        // Allow this node to be visited again from a different path (SPPF sharing)
-        visited.remove(&node_id);
-        result
-    }
-
-    /// Count total terminal characters in a parse tree (for alternative selection)
-    fn count_tree_chars(tree: &ParseTree) -> usize {
-        if tree.children.is_empty() {
-            match &tree.name {
-                ParseSymbol::Terminal(s) => {
-                    if s == "ε" || s == "epsilon" {
-                        0
-                    } else {
-                        s.len()
-                    }
-                }
-                ParseSymbol::NonTerminal(s) => {
-                    if s.starts_with('<') && s.ends_with('>') {
-                        0
-                    } else {
-                        s.len()
-                    }
-                }
-            }
-        } else {
-            tree.children
-                .iter()
-                .map(|c| Self::count_tree_chars(c))
-                .sum()
-        }
-    }
-
-    /// Recursive helper to flatten binary SPPF nodes into N-ary lists
-    fn flatten_tree(
-        &self,
-        node_id: SPPFNodeId,
-        visited: &mut HashSet<SPPFNodeId>,
     ) -> Vec<ParseTree> {
-        // Check for cycles to prevent infinite recursion
         if visited.contains(&node_id) {
             return vec![];
         }
@@ -1040,36 +915,28 @@ impl GLLParser {
         let node = self.sppf.get(node_id);
         let g_node = self.g_grammar.get(node.gn);
 
-        // --- Base Case: Leaf Node (Terminal or Epsilon) ---
         if node.pack_ns.is_empty() {
-            return match g_node.kind {
+            let result = match g_node.kind {
                 GKind::Terminal(t_id) => {
                     let name = self.grammar.terminal_str(t_id).unwrap_or("?").to_string();
                     vec![ParseTree::leaf(&name)]
                 }
-                GKind::Epsilon => {
-                    vec![ParseTree::leaf("ε")]
-                }
+                GKind::Epsilon => vec![ParseTree::leaf("ε")],
                 _ => vec![],
             };
+            visited.remove(&node_id);
+            return result;
         }
 
-        if let Some(pack_id) = node.pack_ns.iter().next() {
+        let result = if let Some(pack_id) = node.pack_ns.iter().next() {
             let pack = &self.sppf.pack_nodes[pack_id.0];
-
-            // Collect children from Left and Right subtrees
             let mut children = Vec::new();
 
-            // The Left child (if it exists) represents the prefix of the rule
             if let Some(left_id) = pack.left_c {
-                children.extend(self.flatten_tree(left_id, visited));
+                children.extend(self.flatten_tree_first(left_id, visited));
             }
+            children.extend(self.flatten_tree_first(pack.right_c, visited));
 
-            // The Right child is the symbol just parsed
-            children.extend(self.flatten_tree(pack.right_c, visited));
-
-            // Determine if we Wrap or Flatten
-            // ONLY wrap for LHS nodes, NOT for NonTerminal nodes (which are RHS references)
             match g_node.kind {
                 GKind::LHS(nt_id) => {
                     let name = self
@@ -1079,16 +946,19 @@ impl GLLParser {
                         .to_string();
                     vec![ParseTree::new(ParseSymbol::NonTerminal(name), children)]
                 }
-
                 _ => children,
             }
         } else {
             vec![]
-        }
+        };
+
+        visited.remove(&node_id);
+        result
     }
 
-    pub fn parse(&mut self, input: &Vec<u32>) -> Option<ParseTree> {
-        let accepted = self.parse_on(input.to_vec());
+    /// Parse `input` and materialize one parse tree from the SPPF.
+    pub fn parse_one(&mut self, input: &[u32]) -> Option<ParseTree> {
+        let accepted = self.recognize(input);
         if accepted {
             let start_nt_id = self.grammar.start;
             let start_gn = *self.g_grammar.headers.get(&start_nt_id).unwrap();
@@ -1100,6 +970,11 @@ impl GLLParser {
         } else {
             None
         }
+    }
+
+    /// Compatibility wrapper for older call sites. Prefer [`GLLParser::parse_one`].
+    pub fn parse(&mut self, input: &[u32]) -> Option<ParseTree> {
+        self.parse_one(input)
     }
 
     /// Enumerate ALL parse trees from an SPPF node by taking the cartesian product
@@ -1186,8 +1061,8 @@ impl GLLParser {
 
     /// Parse and return ALL parse trees (for ambiguous grammars).
     /// Returns an empty Vec if the input is not accepted.
-    pub fn parse_all(&mut self, input: &Vec<u32>) -> Vec<ParseTree> {
-        let accepted = self.parse_on(input.to_vec());
+    pub fn parse_all(&mut self, input: &[u32]) -> Vec<ParseTree> {
+        let accepted = self.recognize(input);
         if !accepted {
             return vec![];
         }
@@ -1203,6 +1078,7 @@ impl GLLParser {
     }
 }
 
+#[cfg(test)]
 mod tests {
     use crate::grammars;
 
@@ -1266,9 +1142,38 @@ mod tests {
         let token_b = grammar.terminals.get_id("b").expect("Token 'b' not found");
         let input = vec![token_a, token_a, token_b, token_b];
 
-        let parse_tree = parser.parse(&input);
+        let parse_tree = parser.parse_one(&input);
         assert!(parse_tree.is_some(), "Parse tree should be generated");
         println!("{:}", parse_tree.unwrap().display());
+    }
+
+    #[test]
+    fn test_gll_public_api_names_recognition_and_tree_modes() {
+        let json = r#"{
+            "name": "api",
+            "start": "<S>",
+            "rules": {
+                "<S>": [["a"]]
+            }
+        }"#;
+        let grammar = grammars::load_grammar_from_str(json).unwrap();
+        let token_a = grammar.terminals.get_id("a").expect("Token 'a' not found");
+        let token_b = grammar.terminals.get_id("b").unwrap_or(token_a + 1);
+        let input = vec![token_a];
+        let invalid_input = vec![token_b];
+
+        let mut recognizer = GLLParser::new(&grammar);
+        assert!(recognizer.recognize(&input));
+        assert!(!recognizer.recognize(&invalid_input));
+
+        let mut parser = GLLParser::new(&grammar);
+        let tree = parser
+            .parse_one(&input)
+            .expect("parse_one should return one tree for accepted input");
+        assert!(matches!(tree.name, ParseSymbol::NonTerminal(_)));
+
+        let mut all_parser = GLLParser::new(&grammar);
+        assert_eq!(all_parser.parse_all(&input).len(), 1);
     }
 
     #[test]
@@ -1284,7 +1189,7 @@ mod tests {
 
         println!("\n=== Testing GLL Parser (S-expression) ===");
         let mut parser = GLLParser::new(&grammar);
-        let result = parser.parse(&tokens);
+        let result = parser.parse_one(&tokens);
         match &result {
             Some(tree) => {
                 println!("\n✓ Parse successful!");

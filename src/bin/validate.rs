@@ -157,9 +157,7 @@ fn run_main() {
 
         // LL and LR may panic on conflicting grammars.
         let ll_result: Result<LLParser, _> =
-            std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-                LLParser::new(&grammar)
-            }));
+            std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| LLParser::new(&grammar)));
         let ll_parser = ll_result.ok();
 
         let lr_result: Result<LRParser, _> =
@@ -204,11 +202,7 @@ fn run_main() {
             let tokens = match grammar.tokenize(line) {
                 Some(t) => t,
                 None => {
-                    println!(
-                        "  SKIP [{:3}] {:40} (tokenize failed)",
-                        line_no + 1,
-                        line
-                    );
+                    println!("  SKIP [{:3}] {:40} (tokenize failed)", line_no + 1, line);
                     skipped += 1;
                     total -= 1;
                     continue;
@@ -230,7 +224,7 @@ fn run_main() {
             });
             results.push(ParserResult {
                 name: "GLL",
-                outcome: if gll_parser.parse(&tokens).is_some() {
+                outcome: if gll_parser.parse_one(&tokens).is_some() {
                     Outcome::Accept
                 } else {
                     Outcome::Reject
@@ -333,12 +327,7 @@ fn run_main() {
                 "FAIL (disagree)"
             };
 
-            println!(
-                "  [{:3}] {:35} {}",
-                line_no + 1,
-                line,
-                verdict
-            );
+            println!("  [{:3}] {:35} {}", line_no + 1, line, verdict);
             if !agree {
                 println!("        {}", detail);
             }
@@ -361,7 +350,10 @@ fn run_main() {
                 if !trees_agree || leo_n != 1 {
                     println!(
                         "        trees  Leo={:<4} GLL={:<4} RNGLR={:<4} BRNGLR={:<4}  {}",
-                        leo_n, gll_n, rnglr_n, brnglr_n,
+                        leo_n,
+                        gll_n,
+                        rnglr_n,
+                        brnglr_n,
                         if trees_agree { "AGREE" } else { "DISAGREE !!!" }
                     );
                 }
@@ -391,14 +383,20 @@ fn run_main() {
     if disagreed == 0 {
         println!("\nAll parsers agree on every test case.");
     } else {
-        println!("\nWARNING: {} test case(s) have parser disagreements.", disagreed);
+        println!(
+            "\nWARNING: {} test case(s) have parser disagreements.",
+            disagreed
+        );
     }
 
     // Tree-count summary.
     if tree_total > 0 {
         println!();
         println!("{}", "=".repeat(60));
-        println!("Tree-count check (Leo vs GLL vs RNGLR vs BRNGLR, {} accepted inputs)", tree_total);
+        println!(
+            "Tree-count check (Leo vs GLL vs RNGLR vs BRNGLR, {} accepted inputs)",
+            tree_total
+        );
         println!("{}", "=".repeat(60));
         println!(
             "  Agreed   : {}  ({:.1}%)",
@@ -409,7 +407,10 @@ fn run_main() {
         if tree_disagreed == 0 {
             println!("\nAll four parsers agree on parse-tree counts.");
         } else {
-            println!("\nWARNING: {} input(s) have differing parse-tree counts.", tree_disagreed);
+            println!(
+                "\nWARNING: {} input(s) have differing parse-tree counts.",
+                tree_disagreed
+            );
         }
     }
 }
@@ -634,14 +635,10 @@ fn run_exhaustive_validation() -> bool {
         let mut gll_parser = gll::GLLParser::new(&grammar);
         let mut leo = earley_leo::LeoParser::new(grammar.clone());
 
-        let ll_parser = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-            LLParser::new(&grammar)
-        }))
-        .ok();
-        let lr_parser = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-            LRParser::new(&grammar)
-        }))
-        .ok();
+        let ll_parser =
+            std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| LLParser::new(&grammar))).ok();
+        let lr_parser =
+            std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| LRParser::new(&grammar))).ok();
 
         // Collect terminal alphabet (token strings, typically single characters).
         let alphabet: Vec<String> = (0..grammar.num_terminals())
@@ -666,7 +663,7 @@ fn run_exhaustive_validation() -> bool {
 
             // Run all parsers.
             let leo_acc = leo.parse(tokens.clone()).is_some();
-            let gll_acc = gll_parser.parse(&tokens).is_some();
+            let gll_acc = gll_parser.parse_one(&tokens).is_some();
             let rnglr_acc = rnglr.parse(&glr_tokens).is_some();
             let brnglr_acc = brnglr.parse(&glr_tokens).is_some();
             let cyk_acc = cyk::parse(&cnf_grammar, &cnf_tokens).is_some();
@@ -700,8 +697,14 @@ fn run_exhaustive_validation() -> bool {
                     if brnglr_acc { "A" } else { "R" },
                     if cyk_acc { "A" } else { "R" },
                     // if val_acc { "A" } else { "R" },
-                    ll_acc.map_or(String::new(), |r| format!(" LL:{}", if r { "A" } else { "R" })),
-                    lr_acc.map_or(String::new(), |r| format!(" LR:{}", if r { "A" } else { "R" })),
+                    ll_acc.map_or(String::new(), |r| format!(
+                        " LL:{}",
+                        if r { "A" } else { "R" }
+                    )),
+                    lr_acc.map_or(String::new(), |r| format!(
+                        " LR:{}",
+                        if r { "A" } else { "R" }
+                    )),
                 );
                 println!(
                     "  DIFF-FAIL  input={:?}  {}",
@@ -783,17 +786,20 @@ fn run_exhaustive_validation() -> bool {
     println!("Exhaustive Validation Summary");
     println!("{}", "=".repeat(60));
     println!("  Total strings tested : {}", grand_total);
-    println!(
-        "  Differential PASS    : {}",
-        grand_total - grand_diff_fail
-    );
+    println!("  Differential PASS    : {}", grand_total - grand_diff_fail);
     if grand_diff_fail > 0 {
-        println!("  Differential FAIL    : {}  *** PROBLEMS ***", grand_diff_fail);
+        println!(
+            "  Differential FAIL    : {}  *** PROBLEMS ***",
+            grand_diff_fail
+        );
     } else {
         println!("  Differential FAIL    : 0");
     }
     if grand_gt_fail > 0 {
-        println!("  Ground truth FAIL    : {}  *** PROBLEMS ***", grand_gt_fail);
+        println!(
+            "  Ground truth FAIL    : {}  *** PROBLEMS ***",
+            grand_gt_fail
+        );
     } else {
         println!("  Ground truth FAIL    : 0");
     }

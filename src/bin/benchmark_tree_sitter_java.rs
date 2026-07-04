@@ -520,14 +520,14 @@ fn run_main() -> std::io::Result<()> {
     let mut timed_out: HashSet<String> = HashSet::new();
 
     for (idx, input) in inputs.iter().enumerate() {
+        let display_file = &input.file[..input.file.len().min(60)];
         println!(
-            "\n  Input #{} [{:>3}] {} bytes, {} local tokens",
+            "\n  Input #{} [{}] {} bytes, {} local tokens",
             idx + 1,
-            input.size_category,
+            display_file,
             input.bytes,
             input.token_count
         );
-        println!("  {}", &input.file[..input.file.len().min(60)]);
 
         let result = benchmark_tree_sitter_input(&mut tree_sitter_parser, input);
         let recog_sym = if result.recognized { "R" } else { "!" };
@@ -561,9 +561,7 @@ fn run_main() -> std::io::Result<()> {
                     tree_to_bool(leo.parse(input.ids.clone()))
                 }),
                 "GLL" => benchmark_local_parser(input, "GLL", || {
-                    // Benchmark GLL recognition here. `parse()` and `parse_all()`
-                    // remain available for callers that need tree extraction.
-                    gll_parser.parse_on(input.ids.clone())
+                    gll_parser.parse_one(&input.ids).is_some()
                 }),
                 "RNGLR" => benchmark_local_parser(input, "RNGLR", || {
                     tree_to_bool(rnglr.parse(&input.glr_ids))

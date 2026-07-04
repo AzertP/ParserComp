@@ -131,7 +131,12 @@ impl BenchmarkResult {
         )
     }
 
-    fn conflict(parser_name: &str, input_length: usize, token_count: usize, source_file: &str) -> Self {
+    fn conflict(
+        parser_name: &str,
+        input_length: usize,
+        token_count: usize,
+        source_file: &str,
+    ) -> Self {
         BenchmarkResult {
             parser: parser_name.to_string(),
             input_length,
@@ -147,7 +152,12 @@ impl BenchmarkResult {
         }
     }
 
-    fn timeout(parser_name: &str, input_length: usize, token_count: usize, source_file: &str) -> Self {
+    fn timeout(
+        parser_name: &str,
+        input_length: usize,
+        token_count: usize,
+        source_file: &str,
+    ) -> Self {
         BenchmarkResult {
             parser: parser_name.to_string(),
             input_length,
@@ -195,7 +205,11 @@ where
     let _ = sampler.join();
 
     let peak = peak_mem.load(Ordering::Relaxed);
-    if peak > start_mem { peak - start_mem } else { 0 }
+    if peak > start_mem {
+        peak - start_mem
+    } else {
+        0
+    }
 }
 
 fn measure<F>(mut parse_fn: F) -> (f64, f64, u32)
@@ -281,16 +295,12 @@ fn load_inputs(source: &InputSource) -> Vec<(String, String)> {
         }
         InputSource::CodeFiles(dir) => {
             let mut files = Vec::new();
-            let entries = fs::read_dir(dir)
-                .unwrap_or_else(|_| panic!("Failed to read directory: {}", dir));
+            let entries =
+                fs::read_dir(dir).unwrap_or_else(|_| panic!("Failed to read directory: {}", dir));
             for entry in entries.flatten() {
                 let path = entry.path();
                 if path.is_file() {
-                    let filename = path
-                        .file_name()
-                        .unwrap()
-                        .to_string_lossy()
-                        .into_owned();
+                    let filename = path.file_name().unwrap().to_string_lossy().into_owned();
                     let content = fs::read_to_string(&path)
                         .unwrap_or_else(|_| panic!("Failed to read file: {:?}", path));
                     let content = content.trim().to_string();
@@ -330,8 +340,8 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
     )?;
 
     // Load grammar
-    let grammar = grammars::load_grammar_from_file(config.grammar_path)
-        .expect("Failed to load grammar");
+    let grammar =
+        grammars::load_grammar_from_file(config.grammar_path).expect("Failed to load grammar");
     println!("✓ Grammar loaded.");
 
     // Generate or reuse GLR tables
@@ -421,8 +431,12 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
         for parser_name in config.parsers {
             // Skip conflicting parsers
             if conflict_parsers.contains(*parser_name) {
-                let result = BenchmarkResult::conflict(parser_name, input_len, token_count, source_file);
-                println!("    [CONFLICT] {:8}: grammar has conflicts, skipping", parser_name);
+                let result =
+                    BenchmarkResult::conflict(parser_name, input_len, token_count, source_file);
+                println!(
+                    "    [CONFLICT] {:8}: grammar has conflicts, skipping",
+                    parser_name
+                );
                 writeln!(csv_file, "{}", result.to_csv_row())?;
                 csv_file.flush()?;
                 continue;
@@ -430,8 +444,12 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
 
             // Skip timed-out parsers
             if failed_parsers.contains(*parser_name) {
-                let result = BenchmarkResult::timeout(parser_name, input_len, token_count, source_file);
-                println!("    [TIMEOUT]  {:8}: previously timed out, skipping", parser_name);
+                let result =
+                    BenchmarkResult::timeout(parser_name, input_len, token_count, source_file);
+                println!(
+                    "    [TIMEOUT]  {:8}: previously timed out, skipping",
+                    parser_name
+                );
                 writeln!(csv_file, "{}", result.to_csv_row())?;
                 csv_file.flush()?;
                 continue;
@@ -440,8 +458,7 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
             // Helper macro: check recognition first; bail out immediately on failure.
             macro_rules! check_and_bail {
                 ($parse_expr:expr) => {{
-                    let (recognized, parse_correct) =
-                        check_correctness(|| $parse_expr, content);
+                    let (recognized, parse_correct) = check_correctness(|| $parse_expr, content);
                     if !recognized {
                         let fail_result = BenchmarkResult {
                             parser: parser_name.to_string(),
@@ -464,10 +481,7 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
                         );
                         return Err(std::io::Error::new(
                             std::io::ErrorKind::Other,
-                            format!(
-                                "Parse failure: parser={}, file={}",
-                                parser_name, display
-                            ),
+                            format!("Parse failure: parser={}, file={}", parser_name, display),
                         ));
                     }
                     (recognized, parse_correct)
@@ -476,8 +490,7 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
 
             let result = match *parser_name {
                 "Leo" => {
-                    let (recognized, parse_correct) =
-                        check_and_bail!(leo.parse(tokens.clone()));
+                    let (recognized, parse_correct) = check_and_bail!(leo.parse(tokens.clone()));
                     let peak_mem = measure_peak_memory(|| leo.parse(tokens.clone()));
                     let (median, mad, iters) = measure(|| leo.parse(tokens.clone()));
                     BenchmarkResult {
@@ -496,9 +509,9 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
                 }
                 "GLL" => {
                     let (recognized, parse_correct) =
-                        check_and_bail!(gll_parser.parse(&tokens));
-                    let peak_mem = measure_peak_memory(|| gll_parser.parse(&tokens));
-                    let (median, mad, iters) = measure(|| gll_parser.parse(&tokens));
+                        check_and_bail!(gll_parser.parse_one(&tokens));
+                    let peak_mem = measure_peak_memory(|| gll_parser.parse_one(&tokens));
+                    let (median, mad, iters) = measure(|| gll_parser.parse_one(&tokens));
                     BenchmarkResult {
                         parser: parser_name.to_string(),
                         input_length: input_len,
@@ -514,8 +527,7 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
                     }
                 }
                 "RNGLR" => {
-                    let (recognized, parse_correct) =
-                        check_and_bail!(rnglr.parse(&glr_tokens));
+                    let (recognized, parse_correct) = check_and_bail!(rnglr.parse(&glr_tokens));
                     let peak_mem = measure_peak_memory(|| rnglr.parse(&glr_tokens));
                     let (median, mad, iters) = measure(|| rnglr.parse(&glr_tokens));
                     BenchmarkResult {
@@ -533,8 +545,7 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
                     }
                 }
                 "BRNGLR" => {
-                    let (recognized, parse_correct) =
-                        check_and_bail!(brnglr.parse(&glr_tokens));
+                    let (recognized, parse_correct) = check_and_bail!(brnglr.parse(&glr_tokens));
                     let peak_mem = measure_peak_memory(|| brnglr.parse(&glr_tokens));
                     let (median, mad, iters) = measure(|| brnglr.parse(&glr_tokens));
                     BenchmarkResult {

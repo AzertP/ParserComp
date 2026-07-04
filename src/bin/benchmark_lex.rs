@@ -40,36 +40,80 @@ use std::time::{Duration, Instant};
 // ============================================================================
 
 const DEFAULT_PARSERS: &[&str] = &["Leo", "GLL", "RNGLR", "BRNGLR"];
+const EXCLUDED_SOURCE_FILES: &[&str] = &[
+    // Uses C# 2.0 generic method declarations/invocations outside the adapted C# 1.2 grammar scope.
+    "1941974.cs",
+    "2302133.cs",
+    // Uses C# 2.0 property accessor modifier syntax outside the adapted C# 1.2 grammar scope.
+    "3217761.cs",
+    "3217789.cs",
+    // Uses C# 2.0 iterator/yield syntax outside the adapted C# 1.2 grammar scope.
+    "3242471.cs",
+    // Uses C# 3.0 object initializer syntax outside the adapted C# 1.2 grammar scope.
+    "2467486.cs",
+    "2696682.cs",
+    "2892858.cs",
+    "4399879.cs",
+    "4407712.cs",
+    "4408113.cs",
+    "4414104.cs",
+    // Uses C# 3.0 collection initializer syntax outside the adapted C# 1.2 grammar scope.
+    "2440111.cs",
+    "2442986.cs",
+    "4774386.cs",
+    // Uses C# 6.0 expression-bodied member syntax outside the adapted C# 1.2 grammar scope.
+    "4312573.cs",
+    "4313948.cs",
+    "4313968.cs",
+    "4314068.cs",
+    // Uses nested generic type closers (`>>`), which require contextual lexer handling.
+    "3232886.cs",
+    "3303252.cs",
+    "4231178.cs",
+    "4774920.cs",
+    // Uses tuple assignment syntax outside the adapted C# 1.2 grammar scope.
+    "9518095.cs",
+];
 
 struct LangConfig {
     name: &'static str,
     lexer_spec: &'static str,
     grammar_path: &'static str,
     input_dir: &'static str,
-    file_ext: &'static str,
+    file_exts: &'static [&'static str],
     table_path: &'static str,
     generate_table: bool,
     parsers: &'static [&'static str],
 }
 
 const CONFIGS: &[LangConfig] = &[
-    LangConfig {
-        name: "c_tok",
-        lexer_spec: "grammars/lexer/c_regex.json",
-        grammar_path: "grammars/ansi_c_tok.json",
-        input_dir: "input/code/C",
-        file_ext: ".c",
-        table_path: "table/ansi_c_tok_glr_table.csv",
-        generate_table: false,
-        parsers: DEFAULT_PARSERS,
-    },
+    // LangConfig {
+    //     name: "csharp_tok",
+    //     lexer_spec: "grammars/lexer/csharp_regex.json",
+    //     grammar_path: "grammars/csharp_tok.json",
+    //     input_dir: "input/code/Csharp",
+    //     file_exts: &[".cs"],
+    //     table_path: "table/csharp_tok_glr_table.csv",
+    //     generate_table: true,
+    //     parsers: DEFAULT_PARSERS,
+    // },
+    // LangConfig {
+    //     name: "c_tok",
+    //     lexer_spec: "grammars/lexer/c_regex.json",
+    //     grammar_path: "grammars/ansi_c_tok.json",
+    //     input_dir: "input/code/C",
+    //     file_exts: &[".c"],
+    //     table_path: "table/ansi_c_tok_glr_table.csv",
+    //     generate_table: false,
+    //     parsers: DEFAULT_PARSERS,
+    // },
     // Uncomment when lexer specs and tokenised grammars are ready:
     // LangConfig {
-    //     name: "C++",
+    //     name: "cpp_tok",
     //     lexer_spec: "grammars/lexer/cpp_regex.json",
     //     grammar_path: "grammars/cpp_tok.json",
     //     input_dir: "input/code/C++",
-    //     file_ext: ".cpp",
+    //     file_exts: &[".cpp"],
     //     table_path: "table/cpp_tok_glr_table.csv",
     //     generate_table: true,
     //     parsers: DEFAULT_PARSERS,
@@ -79,18 +123,28 @@ const CONFIGS: &[LangConfig] = &[
     //     lexer_spec: "grammars/lexer/java_regex.json",
     //     grammar_path: "grammars/jsl18_tok.json",
     //     input_dir: "input/code/Java",
-    //     file_ext: ".java",
+    //     file_exts: &[".java"],
     //     table_path: "table/java_tok_glr_table.csv",
     //     generate_table: true,
     //     parsers: DEFAULT_PARSERS,
     // },
+    LangConfig {
+        name: "pascal_tok",
+        lexer_spec: "grammars/lexer/pascal_regex.json",
+        grammar_path: "grammars/pascal_tok.json",
+        input_dir: "input/code/Pascal ISO",
+        file_exts: &[".pas"],
+        table_path: "table/pascal_tok_glr_table.csv",
+        generate_table: true,
+        parsers: DEFAULT_PARSERS,
+    },
     // LangConfig {
-    //     name: "FreePascal",
-    //     lexer_spec: "grammars/lexer/pascal_regex.json",
-    //     grammar_path: "grammars/pascal_tok.json",
-    //     input_dir: "input/code/FreePascal",
-    //     file_ext: ".pas",
-    //     table_path: "table/pascal_tok_glr_table.csv",
+    //     name: "cobol_tok",
+    //     lexer_spec: "grammars/lexer/cobol_regex.json",
+    //     grammar_path: "grammars/cobol_tok.json",
+    //     input_dir: "input/code/Cobol",
+    //     file_exts: &[".cbl", ".cob", ".cobol"],
+    //     table_path: "table/cobol_tok_glr_table.csv",
     //     generate_table: true,
     //     parsers: DEFAULT_PARSERS,
     // },
@@ -319,14 +373,17 @@ where
     }
 }
 
-fn collect_files(dir: &str, ext: &str) -> Vec<PathBuf> {
-    let bare_ext = ext.trim_start_matches('.');
+fn collect_files(dir: &str, exts: &[&str]) -> Vec<PathBuf> {
+    let bare_exts: Vec<String> = exts
+        .iter()
+        .map(|ext| ext.trim_start_matches('.').to_ascii_lowercase())
+        .collect();
     let mut files: Vec<PathBuf> = fs::read_dir(Path::new(dir))
         .into_iter()
         .flatten()
         .filter_map(|e| {
             let p = e.ok()?.path();
-            if p.extension().and_then(|s| s.to_str()) == Some(bare_ext) {
+            if has_configured_extension(&p, &bare_exts) && !is_excluded_source_file(&p) {
                 Some(p)
             } else {
                 None
@@ -335,6 +392,23 @@ fn collect_files(dir: &str, ext: &str) -> Vec<PathBuf> {
         .collect();
     files.sort();
     files
+}
+
+fn has_configured_extension(path: &Path, bare_exts: &[String]) -> bool {
+    path.extension()
+        .and_then(|ext| ext.to_str())
+        .map(|ext| {
+            bare_exts
+                .iter()
+                .any(|wanted| ext.eq_ignore_ascii_case(wanted))
+        })
+        .unwrap_or(false)
+}
+
+fn is_excluded_source_file(path: &Path) -> bool {
+    path.file_name()
+        .and_then(|name| name.to_str())
+        .is_some_and(|name| EXCLUDED_SOURCE_FILES.contains(&name))
 }
 
 struct InputCase {
@@ -462,11 +536,11 @@ fn run_config(cfg: &LangConfig) -> std::io::Result<()> {
     brnglr.set_grammar(grammar.clone());
 
     // Discover source files
-    let files = collect_files(cfg.input_dir, cfg.file_ext);
+    let files = collect_files(cfg.input_dir, cfg.file_exts);
     if files.is_empty() {
         eprintln!(
-            "[SKIP] No {} files found in {}.",
-            cfg.file_ext, cfg.input_dir
+            "[SKIP] No {:?} files found in {}.",
+            cfg.file_exts, cfg.input_dir
         );
         return Ok(());
     }
@@ -502,14 +576,14 @@ fn run_config(cfg: &LangConfig) -> std::io::Result<()> {
     let mut failed_parsers: HashSet<String> = HashSet::new();
 
     for (idx, input) in inputs.iter().enumerate() {
+        let display_file = &input.file[..input.file.len().min(60)];
         println!(
-            "\n  Input #{} [{:>3}] {} bytes, {} tokens",
+            "\n  Input #{} [{}] {} bytes, {} tokens",
             idx + 1,
-            input.size_category,
+            display_file,
             input.bytes,
             input.token_count
         );
-        println!("  {}", &input.file[..input.file.len().min(60)]);
 
         for &parser_name in cfg.parsers {
             // Skip previously timed-out parsers
@@ -548,7 +622,7 @@ fn run_config(cfg: &LangConfig) -> std::io::Result<()> {
                     input.bytes,
                     "GLL",
                     input.token_count,
-                    || gll_parser.parse(&input.ids),
+                    || gll_parser.parse_one(&input.ids),
                 ),
                 "RNGLR" => benchmark_parser(
                     cfg.name,
@@ -645,4 +719,103 @@ fn main() {
         .expect("Failed to spawn thread with larger stack")
         .join()
         .expect("Thread panicked");
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn collect_files_omits_configured_unsupported_sources() {
+        let tmp_dir = std::env::temp_dir().join(format!(
+            "parser_comparison_benchmark_lex_test_{}",
+            std::process::id()
+        ));
+        let _ = fs::remove_dir_all(&tmp_dir);
+        fs::create_dir_all(&tmp_dir).expect("create temp test directory");
+        for excluded in [
+            "9518095.cs",
+            "1941974.cs",
+            "2302133.cs",
+            "2696682.cs",
+            "4774920.cs",
+            "3303252.cs",
+            "3232886.cs",
+            "4231178.cs",
+            "2442986.cs",
+            "4774386.cs",
+            "2440111.cs",
+            "2467486.cs",
+            "3242471.cs",
+            "4399879.cs",
+            "2892858.cs",
+            "4312573.cs",
+            "4313948.cs",
+            "4313968.cs",
+            "4314068.cs",
+            "4407712.cs",
+            "4408113.cs",
+            "4414104.cs",
+            "3217761.cs",
+            "3217789.cs",
+        ] {
+            fs::write(tmp_dir.join(excluded), "class C {}").expect("write excluded source");
+        }
+        fs::write(tmp_dir.join("2433596.cs"), "class C {}").expect("write included source");
+
+        let files = collect_files(tmp_dir.to_str().unwrap(), &[".cs"]);
+        let names: Vec<_> = files
+            .iter()
+            .filter_map(|path| path.file_name().and_then(|name| name.to_str()))
+            .collect();
+
+        assert_eq!(names, vec!["2433596.cs"]);
+
+        fs::remove_dir_all(&tmp_dir).expect("remove temp test directory");
+    }
+
+    #[test]
+    fn collect_files_accepts_multiple_extensions_case_insensitively() {
+        let tmp_dir = std::env::temp_dir().join(format!(
+            "parser_comparison_benchmark_lex_ext_test_{}",
+            std::process::id()
+        ));
+        let _ = fs::remove_dir_all(&tmp_dir);
+        fs::create_dir_all(&tmp_dir).expect("create temp test directory");
+        for file in ["a.cbl", "b.COB", "c.cobol", "ignored.txt"] {
+            fs::write(tmp_dir.join(file), "IDENTIFICATION DIVISION.").expect("write source");
+        }
+
+        let files = collect_files(tmp_dir.to_str().unwrap(), &[".cbl", ".cob", ".cobol"]);
+        let names: Vec<_> = files
+            .iter()
+            .filter_map(|path| path.file_name().and_then(|name| name.to_str()))
+            .collect();
+
+        assert_eq!(names, vec!["a.cbl", "b.COB", "c.cobol"]);
+
+        fs::remove_dir_all(&tmp_dir).expect("remove temp test directory");
+    }
+
+    #[test]
+    fn benchmark_configs_include_full_cobol_corpus() {
+        let cfg = CONFIGS
+            .iter()
+            .find(|cfg| cfg.name == "cobol_tok")
+            .expect("benchmark_lex should include COBOL");
+
+        assert_eq!(cfg.lexer_spec, "grammars/lexer/cobol_regex.json");
+        assert_eq!(cfg.grammar_path, "grammars/cobol_tok.json");
+        assert_eq!(cfg.input_dir, "input/code/Cobol");
+        assert_eq!(cfg.file_exts, &[".cbl", ".cob", ".cobol"]);
+        assert_eq!(cfg.table_path, "table/cobol_tok_glr_table.csv");
+
+        let files = collect_files(cfg.input_dir, cfg.file_exts);
+        assert_eq!(files.len(), 150);
+
+        let lexer = Lexer::from_file(cfg.lexer_spec).expect("load COBOL lexer");
+        let grammar =
+            grammars::load_grammar_from_file(cfg.grammar_path).expect("load COBOL grammar");
+        assert_eq!(load_inputs(&files, &lexer, &grammar).len(), 150);
+    }
 }

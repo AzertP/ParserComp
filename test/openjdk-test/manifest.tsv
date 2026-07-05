@@ -1,84 +1,84 @@
-file	method	source_line	has_expected_diagnostics	expected_diagnostics	has_erroneous_tree_check	unresolved_fragments	bytes	lines
-cases/001_testPositionForSuperConstructorCalls.java	testPositionForSuperConstructorCalls	164	false		false		58	1
-cases/002_testPositionForEnumModifiers.java	testPositionForEnumModifiers	203	false		false		35	1
-cases/003_testNewClassWithEnclosing.java	testNewClassWithEnclosing	224	false		false		95	1
-cases/004_testPreferredPositionForBinaryOp.java	testPreferredPositionForBinaryOp	248	false		false		136	1
-cases/005_testErrorRecoveryForEnhancedForLoop142381.java	testErrorRecoveryForEnhancedForLoop142381	268	false		false		101	1
-cases/006_testPositionAnnotationNoPackage187551.java	testPositionAnnotationNoPackage187551	296	false		false		19	2
-cases/007_testPositionMissingStatement.java	testPositionMissingStatement	311	false		false		34	1
-cases/008_testStartPositionForMethodWithoutModifiers.java	testStartPositionForMethodWithoutModifiers	559	false		false		41	1
-cases/009_testVariableInIfThen1.java	testVariableInIfThen1	577	true	compiler.err.variable.not.allowed	false		107	1
-cases/010_testVariableInIfThen2.java	testVariableInIfThen2	603	true	compiler.err.class.not.allowed	false		93	1
-cases/011_testVariableInIfThen3.java	testVariableInIfThen3	626	true	compiler.err.class.not.allowed	false		82	1
-cases/012_testVariableInIfThen4.java	testVariableInIfThen4	649	true	compiler.err.class.not.allowed	false		97	1
-cases/013_testVariableInIfThen5.java	testVariableInIfThen5	672	true	compiler.err.illegal.start.of.stmt	false		63	1
-cases/014_testMissingExponent.java	testMissingExponent	697	false		false		43	2
-cases/015_testTryResourcePos.java	testTryResourcePos	708	false		false		69	1
-cases/016_testVarPos.java	testVarPos	729	false		false		60	1
-cases/017_testOperatorMissingError.java	testOperatorMissingError	752	false		true		71	1
-cases/018_testMissingParenthesisError.java	testMissingParenthesisError	778	false		true		75	1
-cases/019_testMissingClassError.java	testMissingClassError	803	false		true		70	1
-cases/020_testSwitchError.java	testSwitchError	828	false		true		117	1
-cases/021_testMethodError.java	testMethodError	854	false		true		83	1
-cases/022_testPositionBrokenSource126732a_return_runnable.java	testPositionBrokenSource126732a	887	false		false		145	8
-cases/023_testPositionBrokenSource126732a_do_while_true.java	testPositionBrokenSource126732a	887	false		false		147	8
-cases/024_testPositionBrokenSource126732a_throw_unsupportedoperationexception.java	testPositionBrokenSource126732a	887	false		false		165	8
-cases/025_testPositionBrokenSource126732a_assert_true.java	testPositionBrokenSource126732a	887	false		false		139	8
-cases/026_testPositionBrokenSource126732a_1_1.java	testPositionBrokenSource126732a	887	false		false		133	8
-cases/027_testPositionBrokenSource126732b_break.java	testPositionBrokenSource126732b	926	false		false		170	10
-cases/028_testPositionBrokenSource126732b_break_a.java	testPositionBrokenSource126732b	926	false		false		172	10
-cases/029_testPositionBrokenSource126732b_continue.java	testPositionBrokenSource126732b	926	false		false		174	10
-cases/030_testPositionBrokenSource126732b_continue_a.java	testPositionBrokenSource126732b	926	false		false		175	10
-cases/031_testStartPositionEnumConstantInit.java	testStartPositionEnumConstantInit	961	false		false		29	1
-cases/032_testVoidLambdaParameter.java	testVoidLambdaParameter	977	false		false		54	1
-cases/033_testWrongFirstToken.java	testWrongFirstToken	1014	true	compiler.err.class.method.or.field.expected	false		1	1
-cases/034_testForInit.java	testForInit	1029	true	compiler.err.bad.initializer	false		41	1
-cases/035_testCompDeclVarType.java	testCompDeclVarType	1059	false		false		94	1
-cases/036_testCaseBodyStatements.java	testCaseBodyStatements	1081	true	compiler.err.switch.case.unexpected.statement	false		755	1
-cases/037_testTypeParamsWithoutMethod.java	testTypeParamsWithoutMethod	1212	false		true		52	1
-cases/038_testAnalyzeParensWithComma1.java	testAnalyzeParensWithComma1	1245	false		false		39	1
-cases/039_testAnalyzeParensWithComma2.java	testAnalyzeParensWithComma2	1278	false		false		41	1
-cases/040_testBrokenEnum1.java	testBrokenEnum1	1311	true	compiler.err.expected3	false		57	1
-cases/041_testBrokenEnum2.java	testBrokenEnum2	1347	true	compiler.err.expected3	false		59	1
-cases/042_testBrokenEnum3.java	testBrokenEnum3	1382	true	compiler.err.expected2	false		53	1
-cases/043_testBrokenEnum4.java	testBrokenEnum4	1415	true	compiler.err.enum.constant.expected	false		60	1
-cases/044_testBrokenEnum5.java	testBrokenEnum5	1450	true	compiler.err.enum.constant.not.expected	false		57	1
-cases/045_testCompoundAssignment.java	testCompoundAssignment	1484	true	compiler.err.expected	false		37	1
-cases/046_testStartAndEndPositionForClassesInPermitsClause.java	testStartAndEndPositionForClassesInPermitsClause	1510	false		false		116	1
-cases/047_testErrorRecoveryClassNotBrace.java	testErrorRecoveryClassNotBrace	1545	false		false		97	9
-cases/048_testElseRecovery.java	testElseRecovery	1583	true	compiler.err.expected,compiler.err.not.stmt	false		155	13
-cases/049_testAtRecovery.java	testAtRecovery	1630	true	compiler.err.expected	false		140	12
-cases/050_testBasedAnonymous.java	testBasedAnonymous	1673	false		false		86	6
-cases/051_testBrokenUnicodeEscape.java	testBrokenUnicodeEscape	1707	true	compiler.err.illegal.unicode.esc	false		90	6
-cases/052_testUsupportedTextBlock.java	testUsupportedTextBlock	1741	true	compiler.err.feature.not.supported.in.source.plural	false		80	5
-cases/053_testSyntheticConstructorReturnType.java	testSyntheticConstructorReturnType	1774	false		false		36	4
-cases/054_testVarArgArrayParameter.java	testVarArgArrayParameter	1791	false		false		74	5
-cases/055_testX.java	testX	1812	false		true		73	5
-cases/056_testDefaultTagPosition.java	testDefaultTagPosition	1837	false		false		1055	54
-cases/057_testImplicitFinalInTryWithResources.java	testImplicitFinalInTryWithResources	1924	false		false		370	17
-cases/058_testModuleInfoProvidesRecovery.java	testModuleInfoProvidesRecovery	2005	false		false		28	4
-cases/059_testGuardRecovery.java	testGuardRecovery	2250	true	compiler.err.guard.not.allowed	true		343	15
-cases/060_testUnnamedClassPositions.java	testUnnamedClassPositions	2305	false		false		15	1
-cases/061_testJavadoc.java	testJavadoc	2327	false		false		56	6
-cases/062_testDanglingElse.java	testDanglingElse	2355	true	compiler.err.else.without.if	false		27	4
-cases/063_testPartialTopLevelModifiers.java	testPartialTopLevelModifiers	2393	false		true		21	3
-cases/064_testStatementsInClass.java	testStatementsInClass	2415	true	compiler.err.statement.not.expected	true		274	16
-cases/065_testImplicitlyDeclaredClassesConfusion1.java	testImplicitlyDeclaredClassesConfusion1	2489	true	compiler.err.expected2	true		182	9
-cases/066_testImplicitlyDeclaredClassesConfusion2.java	testImplicitlyDeclaredClassesConfusion2	2536	true	compiler.err.expected2	true		179	8
-cases/067_testImplicitlyDeclaredClassesConfusion3.java	testImplicitlyDeclaredClassesConfusion3	2580	true	compiler.err.expected2	true		93	5
-cases/068_testImplicitlyDeclaredClassesConfusion4.java	testImplicitlyDeclaredClassesConfusion4	2617	true	compiler.err.expected2	true		99	6
-cases/069_testImplicitlyDeclaredClassesConfusion5.java	testImplicitlyDeclaredClassesConfusion5	2656	true	compiler.err.expected,compiler.err.illegal.start.of.type	true		88	6
-cases/070_testImplicitlyDeclaredClassesConfusion6.java	testImplicitlyDeclaredClassesConfusion6	2697	true	compiler.err.expected,compiler.err.expected3	true		134	7
-cases/071_testImplicitlyDeclaredClassesConfusion7.java	testImplicitlyDeclaredClassesConfusion7	2743	true	compiler.err.expected	true		76	5
-cases/072_testImplicitlyDeclaredClassesConfusion10.java	testImplicitlyDeclaredClassesConfusion10	2780	true	compiler.err.expected2	true		212	10
-cases/073_testImplicitlyDeclaredClassesConfusion11.java	testImplicitlyDeclaredClassesConfusion11	2829	true	compiler.err.expected2	true		194	8
-cases/074_testImplicitlyDeclaredClassesConfusion12.java	testImplicitlyDeclaredClassesConfusion12	2874	true	compiler.err.expected2	true		218	10
-cases/075_testImplicitlyDeclaredClassesConfusion13.java	testImplicitlyDeclaredClassesConfusion13	2923	true	compiler.err.expected2	true		201	8
-cases/076_testImplicitlyDeclaredClassesConfusion14.java	testImplicitlyDeclaredClassesConfusion14	2968	true	compiler.err.expected2,compiler.err.illegal.start.of.expr	true		240	10
-cases/077_testVeryBrokenTypeWithAnnotations.java	testVeryBrokenTypeWithAnnotations	3020	true	compiler.err.dot.class.expected,compiler.err.expected,compiler.err.expected2,compiler.err.illegal.start.of.type,compiler.err.not.stmt,compiler.err.premature.eof	true		117	6
-cases/078_testVeryBrokenTypeWithAnnotationsMinimal.java	testVeryBrokenTypeWithAnnotationsMinimal	3069	false		false		13	2
-cases/079_testCompactSourceFileMultiField1.java	testCompactSourceFileMultiField1	3083	false		false		28	3
-cases/080_testCompactSourceFileMultiField2.java	testCompactSourceFileMultiField2	3107	false		false		36	3
-cases/081_testTypeAnnotationBrokenMethodRef.java	testTypeAnnotationBrokenMethodRef	3131	true	compiler.err.illegal.start.of.type	false		96	5
-cases/082_testVarPositions.java	testVarPositions	3158	false		true		59	6
-cases/083_testDeepNestingNoClose.java	testDeepNestingNoClose	1527	true	compiler.err.premature.eof	false		1214	102
+file	method	source_line	has_expected_diagnostics	expected_diagnostics	has_erroneous_tree_check	unresolved_fragments	bytes	lines	javac_recognition_oracle	javac_expected_accept	javac_error_count	javac_error_codes
+cases/001_testPositionForSuperConstructorCalls.java	testPositionForSuperConstructorCalls	164	false		false		58	1	jdk17_javac_task_parse	true	0	
+cases/002_testPositionForEnumModifiers.java	testPositionForEnumModifiers	203	false		false		35	1	jdk17_javac_task_parse	true	0	
+cases/003_testNewClassWithEnclosing.java	testNewClassWithEnclosing	224	false		false		95	1	jdk17_javac_task_parse	true	0	
+cases/004_testPreferredPositionForBinaryOp.java	testPreferredPositionForBinaryOp	248	false		false		136	1	jdk17_javac_task_parse	true	0	
+cases/005_testErrorRecoveryForEnhancedForLoop142381.java	testErrorRecoveryForEnhancedForLoop142381	268	false		false		101	1	jdk17_javac_task_parse	false	1	compiler.err.bad.initializer
+cases/006_testPositionAnnotationNoPackage187551.java	testPositionAnnotationNoPackage187551	296	false		false		19	2	jdk17_javac_task_parse	true	0	
+cases/007_testPositionMissingStatement.java	testPositionMissingStatement	311	false		false		34	1	jdk17_javac_task_parse	false	1	compiler.err.illegal.start.of.stmt
+cases/008_testStartPositionForMethodWithoutModifiers.java	testStartPositionForMethodWithoutModifiers	559	false		false		41	1	jdk17_javac_task_parse	true	0	
+cases/009_testVariableInIfThen1.java	testVariableInIfThen1	577	true	compiler.err.variable.not.allowed	false		107	1	jdk17_javac_task_parse	false	1	compiler.err.variable.not.allowed
+cases/010_testVariableInIfThen2.java	testVariableInIfThen2	603	true	compiler.err.class.not.allowed	false		93	1	jdk17_javac_task_parse	false	1	compiler.err.class.not.allowed
+cases/011_testVariableInIfThen3.java	testVariableInIfThen3	626	true	compiler.err.class.not.allowed	false		82	1	jdk17_javac_task_parse	false	1	compiler.err.class.not.allowed
+cases/012_testVariableInIfThen4.java	testVariableInIfThen4	649	true	compiler.err.class.not.allowed	false		97	1	jdk17_javac_task_parse	false	1	compiler.err.class.not.allowed
+cases/013_testVariableInIfThen5.java	testVariableInIfThen5	672	true	compiler.err.illegal.start.of.stmt	false		63	1	jdk17_javac_task_parse	false	1	compiler.err.illegal.start.of.stmt
+cases/014_testMissingExponent.java	testMissingExponent	697	false		false		43	2	jdk17_javac_task_parse	false	1	compiler.err.malformed.fp.lit
+cases/015_testTryResourcePos.java	testTryResourcePos	708	false		false		69	1	jdk17_javac_task_parse	true	0	
+cases/016_testVarPos.java	testVarPos	729	false		false		60	1	jdk17_javac_task_parse	true	0	
+cases/017_testOperatorMissingError.java	testOperatorMissingError	752	false		true		71	1	jdk17_javac_task_parse	false	3	compiler.err.expected,compiler.err.not.stmt,compiler.err.expected
+cases/018_testMissingParenthesisError.java	testMissingParenthesisError	778	false		true		75	1	jdk17_javac_task_parse	false	1	compiler.err.expected2
+cases/019_testMissingClassError.java	testMissingClassError	803	false		true		70	1	jdk17_javac_task_parse	false	2	compiler.err.expected4,compiler.err.expected4
+cases/020_testSwitchError.java	testSwitchError	828	false		true		117	1	jdk17_javac_task_parse	false	5	compiler.err.not.stmt,compiler.err.expected,compiler.err.not.stmt,compiler.err.expected,compiler.err.orphaned
+cases/021_testMethodError.java	testMethodError	854	false		true		83	1	jdk17_javac_task_parse	false	1	compiler.err.expected
+cases/022_testPositionBrokenSource126732a_return_runnable.java	testPositionBrokenSource126732a	887	false		false		145	8	jdk17_javac_task_parse	false	2	compiler.err.expected,compiler.err.premature.eof
+cases/023_testPositionBrokenSource126732a_do_while_true.java	testPositionBrokenSource126732a	887	false		false		147	8	jdk17_javac_task_parse	false	2	compiler.err.expected,compiler.err.premature.eof
+cases/024_testPositionBrokenSource126732a_throw_unsupportedoperationexception.java	testPositionBrokenSource126732a	887	false		false		165	8	jdk17_javac_task_parse	false	2	compiler.err.expected,compiler.err.premature.eof
+cases/025_testPositionBrokenSource126732a_assert_true.java	testPositionBrokenSource126732a	887	false		false		139	8	jdk17_javac_task_parse	false	2	compiler.err.expected,compiler.err.premature.eof
+cases/026_testPositionBrokenSource126732a_1_1.java	testPositionBrokenSource126732a	887	false		false		133	8	jdk17_javac_task_parse	false	3	compiler.err.not.stmt,compiler.err.expected,compiler.err.premature.eof
+cases/027_testPositionBrokenSource126732b_break.java	testPositionBrokenSource126732b	926	false		false		170	10	jdk17_javac_task_parse	false	2	compiler.err.expected,compiler.err.premature.eof
+cases/028_testPositionBrokenSource126732b_break_a.java	testPositionBrokenSource126732b	926	false		false		172	10	jdk17_javac_task_parse	false	2	compiler.err.expected,compiler.err.premature.eof
+cases/029_testPositionBrokenSource126732b_continue.java	testPositionBrokenSource126732b	926	false		false		174	10	jdk17_javac_task_parse	false	2	compiler.err.expected,compiler.err.premature.eof
+cases/030_testPositionBrokenSource126732b_continue_a.java	testPositionBrokenSource126732b	926	false		false		175	10	jdk17_javac_task_parse	false	2	compiler.err.expected,compiler.err.premature.eof
+cases/031_testStartPositionEnumConstantInit.java	testStartPositionEnumConstantInit	961	false		false		29	1	jdk17_javac_task_parse	true	0	
+cases/032_testVoidLambdaParameter.java	testVoidLambdaParameter	977	false		false		54	1	jdk17_javac_task_parse	true	0	
+cases/033_testWrongFirstToken.java	testWrongFirstToken	1014	true	compiler.err.class.method.or.field.expected	false		1	1	jdk17_javac_task_parse	false	1	compiler.err.expected4
+cases/034_testForInit.java	testForInit	1029	true	compiler.err.bad.initializer	false		41	1	jdk17_javac_task_parse	false	1	compiler.err.bad.initializer
+cases/035_testCompDeclVarType.java	testCompDeclVarType	1059	false		false		94	1	jdk17_javac_task_parse	false	1	compiler.err.restricted.type.not.allowed.compound
+cases/036_testCaseBodyStatements.java	testCaseBodyStatements	1081	true	compiler.err.switch.case.unexpected.statement	false		755	1	jdk17_javac_task_parse	false	1	compiler.err.switch.case.unexpected.statement
+cases/037_testTypeParamsWithoutMethod.java	testTypeParamsWithoutMethod	1212	false		true		52	1	jdk17_javac_task_parse	false	1	compiler.err.illegal.start.of.type
+cases/038_testAnalyzeParensWithComma1.java	testAnalyzeParensWithComma1	1245	false		false		39	1	jdk17_javac_task_parse	false	2	compiler.err.premature.eof,compiler.err.premature.eof
+cases/039_testAnalyzeParensWithComma2.java	testAnalyzeParensWithComma2	1278	false		false		41	1	jdk17_javac_task_parse	false	1	compiler.err.premature.eof
+cases/040_testBrokenEnum1.java	testBrokenEnum1	1311	true	compiler.err.expected3	false		57	1	jdk17_javac_task_parse	false	1	compiler.err.expected3
+cases/041_testBrokenEnum2.java	testBrokenEnum2	1347	true	compiler.err.expected3	false		59	1	jdk17_javac_task_parse	false	1	compiler.err.expected3
+cases/042_testBrokenEnum3.java	testBrokenEnum3	1382	true	compiler.err.expected2	false		53	1	jdk17_javac_task_parse	false	1	compiler.err.expected2
+cases/043_testBrokenEnum4.java	testBrokenEnum4	1415	true	compiler.err.enum.constant.expected	false		60	1	jdk17_javac_task_parse	false	1	compiler.err.enum.constant.expected
+cases/044_testBrokenEnum5.java	testBrokenEnum5	1450	true	compiler.err.enum.constant.not.expected	false		57	1	jdk17_javac_task_parse	false	1	compiler.err.enum.constant.not.expected
+cases/045_testCompoundAssignment.java	testCompoundAssignment	1484	true	compiler.err.expected	false		37	1	jdk17_javac_task_parse	false	1	compiler.err.expected
+cases/046_testStartAndEndPositionForClassesInPermitsClause.java	testStartAndEndPositionForClassesInPermitsClause	1510	false		false		116	1	jdk17_javac_task_parse	true	0	
+cases/047_testErrorRecoveryClassNotBrace.java	testErrorRecoveryClassNotBrace	1545	false		false		97	9	jdk17_javac_task_parse	false	5	compiler.err.expected,compiler.err.expected,compiler.err.expected,compiler.err.expected,compiler.err.expected
+cases/048_testElseRecovery.java	testElseRecovery	1583	true	compiler.err.expected,compiler.err.not.stmt	false		155	13	jdk17_javac_task_parse	false	2	compiler.err.expected,compiler.err.not.stmt
+cases/049_testAtRecovery.java	testAtRecovery	1630	true	compiler.err.expected	false		140	12	jdk17_javac_task_parse	false	2	compiler.err.expected,compiler.err.expected
+cases/050_testBasedAnonymous.java	testBasedAnonymous	1673	false		false		86	6	jdk17_javac_task_parse	true	0	
+cases/051_testBrokenUnicodeEscape.java	testBrokenUnicodeEscape	1707	true	compiler.err.illegal.unicode.esc	false		90	6	jdk17_javac_task_parse	false	2	compiler.err.illegal.unicode.esc,compiler.err.illegal.unicode.esc
+cases/052_testUsupportedTextBlock.java	testUsupportedTextBlock	1741	true	compiler.err.feature.not.supported.in.source.plural	false		80	5	jdk17_javac_task_parse	true	0	
+cases/053_testSyntheticConstructorReturnType.java	testSyntheticConstructorReturnType	1774	false		false		36	4	jdk17_javac_task_parse	true	0	
+cases/054_testVarArgArrayParameter.java	testVarArgArrayParameter	1791	false		false		74	5	jdk17_javac_task_parse	true	0	
+cases/055_testX.java	testX	1812	false		true		73	5	jdk17_javac_task_parse	false	2	compiler.err.expected4,compiler.err.expected4
+cases/056_testDefaultTagPosition.java	testDefaultTagPosition	1837	false		false		1055	54	jdk17_javac_task_parse	false	7	compiler.err.preview.feature.disabled.plural,compiler.err.expected,compiler.err.expected,compiler.err.expected,compiler.err.expected,compiler.err.expected,compiler.err.expected
+cases/057_testImplicitFinalInTryWithResources.java	testImplicitFinalInTryWithResources	1924	false		false		370	17	jdk17_javac_task_parse	true	0	
+cases/058_testModuleInfoProvidesRecovery.java	testModuleInfoProvidesRecovery	2005	false		false		28	4	jdk17_javac_task_parse	false	1	compiler.err.invalid.module.directive
+cases/059_testGuardRecovery.java	testGuardRecovery	2250	true	compiler.err.guard.not.allowed	true		343	15	jdk17_javac_task_parse	false	12	compiler.err.expected2,compiler.err.expected,compiler.err.expected2,compiler.err.expected,compiler.err.expected2,compiler.err.expected,compiler.err.expected2,compiler.err.expected,compiler.err.expected2,compiler.err.expected,compiler.err.expected2,compiler.err.expected
+cases/060_testUnnamedClassPositions.java	testUnnamedClassPositions	2305	false		false		15	1	jdk17_javac_task_parse	false	1	compiler.err.expected4
+cases/061_testJavadoc.java	testJavadoc	2327	false		false		56	6	jdk17_javac_task_parse	true	0	
+cases/062_testDanglingElse.java	testDanglingElse	2355	true	compiler.err.else.without.if	false		27	4	jdk17_javac_task_parse	false	2	compiler.err.expected4,compiler.err.expected4
+cases/063_testPartialTopLevelModifiers.java	testPartialTopLevelModifiers	2393	false		true		21	3	jdk17_javac_task_parse	false	1	compiler.err.premature.eof
+cases/064_testStatementsInClass.java	testStatementsInClass	2415	true	compiler.err.statement.not.expected	true		274	16	jdk17_javac_task_parse	false	16	compiler.err.illegal.start.of.type,compiler.err.illegal.start.of.type,compiler.err.illegal.start.of.type,compiler.err.illegal.start.of.type,compiler.err.illegal.start.of.type,compiler.err.illegal.start.of.type,compiler.err.assert.as.identifier,compiler.err.expected,compiler.err.illegal.start.of.type,compiler.err.illegal.start.of.type,compiler.err.illegal.start.of.type,compiler.err.illegal.start.of.type,compiler.err.invalid.meth.decl.ret.type.req,compiler.err.illegal.start.of.type,compiler.err.illegal.start.of.type,compiler.err.expected
+cases/065_testImplicitlyDeclaredClassesConfusion1.java	testImplicitlyDeclaredClassesConfusion1	2489	true	compiler.err.expected2	true		182	9	jdk17_javac_task_parse	false	3	compiler.err.expected,compiler.err.expected4,compiler.err.expected4
+cases/066_testImplicitlyDeclaredClassesConfusion2.java	testImplicitlyDeclaredClassesConfusion2	2536	true	compiler.err.expected2	true		179	8	jdk17_javac_task_parse	false	1	compiler.err.expected
+cases/067_testImplicitlyDeclaredClassesConfusion3.java	testImplicitlyDeclaredClassesConfusion3	2580	true	compiler.err.expected2	true		93	5	jdk17_javac_task_parse	false	1	compiler.err.expected
+cases/068_testImplicitlyDeclaredClassesConfusion4.java	testImplicitlyDeclaredClassesConfusion4	2617	true	compiler.err.expected2	true		99	6	jdk17_javac_task_parse	false	2	compiler.err.expected,compiler.err.expected4
+cases/069_testImplicitlyDeclaredClassesConfusion5.java	testImplicitlyDeclaredClassesConfusion5	2656	true	compiler.err.expected,compiler.err.illegal.start.of.type	true		88	6	jdk17_javac_task_parse	false	2	compiler.err.expected,compiler.err.illegal.start.of.type
+cases/070_testImplicitlyDeclaredClassesConfusion6.java	testImplicitlyDeclaredClassesConfusion6	2697	true	compiler.err.expected,compiler.err.expected3	true		134	7	jdk17_javac_task_parse	false	2	compiler.err.expected3,compiler.err.expected
+cases/071_testImplicitlyDeclaredClassesConfusion7.java	testImplicitlyDeclaredClassesConfusion7	2743	true	compiler.err.expected	true		76	5	jdk17_javac_task_parse	false	1	compiler.err.expected
+cases/072_testImplicitlyDeclaredClassesConfusion10.java	testImplicitlyDeclaredClassesConfusion10	2780	true	compiler.err.expected2	true		212	10	jdk17_javac_task_parse	false	5	compiler.err.expected,compiler.err.illegal.start.of.type,compiler.err.expected,compiler.err.expected4,compiler.err.expected4
+cases/073_testImplicitlyDeclaredClassesConfusion11.java	testImplicitlyDeclaredClassesConfusion11	2829	true	compiler.err.expected2	true		194	8	jdk17_javac_task_parse	false	1	compiler.err.expected
+cases/074_testImplicitlyDeclaredClassesConfusion12.java	testImplicitlyDeclaredClassesConfusion12	2874	true	compiler.err.expected2	true		218	10	jdk17_javac_task_parse	false	5	compiler.err.expected,compiler.err.illegal.start.of.type,compiler.err.expected,compiler.err.expected4,compiler.err.expected4
+cases/075_testImplicitlyDeclaredClassesConfusion13.java	testImplicitlyDeclaredClassesConfusion13	2923	true	compiler.err.expected2	true		201	8	jdk17_javac_task_parse	false	1	compiler.err.expected
+cases/076_testImplicitlyDeclaredClassesConfusion14.java	testImplicitlyDeclaredClassesConfusion14	2968	true	compiler.err.expected2,compiler.err.illegal.start.of.expr	true		240	10	jdk17_javac_task_parse	false	3	compiler.err.expected,compiler.err.expected,compiler.err.illegal.start.of.type
+cases/077_testVeryBrokenTypeWithAnnotations.java	testVeryBrokenTypeWithAnnotations	3020	true	compiler.err.dot.class.expected,compiler.err.expected,compiler.err.expected2,compiler.err.illegal.start.of.type,compiler.err.not.stmt,compiler.err.premature.eof	true		117	6	jdk17_javac_task_parse	false	0	
+cases/078_testVeryBrokenTypeWithAnnotationsMinimal.java	testVeryBrokenTypeWithAnnotationsMinimal	3069	false		false		13	2	jdk17_javac_task_parse	false	4	compiler.err.expected4,compiler.err.expected4,compiler.err.expected,compiler.err.expected4
+cases/079_testCompactSourceFileMultiField1.java	testCompactSourceFileMultiField1	3083	false		false		28	3	jdk17_javac_task_parse	false	2	compiler.err.expected4,compiler.err.expected4
+cases/080_testCompactSourceFileMultiField2.java	testCompactSourceFileMultiField2	3107	false		false		36	3	jdk17_javac_task_parse	false	2	compiler.err.expected4,compiler.err.expected4
+cases/081_testTypeAnnotationBrokenMethodRef.java	testTypeAnnotationBrokenMethodRef	3131	true	compiler.err.illegal.start.of.type	false		96	5	jdk17_javac_task_parse	true	0	
+cases/082_testVarPositions.java	testVarPositions	3158	false		true		59	6	jdk17_javac_task_parse	false	1	compiler.err.illegal.start.of.expr
+cases/083_testDeepNestingNoClose.java	testDeepNestingNoClose	1527	true	compiler.err.premature.eof	false		1214	102	jdk17_javac_task_parse	false	1	compiler.err.premature.eof

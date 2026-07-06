@@ -1,11 +1,14 @@
-use std::collections::{HashSet, HashMap};
 use std::cell::RefCell;
+use std::env;
 use std::fmt;
 use std::fs::File;
 use std::io::{self, BufWriter, Write};
 use std::path::Path;
+use std::sync::Arc;
+use std::time::{Duration, Instant};
 
 use crate::grammars::{Grammar, NumSymbol};
+use rustc_hash::{FxHashMap as HashMap, FxHashSet as HashSet};
 
 /// Special symbol representing end of input
 pub const END_OF_INPUT: u32 = u32::MAX;
@@ -13,7 +16,8 @@ pub const END_OF_INPUT: u32 = u32::MAX;
 /// Special symbol representing epsilon (empty string)
 pub const EPSILON: u32 = u32::MAX - 1;
 
-
+const MAX_CACHED_CLOSURE_ITEMS: usize = 256;
+const MAX_CACHED_CLOSURES: usize = 20_000;
 
 /// An LR(1) item is a production of the form A -> α·β, with a look-ahead symbol
 ///
@@ -26,7 +30,7 @@ pub struct Item {
     /// Left-hand side of the production (non-terminal ID)
     pub lhs: u32,
     /// Right-hand side of the production (list of symbols)
-    pub rhs: Vec<NumSymbol>,
+    pub rhs: Arc<[NumSymbol]>,
     /// Position of the dot in the production (0 means at the beginning)
     pub dot: usize,
     /// Look-ahead symbol
@@ -36,6 +40,10 @@ pub struct Item {
 impl Item {
     /// Create a new LR(1) item
     pub fn new(lhs: u32, rhs: Vec<NumSymbol>, dot: usize, look_ahead: NumSymbol) -> Self {
+        Self::from_shared_rhs(lhs, Arc::from(rhs.into_boxed_slice()), dot, look_ahead)
+    }
+
+    fn from_shared_rhs(lhs: u32, rhs: Arc<[NumSymbol]>, dot: usize, look_ahead: NumSymbol) -> Self {
         Item {
             lhs,
             rhs,
@@ -62,7 +70,7 @@ impl Item {
     pub fn advance(&self) -> Item {
         Item {
             lhs: self.lhs,
-            rhs: self.rhs.clone(),
+            rhs: Arc::clone(&self.rhs),
             dot: self.dot + 1,
             look_ahead: self.look_ahead,
         }
@@ -100,28 +108,16 @@ fn symbol_to_ord(sym: &NumSymbol) -> (u8, u32) {
 
 impl Ord for Item {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        // Compare lhs
-        match self.lhs.cmp(&other.lhs) {
-            std::cmp::Ordering::Equal => {}
-            ord => return ord,
-        }
-
-        // Compare rhs element by element
-        let self_rhs: Vec<(u8, u32)> = self.rhs.iter().map(symbol_to_ord).collect();
-        let other_rhs: Vec<(u8, u32)> = other.rhs.iter().map(symbol_to_ord).collect();
-        match self_rhs.cmp(&other_rhs) {
-            std::cmp::Ordering::Equal => {}
-            ord => return ord,
-        }
-
-        // Compare dot
-        match self.dot.cmp(&other.dot) {
-            std::cmp::Ordering::Equal => {}
-            ord => return ord,
-        }
-
-        // Compare look_ahead
-        symbol_to_ord(&self.look_ahead).cmp(&symbol_to_ord(&other.look_ahead))
+        self.lhs
+            .cmp(&other.lhs)
+            .then_with(|| {
+                self.rhs
+                    .iter()
+                    .map(symbol_to_ord)
+                    .cmp(other.rhs.iter().map(symbol_to_ord))
+            })
+            .then_with(|| self.dot.cmp(&other.dot))
+            .then_with(|| symbol_to_ord(&self.look_ahead).cmp(&symbol_to_ord(&other.look_ahead)))
     }
 }
 
@@ -134,8 +130,91 @@ impl PartialOrd for Item {
 /// State in the LR automaton, consisting of a state ID and a set of items
 pub type State = (usize, HashSet<Item>);
 
-/// Cached states and goto map type
-type CachedStates = (Vec<State>, HashMap<(usize, NumSymbol), usize>);
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+struct StateKey(Vec<Item>);
+
+impl StateKey {
+    fn from_items(items: &HashSet<Item>) -> Self {
+        let mut sorted_items: Vec<Item> = items.iter().cloned().collect();
+        sorted_items.sort_unstable();
+        StateKey(sorted_items)
+    }
+
+    fn from_item_slice(items: &[Item]) -> Self {
+        let mut sorted_items = items.to_vec();
+        sorted_items.sort_unstable();
+        StateKey(sorted_items)
+    }
+}
+
+#[derive(Clone, Copy)]
+struct ProgressSnapshot {
+    processed: usize,
+    states: usize,
+    pending: usize,
+    gotos: usize,
+    first_cache: usize,
+    closure_cache: usize,
+}
+
+struct ProgressReporter {
+    enabled: bool,
+    interval: usize,
+}
+
+impl ProgressReporter {
+    fn from_env() -> Self {
+        let enabled = env::var("LR_TABLE_PROGRESS")
+            .map(|value| {
+                matches!(
+                    value.as_str(),
+                    "1" | "true" | "TRUE" | "yes" | "YES" | "on" | "ON"
+                )
+            })
+            .unwrap_or(false);
+        let interval = env::var("LR_TABLE_PROGRESS_INTERVAL")
+            .ok()
+            .and_then(|value| value.parse::<usize>().ok())
+            .filter(|value| *value > 0)
+            .unwrap_or(1000);
+
+        Self::new(enabled, interval)
+    }
+
+    fn new(enabled: bool, interval: usize) -> Self {
+        ProgressReporter {
+            enabled,
+            interval: interval.max(1),
+        }
+    }
+
+    fn enabled(&self) -> bool {
+        self.enabled
+    }
+
+    fn should_report(&self, processed: usize) -> bool {
+        self.enabled && processed > 0 && processed % self.interval == 0
+    }
+
+    fn format_snapshot(&self, snapshot: ProgressSnapshot, elapsed: Duration) -> String {
+        format!(
+            "lr-table-progress processed={} states={} pending={} gotos={} first_cache={} closure_cache={} elapsed={}s",
+            snapshot.processed,
+            snapshot.states,
+            snapshot.pending,
+            snapshot.gotos,
+            snapshot.first_cache,
+            snapshot.closure_cache,
+            elapsed.as_secs()
+        )
+    }
+
+    fn report(&self, snapshot: ProgressSnapshot, elapsed: Duration) {
+        if self.enabled {
+            eprintln!("{}", self.format_snapshot(snapshot, elapsed));
+        }
+    }
+}
 
 /// Special augmented start symbol ID (used internally)
 /// We use u32::MAX - 2 to avoid collision with END_OF_INPUT and EPSILON
@@ -148,9 +227,10 @@ pub struct TableGenerator<'a> {
     original_start: u32,
     nullable: HashSet<u32>,
     first: HashMap<u32, HashSet<NumSymbol>>,
+    first_sequence_cache: RefCell<HashMap<Vec<NumSymbol>, HashSet<NumSymbol>>>,
+    closure_cache: RefCell<HashMap<StateKey, HashSet<Item>>>,
+    production_cache: HashMap<u32, Vec<Arc<[NumSymbol]>>>,
 
-    /// Cached states and goto map (computed lazily)
-    cached_states: RefCell<Option<CachedStates>>,
     /// SPPF for handling epsilon derivations and right-nulled items
     sppf: SPPF,
 }
@@ -166,6 +246,19 @@ impl<'a> TableGenerator<'a> {
 
         // Build SPPF for epsilon handling
         let sppf = SPPF::new(grammar, &nullable);
+        let mut production_cache: HashMap<u32, Vec<Arc<[NumSymbol]>>> = HashMap::default();
+        let mut lhs_ids: Vec<u32> = grammar.rules.keys().copied().collect();
+        lhs_ids.sort_unstable();
+
+        for lhs in lhs_ids {
+            let mut shared_productions = Vec::new();
+            if let Some(productions) = grammar.rules.get(&lhs) {
+                for production in productions {
+                    shared_productions.push(Arc::from(production.clone().into_boxed_slice()));
+                }
+            }
+            production_cache.insert(lhs, shared_productions);
+        }
 
         TableGenerator {
             grammar,
@@ -173,7 +266,9 @@ impl<'a> TableGenerator<'a> {
             original_start: grammar.start,
             nullable,
             first,
-            cached_states: RefCell::new(None),
+            first_sequence_cache: RefCell::new(HashMap::default()),
+            closure_cache: RefCell::new(HashMap::default()),
+            production_cache,
             sppf,
         }
     }
@@ -286,6 +381,19 @@ impl<'a> TableGenerator<'a> {
 
     /// Calculate FIRST for a sequence of symbols
     fn calculate_first_for_sequence(&self, symbols: &[NumSymbol]) -> HashSet<NumSymbol> {
+        let key = symbols.to_vec();
+        if let Some(cached) = self.first_sequence_cache.borrow().get(&key) {
+            return cached.clone();
+        }
+
+        let result = self.calculate_first_for_sequence_uncached(symbols);
+        self.first_sequence_cache
+            .borrow_mut()
+            .insert(key, result.clone());
+        result
+    }
+
+    fn calculate_first_for_sequence_uncached(&self, symbols: &[NumSymbol]) -> HashSet<NumSymbol> {
         if symbols.is_empty() {
             let mut result = HashSet::default();
             result.insert(NumSymbol::Terminal(EPSILON));
@@ -326,45 +434,56 @@ impl<'a> TableGenerator<'a> {
         result
     }
 
+    fn calculate_first_for_suffix_and_lookahead(
+        &self,
+        beta: &[NumSymbol],
+        lookahead: NumSymbol,
+    ) -> HashSet<NumSymbol> {
+        let mut first_set = self.calculate_first_for_sequence(beta);
+        if first_set.remove(&NumSymbol::Terminal(EPSILON)) {
+            first_set.insert(lookahead);
+        }
+        first_set
+    }
+
     /// Compute the closure of a set of items
     /// For each item A -> α·Bβ, a in the set, add all items B -> ·γ, b
     /// where b is in FIRST(βa)
     fn find_closure(&self, items: &[Item]) -> HashSet<Item> {
+        let kernel_key = StateKey::from_item_slice(items);
+        if let Some(cached) = self.closure_cache.borrow().get(&kernel_key) {
+            return cached.clone();
+        }
+
         let mut result: HashSet<Item> = items.iter().cloned().collect();
-        let mut changed = true;
+        let mut worklist: Vec<Item> = items.to_vec();
 
-        while changed {
-            changed = false;
-            let current_items: Vec<Item> = result.iter().cloned().collect();
+        while let Some(item) = worklist.pop() {
+            if item.is_complete() {
+                continue;
+            }
 
-            for item in current_items {
-                // Skip if dot is at the end
-                if item.is_complete() {
-                    continue;
-                }
+            if let Some(NumSymbol::NonTerminal(next_nt)) = item.next_symbol() {
+                let first_set = self.calculate_first_for_suffix_and_lookahead(
+                    &item.rhs[item.dot + 1..],
+                    item.look_ahead,
+                );
 
-                // Get the symbol after the dot
-                if let Some(NumSymbol::NonTerminal(next_nt)) = item.next_symbol() {
-                    // Calculate FIRST(βa) where β is the rest after the dot, a is look-ahead
-                    let mut beta_a: Vec<NumSymbol> = item.rhs[item.dot + 1..].to_vec();
-                    beta_a.push(item.look_ahead);
+                if let Some(productions) = self.production_cache.get(&next_nt) {
+                    for production in productions {
+                        for &look_ahead in &first_set {
+                            if look_ahead == NumSymbol::Terminal(EPSILON) {
+                                continue;
+                            }
 
-                    let first_set = self.calculate_first_for_sequence(&beta_a);
-
-                    // Add items for each production of the next non-terminal
-                    if let Some(productions) = self.grammar.rules.get(&next_nt) {
-                        for production in productions {
-                            for &look_ahead in &first_set {
-                                // Skip epsilon as look-ahead
-                                if look_ahead == NumSymbol::Terminal(EPSILON) {
-                                    continue;
-                                }
-
-                                let new_item =
-                                    Item::new(next_nt, production.clone(), 0, look_ahead);
-                                if result.insert(new_item) {
-                                    changed = true;
-                                }
+                            let new_item = Item::from_shared_rhs(
+                                next_nt,
+                                Arc::clone(production),
+                                0,
+                                look_ahead,
+                            );
+                            if result.insert(new_item.clone()) {
+                                worklist.push(new_item);
                             }
                         }
                     }
@@ -372,22 +491,30 @@ impl<'a> TableGenerator<'a> {
             }
         }
 
+        if result.len() <= MAX_CACHED_CLOSURE_ITEMS {
+            let mut closure_cache = self.closure_cache.borrow_mut();
+            if closure_cache.len() < MAX_CACHED_CLOSURES {
+                closure_cache.insert(kernel_key, result.clone());
+            }
+        }
         result
     }
 
-    /// Compute the transition from a state with a given symbol
-    fn transition(&self, state: &HashSet<Item>, symbol: NumSymbol) -> HashSet<Item> {
-        let mut items = Vec::new();
+    fn transition_kernels(state: &HashSet<Item>) -> Vec<(NumSymbol, Vec<Item>)> {
+        let mut grouped: HashMap<NumSymbol, Vec<Item>> = HashMap::default();
 
         for item in state {
             if let Some(next_sym) = item.next_symbol() {
-                if next_sym == symbol {
-                    items.push(item.advance());
-                }
+                grouped.entry(next_sym).or_default().push(item.advance());
             }
         }
 
-        self.find_closure(&items)
+        let mut kernels: Vec<(NumSymbol, Vec<Item>)> = grouped.into_iter().collect();
+        kernels.sort_by(|(left, _), (right, _)| symbol_to_ord(left).cmp(&symbol_to_ord(right)));
+        for (_, items) in &mut kernels {
+            items.sort_unstable();
+        }
+        kernels
     }
 
     /// Generate all LR(1) automaton states
@@ -396,20 +523,10 @@ impl<'a> TableGenerator<'a> {
     /// - A list of states (id, item set)
     /// - A GOTO map: (state_id, symbol) -> next_state_id
     ///
-    /// Results are cached after first computation.
+    /// Results are not retained inside the generator. Keeping a second full
+    /// automaton copy is too costly for large grammars while exporting tables.
     pub fn generate_states(&self) -> (Vec<State>, HashMap<(usize, NumSymbol), usize>) {
-        // Check if we have a cached result
-        if let Some(cached) = self.cached_states.borrow().as_ref() {
-            return cached.clone();
-        }
-
-        // Compute the states
-        let result = self.compute_states();
-
-        // Cache the result
-        *self.cached_states.borrow_mut() = Some(result.clone());
-
-        result
+        self.compute_states()
     }
 
     /// Internal method to compute states (called once and cached)
@@ -427,47 +544,67 @@ impl<'a> TableGenerator<'a> {
         );
 
         let initial_state = (0, self.find_closure(&[initial_item]));
+        let initial_key = StateKey::from_items(&initial_state.1);
 
         let mut states: Vec<State> = vec![initial_state.clone()];
         let mut unprocessed: Vec<State> = vec![initial_state];
+        let mut state_index: HashMap<StateKey, usize> = HashMap::default();
+        state_index.insert(initial_key, 0);
         let mut goto_map: HashMap<(usize, NumSymbol), usize> = HashMap::default();
+        let progress = ProgressReporter::from_env();
+        let progress_start = Instant::now();
+        let mut processed_states = 0usize;
 
         while let Some((state_id, state_items)) = unprocessed.pop() {
-            // Collect all symbols that appear after dots in this state
-            // Sort them for deterministic state generation (matching Python's sorted())
-            let mut next_symbols: Vec<NumSymbol> = state_items
-                .iter()
-                .filter_map(|item| item.next_symbol())
-                .collect::<HashSet<_>>()
-                .into_iter()
-                .collect();
-            next_symbols.sort_by(|a, b| symbol_to_ord(a).cmp(&symbol_to_ord(b)));
-
-            for symbol in next_symbols {
-                let next_state_items = self.transition(&state_items, symbol);
+            processed_states += 1;
+            for (symbol, kernel_items) in Self::transition_kernels(&state_items) {
+                let next_state_items = self.find_closure(&kernel_items);
 
                 if next_state_items.is_empty() {
                     continue;
                 }
 
-                // Check if this state already exists
-                let existing_idx = states
-                    .iter()
-                    .position(|(_, items)| *items == next_state_items);
+                let next_state_key = StateKey::from_items(&next_state_items);
 
-                match existing_idx {
-                    Some(idx) => {
-                        goto_map.insert((state_id, symbol), idx);
-                    }
-                    None => {
-                        let new_state_id = states.len();
-                        let new_state = (new_state_id, next_state_items);
-                        states.push(new_state.clone());
-                        unprocessed.push(new_state);
-                        goto_map.insert((state_id, symbol), new_state_id);
-                    }
+                if let Some(&existing_state_id) = state_index.get(&next_state_key) {
+                    goto_map.insert((state_id, symbol), existing_state_id);
+                } else {
+                    let new_state_id = states.len();
+                    state_index.insert(next_state_key, new_state_id);
+                    let new_state = (new_state_id, next_state_items);
+                    states.push(new_state.clone());
+                    unprocessed.push(new_state);
+                    goto_map.insert((state_id, symbol), new_state_id);
                 }
             }
+
+            if progress.should_report(processed_states) {
+                progress.report(
+                    ProgressSnapshot {
+                        processed: processed_states,
+                        states: states.len(),
+                        pending: unprocessed.len(),
+                        gotos: goto_map.len(),
+                        first_cache: self.first_sequence_cache.borrow().len(),
+                        closure_cache: self.closure_cache.borrow().len(),
+                    },
+                    progress_start.elapsed(),
+                );
+            }
+        }
+
+        if progress.enabled() {
+            progress.report(
+                ProgressSnapshot {
+                    processed: processed_states,
+                    states: states.len(),
+                    pending: unprocessed.len(),
+                    gotos: goto_map.len(),
+                    first_cache: self.first_sequence_cache.borrow().len(),
+                    closure_cache: self.closure_cache.borrow().len(),
+                },
+                progress_start.elapsed(),
+            );
         }
 
         (states, goto_map)
@@ -592,21 +729,27 @@ impl<'a> TableGenerator<'a> {
                 .unwrap()
                 .entry(*symbol)
                 .or_insert_with(Vec::new);
-            
+
             // Check for shift/reduce conflict
             if !actions.is_empty() {
                 eprintln!("🚨🚨🚨 CONFLICT DETECTED! 🚨🚨🚨");
-                eprintln!("State {}: Shift/Reduce conflict on symbol '{}'", state_id, self.format_symbol(symbol));
+                eprintln!(
+                    "State {}: Shift/Reduce conflict on symbol '{}'",
+                    state_id,
+                    self.format_symbol(symbol)
+                );
                 eprint!("  Existing actions: ");
                 for (i, action) in actions.iter().enumerate() {
-                    if i > 0 { eprint!(", "); }
+                    if i > 0 {
+                        eprint!(", ");
+                    }
                     eprint!("{}", self.format_action(action));
                 }
                 eprintln!();
                 eprintln!("  New action: Shift to state {}", next_state);
                 eprintln!("🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨");
             }
-            
+
             actions.push(Action::Shift(*next_state));
         }
 
@@ -622,19 +765,21 @@ impl<'a> TableGenerator<'a> {
                             .unwrap()
                             .entry(NumSymbol::Terminal(END_OF_INPUT))
                             .or_insert_with(Vec::new);
-                        
+
                         if !actions.is_empty() {
                             eprintln!("🚨🚨🚨 CONFLICT DETECTED! 🚨🚨🚨");
                             eprintln!("State {}: Accept conflict on END_OF_INPUT", state_id);
                             eprint!("  Existing actions: ");
                             for (i, action) in actions.iter().enumerate() {
-                                if i > 0 { eprint!(", "); }
+                                if i > 0 {
+                                    eprint!(", ");
+                                }
                                 eprint!("{}", self.format_action(action));
                             }
                             eprintln!();
                             eprintln!("🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨");
                         }
-                        
+
                         actions.push(Action::Accept);
                     } else {
                         // Reduce action with dummy SPPF label (0)
@@ -644,37 +789,45 @@ impl<'a> TableGenerator<'a> {
                             .unwrap()
                             .entry(item.look_ahead)
                             .or_insert_with(Vec::new);
-                        
+
                         // Check for reduce/reduce or shift/reduce conflict
                         if !actions.is_empty() {
-                            let conflict_type = if actions.iter().any(|a| matches!(a, Action::Shift(_))) {
-                                "Shift/Reduce"
-                            } else {
-                                "Reduce/Reduce"
-                            };
-                            
+                            let conflict_type =
+                                if actions.iter().any(|a| matches!(a, Action::Shift(_))) {
+                                    "Shift/Reduce"
+                                } else {
+                                    "Reduce/Reduce"
+                                };
+
                             // Format the reduction for display
-                            let lhs_name = self.grammar.non_terminals
-                                .get_str(item.lhs)
-                                .unwrap_or("?");
-                            let rhs_strs: Vec<String> = item.rhs.iter()
-                                .map(|s| self.format_symbol(s))
-                                .collect();
-                            
+                            let lhs_name =
+                                self.grammar.non_terminals.get_str(item.lhs).unwrap_or("?");
+                            let rhs_strs: Vec<String> =
+                                item.rhs.iter().map(|s| self.format_symbol(s)).collect();
+
                             eprintln!("🚨🚨🚨 CONFLICT DETECTED! 🚨🚨🚨");
-                            eprintln!("State {}: {} conflict on symbol '{}'", 
-                                     state_id, conflict_type, self.format_symbol(&item.look_ahead));
+                            eprintln!(
+                                "State {}: {} conflict on symbol '{}'",
+                                state_id,
+                                conflict_type,
+                                self.format_symbol(&item.look_ahead)
+                            );
                             eprint!("  Existing actions: ");
                             for (i, a) in actions.iter().enumerate() {
-                                if i > 0 { eprint!(", "); }
+                                if i > 0 {
+                                    eprint!(", ");
+                                }
                                 eprint!("{}", self.format_action(a));
                             }
                             eprintln!();
-                            eprintln!("  New action: Reduce using rule {} -> {}", 
-                                     lhs_name, rhs_strs.join(" "));
+                            eprintln!(
+                                "  New action: Reduce using rule {} -> {}",
+                                lhs_name,
+                                rhs_strs.join(" ")
+                            );
                             eprintln!("🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨");
                         }
-                        
+
                         actions.push(action);
                     }
                 }
@@ -988,7 +1141,7 @@ impl SPPF {
         sorted_lhs.sort_unstable();
 
         for lhs in sorted_lhs {
-            let productions = grammar.rules.get(&lhs).unwrap(); 
+            let productions = grammar.rules.get(&lhs).unwrap();
 
             for rhs in productions {
                 for i in 1..rhs.len() {
@@ -1008,10 +1161,10 @@ impl SPPF {
                             })
                             .collect();
 
-                        if nt_ids.len() == 1 { 
+                        if nt_ids.len() == 1 {
                             // Add single child
                             i_map.insert(NullableLabel::Single(nt_ids[0]), counter);
-                            continue; 
+                            continue;
                         }
 
                         let label = NullableLabel::Sequence(nt_ids);
@@ -1046,5 +1199,255 @@ impl SPPF {
         } else {
             self.get_label(&NullableLabel::Sequence(nts.to_vec()))
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn item(lhs: u32, rhs: Vec<NumSymbol>, dot: usize, lookahead: NumSymbol) -> Item {
+        Item::new(lhs, rhs, dot, lookahead)
+    }
+
+    #[test]
+    fn state_key_is_independent_of_hashset_iteration_order() {
+        let item_a = item(1, vec![NumSymbol::Terminal(10)], 0, NumSymbol::Terminal(20));
+        let item_b = item(
+            2,
+            vec![NumSymbol::NonTerminal(3)],
+            0,
+            NumSymbol::Terminal(21),
+        );
+
+        let first: HashSet<Item> = [item_a.clone(), item_b.clone()].into_iter().collect();
+        let second: HashSet<Item> = [item_b, item_a].into_iter().collect();
+
+        assert_eq!(StateKey::from_items(&first), StateKey::from_items(&second));
+    }
+
+    #[test]
+    fn state_key_distinguishes_lookahead() {
+        let first: HashSet<Item> = [item(
+            1,
+            vec![NumSymbol::Terminal(10)],
+            0,
+            NumSymbol::Terminal(20),
+        )]
+        .into_iter()
+        .collect();
+        let second: HashSet<Item> = [item(
+            1,
+            vec![NumSymbol::Terminal(10)],
+            0,
+            NumSymbol::Terminal(21),
+        )]
+        .into_iter()
+        .collect();
+
+        assert_ne!(StateKey::from_items(&first), StateKey::from_items(&second));
+    }
+
+    #[test]
+    fn advancing_item_reuses_rhs_storage() {
+        let item = item(
+            1,
+            vec![NumSymbol::Terminal(10), NumSymbol::NonTerminal(20)],
+            0,
+            NumSymbol::Terminal(30),
+        );
+        let advanced = item.advance();
+
+        assert!(std::sync::Arc::ptr_eq(&item.rhs, &advanced.rhs));
+    }
+
+    #[test]
+    fn transition_kernels_group_advanced_items_in_symbol_order() {
+        let a_item = item(
+            1,
+            vec![NumSymbol::Terminal(10), NumSymbol::Terminal(11)],
+            0,
+            NumSymbol::Terminal(30),
+        );
+        let b_item = item(
+            2,
+            vec![NumSymbol::NonTerminal(3), NumSymbol::Terminal(12)],
+            0,
+            NumSymbol::Terminal(31),
+        );
+        let another_a_item = item(
+            4,
+            vec![NumSymbol::Terminal(10), NumSymbol::Terminal(13)],
+            0,
+            NumSymbol::Terminal(32),
+        );
+        let state: HashSet<Item> = [a_item, b_item, another_a_item].into_iter().collect();
+
+        let kernels = TableGenerator::transition_kernels(&state);
+
+        assert_eq!(kernels.len(), 2);
+        assert_eq!(kernels[0].0, NumSymbol::Terminal(10));
+        assert_eq!(kernels[0].1.len(), 2);
+        assert!(kernels[0].1.iter().all(|item| item.dot == 1));
+        assert_eq!(kernels[1].0, NumSymbol::NonTerminal(3));
+        assert_eq!(kernels[1].1.len(), 1);
+        assert_eq!(kernels[1].1[0].dot, 1);
+    }
+
+    #[test]
+    fn first_sequence_results_are_cached_by_exact_symbol_sequence() {
+        let grammar = crate::grammars::load_grammar_from_str(
+            r#"{
+                "name": "first_cache",
+                "start": "<S>",
+                "rules": {
+                    "<S>": [["<A>", "b"]],
+                    "<A>": [["a"], []]
+                }
+            }"#,
+        )
+        .expect("load grammar");
+        let generator = TableGenerator::new(&grammar);
+        let a = grammar.non_terminals.get_id("<A>").expect("A id");
+        let b = grammar.terminals.get_id("b").expect("b id");
+        let sequence = vec![NumSymbol::NonTerminal(a), NumSymbol::Terminal(b)];
+
+        let first = generator.calculate_first_for_sequence(&sequence);
+        let second = generator.calculate_first_for_sequence(&sequence);
+
+        assert_eq!(first, second);
+        assert_eq!(generator.first_sequence_cache.borrow().len(), 1);
+    }
+
+    #[test]
+    fn first_suffix_cache_reuses_nonnullable_beta_across_lookaheads() {
+        let grammar = crate::grammars::load_grammar_from_str(
+            r#"{
+                "name": "first_suffix_cache",
+                "start": "<S>",
+                "rules": {
+                    "<S>": [["<A>", "b"]],
+                    "<A>": [["a"]]
+                }
+            }"#,
+        )
+        .expect("load grammar");
+        let generator = TableGenerator::new(&grammar);
+        let b = grammar.terminals.get_id("b").expect("b id");
+        let c = NumSymbol::Terminal(100);
+        let d = NumSymbol::Terminal(101);
+        let beta = [NumSymbol::Terminal(b)];
+
+        let first = generator.calculate_first_for_suffix_and_lookahead(&beta, c);
+        let second = generator.calculate_first_for_suffix_and_lookahead(&beta, d);
+
+        assert_eq!(first, second);
+        assert_eq!(first, [NumSymbol::Terminal(b)].into_iter().collect());
+        assert_eq!(generator.first_sequence_cache.borrow().len(), 1);
+    }
+
+    #[test]
+    fn first_suffix_uses_lookahead_when_beta_is_nullable() {
+        let grammar = crate::grammars::load_grammar_from_str(
+            r#"{
+                "name": "first_suffix_nullable",
+                "start": "<S>",
+                "rules": {
+                    "<S>": [["<A>"]],
+                    "<A>": [["a"], []]
+                }
+            }"#,
+        )
+        .expect("load grammar");
+        let generator = TableGenerator::new(&grammar);
+        let a = grammar.terminals.get_id("a").expect("a id");
+        let nt_a = grammar.non_terminals.get_id("<A>").expect("A id");
+        let lookahead = NumSymbol::Terminal(100);
+        let beta = [NumSymbol::NonTerminal(nt_a)];
+
+        let first = generator.calculate_first_for_suffix_and_lookahead(&beta, lookahead);
+
+        assert_eq!(
+            first,
+            [NumSymbol::Terminal(a), lookahead].into_iter().collect()
+        );
+    }
+
+    #[test]
+    fn closure_results_are_cached_by_kernel_items() {
+        let grammar = crate::grammars::load_grammar_from_str(
+            r#"{
+                "name": "closure_cache",
+                "start": "<S>",
+                "rules": {
+                    "<S>": [["<A>"]],
+                    "<A>": [["a"]]
+                }
+            }"#,
+        )
+        .expect("load grammar");
+        let generator = TableGenerator::new(&grammar);
+        let s = grammar.non_terminals.get_id("<S>").expect("S id");
+        let kernel = [Item::new(
+            AUGMENTED_START,
+            vec![NumSymbol::NonTerminal(s)],
+            0,
+            NumSymbol::Terminal(END_OF_INPUT),
+        )];
+
+        let first = generator.find_closure(&kernel);
+        let second = generator.find_closure(&kernel);
+
+        assert_eq!(first, second);
+        assert_eq!(generator.closure_cache.borrow().len(), 1);
+    }
+
+    #[test]
+    fn oversized_closure_results_are_not_cached() {
+        let grammar = crate::grammars::simple_grammar();
+        let generator = TableGenerator::new(&grammar);
+        let kernel: Vec<Item> = (0..=MAX_CACHED_CLOSURE_ITEMS)
+            .map(|idx| {
+                Item::new(
+                    10_000 + idx as u32,
+                    vec![NumSymbol::Terminal(idx as u32)],
+                    1,
+                    NumSymbol::Terminal(END_OF_INPUT),
+                )
+            })
+            .collect();
+
+        let closure = generator.find_closure(&kernel);
+
+        assert_eq!(closure.len(), MAX_CACHED_CLOSURE_ITEMS + 1);
+        assert!(generator.closure_cache.borrow().is_empty());
+    }
+
+    #[test]
+    fn progress_reporter_reports_only_on_interval() {
+        let reporter = ProgressReporter::new(true, 4);
+
+        assert!(!reporter.should_report(1));
+        assert!(!reporter.should_report(3));
+        assert!(reporter.should_report(4));
+        assert!(reporter.should_report(8));
+    }
+
+    #[test]
+    fn progress_reporter_formats_snapshot_counters() {
+        let reporter = ProgressReporter::new(true, 1000);
+        let snapshot = ProgressSnapshot {
+            processed: 2_000,
+            states: 3_200,
+            pending: 400,
+            gotos: 12_345,
+            first_cache: 67,
+            closure_cache: 89,
+        };
+
+        assert_eq!(
+            reporter.format_snapshot(snapshot, std::time::Duration::from_secs(125)),
+            "lr-table-progress processed=2000 states=3200 pending=400 gotos=12345 first_cache=67 closure_cache=89 elapsed=125s"
+        );
     }
 }

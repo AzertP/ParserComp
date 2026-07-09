@@ -5,6 +5,9 @@
     "ID": [
       "read",
       "readln",
+      "fixed",
+      "private",
+      "result",
       "write",
       "writeln"
     ]
@@ -16,6 +19,10 @@
         "."
       ],
       [
+        "<module>",
+        "."
+      ],
+      [
         "<program_heading>",
         ";",
         "<uses_clause>",
@@ -23,6 +30,32 @@
         "."
       ],
       [
+        "<program_heading>",
+        ";",
+        "<joins_clause>",
+        "<program_block>",
+        "."
+      ],
+      [
+        "<program_heading>",
+        ";",
+        "<joins_clause>",
+        "<uses_clause>",
+        "<program_block>",
+        "."
+      ],
+      [
+        "<uses_clause>",
+        "<program_block>",
+        "."
+      ],
+      [
+        "<joins_clause>",
+        "<program_block>",
+        "."
+      ],
+      [
+        "<joins_clause>",
         "<uses_clause>",
         "<program_block>",
         "."
@@ -32,9 +65,57 @@
         "."
       ]
     ],
+    "<module>": [
+      [
+        "<module_heading>",
+        ";",
+        "<program_block>"
+      ],
+      [
+        "<module_heading>",
+        ";",
+        "<uses_clause>",
+        "<program_block>"
+      ],
+      [
+        "<module_heading>",
+        ";",
+        "<joins_clause>",
+        "<program_block>"
+      ],
+      [
+        "<module_heading>",
+        ";",
+        "<joins_clause>",
+        "<uses_clause>",
+        "<program_block>"
+      ]
+    ],
+    "<module_heading>": [
+      [
+        "module",
+        "<ID>",
+        "<module_heading_58>"
+      ]
+    ],
+    "<module_heading_58>": [
+      [],
+      [
+        "(",
+        "<program_parameters>",
+        ")"
+      ]
+    ],
     "<uses_clause>": [
       [
         "uses",
+        "<uses_list>",
+        ";"
+      ]
+    ],
+    "<joins_clause>": [
+      [
+        "joins",
         "<uses_list>",
         ";"
       ]
@@ -137,12 +218,60 @@
     ],
     "<block>": [
       [
-        "<label_declaration_part>",
-        "<constant_definition_part>",
-        "<type_definition_part>",
-        "<variable_declaration_part>",
-        "<procedure_and_function_declaration_part>",
+        "<block_declaration_sequence>",
         "<statement_part>"
+      ]
+    ],
+    "<block_declaration_sequence>": [
+      [],
+      [
+        "<block_declaration_sequence>",
+        "<block_declaration>"
+      ]
+    ],
+    "<block_declaration>": [
+      [
+        "private"
+      ],
+      [
+        "label",
+        "<label>",
+        "<label_declaration_part_22>",
+        ";"
+      ],
+      [
+        "const",
+        "<constant_definition>",
+        ";",
+        "<constant_definition_part_10>"
+      ],
+      [
+        "type",
+        "<type_definition>",
+        ";",
+        "<type_definition_part_47>"
+      ],
+      [
+        "var",
+        "<variable_declaration>",
+        ";",
+        "<variable_declaration_part_51>"
+      ],
+      [
+        "fixed",
+        "<fixed_declaration>",
+        ";",
+        "<fixed_declaration_tail>"
+      ],
+      [
+        "static",
+        "<variable_declaration>",
+        ";",
+        "<static_declaration_part_60>"
+      ],
+      [
+        "<procedure_and_function_declaration_part_26>",
+        ";"
       ]
     ],
     "<Boolean_expression>": [
@@ -193,6 +322,7 @@
         "of",
         "<case_list_element>",
         "<case_statement_5>",
+        "<case_else_part>",
         "<case_statement_6>",
         "end"
       ]
@@ -209,6 +339,18 @@
       [],
       [
         ";"
+      ]
+    ],
+    "<case_else_part>": [
+      [],
+      [
+        "else",
+        "<statement>"
+      ],
+      [
+        ";",
+        "else",
+        "<statement>"
       ]
     ],
     "<character_string>": [
@@ -287,7 +429,76 @@
       [
         "<ID>",
         "=",
+        "<constant_initializer>"
+      ],
+      [
+        "<ID>",
+        ":",
+        "<type_denoter>",
+        "=",
+        "<constant_initializer>"
+      ]
+    ],
+    "<constant_initializer>": [
+      [
+        "<aggregate_constant>"
+      ],
+      [
+        "<typed_constant_constructor>"
+      ],
+      [
+        "<expression>"
+      ]
+    ],
+    "<aggregate_constant>": [
+      [
+        "(",
+        "<constant_initializer>",
+        "<aggregate_constant_tail>",
+        ")"
+      ]
+    ],
+    "<aggregate_constant_tail>": [
+      [],
+      [
+        "<aggregate_constant_tail>",
+        ",",
+        "<constant_initializer>"
+      ]
+    ],
+    "<typed_constant_constructor>": [
+      [
+        "<type_ID>",
+        "[",
+        "<constructor_member>",
+        "<constructor_member_tail>",
+        "]"
+      ]
+    ],
+    "<constructor_member>": [
+      [
+        "<constant_initializer>"
+      ],
+      [
+        "<constructor_key>",
+        ":",
+        "<constant_initializer>"
+      ]
+    ],
+    "<constructor_key>": [
+      [
         "<constant>"
+      ],
+      [
+        "<ID>"
+      ]
+    ],
+    "<constructor_member_tail>": [
+      [],
+      [
+        "<constructor_member_tail>",
+        ",",
+        "<constructor_member>"
       ]
     ],
     "<constant_definition_part>": [
@@ -457,6 +668,47 @@
         "<field_ID>"
       ]
     ],
+    "<fixed_declaration>": [
+      [
+        "<ID>",
+        ":",
+        "<type_denoter>",
+        "=",
+        "<fixed_initializer>"
+      ]
+    ],
+    "<fixed_declaration_tail>": [
+      [],
+      [
+        "<fixed_declaration_tail>",
+        "<fixed_declaration>",
+        ";"
+      ]
+    ],
+    "<fixed_initializer>": [
+      [
+        "<fixed_array_initializer>"
+      ],
+      [
+        "<expression>"
+      ]
+    ],
+    "<fixed_array_initializer>": [
+      [
+        "array",
+        "<fixed_initializer>",
+        "<fixed_initializer_tail>",
+        "end"
+      ]
+    ],
+    "<fixed_initializer_tail>": [
+      [],
+      [
+        "<fixed_initializer_tail>",
+        ",",
+        "<fixed_initializer>"
+      ]
+    ],
     "<file_type>": [
       [
         "file",
@@ -521,6 +773,15 @@
       ],
       [
         "<variable_parameter_specification>"
+      ],
+      [
+        "<conformant_array_parameter_specification>"
+      ],
+      [
+        "<view_parameter_specification>"
+      ],
+      [
+        "<out_parameter_specification>"
       ],
       [
         "<procedural_parameter_specification>"
@@ -592,6 +853,11 @@
     "<function_ID>": [
       [
         "ID"
+      ],
+      [
+        "ID",
+        ".",
+        "ID"
       ]
     ],
     "<functional_parameter_specification>": [
@@ -624,6 +890,31 @@
         "<ID>"
       ]
     ],
+    "<declaration_ID>": [
+      [
+        "<ID>"
+      ],
+      [
+        "<ID>",
+        "(",
+        "<expression>",
+        ")"
+      ]
+    ],
+    "<declaration_ID_list>": [
+      [
+        "<declaration_ID>",
+        "<declaration_ID_list_tail>"
+      ]
+    ],
+    "<declaration_ID_list_tail>": [
+      [],
+      [
+        "<declaration_ID_list_tail>",
+        ",",
+        "<declaration_ID>"
+      ]
+    ],
     "<if_statement>": [
       [
         "if",
@@ -640,6 +931,11 @@
       ]
     ],
     "<index_expression>": [
+      [
+        "<expression>",
+        "..",
+        "<expression>"
+      ],
       [
         "<expression>"
       ]
@@ -755,6 +1051,10 @@
       [
         "^",
         "<domain_type>"
+      ],
+      [
+        "->",
+        "<domain_type>"
       ]
     ],
     "<new_structured_type>": [
@@ -790,6 +1090,14 @@
     ],
     "<ordinal_type_ID>": [
       [
+        "<type_ID>"
+      ]
+    ],
+    "<out_parameter_specification>": [
+      [
+        "out",
+        "<declaration_ID_list>",
+        ":",
         "<type_ID>"
       ]
     ],
@@ -900,6 +1208,11 @@
     ],
     "<procedure_ID>": [
       [
+        "ID"
+      ],
+      [
+        "ID",
+        ".",
         "ID"
       ]
     ],
@@ -1180,6 +1493,9 @@
         "<simple_statement_41>"
       ],
       [
+        "<result_statement>"
+      ],
+      [
         "<procedure_statement>"
       ],
       [
@@ -1190,6 +1506,12 @@
       [],
       [
         "<assignment_statement>"
+      ]
+    ],
+    "<result_statement>": [
+      [
+        "result",
+        "<expression>"
       ]
     ],
     "<simple_type>": [
@@ -1287,9 +1609,9 @@
     ],
     "<subrange_type>": [
       [
-        "<constant>",
+        "<expression>",
         "..",
-        "<constant>"
+        "<expression>"
       ]
     ],
     "<tag_field>": [
@@ -1314,6 +1636,28 @@
         "<term_45>",
         "<multiplying_operator>",
         "<factor>"
+      ]
+    ],
+    "<static_declaration_part>": [
+      [
+        "<static_declaration_part_59>"
+      ]
+    ],
+    "<static_declaration_part_59>": [
+      [],
+      [
+        "static",
+        "<variable_declaration>",
+        ";",
+        "<static_declaration_part_60>"
+      ]
+    ],
+    "<static_declaration_part_60>": [
+      [],
+      [
+        "<static_declaration_part_60>",
+        "<variable_declaration>",
+        ";"
       ]
     ],
     "<type_definition>": [
@@ -1355,6 +1699,11 @@
     ],
     "<type_ID>": [
       [
+        "ID"
+      ],
+      [
+        "ID",
+        ".",
         "ID"
       ]
     ],
@@ -1440,7 +1789,15 @@
     ],
     "<value_parameter_specification>": [
       [
-        "<ID_list>",
+        "<declaration_ID_list>",
+        ":",
+        "<type_ID>"
+      ]
+    ],
+    "<view_parameter_specification>": [
+      [
+        "view",
+        "<declaration_ID_list>",
         ":",
         "<type_ID>"
       ]
@@ -1455,6 +1812,10 @@
       [
         "<variable_access>",
         "^"
+      ],
+      [
+        "<variable_access>",
+        "->"
       ]
     ],
     "<variable_conformant_array_specification>": [
@@ -1467,9 +1828,16 @@
     ],
     "<variable_declaration>": [
       [
-        "<ID_list>",
+        "<declaration_ID_list>",
         ":",
         "<type_denoter>"
+      ],
+      [
+        "<declaration_ID_list>",
+        ":",
+        "<type_denoter>",
+        ":=",
+        "<expression>"
       ]
     ],
     "<variable_declaration_part>": [
@@ -1502,7 +1870,7 @@
     "<variable_parameter_specification>": [
       [
         "var",
-        "<ID_list>",
+        "<declaration_ID_list>",
         ":",
         "<type_ID>"
       ]
@@ -1568,7 +1936,7 @@
       [],
       [
         ":",
-        "<expression>",
+        "<write_format_expression>",
         "<write_parameter_54>"
       ]
     ],
@@ -1576,7 +1944,15 @@
       [],
       [
         ":",
+        "<write_format_expression>"
+      ]
+    ],
+    "<write_format_expression>": [
+      [
         "<expression>"
+      ],
+      [
+        "*"
       ]
     ],
     "<writeln_parameter_list>": [

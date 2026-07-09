@@ -3,23 +3,30 @@
   "skip": [
     "^[ \\t\\r\\n\\x0C]+",
     "^//[^\\n]*(?:\\n|$)",
+    "^/\\*(?s:.*?)\\*/",
     "^\\{(?s:.*?)\\}",
     "^\\(\\*(?s:.*?)\\*\\)"
   ],
   "tokens": [
     ["STRING", "^'(?:''|[^'])*'"],
+    ["STRING", "^\"(?:\"\"|[^\"])*\""],
 
     ["REAL", "^[0-9]+\\.[0-9]+(?:[eE][+-]?[0-9]+)?"],
     ["REAL", "^[0-9]+(?:[eE][+-]?[0-9]+)"],
     ["INTEGER", "^\\$[0-9A-Fa-f]+"],
     ["INTEGER", "^[0-9]+"],
 
+    ["module", "^(?i:module)\\b"],
+    ["private", "^(?i:private)\\b"],
     ["program", "^(?i:program)\\b"],
+    ["joins", "^(?i:joins)\\b"],
     ["uses", "^(?i:uses)\\b"],
     ["label", "^(?i:label)\\b"],
     ["const", "^(?i:const)\\b"],
     ["type", "^(?i:type)\\b"],
     ["var", "^(?i:var)\\b"],
+    ["fixed", "^(?i:fixed)\\b"],
+    ["static", "^(?i:static)\\b"],
     ["array", "^(?i:array)\\b"],
     ["record", "^(?i:record)\\b"],
     ["set", "^(?i:set)\\b"],
@@ -43,6 +50,9 @@
     ["goto", "^(?i:goto)\\b"],
     ["procedure", "^(?i:procedure)\\b"],
     ["function", "^(?i:function)\\b"],
+    ["result", "^(?i:result)\\b"],
+    ["view", "^(?i:view)\\b"],
+    ["out", "^(?i:out)\\b"],
     ["read", "^(?i:read)\\b"],
     ["readln", "^(?i:readln)\\b"],
     ["write", "^(?i:write)\\b"],
@@ -57,6 +67,11 @@
 
     ["ID_OR_KEYWORD", "^[A-Za-z_][A-Za-z0-9_]*"],
 
+    ["[", "^\\(\\."],
+    ["]", "^\\.\\)"],
+    ["^", "^@"],
+    ["and", "^&"],
+
     ["OP", "^:="],
     ["OP", "^\\.\\."],
     ["OP", "^<>"],
@@ -64,6 +79,7 @@
     ["OP", "^>="],
     ["OP", "^<<"],
     ["OP", "^>>"],
+    ["OP", "^->"],
     ["OP", "^[()\\[\\],;.:+\\-*/=<>^]"]
   ]
 }

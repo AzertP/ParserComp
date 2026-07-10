@@ -11,7 +11,7 @@
 //!   cargo run --release --bin benchmark_lex
 //!
 //! Output:
-//!   results/benchmark_lex_<language>.csv
+//!   results/benchmark_lex/benchmark_<language>.csv
 //!   CSV columns:
 //!     language, size_category, file, bytes,
 //!     parser, token_count, median_time_ns, mad_ns,
@@ -39,7 +39,8 @@ use std::time::{Duration, Instant};
 // Language configurations
 // ============================================================================
 
-const DEFAULT_PARSERS: &[&str] = &["Leo", "GLL", "RNGLR", "BRNGLR"];
+#[allow(dead_code)]
+const DEFAULT_PARSERS: &[&str] = &["Leo", "GLL"];
 const EXCLUDED_SOURCE_FILES: &[&str] = &[
     // Uses C# 2.0 generic method declarations/invocations outside the adapted C# 1.2 grammar scope.
     "1941974.cs",
@@ -87,47 +88,47 @@ struct LangConfig {
 }
 
 const CONFIGS: &[LangConfig] = &[
-    // LangConfig {
-    //     name: "csharp_tok",
-    //     lexer_spec: "grammars/lexer/csharp_regex.json",
-    //     grammar_path: "grammars/csharp_tok.json",
-    //     input_dir: "input/code/Csharp",
-    //     file_exts: &[".cs"],
-    //     table_path: "table/csharp_tok_glr_table.csv",
-    //     generate_table: true,
-    //     parsers: DEFAULT_PARSERS,
-    // },
-    // LangConfig {
-    //     name: "c_tok",
-    //     lexer_spec: "grammars/lexer/c_regex.json",
-    //     grammar_path: "grammars/ansi_c_tok.json",
-    //     input_dir: "input/code/C",
-    //     file_exts: &[".c"],
-    //     table_path: "table/ansi_c_tok_glr_table.csv",
-    //     generate_table: false,
-    //     parsers: DEFAULT_PARSERS,
-    // },
+    LangConfig {
+        name: "csharp_tok",
+        lexer_spec: "grammars/lexer/csharp_regex.json",
+        grammar_path: "grammars/csharp_tok.json",
+        input_dir: "input/code/Csharp",
+        file_exts: &[".cs"],
+        table_path: "table/csharp_tok_glr_table.csv",
+        generate_table: false,
+        parsers: DEFAULT_PARSERS,
+    },
+    LangConfig {
+        name: "c_tok",
+        lexer_spec: "grammars/lexer/c_regex.json",
+        grammar_path: "grammars/ansi_c_tok.json",
+        input_dir: "input/code/C",
+        file_exts: &[".c"],
+        table_path: "table/ansi_c_tok_glr_table.csv",
+        generate_table: false,
+        parsers: DEFAULT_PARSERS,
+    },
     // Uncomment when lexer specs and tokenised grammars are ready:
-    // LangConfig {
-    //     name: "cpp_tok",
-    //     lexer_spec: "grammars/lexer/cpp_regex.json",
-    //     grammar_path: "grammars/cpp_tok.json",
-    //     input_dir: "input/code/C++",
-    //     file_exts: &[".cpp"],
-    //     table_path: "table/cpp_tok_glr_table.csv",
-    //     generate_table: true,
-    //     parsers: DEFAULT_PARSERS,
-    // },
-    // LangConfig {
-    //     name: "Java",
-    //     lexer_spec: "grammars/lexer/java_regex.json",
-    //     grammar_path: "grammars/jsl18_tok.json",
-    //     input_dir: "input/code/Java",
-    //     file_exts: &[".java"],
-    //     table_path: "table/java_tok_glr_table.csv",
-    //     generate_table: true,
-    //     parsers: DEFAULT_PARSERS,
-    // },
+    LangConfig {
+        name: "cpp_tok",
+        lexer_spec: "grammars/lexer/cpp_regex.json",
+        grammar_path: "grammars/cpp_tok.json",
+        input_dir: "input/code/C++",
+        file_exts: &[".cpp"],
+        table_path: "table/cpp_tok_glr_table.csv",
+        generate_table: false,
+        parsers: DEFAULT_PARSERS,
+    },
+    LangConfig {
+        name: "java_tok",
+        lexer_spec: "grammars/lexer/java_regex.json",
+        grammar_path: "grammars/jsl18_tok.json",
+        input_dir: "input/code/Java",
+        file_exts: &[".java"],
+        table_path: "table/java_tok_glr_table.csv",
+        generate_table: false,
+        parsers: DEFAULT_PARSERS,
+    },
     LangConfig {
         name: "pascal_tok",
         lexer_spec: "grammars/lexer/pascal_regex.json",
@@ -135,19 +136,9 @@ const CONFIGS: &[LangConfig] = &[
         input_dir: "input/code/Pascal ISO",
         file_exts: &[".pas"],
         table_path: "table/pascal_tok_glr_table.csv",
-        generate_table: true,
+        generate_table: false,
         parsers: DEFAULT_PARSERS,
     },
-    // LangConfig {
-    //     name: "cobol_tok",
-    //     lexer_spec: "grammars/lexer/cobol_regex.json",
-    //     grammar_path: "grammars/cobol_tok.json",
-    //     input_dir: "input/code/Cobol",
-    //     file_exts: &[".cbl", ".cob", ".cobol"],
-    //     table_path: "table/cobol_tok_glr_table.csv",
-    //     generate_table: true,
-    //     parsers: DEFAULT_PARSERS,
-    // },
 ];
 
 // ============================================================================
@@ -159,6 +150,15 @@ const MIN_ITERATIONS: u32 = 10;
 const MAX_ITERATIONS: u32 = 20;
 const TARGET_TIME: Duration = Duration::from_millis(500);
 const TIMEOUT_THRESHOLD: f64 = 1_000_000_000.0; // 1 second in ns
+const RESULT_DIR: &str = "results/benchmark_lex";
+
+fn output_path(config_name: &str) -> String {
+    format!(
+        "{}/benchmark_{}.csv",
+        RESULT_DIR,
+        config_name.replace(['+', ' '], "_")
+    )
+}
 
 // ============================================================================
 // BenchmarkResult — mirrors benchmark_csv.rs, with extra leading columns
@@ -559,11 +559,8 @@ fn run_config(cfg: &LangConfig) -> std::io::Result<()> {
     );
 
     // Open output CSV
-    fs::create_dir_all("results")?;
-    let out_path = format!(
-        "results/benchmark_{}.csv",
-        cfg.name.replace(['+', ' '], "_")
-    );
+    fs::create_dir_all(RESULT_DIR)?;
+    let out_path = output_path(cfg.name);
     let mut csv_file = File::create(&out_path)?;
     writeln!(
         csv_file,
@@ -726,6 +723,14 @@ mod tests {
     use super::*;
 
     #[test]
+    fn output_path_uses_benchmark_lex_result_folder() {
+        assert_eq!(
+            output_path("java_tok"),
+            "results/benchmark_lex/benchmark_java_tok.csv"
+        );
+    }
+
+    #[test]
     fn collect_files_omits_configured_unsupported_sources() {
         let tmp_dir = std::env::temp_dir().join(format!(
             "parser_comparison_benchmark_lex_test_{}",
@@ -782,40 +787,18 @@ mod tests {
         ));
         let _ = fs::remove_dir_all(&tmp_dir);
         fs::create_dir_all(&tmp_dir).expect("create temp test directory");
-        for file in ["a.cbl", "b.COB", "c.cobol", "ignored.txt"] {
-            fs::write(tmp_dir.join(file), "IDENTIFICATION DIVISION.").expect("write source");
+        for file in ["a.foo", "b.BAR", "c.baz", "ignored.txt"] {
+            fs::write(tmp_dir.join(file), "sample").expect("write source");
         }
 
-        let files = collect_files(tmp_dir.to_str().unwrap(), &[".cbl", ".cob", ".cobol"]);
+        let files = collect_files(tmp_dir.to_str().unwrap(), &[".foo", ".bar", ".baz"]);
         let names: Vec<_> = files
             .iter()
             .filter_map(|path| path.file_name().and_then(|name| name.to_str()))
             .collect();
 
-        assert_eq!(names, vec!["a.cbl", "b.COB", "c.cobol"]);
+        assert_eq!(names, vec!["a.foo", "b.BAR", "c.baz"]);
 
         fs::remove_dir_all(&tmp_dir).expect("remove temp test directory");
-    }
-
-    #[test]
-    fn benchmark_configs_include_full_cobol_corpus() {
-        let cfg = CONFIGS
-            .iter()
-            .find(|cfg| cfg.name == "cobol_tok")
-            .expect("benchmark_lex should include COBOL");
-
-        assert_eq!(cfg.lexer_spec, "grammars/lexer/cobol_regex.json");
-        assert_eq!(cfg.grammar_path, "grammars/cobol_tok.json");
-        assert_eq!(cfg.input_dir, "input/code/Cobol");
-        assert_eq!(cfg.file_exts, &[".cbl", ".cob", ".cobol"]);
-        assert_eq!(cfg.table_path, "table/cobol_tok_glr_table.csv");
-
-        let files = collect_files(cfg.input_dir, cfg.file_exts);
-        assert_eq!(files.len(), 150);
-
-        let lexer = Lexer::from_file(cfg.lexer_spec).expect("load COBOL lexer");
-        let grammar =
-            grammars::load_grammar_from_file(cfg.grammar_path).expect("load COBOL grammar");
-        assert_eq!(load_inputs(&files, &lexer, &grammar).len(), 150);
     }
 }

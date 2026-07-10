@@ -10,7 +10,7 @@
 //!   cargo run --release --bin benchmark_code
 //!
 //! Output:
-//!   Creates CSV files in results/ with columns:
+//!   Creates CSV files in results/benchmark_code/ with columns:
 //!   parser,input_length,token_count,median_time_ns,mad_ns,peak_memory_bytes,
 //!   iterations,recognized,parse_correct,status,source_file
 use memory_stats::memory_stats;
@@ -93,6 +93,11 @@ const MIN_ITERATIONS: u32 = 10;
 const MAX_ITERATIONS: u32 = 20;
 const TARGET_TIME: Duration = Duration::from_millis(500);
 const TIMEOUT_THRESHOLD: f64 = 1_000_000_000.0; // 1 second in ns
+const RESULT_DIR: &str = "results/benchmark_code";
+
+fn output_path(config_name: &str) -> String {
+    format!("{}/benchmark_{}.csv", RESULT_DIR, config_name)
+}
 
 // ============================================================================
 // Benchmark Result
@@ -331,8 +336,8 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
     println!("{}", "=".repeat(60));
 
     // Setup CSV
-    fs::create_dir_all("results")?;
-    let filename = format!("results/benchmark_{}.csv", config.name);
+    fs::create_dir_all(RESULT_DIR)?;
+    let filename = output_path(config.name);
     let mut csv_file = File::create(&filename)?;
     writeln!(
         csv_file,
@@ -614,4 +619,17 @@ fn main() {
         .expect("Failed to spawn thread with larger stack")
         .join()
         .expect("Thread panicked");
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn output_path_uses_benchmark_code_result_folder() {
+        assert_eq!(
+            output_path("java_ws"),
+            "results/benchmark_code/benchmark_java_ws.csv"
+        );
+    }
 }

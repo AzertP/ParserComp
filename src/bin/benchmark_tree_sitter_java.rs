@@ -10,7 +10,7 @@
 //!   cargo run --release --bin benchmark_tree_sitter_java -- --regenerate-table
 //!
 //! Output:
-//!   results/benchmark_tree_sitter_java.csv
+//!   results/benchmark_tree_sitter_java/benchmark_tree_sitter_java.csv
 
 use memory_stats::memory_stats;
 use parser_comparison::grammars;
@@ -36,7 +36,8 @@ const INPUT_DIR: &str = "input/code/Java";
 const JAVA_TREE_LEXER_SPEC: &str = "grammars/lexer/java_tree_regex.json";
 const JAVA_TREE_GRAMMAR: &str = "grammars/java_tree.json";
 const JAVA_TREE_GLR_TABLE: &str = "table/java_tree_glr_table.csv";
-const OUT_PATH: &str = "results/benchmark_tree_sitter_java.csv";
+const RESULT_DIR: &str = "results/benchmark_tree_sitter_java";
+const OUT_PATH: &str = "results/benchmark_tree_sitter_java/benchmark_tree_sitter_java.csv";
 const LOCAL_PARSERS: &[&str] = &["Leo", "GLL", "RNGLR", "BRNGLR"];
 
 const WARMUP_ITERATIONS: u32 = 1;
@@ -508,7 +509,7 @@ fn run_main() -> std::io::Result<()> {
     rnglr.set_grammar(grammar.clone());
     brnglr.set_grammar(grammar.clone());
 
-    fs::create_dir_all("results")?;
+    fs::create_dir_all(RESULT_DIR)?;
     let mut csv_file = File::create(OUT_PATH)?;
     writeln!(
         csv_file,
@@ -610,5 +611,18 @@ fn main() {
     if let Err(e) = result {
         eprintln!("Error: {}", e);
         std::process::exit(1);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn output_path_uses_benchmark_tree_sitter_java_result_folder() {
+        assert_eq!(
+            OUT_PATH,
+            "results/benchmark_tree_sitter_java/benchmark_tree_sitter_java.csv"
+        );
     }
 }

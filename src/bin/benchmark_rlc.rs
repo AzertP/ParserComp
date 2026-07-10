@@ -8,7 +8,7 @@
 //!   cargo run --release --bin benchmark_rlc
 //!
 //! Output:
-//!   results/benchmark_rlc_<language>.csv
+//!   results/benchmark_rlc/benchmark_rlc_<language>.csv
 
 use memory_stats::memory_stats;
 use parser_comparison::grammars;
@@ -99,6 +99,11 @@ const MIN_ITERATIONS: u32 = 10;
 const MAX_ITERATIONS: u32 = 20;
 const TARGET_TIME: Duration = Duration::from_millis(500);
 const TIMEOUT_THRESHOLD: f64 = 1_000_000_000.0;
+const RESULT_DIR: &str = "results/benchmark_rlc";
+
+fn output_path(config_name: &str) -> String {
+    format!("{}/benchmark_rlc_{}.csv", RESULT_DIR, config_name)
+}
 
 // ============================================================================
 // Expected-result manifest and conformance tracking
@@ -736,8 +741,8 @@ fn run_config(
         inputs.last().map(|input| input.token_count).unwrap_or(0)
     );
 
-    fs::create_dir_all("results")?;
-    let out_path = format!("results/benchmark_rlc_{}.csv", cfg.name);
+    fs::create_dir_all(RESULT_DIR)?;
+    let out_path = output_path(cfg.name);
     let mut csv_file = File::create(&out_path)?;
     writeln!(
         csv_file,
@@ -918,6 +923,14 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn output_path_uses_benchmark_rlc_result_folder() {
+        assert_eq!(
+            output_path("java"),
+            "results/benchmark_rlc/benchmark_rlc_java.csv"
+        );
+    }
 
     #[test]
     fn manifest_reader_loads_accept_and_reject_expectations() {

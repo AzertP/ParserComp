@@ -1,11 +1,11 @@
-//! Benchmarking tool that outputs CSV data for plotting parsing time vs input length.
+//! Benchmarking tool for invalid scannerless inputs.
 //!
 //! Usage:
-//!   cargo run --release --bin benchmark_csv
+//!   cargo run --release --bin benchmark_csv_invalid
 //!
 //! Output:
-//!   Creates a CSV file in results/benchmark_csv/ with columns:
-//!   parser, input_length, tokens, median_time_ns, mad_ns, iterations
+//!   Creates a CSV file in results/benchmark_csv_invalid/ with columns:
+//!   parser, input_length, tokens, median_time_ns, mad_ns, iterations, recognized, reject_correct
 use memory_stats::memory_stats;
 use parser_comparison::grammars;
 use parser_comparison::parse_tree::ParseTree;
@@ -14,7 +14,6 @@ use parser_comparison::parsers::gll::ll;
 use parser_comparison::parsers::glr::lr;
 use parser_comparison::parsers::glr::table_generator;
 use parser_comparison::parsers::{cyk, earley_leo, gll, glr, valiant};
-use parser_comparison::tree;
 use std::collections::HashSet;
 use std::fs::{self, File};
 use std::hint::black_box;
@@ -55,77 +54,77 @@ const CONFIGS: &[GrammarConfig] = &[
     GrammarConfig {
         name: "ansi_c",
         grammar_path: "grammars/ansi_c.json",
-        input_paths: &["input/ansi_c.txt"],
+        input_paths: &["input/ansi_c_invalid.txt"],
         table_path: "table/ansi_c_glr_table.csv",
         lr_table_path: "table/ansi_c_lr_table.csv",
         generate_table: false,
-        parsers: ALL_PARSERS,
+        parsers: FAST_PARSERS,
     },
     // ----- Bool -----
     GrammarConfig {
         name: "bool",
         grammar_path: "grammars/bool.json",
-        input_paths: &["input/bool.txt"],
+        input_paths: &["input/bool_invalid.txt"],
         table_path: "table/bool_glr_table.csv",
         lr_table_path: "table/bool_lr_table.csv",
         generate_table: true,
-        parsers: ALL_PARSERS,
+        parsers: FAST_PARSERS,
     },
     // ----- Calculator -----
     GrammarConfig {
         name: "calc",
         grammar_path: "grammars/calc.json",
-        input_paths: &["input/expr.txt"],
+        input_paths: &["input/expr_invalid.txt"],
         table_path: "table/calc_glr_table.csv",
         lr_table_path: "table/calc_lr_table.csv",
         generate_table: false,
-        parsers: ALL_PARSERS,
+        parsers: FAST_PARSERS,
     },
     // ----- Calculator LL(1) -----
     GrammarConfig {
         name: "calc_ll1",
         grammar_path: "grammars/ll1_calc.json",
-        input_paths: &["input/expr.txt"],
+        input_paths: &["input/expr_invalid.txt"],
         table_path: "table/calc_ll1_glr_table.csv",
         lr_table_path: "table/calc_ll1_lr_table.csv",
         generate_table: true,
-        parsers: ALL_PARSERS,
+        parsers: FAST_PARSERS,
     },
     // ----- Expr -----
     GrammarConfig {
         name: "expr",
         grammar_path: "grammars/expr.json",
-        input_paths: &["input/expr.txt"],
+        input_paths: &["input/expr_invalid.txt"],
         table_path: "table/expr_glr_table.csv",
         lr_table_path: "table/expr_lr_table.csv",
         generate_table: false,
-        parsers: ALL_PARSERS,
+        parsers: FAST_PARSERS,
     },
     // ----- Expr Ambiguous -----
     GrammarConfig {
         name: "expr_ambi",
         grammar_path: "grammars/expr_ambi.json",
-        input_paths: &["input/expr.txt"],
+        input_paths: &["input/expr_invalid.txt"],
         table_path: "table/expr_ambi_glr_table.csv",
         lr_table_path: "table/expr_ambi_lr_table.csv",
         generate_table: false,
-        parsers: ALL_PARSERS,
+        parsers: FAST_PARSERS,
     },
     // ----- C++ -----
     GrammarConfig {
         name: "cpp",
         grammar_path: "grammars/cpp.json",
-        input_paths: &["input/cpp.txt"],
+        input_paths: &["input/cpp_invalid.txt"],
         table_path: "table/cpp_glr_table.csv",
         lr_table_path: "table/cpp_lr_table.csv",
-        generate_table: true,
+        generate_table: false,
         parsers: FAST_PARSERS,
     },
     // ----- CSS -----
     GrammarConfig {
         name: "css",
         grammar_path: "grammars/css.json",
-        input_paths: &["input/css.txt"],
+        input_paths: &["input/css_invalid.txt"],
         table_path: "table/css_glr_table.csv",
         lr_table_path: "table/css_lr_table.csv",
         generate_table: false,
@@ -135,7 +134,7 @@ const CONFIGS: &[GrammarConfig] = &[
     GrammarConfig {
         name: "html",
         grammar_path: "grammars/html.json",
-        input_paths: &["input/html.txt"],
+        input_paths: &["input/html_invalid.txt"],
         table_path: "table/html_glr_table.csv",
         lr_table_path: "table/html_lr_table.csv",
         generate_table: false,
@@ -145,27 +144,27 @@ const CONFIGS: &[GrammarConfig] = &[
     GrammarConfig {
         name: "json",
         grammar_path: "grammars/json.json",
-        input_paths: &["input/json.txt"],
+        input_paths: &["input/json_invalid.txt"],
         table_path: "table/json_glr_table.csv",
         lr_table_path: "table/json_lr_table.csv",
-        generate_table: true,
+        generate_table: false,
         parsers: FAST_PARSERS,
     },
     // // ----- Json LL(1) -----
     GrammarConfig {
         name: "json_ll1",
         grammar_path: "grammars/ll1_json.json",
-        input_paths: &["input/json.txt"],
+        input_paths: &["input/json_invalid.txt"],
         table_path: "table/json_ll1_glr_table.csv",
         lr_table_path: "table/json_ll1_lr_table.csv",
-        generate_table: true,
+        generate_table: false,
         parsers: FAST_PARSERS,
     },
     // // ----- Json LR(1) -----
     GrammarConfig {
         name: "json_lr",
         grammar_path: "grammars/lr_json.json",
-        input_paths: &["input/json.txt"],
+        input_paths: &["input/json_invalid.txt"],
         table_path: "table/lr_json_glr_table.csv",
         lr_table_path: "table/lr_json_lr_table.csv",
         generate_table: false,
@@ -175,7 +174,7 @@ const CONFIGS: &[GrammarConfig] = &[
     GrammarConfig {
         name: "json_ambi",
         grammar_path: "grammars/json_ambi.json",
-        input_paths: &["input/json.txt"],
+        input_paths: &["input/json_invalid.txt"],
         table_path: "table/json_ambi_glr_table.csv",
         lr_table_path: "table/json_ambi_lr_table.csv",
         generate_table: false,
@@ -185,7 +184,7 @@ const CONFIGS: &[GrammarConfig] = &[
     GrammarConfig {
         name: "java",
         grammar_path: "grammars/jsl18.json",
-        input_paths: &["input/java.txt"],
+        input_paths: &["input/java_invalid.txt"],
         table_path: "table/java_glr_table.csv",
         lr_table_path: "table/java_lr_table.csv",
         generate_table: false,
@@ -195,17 +194,17 @@ const CONFIGS: &[GrammarConfig] = &[
     GrammarConfig {
         name: "pascal",
         grammar_path: "grammars/pascal.json",
-        input_paths: &["input/pascal.txt"],
+        input_paths: &["input/pascal_invalid.txt"],
         table_path: "table/pascal_glr_table.csv",
         lr_table_path: "table/pascal_lr_table.csv",
         generate_table: false,
         parsers: FAST_PARSERS,
     },
-    // // // ----- TinyPascal -----
+    // // ----- TinyPascal -----
     GrammarConfig {
         name: "tinypascal",
         grammar_path: "grammars/ll1_tinypascal.json",
-        input_paths: &["input/tinypascal.txt"],
+        input_paths: &["input/tinypascal_invalid.txt"],
         table_path: "table/tinypascal_glr_table.csv",
         lr_table_path: "table/tinypascal_lr_table.csv",
         generate_table: true,
@@ -215,17 +214,17 @@ const CONFIGS: &[GrammarConfig] = &[
     GrammarConfig {
         name: "sexp",
         grammar_path: "grammars/sexp.json",
-        input_paths: &["input/sexp.txt"],
+        input_paths: &["input/sexp_invalid.txt"],
         table_path: "table/sexp_glr_table.csv",
         lr_table_path: "table/sexp_lr_table.csv",
         generate_table: true,
-        parsers: ALL_PARSERS,
+        parsers: FAST_PARSERS,
     },
     // ----- S-exp LL(1) -----
     GrammarConfig {
         name: "sexp_ll1",
         grammar_path: "grammars/ll1_sexp.json",
-        input_paths: &["input/sexp.txt"],
+        input_paths: &["input/sexp_invalid.txt"],
         table_path: "table/sexp_ll1_glr_table.csv",
         lr_table_path: "table/sexp_ll1_lr_table.csv",
         generate_table: true,
@@ -235,7 +234,7 @@ const CONFIGS: &[GrammarConfig] = &[
     GrammarConfig {
         name: "shell",
         grammar_path: "grammars/shell.json",
-        input_paths: &["input/shell.txt"],
+        input_paths: &["input/shell_invalid.txt"],
         table_path: "table/shell_glr_table.csv",
         lr_table_path: "table/shell_lr_table.csv",
         generate_table: false,
@@ -245,7 +244,7 @@ const CONFIGS: &[GrammarConfig] = &[
     GrammarConfig {
         name: "sql",
         grammar_path: "grammars/sql.json",
-        input_paths: &["input/sql.txt"],
+        input_paths: &["input/sql_invalid.txt"],
         table_path: "table/sql_glr_table.csv",
         lr_table_path: "table/sql_lr_table.csv",
         generate_table: false,
@@ -255,7 +254,7 @@ const CONFIGS: &[GrammarConfig] = &[
     GrammarConfig {
         name: "tinyc",
         grammar_path: "grammars/tinyc.json",
-        input_paths: &["input/tinyc.txt"],
+        input_paths: &["input/tinyc_invalid.txt"],
         table_path: "table/tinyc_glr_table.csv",
         lr_table_path: "table/tinyc_lr_table.csv",
         generate_table: false,
@@ -265,7 +264,7 @@ const CONFIGS: &[GrammarConfig] = &[
     GrammarConfig {
         name: "tinyc_lr",
         grammar_path: "grammars/lr_tinyc.json",
-        input_paths: &["input/tinyc_lr.txt"],
+        input_paths: &["input/tinyc_lr_invalid.txt"],
         table_path: "table/lr_tinyc_glr_table.csv",
         lr_table_path: "table/lr_tinyc_lr_table.csv",
         generate_table: false,
@@ -278,10 +277,10 @@ const MIN_ITERATIONS: u32 = 10;
 const MAX_ITERATIONS: u32 = 20;
 const TARGET_TIME: Duration = Duration::from_millis(500);
 const TIMEOUT_THRESHOLD: f64 = 1_000_000_000.0; // 1 seconds in ns
-const RESULT_DIR: &str = "results/benchmark_csv";
+const RESULT_DIR: &str = "results/benchmark_csv_invalid";
 
 fn output_path(config_name: &str) -> String {
-    format!("{}/benchmark_{}.csv", RESULT_DIR, config_name)
+    format!("{}/benchmark_{}_invalid.csv", RESULT_DIR, config_name)
 }
 
 #[derive(Clone)]
@@ -294,7 +293,7 @@ struct BenchmarkResult {
     peak_memory_bytes: usize,
     iterations: u32,
     recognized: bool,
-    parse_correct: bool,
+    reject_correct: bool,
     status: String, // "OK", "CONFLICT", "TIMEOUT"
 }
 
@@ -310,7 +309,7 @@ impl BenchmarkResult {
             self.peak_memory_bytes,
             self.iterations,
             self.recognized,
-            self.parse_correct,
+            self.reject_correct,
             self.status
         )
     }
@@ -325,7 +324,7 @@ impl BenchmarkResult {
             peak_memory_bytes: 0,
             iterations: 0,
             recognized: false,
-            parse_correct: false,
+            reject_correct: false,
             status: "CONFLICT".to_string(),
         }
     }
@@ -340,7 +339,7 @@ impl BenchmarkResult {
             peak_memory_bytes: 0,
             iterations: 0,
             recognized: false,
-            parse_correct: false,
+            reject_correct: false,
             status: "TIMEOUT".to_string(),
         }
     }
@@ -449,15 +448,15 @@ where
     (median, mad, iterations)
 }
 
-/// Check recognition and parse correctness in a single parse call.
-/// Returns (recognized, parse_correct).
-fn check_correctness<F>(mut parse_fn: F, expected: &str) -> (bool, bool)
+/// Check whether an invalid input is rejected in a single parse call.
+/// Returns (recognized, reject_correct).
+fn check_correctness<F>(mut parse_fn: F) -> (bool, bool)
 where
     F: FnMut() -> Option<ParseTree>,
 {
     match parse_fn() {
-        Some(tree) => (true, tree.to_flat_string() == expected),
-        None => (false, false),
+        Some(_) => (true, false),
+        None => (false, true),
     }
 }
 
@@ -467,7 +466,7 @@ where
 
 fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
     println!("\n{}", "=".repeat(60));
-    println!("Benchmarking: {} grammar", config.name);
+    println!("Benchmarking invalid inputs: {} grammar", config.name);
     println!("  Grammar: {}", config.grammar_path);
     println!("  Inputs:  {:?}", config.input_paths);
     println!("{}", "=".repeat(60));
@@ -478,7 +477,7 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
     let mut csv_file = File::create(&filename)?;
     writeln!(
         csv_file,
-        "parser,input_length,token_count,median_time_ns,mad_ns,peak_memory_bytes,iterations,recognized,parse_correct,status"
+        "parser,input_length,token_count,median_time_ns,mad_ns,peak_memory_bytes,iterations,recognized,reject_correct,status"
     )?;
 
     // Load grammar
@@ -570,7 +569,7 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
     let lines: Vec<&str> = all_input_lines.iter().map(|s| s.as_str()).collect();
 
     println!(
-        "Found {} inputs (lengths: {} to {} bytes)",
+        "Found {} invalid inputs (lengths: {} to {} bytes)",
         lines.len(),
         lines.first().map(|l| l.len()).unwrap_or(0),
         lines.last().map(|l| l.len()).unwrap_or(0)
@@ -627,8 +626,8 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
 
             let result = match *parser_name {
                 "Earley" => {
-                    let (recognized, parse_correct) =
-                        check_correctness(|| earley.parse(tokens.clone()), line);
+                    let (recognized, reject_correct) =
+                        check_correctness(|| earley.parse(tokens.clone()));
                     let peak_mem = measure_peak_memory(|| earley.parse(tokens.clone()));
                     let (median, mad, iters) = measure(|| earley.parse(tokens.clone()));
                     BenchmarkResult {
@@ -640,13 +639,13 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
                         peak_memory_bytes: peak_mem,
                         iterations: iters,
                         recognized,
-                        parse_correct,
+                        reject_correct,
                         status: "OK".to_string(),
                     }
                 }
                 "Leo" => {
-                    let (recognized, parse_correct) =
-                        check_correctness(|| leo.parse(tokens.clone()), line);
+                    let (recognized, reject_correct) =
+                        check_correctness(|| leo.parse(tokens.clone()));
                     let peak_mem = measure_peak_memory(|| leo.parse(tokens.clone()));
                     let (median, mad, iters) = measure(|| leo.parse(tokens.clone()));
                     BenchmarkResult {
@@ -658,13 +657,13 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
                         peak_memory_bytes: peak_mem,
                         iterations: iters,
                         recognized,
-                        parse_correct,
+                        reject_correct,
                         status: "OK".to_string(),
                     }
                 }
                 "GLL" => {
-                    let (recognized, parse_correct) =
-                        check_correctness(|| gll_parser.parse_one(&tokens), line);
+                    let (recognized, reject_correct) =
+                        check_correctness(|| gll_parser.parse_one(&tokens));
                     let peak_mem = measure_peak_memory(|| gll_parser.parse_one(&tokens));
                     let (median, mad, iters) = measure(|| gll_parser.parse_one(&tokens));
                     BenchmarkResult {
@@ -676,13 +675,13 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
                         peak_memory_bytes: peak_mem,
                         iterations: iters,
                         recognized,
-                        parse_correct,
+                        reject_correct,
                         status: "OK".to_string(),
                     }
                 }
                 "RNGLR" => {
-                    let (recognized, parse_correct) =
-                        check_correctness(|| rnglr.parse(&glr_tokens), line);
+                    let (recognized, reject_correct) =
+                        check_correctness(|| rnglr.parse(&glr_tokens));
                     let peak_mem = measure_peak_memory(|| rnglr.parse(&glr_tokens));
                     let (median, mad, iters) = measure(|| rnglr.parse(&glr_tokens));
                     BenchmarkResult {
@@ -694,13 +693,13 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
                         peak_memory_bytes: peak_mem,
                         iterations: iters,
                         recognized,
-                        parse_correct,
+                        reject_correct,
                         status: "OK".to_string(),
                     }
                 }
                 "BRNGLR" => {
-                    let (recognized, parse_correct) =
-                        check_correctness(|| brnglr.parse(&glr_tokens), line);
+                    let (recognized, reject_correct) =
+                        check_correctness(|| brnglr.parse(&glr_tokens));
                     let peak_mem = measure_peak_memory(|| brnglr.parse(&glr_tokens));
                     let (median, mad, iters) = measure(|| brnglr.parse(&glr_tokens));
                     BenchmarkResult {
@@ -712,13 +711,13 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
                         peak_memory_bytes: peak_mem,
                         iterations: iters,
                         recognized,
-                        parse_correct,
+                        reject_correct,
                         status: "OK".to_string(),
                     }
                 }
                 "CYK" => {
-                    let (recognized, parse_correct) =
-                        check_correctness(|| cyk::parse(&cnf_grammar, &cnf_tokens), line);
+                    let (recognized, reject_correct) =
+                        check_correctness(|| cyk::parse(&cnf_grammar, &cnf_tokens));
                     let peak_mem = measure_peak_memory(|| cyk::parse(&cnf_grammar, &cnf_tokens));
                     let (median, mad, iters) = measure(|| cyk::parse(&cnf_grammar, &cnf_tokens));
                     BenchmarkResult {
@@ -730,13 +729,13 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
                         peak_memory_bytes: peak_mem,
                         iterations: iters,
                         recognized,
-                        parse_correct,
+                        reject_correct,
                         status: "OK".to_string(),
                     }
                 }
                 "Valiant" => {
-                    let (recognized, parse_correct) =
-                        check_correctness(|| valiant::parse(&cnf_grammar, &cnf_tokens), line);
+                    let (recognized, reject_correct) =
+                        check_correctness(|| valiant::parse(&cnf_grammar, &cnf_tokens));
                     let peak_mem =
                         measure_peak_memory(|| valiant::parse(&cnf_grammar, &cnf_tokens));
                     let (median, mad, iters) =
@@ -750,14 +749,14 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
                         peak_memory_bytes: peak_mem,
                         iterations: iters,
                         recognized,
-                        parse_correct,
+                        reject_correct,
                         status: "OK".to_string(),
                     }
                 }
                 "LR" => {
                     if let Some(parser) = &lr_parser {
-                        let (recognized, parse_correct) =
-                            check_correctness(|| parser.parse(&glr_tokens), line);
+                        let (recognized, reject_correct) =
+                            check_correctness(|| parser.parse(&glr_tokens));
                         let peak_mem = measure_peak_memory(|| parser.parse(&glr_tokens));
                         let (median, mad, iters) = measure(|| parser.parse(&glr_tokens));
                         BenchmarkResult {
@@ -769,7 +768,7 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
                             peak_memory_bytes: peak_mem,
                             iterations: iters,
                             recognized,
-                            parse_correct,
+                            reject_correct,
                             status: "OK".to_string(),
                         }
                     } else {
@@ -778,8 +777,8 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
                 }
                 "LL" => {
                     if let Some(parser) = &ll_parser {
-                        let (recognized, parse_correct) =
-                            check_correctness(|| parser.parse(&tokens), line);
+                        let (recognized, reject_correct) =
+                            check_correctness(|| parser.parse(&tokens));
                         let peak_mem = measure_peak_memory(|| parser.parse(&tokens));
                         let (median, mad, iters) = measure(|| parser.parse(&tokens));
                         BenchmarkResult {
@@ -791,7 +790,7 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
                             peak_memory_bytes: peak_mem,
                             iterations: iters,
                             recognized,
-                            parse_correct,
+                            reject_correct,
                             status: "OK".to_string(),
                         }
                     } else {
@@ -801,27 +800,31 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
                 _ => continue,
             };
 
-            let recog_status = if result.recognized { "R" } else { "✗" };
-            let parse_status = if result.parse_correct { "P" } else { "✗" };
+            let outcome_status = if result.recognized {
+                "ACCEPT"
+            } else {
+                "REJECT"
+            };
+            let reject_status = if result.reject_correct { "OK" } else { "FAIL" };
             println!(
-                "    [{}|{}] {:8}: {:>12.0} ns ± {:>8.0} ns ({} iters)",
-                recog_status,
-                parse_status,
+                "    [{:6}|{}] {:8}: {:>12.0} ns ± {:>8.0} ns ({} iters)",
+                outcome_status,
+                reject_status,
                 result.parser,
                 result.median_time_ns,
                 result.mad_ns,
                 result.iterations
             );
 
-            if !result.recognized {
+            if result.recognized {
                 eprintln!(
-                    "    [WARN] Parser {} failed to recognize input with length {} ({} tokens)",
+                    "    [WARN] Parser {} accepted invalid input with length {} ({} tokens)",
                     result.parser, result.input_length, result.token_count
                 );
             }
-            if !result.parse_correct {
+            if !result.reject_correct {
                 eprintln!(
-                    "    [WARN] Parser {} produced incorrect parse tree for input with length {} ({} tokens)",
+                    "    [WARN] Parser {} did not reject invalid input with length {} ({} tokens)",
                     result.parser, result.input_length, result.token_count
                 );
             }
@@ -845,9 +848,9 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
 }
 
 fn run_main() {
-    println!("Parser Benchmark Tool");
+    println!("Invalid Input Parser Benchmark Tool");
     println!("=====================");
-    println!("Generating CSV data for plotting parsing time vs input length\n");
+    println!("Generating CSV data for rejection behavior vs input length\n");
     println!("Configuration:");
     println!("  Warmup iterations: {}", WARMUP_ITERATIONS);
     println!("  Min iterations: {}", MIN_ITERATIONS);
@@ -880,10 +883,10 @@ mod tests {
     use super::*;
 
     #[test]
-    fn output_path_uses_benchmark_csv_result_folder() {
+    fn output_path_uses_benchmark_csv_invalid_result_folder() {
         assert_eq!(
             output_path("json"),
-            "results/benchmark_csv/benchmark_json.csv"
+            "results/benchmark_csv_invalid/benchmark_json_invalid.csv"
         );
     }
 }

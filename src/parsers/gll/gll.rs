@@ -893,22 +893,21 @@ impl GLLParser {
     fn sppf_to_tree(&self, root_id: SPPFNodeId) -> Option<ParseTree> {
         let mut visited = HashSet::default();
         self.flatten_tree_first(root_id, &mut visited)
-            .into_iter()
-            .next()
+            .and_then(|trees| trees.into_iter().next())
     }
 
-    /// Flatten one path through the SPPF by taking the first packed alternative.
+    /// Flatten one valid path through the SPPF.
     ///
-    /// `parse_all` is responsible for enumerating ambiguity. This method avoids
-    /// recursively scoring already-materialized trees, which can overflow the
-    /// stack on large accepted inputs.
+    /// `parse_all` is responsible for enumerating ambiguity. This method tries
+    /// packed alternatives in insertion order and skips cyclic alternatives that
+    /// cannot materialize a finite tree for the current span.
     fn flatten_tree_first(
         &self,
         node_id: SPPFNodeId,
         visited: &mut HashSet<SPPFNodeId>,
-    ) -> Vec<ParseTree> {
+    ) -> Option<Vec<ParseTree>> {
         if visited.contains(&node_id) {
-            return vec![];
+            return None;
         }
         visited.insert(node_id);
 
@@ -919,25 +918,34 @@ impl GLLParser {
             let result = match g_node.kind {
                 GKind::Terminal(t_id) => {
                     let name = self.grammar.terminal_str(t_id).unwrap_or("?").to_string();
-                    vec![ParseTree::leaf(&name)]
+                    Some(vec![ParseTree::leaf(&name)])
                 }
-                GKind::Epsilon => vec![ParseTree::leaf("ε")],
-                _ => vec![],
+                GKind::Epsilon => Some(vec![ParseTree::leaf("ε")]),
+                _ => None,
             };
             visited.remove(&node_id);
             return result;
         }
 
-        let result = if let Some(pack_id) = node.pack_ns.iter().next() {
+        let mut pack_ids: Vec<PackID> = node.pack_ns.iter().copied().collect();
+        pack_ids.sort_by_key(|pack_id| pack_id.0);
+
+        for pack_id in pack_ids {
             let pack = &self.sppf.pack_nodes[pack_id.0];
             let mut children = Vec::new();
 
             if let Some(left_id) = pack.left_c {
-                children.extend(self.flatten_tree_first(left_id, visited));
+                let Some(left_children) = self.flatten_tree_first(left_id, visited) else {
+                    continue;
+                };
+                children.extend(left_children);
             }
-            children.extend(self.flatten_tree_first(pack.right_c, visited));
+            let Some(right_children) = self.flatten_tree_first(pack.right_c, visited) else {
+                continue;
+            };
+            children.extend(right_children);
 
-            match g_node.kind {
+            let result = match g_node.kind {
                 GKind::LHS(nt_id) => {
                     let name = self
                         .grammar
@@ -947,13 +955,14 @@ impl GLLParser {
                     vec![ParseTree::new(ParseSymbol::NonTerminal(name), children)]
                 }
                 _ => children,
-            }
-        } else {
-            vec![]
-        };
+            };
+
+            visited.remove(&node_id);
+            return Some(result);
+        }
 
         visited.remove(&node_id);
-        result
+        None
     }
 
     /// Parse `input` and materialize one parse tree from the SPPF.
@@ -1184,7 +1193,7 @@ mod tests {
             grammars::load_grammar_from_file(path).expect("Failed to load S-expression grammar");
 
         // let input = r#"((()..) () () (-4.0.((+8.93 (((((+."wGH").())."`").((.."U"))).((().((-33) (((y/ (() () (((/. ())).())) . ()).(((().(((+1.5.-0).(().+116.36)).(("hDk1".(("b").((..("yk{".()))..))) ((() ("^".()) "Kj") 4.5329 ((((..(/ -55)).((().(())).(((-00."vl") +6.08))))).(-70050.2.(((/.((() (/8)) ((...).((().(()."9Y")).())))).()).(85797.03.(((p.(((().("b".())).(().(((-17.0.("|")).*j).())))."HMIY")).(-9.40..)).()))))))))).((().00).())).(/.(().((().(9.50.("Tq)".(((..((+2..).((()."K")))).920) (-2))))).((((*.)..)).(((((..++)).((. ("dIF") "[" -98 (())).((().((((().("J"..)).-1523)).(((((-.(+7.4.((())))) 1).()))..)))..-)))."y)D")..))))))).()))).060.68)) ()).e2)) . r* .)"#;
-        let input = r#"(.)"#;
+        let input = r#"(a b c)"#;
         let tokens: Vec<u32> = grammar.tokenize(input).expect("Failed to tokenize input");
 
         println!("\n=== Testing GLL Parser (S-expression) ===");
@@ -1228,5 +1237,25 @@ mod tests {
             2,
             "Expected exactly 2 parse trees for id+id+id"
         );
+    }
+
+    #[test]
+    fn test_gll_ansi_c_line_50_tree_yield_matches_input() {
+        let grammar =
+            grammars::load_grammar_from_file("grammars/ansi_c.json").expect("load ansi_c grammar");
+        let input = "volatile;volatile;m{}static*C;x{void;}yregisterconst*p=sizeof(volatile[]);";
+        let tokens = grammar.tokenize(input).expect("tokenize ansi_c line 50");
+
+        let mut recognizer = GLLParser::new(&grammar);
+        assert!(
+            recognizer.recognize(&tokens),
+            "GLL should recognize line 50"
+        );
+
+        let mut parser = GLLParser::new(&grammar);
+        let tree = parser
+            .parse_one(&tokens)
+            .expect("GLL should materialize a tree for line 50");
+        assert_eq!(tree.to_flat_string(), input);
     }
 }

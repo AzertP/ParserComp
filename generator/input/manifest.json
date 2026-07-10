@@ -1,7 +1,7 @@
 {
   "candidate_count": 1000,
   "complex_limit": 10000,
-  "generated_at_utc": "2026-07-10T04:57:00.519968+00:00",
+  "generated_at_utc": "2026-07-10T08:52:44.685458+00:00",
   "grammars": [
     {
       "attempts": 1394,
@@ -206,6 +206,100 @@
           "count": 2,
           "max": 48305,
           "min": 38645
+        }
+      ],
+      "strata_mode": "candidate-spread",
+      "unique_accepted_candidates": 1000
+    },
+    {
+      "attempts": 1170,
+      "bucket": "simple",
+      "generator_grammar": "generator/grammars/tinypascal.json",
+      "generator_grammar_sha256": "d2357cf21a2f36bc9be558c41ca96ab463ce11824c62ffd9e1b16f9ddd9caa83",
+      "length_limit": 50000,
+      "max_depth": 26,
+      "max_length": 49416,
+      "median_length": 806.0,
+      "min_depth": 1,
+      "min_length": 19,
+      "name": "tinypascal",
+      "output_path": "generator/input/tinypascal.txt",
+      "output_sha256": "4a8368fec9e4920edff133a29ea111702cef4a232870060b76b96d3811fc436a",
+      "rule_weighted_symbols": [],
+      "selected_count": 150,
+      "source_grammar": "grammars/ll1_tinypascal.json",
+      "strata": [
+        {
+          "count": 122,
+          "max": 9898,
+          "min": 19
+        },
+        {
+          "count": 11,
+          "max": 19778,
+          "min": 9899
+        },
+        {
+          "count": 6,
+          "max": 29658,
+          "min": 19779
+        },
+        {
+          "count": 6,
+          "max": 39537,
+          "min": 29659
+        },
+        {
+          "count": 5,
+          "max": 49416,
+          "min": 39538
+        }
+      ],
+      "strata_mode": "candidate-spread",
+      "unique_accepted_candidates": 1000
+    },
+    {
+      "attempts": 1262,
+      "bucket": "simple",
+      "generator_grammar": "generator/grammars/tinyc_lr.json",
+      "generator_grammar_sha256": "9d1e2441beeffe4dc63be214e298e538e76fffcf99d68d8f2246d0854d571380",
+      "length_limit": 50000,
+      "max_depth": 26,
+      "max_length": 48868,
+      "median_length": 1288.5,
+      "min_depth": 1,
+      "min_length": 1,
+      "name": "tinyc_lr",
+      "output_path": "generator/input/tinyc_lr.txt",
+      "output_sha256": "ebd4430329225493285cfa703bbba20b1e5c8ecd47eb4f8b4fbaaf5845647ba9",
+      "rule_weighted_symbols": [],
+      "selected_count": 150,
+      "source_grammar": "grammars/lr_tinyc.json",
+      "strata": [
+        {
+          "count": 121,
+          "max": 9774,
+          "min": 1
+        },
+        {
+          "count": 15,
+          "max": 19548,
+          "min": 9775
+        },
+        {
+          "count": 8,
+          "max": 29322,
+          "min": 19549
+        },
+        {
+          "count": 4,
+          "max": 39095,
+          "min": 29323
+        },
+        {
+          "count": 2,
+          "max": 48868,
+          "min": 39096
         }
       ],
       "strata_mode": "candidate-spread",

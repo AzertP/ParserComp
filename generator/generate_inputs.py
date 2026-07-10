@@ -75,6 +75,20 @@ TARGET_CONFIGS: tuple[SyntheticConfig, ...] = (
         max_depth=26,
     ),
     SyntheticConfig(
+        "tinypascal",
+        "grammars/ll1_tinypascal.json",
+        "tinypascal",
+        SIMPLE_BUCKET,
+        max_depth=26,
+    ),
+    SyntheticConfig(
+        "tinyc_lr",
+        "grammars/lr_tinyc.json",
+        "tinyc_lr",
+        SIMPLE_BUCKET,
+        max_depth=26,
+    ),
+    SyntheticConfig(
         "bool",
         "grammars/bool.json",
         "bool",

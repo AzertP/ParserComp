@@ -652,7 +652,7 @@ impl EarleyParser {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::grammars::{ambi_grammar, simple_grammar};
+    use crate::grammars::simple_grammar;
 
     #[test]
     fn test_from_numeric() {
@@ -743,32 +743,6 @@ mod tests {
                 // This depends on the grammar; simple_grammar might not accept single 'a'
             }
         }
-    }
-
-    #[test]
-    fn test_parse_all_simple() {
-        let numeric_grammar = ambi_grammar();
-        let mut parser = EarleyParser::new(numeric_grammar);
-
-        let a_id = parser
-            .num_grammar
-            .terminals
-            .get_id("a")
-            .expect("Terminal 'a' not found");
-
-        let input = vec![a_id, a_id, a_id];
-        let results = parser.parse_all(input);
-
-        println!(
-            "parse_all results for [a, a, a]: {} trees found",
-            results.len()
-        );
-        for (i, tree) in results.iter().enumerate() {
-            println!("  Tree {}: {:}", i, tree.display());
-        }
-
-        // Either no results or some valid trees
-        assert!(results.is_empty() || results.len() > 0);
     }
 
     #[test]

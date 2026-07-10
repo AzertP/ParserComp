@@ -1071,10 +1071,6 @@ pub fn simple_grammar() -> NumericGrammar {
     load_grammar(GRAMMARS_DIR, "simple").expect("Failed to load simple grammar")
 }
 
-pub fn ambi_grammar() -> NumericGrammar {
-    load_grammar(GRAMMARS_DIR, "ambi").expect("Failed to load ambi grammar")
-}
-
 pub fn calc_grammar() -> NumericGrammar {
     load_grammar(GRAMMARS_DIR, "calc").expect("Failed to load calc grammar")
 }

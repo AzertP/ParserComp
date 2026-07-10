@@ -59,7 +59,7 @@ TARGET_CONFIGS: tuple[SyntheticConfig, ...] = (
         SIMPLE_BUCKET,
         max_depth=30,
     ),
-    SyntheticConfig("expr", "grammars/calc.json", "expr", SIMPLE_BUCKET, max_depth=22),
+    SyntheticConfig("expr", "grammars/calc.json", "expr", SIMPLE_BUCKET, max_depth=24),
     SyntheticConfig(
         "json",
         "grammars/json.json",
@@ -83,12 +83,12 @@ TARGET_CONFIGS: tuple[SyntheticConfig, ...] = (
     ),
     SyntheticConfig("ansi_c", "grammars/ansi_c.json", "ansi_c", COMPLEX_BUCKET, max_depth=18),
     SyntheticConfig("cpp", "grammars/cpp.json", "cpp", COMPLEX_BUCKET, max_depth=18),
-    SyntheticConfig("pascal", "grammars/pascal.json", "pascal", COMPLEX_BUCKET, max_depth=18),
-    SyntheticConfig("java", "grammars/jsl18.json", "java", COMPLEX_BUCKET, max_depth=18),
-    SyntheticConfig("html", "grammars/html.json", "html", COMPLEX_BUCKET, max_depth=18),
-    SyntheticConfig("css", "grammars/css.json", "css", COMPLEX_BUCKET, max_depth=18),
+    SyntheticConfig("pascal", "grammars/pascal.json", "pascal", COMPLEX_BUCKET, max_depth=26),
+    SyntheticConfig("java", "grammars/jsl18.json", "java", COMPLEX_BUCKET, max_depth=26),
+    SyntheticConfig("html", "grammars/html.json", "html", COMPLEX_BUCKET, max_depth=30),
+    SyntheticConfig("css", "grammars/css.json", "css", COMPLEX_BUCKET, max_depth=26),
     SyntheticConfig("shell", "grammars/shell.json", "shell", COMPLEX_BUCKET, max_depth=18),
-    SyntheticConfig("sql", "grammars/sql.json", "sql", COMPLEX_BUCKET, max_depth=10),
+    SyntheticConfig("sql", "grammars/sql.json", "sql", COMPLEX_BUCKET, max_depth=14),
 )
 
 

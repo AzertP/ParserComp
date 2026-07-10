@@ -1,7 +1,7 @@
 {
   "candidate_count": 1000,
   "complex_limit": 10000,
-  "generated_at_utc": "2026-07-10T04:16:28.472731+00:00",
+  "generated_at_utc": "2026-07-10T04:57:00.519968+00:00",
   "grammars": [
     {
       "attempts": 1394,
@@ -56,47 +56,47 @@
       "unique_accepted_candidates": 1000
     },
     {
-      "attempts": 1060,
+      "attempts": 1063,
       "bucket": "simple",
       "generator_grammar": "generator/grammars/expr.json",
       "generator_grammar_sha256": "2cb9d0758dea04000e52acd7ac1d60264a56f7f82678da9fa21ba0994fe207c6",
       "length_limit": 50000,
-      "max_depth": 22,
-      "max_length": 27318,
-      "median_length": 263.5,
+      "max_depth": 24,
+      "max_length": 44428,
+      "median_length": 392.0,
       "min_depth": 1,
       "min_length": 1,
       "name": "expr",
       "output_path": "generator/input/expr.txt",
-      "output_sha256": "bc4b95aa7edc0bd655b8e78aa0b91fa84a3d96837bcb2bc176f4c3591b256c8d",
+      "output_sha256": "765e0540a52756722089bfe17272fb7fc99db2dc818ad27ac07c0e6fe00bbb3a",
       "rule_weighted_symbols": [],
       "selected_count": 150,
       "source_grammar": "grammars/calc.json",
       "strata": [
         {
-          "count": 130,
-          "max": 5464,
+          "count": 128,
+          "max": 8886,
           "min": 1
         },
         {
           "count": 11,
-          "max": 10928,
-          "min": 5465
+          "max": 17772,
+          "min": 8887
         },
         {
-          "count": 4,
-          "max": 16392,
-          "min": 10929
+          "count": 7,
+          "max": 26658,
+          "min": 17773
+        },
+        {
+          "count": 1,
+          "max": 35543,
+          "min": 26659
         },
         {
           "count": 3,
-          "max": 21855,
-          "min": 16393
-        },
-        {
-          "count": 2,
-          "max": 27318,
-          "min": 21856
+          "max": 44428,
+          "min": 35544
         }
       ],
       "strata_mode": "candidate-spread",
@@ -355,188 +355,188 @@
       "unique_accepted_candidates": 1000
     },
     {
-      "attempts": 1078,
+      "attempts": 1156,
       "bucket": "complex",
       "generator_grammar": "generator/grammars/pascal.json",
       "generator_grammar_sha256": "dc5d65a2384af498f8c18a35322889f5a835b9cd5d788f89b8ae7a651bbbc7a0",
       "length_limit": 10000,
-      "max_depth": 18,
-      "max_length": 3231,
-      "median_length": 288.0,
+      "max_depth": 26,
+      "max_length": 9811,
+      "median_length": 567.5,
       "min_depth": 1,
       "min_length": 17,
       "name": "pascal",
       "output_path": "generator/input/pascal.txt",
-      "output_sha256": "83f168f2b385b805bf9175da9dc3e0b0ab6cd504fa795d5195c6f53dfb08cc0b",
+      "output_sha256": "1d6e3fad90bfbddcdcf0e891723a618e163a2d8e500676f9440649ac407711b9",
       "rule_weighted_symbols": [],
       "selected_count": 150,
       "source_grammar": "grammars/pascal.json",
       "strata": [
         {
-          "count": 102,
-          "max": 659,
+          "count": 108,
+          "max": 1975,
           "min": 17
         },
         {
-          "count": 25,
-          "max": 1302,
-          "min": 660
+          "count": 21,
+          "max": 3934,
+          "min": 1976
         },
         {
-          "count": 13,
-          "max": 1945,
-          "min": 1303
+          "count": 9,
+          "max": 5893,
+          "min": 3935
         },
         {
-          "count": 8,
-          "max": 2588,
-          "min": 1946
+          "count": 7,
+          "max": 7852,
+          "min": 5894
         },
         {
-          "count": 2,
-          "max": 3231,
-          "min": 2589
+          "count": 5,
+          "max": 9811,
+          "min": 7853
         }
       ],
       "strata_mode": "candidate-spread",
       "unique_accepted_candidates": 1000
     },
     {
-      "attempts": 1078,
+      "attempts": 1150,
       "bucket": "complex",
       "generator_grammar": "generator/grammars/java.json",
       "generator_grammar_sha256": "202046ecdcb3d946f240da80c835c88cb9d2746cdee55d419b680fe3b1454eca",
       "length_limit": 10000,
-      "max_depth": 18,
-      "max_length": 4089,
-      "median_length": 239.5,
+      "max_depth": 26,
+      "max_length": 9767,
+      "median_length": 442.5,
       "min_depth": 1,
-      "min_length": 9,
+      "min_length": 1,
       "name": "java",
       "output_path": "generator/input/java.txt",
-      "output_sha256": "6fa7d0ebb0edff5916b87579ea022e6104444bebfe98643a7eaacb8d68cb9222",
+      "output_sha256": "4a1db5f868f1d5a4a752eb07ac744c2df5f82a933a2c0d009f5498fe3c7e0434",
       "rule_weighted_symbols": [],
       "selected_count": 150,
       "source_grammar": "grammars/jsl18.json",
       "strata": [
         {
-          "count": 123,
-          "max": 825,
-          "min": 9
+          "count": 120,
+          "max": 1954,
+          "min": 1
         },
         {
-          "count": 19,
-          "max": 1641,
-          "min": 826
+          "count": 15,
+          "max": 3908,
+          "min": 1955
         },
         {
-          "count": 6,
-          "max": 2457,
-          "min": 1642
+          "count": 7,
+          "max": 5861,
+          "min": 3909
         },
         {
-          "count": 1,
-          "max": 3273,
-          "min": 2458
+          "count": 4,
+          "max": 7814,
+          "min": 5862
         },
         {
-          "count": 1,
-          "max": 4089,
-          "min": 3274
+          "count": 4,
+          "max": 9767,
+          "min": 7815
         }
       ],
       "strata_mode": "candidate-spread",
       "unique_accepted_candidates": 1000
     },
     {
-      "attempts": 1433,
+      "attempts": 1217,
       "bucket": "complex",
       "generator_grammar": "generator/grammars/html.json",
       "generator_grammar_sha256": "c4993055fa942f73c27601a49bd6a0babcaddfbc7b07392f2e25a7d888d9f216",
       "length_limit": 10000,
-      "max_depth": 18,
-      "max_length": 1476,
-      "median_length": 242.0,
+      "max_depth": 30,
+      "max_length": 9750,
+      "median_length": 645.5,
       "min_depth": 1,
       "min_length": 54,
       "name": "html",
       "output_path": "generator/input/html.txt",
-      "output_sha256": "f7e6e62b9703efc314b15c92d1f1570a7e17b4f29a340dc80820a4e7bfd4df75",
+      "output_sha256": "7bbc53076268d652e03d2f9e9a853b9ed95c6d53400a4eb31439745c13d3aa39",
       "rule_weighted_symbols": [],
       "selected_count": 150,
       "source_grammar": "grammars/html.json",
       "strata": [
         {
-          "count": 94,
-          "max": 338,
+          "count": 121,
+          "max": 1993,
           "min": 54
         },
         {
-          "count": 32,
-          "max": 623,
-          "min": 339
-        },
-        {
-          "count": 16,
-          "max": 908,
-          "min": 624
+          "count": 18,
+          "max": 3933,
+          "min": 1994
         },
         {
           "count": 6,
-          "max": 1192,
-          "min": 909
+          "max": 5872,
+          "min": 3934
+        },
+        {
+          "count": 3,
+          "max": 7811,
+          "min": 5873
         },
         {
           "count": 2,
-          "max": 1476,
-          "min": 1193
+          "max": 9750,
+          "min": 7812
         }
       ],
       "strata_mode": "candidate-spread",
       "unique_accepted_candidates": 1000
     },
     {
-      "attempts": 1176,
+      "attempts": 1272,
       "bucket": "complex",
       "generator_grammar": "generator/grammars/css.json",
       "generator_grammar_sha256": "2f1ce1dca64c7dc6c7a89027a47db6703dba47b2009616531b4868cdc7edf4d6",
       "length_limit": 10000,
-      "max_depth": 18,
-      "max_length": 6889,
-      "median_length": 583.5,
+      "max_depth": 26,
+      "max_length": 9973,
+      "median_length": 1066.5,
       "min_depth": 1,
       "min_length": 3,
       "name": "css",
       "output_path": "generator/input/css.txt",
-      "output_sha256": "5f8cee43845695d7b784aeebb29f630bd4b62bc4756dcf523c8d1be193a314e5",
+      "output_sha256": "8d3568c75247b917ba53b0f10b906a2a7ea5b44933b9c38b5fd2f12635d0e814",
       "rule_weighted_symbols": [],
       "selected_count": 150,
       "source_grammar": "grammars/css.json",
       "strata": [
         {
-          "count": 104,
-          "max": 1380,
+          "count": 94,
+          "max": 1997,
           "min": 3
         },
         {
-          "count": 25,
-          "max": 2758,
-          "min": 1381
+          "count": 26,
+          "max": 3991,
+          "min": 1998
         },
         {
-          "count": 12,
-          "max": 4135,
-          "min": 2759
+          "count": 11,
+          "max": 5985,
+          "min": 3992
         },
         {
-          "count": 6,
-          "max": 5512,
-          "min": 4136
+          "count": 11,
+          "max": 7979,
+          "min": 5986
         },
         {
-          "count": 3,
-          "max": 6889,
-          "min": 5513
+          "count": 8,
+          "max": 9973,
+          "min": 7980
         }
       ],
       "strata_mode": "candidate-spread",
@@ -590,47 +590,47 @@
       "unique_accepted_candidates": 1000
     },
     {
-      "attempts": 1167,
+      "attempts": 1171,
       "bucket": "complex",
       "generator_grammar": "generator/grammars/sql.json",
       "generator_grammar_sha256": "f0e1d1c40cb586eca4d52eb52bb76320c86990701a77c24bb257caf2ca6890d0",
       "length_limit": 10000,
-      "max_depth": 10,
-      "max_length": 6391,
-      "median_length": 59.5,
+      "max_depth": 14,
+      "max_length": 9994,
+      "median_length": 64.5,
       "min_depth": 1,
       "min_length": 5,
       "name": "sql",
       "output_path": "generator/input/sql.txt",
-      "output_sha256": "6ec5b2bfffce515a18b3233d5284f0be0d08762b81b4258d9eb6d7e0a50f2bbb",
+      "output_sha256": "20e9598cba91ebc87429e389306e44e5179dc51aa3633b505c78ff1d8b62efa8",
       "rule_weighted_symbols": [],
       "selected_count": 150,
       "source_grammar": "grammars/sql.json",
       "strata": [
         {
-          "count": 143,
-          "max": 1282,
+          "count": 136,
+          "max": 2002,
           "min": 5
         },
         {
-          "count": 5,
-          "max": 2560,
-          "min": 1283
+          "count": 6,
+          "max": 4000,
+          "min": 2003
         },
         {
-          "count": 1,
-          "max": 3837,
-          "min": 2561
+          "count": 3,
+          "max": 5998,
+          "min": 4001
         },
         {
-          "count": 0,
-          "max": 5114,
-          "min": 3838
+          "count": 3,
+          "max": 7996,
+          "min": 5999
         },
         {
-          "count": 1,
-          "max": 6391,
-          "min": 5115
+          "count": 2,
+          "max": 9994,
+          "min": 7997
         }
       ],
       "strata_mode": "candidate-spread",

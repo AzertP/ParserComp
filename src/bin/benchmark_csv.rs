@@ -51,7 +51,7 @@ const CONFIGS: &[GrammarConfig] = &[
     // GrammarConfig {
     //     name: "ansi_c",
     //     grammar_path: "grammars/ansi_c.json",
-    //     input_paths: &["input/ansi_c_small.txt", "input/ansi_c_large.txt"],
+    //     input_paths: &["input/ansi_c.txt"],
     //     table_path: "table/ansi_c_glr_table.csv",
     //     lr_table_path: "table/ansi_c_lr_table.csv",
     //     generate_table: false,
@@ -71,7 +71,7 @@ const CONFIGS: &[GrammarConfig] = &[
     // GrammarConfig {
     //     name: "calc",
     //     grammar_path: "grammars/calc.json",
-    //     input_paths: &["input/calc_small.txt", "input/calc_large.txt"],
+    //     input_paths: &["input/expr.txt"],
     //     table_path: "table/calc_glr_table.csv",
     //     lr_table_path: "table/calc_lr_table.csv",
     //     generate_table: false,
@@ -81,7 +81,7 @@ const CONFIGS: &[GrammarConfig] = &[
     // GrammarConfig {
     //     name: "calc_ll1",
     //     grammar_path: "grammars/ll1_calc.json",
-    //     input_paths: &["input/calc_small.txt", "input/calc_large.txt"],
+    //     input_paths: &["input/expr.txt"],
     //     table_path: "table/calc_ll1_glr_table.csv",
     //     lr_table_path: "table/calc_ll1_lr_table.csv",
     //     generate_table: true,
@@ -111,7 +111,7 @@ const CONFIGS: &[GrammarConfig] = &[
     // GrammarConfig {
     //     name: "cpp",
     //     grammar_path: "grammars/cpp.json",
-    //     input_paths: &["input/cpp_small.txt", "input/cpp_large.txt"],
+    //     input_paths: &["input/cpp.txt"],
     //     table_path: "table/cpp_glr_table.csv",
     //     lr_table_path: "table/cpp_lr_table.csv",
     //     generate_table: true,
@@ -121,7 +121,7 @@ const CONFIGS: &[GrammarConfig] = &[
     // GrammarConfig {
     //     name: "css",
     //     grammar_path: "grammars/css.json",
-    //     input_paths: &["input/css_small.txt"],
+    //     input_paths: &["input/css.txt"],
     //     table_path: "table/css_glr_table.csv",
     //     lr_table_path: "table/css_lr_table.csv",
     //     generate_table: false,
@@ -141,7 +141,7 @@ const CONFIGS: &[GrammarConfig] = &[
     // GrammarConfig {
     //     name: "json",
     //     grammar_path: "grammars/json.json",
-    //     input_paths: &["input/json_small.txt", "input/json_medium.txt", "input/json_large.txt", "input/json_ultra.txt"],
+    //     input_paths: &["input/json.txt"],
     //     table_path: "table/json_glr_table.csv",
     //     lr_table_path: "table/json_lr_table.csv",
     //     generate_table: true,
@@ -151,7 +151,7 @@ const CONFIGS: &[GrammarConfig] = &[
     // GrammarConfig {
     //     name: "json_ll1",
     //     grammar_path: "grammars/ll1_json.json",
-    //     input_paths: &["input/json_small.txt", "input/json_medium.txt", "input/json_large.txt", "input/json_ultra.txt"],
+    //     input_paths: &["input/json.txt"],
     //     table_path: "table/json_ll1_glr_table.csv",
     //     lr_table_path: "table/json_ll1_lr_table.csv",
     //     generate_table: true,
@@ -161,7 +161,7 @@ const CONFIGS: &[GrammarConfig] = &[
     // GrammarConfig {
     //     name: "json_lr",
     //     grammar_path: "grammars/lr_json.json",
-    //     input_paths: &["input/json_small.txt", "input/json_medium.txt", "input/json_large.txt", "input/json_ultra.txt"],
+    //     input_paths: &["input/json.txt"],
     //     table_path: "table/lr_json_glr_table.csv",
     //     lr_table_path: "table/lr_json_lr_table.csv",
     //     generate_table: false,
@@ -171,7 +171,7 @@ const CONFIGS: &[GrammarConfig] = &[
     // GrammarConfig {
     //     name: "json_ambi",
     //     grammar_path: "grammars/json_ambi.json",
-    //     input_paths: &["input/json_small.txt", "input/json_medium.txt", "input/json_large.txt", "input/json_ultra.txt"],
+    //     input_paths: &["input/json.txt"],
     //     table_path: "table/json_ambi_glr_table.csv",
     //     lr_table_path: "table/json_ambi_lr_table.csv",
     //     generate_table: false,
@@ -181,7 +181,7 @@ const CONFIGS: &[GrammarConfig] = &[
     // GrammarConfig {
     //     name: "java",
     //     grammar_path: "grammars/jsl18.json",
-    //     input_paths: &["input/java_small.txt", "input/java_large.txt"],
+    //     input_paths: &["input/java.txt"],
     //     table_path: "table/java_glr_table.csv",
     //     lr_table_path: "table/java_lr_table.csv",
     //     generate_table: true,
@@ -191,7 +191,7 @@ const CONFIGS: &[GrammarConfig] = &[
     // GrammarConfig {
     //     name: "pascal",
     //     grammar_path: "grammars/pascal.json",
-    //     input_paths: &["input/pascal_small.txt", "input/pascal_large.txt"],
+    //     input_paths: &["input/pascal.txt"],
     //     table_path: "table/pascal_glr_table.csv",
     //     lr_table_path: "table/pascal_lr_table.csv",
     //     generate_table: true,
@@ -211,20 +211,10 @@ const CONFIGS: &[GrammarConfig] = &[
     // GrammarConfig {
     //     name: "sexp",
     //     grammar_path: "grammars/sexp.json",
-    //     input_paths: &["input/sexp_small.txt", "input/sexp_large.txt"],
+    //     input_paths: &["input/sexp.txt"],
     //     table_path: "table/sexp_glr_table.csv",
     //     lr_table_path: "table/sexp_lr_table.csv",
     //     generate_table: false,
-    //     parsers: ALL_PARSERS,
-    // },
-    // // ----- S-exp LL(1) -----
-    // GrammarConfig {
-    //     name: "sexp_ll1",
-    //     grammar_path: "grammars/ll1_sexp.json",
-    //     input_paths: &["input/sexp_ll1.txt"],
-    //     table_path: "table/sexp_ll1_glr_table.csv",
-    //     lr_table_path: "table/sexp_ll1_lr_table.csv",
-    //     generate_table: true,
     //     parsers: ALL_PARSERS,
     // },
     // // ----- Shell -----
@@ -251,7 +241,7 @@ const CONFIGS: &[GrammarConfig] = &[
     // GrammarConfig {
     //     name: "tinyc",
     //     grammar_path: "grammars/tinyc.json",
-    //     input_paths: &["input/tinyc_small.txt", "input/tinyc_large.txt"],
+    //     input_paths: &["input/tinyc.txt"],
     //     table_path: "table/tinyc_glr_table.csv",
     //     lr_table_path: "table/tinyc_lr_table.csv",
     //     generate_table: false,

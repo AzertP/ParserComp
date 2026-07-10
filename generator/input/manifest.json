@@ -1,0 +1,647 @@
+{
+  "candidate_count": 1000,
+  "complex_limit": 10000,
+  "generated_at_utc": "2026-07-10T04:16:28.472731+00:00",
+  "grammars": [
+    {
+      "attempts": 1394,
+      "bucket": "simple",
+      "generator_grammar": "generator/grammars/sexp.json",
+      "generator_grammar_sha256": "020f94754ba0d1be75a5d7bc7ebc50f8d6154925230a0fb8b328f7ccdda43b28",
+      "length_limit": 50000,
+      "max_depth": 30,
+      "max_length": 49854,
+      "median_length": 453.0,
+      "min_depth": 1,
+      "min_length": 1,
+      "name": "sexp",
+      "output_path": "generator/input/sexp.txt",
+      "output_sha256": "395451f685dcf1cc528a22e398ec22961c23fcd6ca9d3d7fd5edc62e4590063a",
+      "rule_weighted_symbols": [
+        "<atom_tail>",
+        "<list>",
+        "<list_after_first>",
+        "<sexp>"
+      ],
+      "selected_count": 150,
+      "source_grammar": "grammars/sexp.json",
+      "strata": [
+        {
+          "count": 123,
+          "max": 9971,
+          "min": 1
+        },
+        {
+          "count": 11,
+          "max": 19942,
+          "min": 9972
+        },
+        {
+          "count": 8,
+          "max": 29913,
+          "min": 19943
+        },
+        {
+          "count": 4,
+          "max": 39884,
+          "min": 29914
+        },
+        {
+          "count": 4,
+          "max": 49854,
+          "min": 39885
+        }
+      ],
+      "strata_mode": "candidate-spread",
+      "unique_accepted_candidates": 1000
+    },
+    {
+      "attempts": 1060,
+      "bucket": "simple",
+      "generator_grammar": "generator/grammars/expr.json",
+      "generator_grammar_sha256": "2cb9d0758dea04000e52acd7ac1d60264a56f7f82678da9fa21ba0994fe207c6",
+      "length_limit": 50000,
+      "max_depth": 22,
+      "max_length": 27318,
+      "median_length": 263.5,
+      "min_depth": 1,
+      "min_length": 1,
+      "name": "expr",
+      "output_path": "generator/input/expr.txt",
+      "output_sha256": "bc4b95aa7edc0bd655b8e78aa0b91fa84a3d96837bcb2bc176f4c3591b256c8d",
+      "rule_weighted_symbols": [],
+      "selected_count": 150,
+      "source_grammar": "grammars/calc.json",
+      "strata": [
+        {
+          "count": 130,
+          "max": 5464,
+          "min": 1
+        },
+        {
+          "count": 11,
+          "max": 10928,
+          "min": 5465
+        },
+        {
+          "count": 4,
+          "max": 16392,
+          "min": 10929
+        },
+        {
+          "count": 3,
+          "max": 21855,
+          "min": 16393
+        },
+        {
+          "count": 2,
+          "max": 27318,
+          "min": 21856
+        }
+      ],
+      "strata_mode": "candidate-spread",
+      "unique_accepted_candidates": 1000
+    },
+    {
+      "attempts": 1170,
+      "bucket": "simple",
+      "generator_grammar": "generator/grammars/json.json",
+      "generator_grammar_sha256": "56f4e68a32b95a72e725d2799e5a248bf8ae0ff969669982e1a603ff59cd4d3f",
+      "length_limit": 50000,
+      "max_depth": 30,
+      "max_length": 41720,
+      "median_length": 559.5,
+      "min_depth": 1,
+      "min_length": 2,
+      "name": "json",
+      "output_path": "generator/input/json.txt",
+      "output_sha256": "b1950e25ed62f612b4d7b106038ec2807b5910438cd4014498a5dab07e2fa159",
+      "rule_weighted_symbols": [
+        "<array>",
+        "<characters>",
+        "<digits>",
+        "<elements>",
+        "<json>",
+        "<members>",
+        "<object>",
+        "<value>"
+      ],
+      "selected_count": 150,
+      "source_grammar": "grammars/json.json",
+      "strata": [
+        {
+          "count": 128,
+          "max": 8345,
+          "min": 2
+        },
+        {
+          "count": 13,
+          "max": 16689,
+          "min": 8346
+        },
+        {
+          "count": 5,
+          "max": 25033,
+          "min": 16690
+        },
+        {
+          "count": 3,
+          "max": 33377,
+          "min": 25034
+        },
+        {
+          "count": 1,
+          "max": 41720,
+          "min": 33378
+        }
+      ],
+      "strata_mode": "candidate-spread",
+      "unique_accepted_candidates": 1000
+    },
+    {
+      "attempts": 1179,
+      "bucket": "simple",
+      "generator_grammar": "generator/grammars/tinyc.json",
+      "generator_grammar_sha256": "eb97fef34c756b83b20ff452eeb69ccc972a3497e9bd0e402dc9c92422527fa5",
+      "length_limit": 50000,
+      "max_depth": 26,
+      "max_length": 48305,
+      "median_length": 414.0,
+      "min_depth": 1,
+      "min_length": 1,
+      "name": "tinyc",
+      "output_path": "generator/input/tinyc.txt",
+      "output_sha256": "da1da319e6525b351836d41cd8de7748812fabf905fe8d3148b61fc1a4e468b8",
+      "rule_weighted_symbols": [
+        "<expr>",
+        "<int>",
+        "<statement>",
+        "<statement_list>",
+        "<sum>"
+      ],
+      "selected_count": 150,
+      "source_grammar": "grammars/tinyc.json",
+      "strata": [
+        {
+          "count": 130,
+          "max": 9661,
+          "min": 1
+        },
+        {
+          "count": 11,
+          "max": 19322,
+          "min": 9662
+        },
+        {
+          "count": 5,
+          "max": 28983,
+          "min": 19323
+        },
+        {
+          "count": 2,
+          "max": 38644,
+          "min": 28984
+        },
+        {
+          "count": 2,
+          "max": 48305,
+          "min": 38645
+        }
+      ],
+      "strata_mode": "candidate-spread",
+      "unique_accepted_candidates": 1000
+    },
+    {
+      "attempts": 1257,
+      "bucket": "simple",
+      "generator_grammar": "generator/grammars/bool.json",
+      "generator_grammar_sha256": "eb271257826695bae4b3c598fe15297c85b1e00f891e75456a5deeb6e81e726d",
+      "length_limit": 50000,
+      "max_depth": 22,
+      "max_length": 46670,
+      "median_length": 466.5,
+      "min_depth": 1,
+      "min_length": 1,
+      "name": "bool",
+      "output_path": "generator/input/bool.txt",
+      "output_sha256": "23781417a41225f6427714775dd43625b23df909262ee8ed971c8d32bdba8ba8",
+      "rule_weighted_symbols": [
+        "<B>"
+      ],
+      "selected_count": 150,
+      "source_grammar": "grammars/bool.json",
+      "strata": [
+        {
+          "count": 131,
+          "max": 9334,
+          "min": 1
+        },
+        {
+          "count": 11,
+          "max": 18668,
+          "min": 9335
+        },
+        {
+          "count": 4,
+          "max": 28002,
+          "min": 18669
+        },
+        {
+          "count": 2,
+          "max": 37336,
+          "min": 28003
+        },
+        {
+          "count": 2,
+          "max": 46670,
+          "min": 37337
+        }
+      ],
+      "strata_mode": "candidate-spread",
+      "unique_accepted_candidates": 1000
+    },
+    {
+      "attempts": 1115,
+      "bucket": "complex",
+      "generator_grammar": "generator/grammars/ansi_c.json",
+      "generator_grammar_sha256": "ce2c4dd15e80a398caac157e3f83aca62e2df575e87b472f5dfbdf732324fb51",
+      "length_limit": 10000,
+      "max_depth": 18,
+      "max_length": 9953,
+      "median_length": 247.0,
+      "min_depth": 1,
+      "min_length": 3,
+      "name": "ansi_c",
+      "output_path": "generator/input/ansi_c.txt",
+      "output_sha256": "5c7c1181b986a48d4be3e0ffd096e1ae6e1c7d8f2cae0ed1564eef6f1ea4e3eb",
+      "rule_weighted_symbols": [],
+      "selected_count": 150,
+      "source_grammar": "grammars/ansi_c.json",
+      "strata": [
+        {
+          "count": 120,
+          "max": 1993,
+          "min": 3
+        },
+        {
+          "count": 13,
+          "max": 3983,
+          "min": 1994
+        },
+        {
+          "count": 8,
+          "max": 5973,
+          "min": 3984
+        },
+        {
+          "count": 5,
+          "max": 7963,
+          "min": 5974
+        },
+        {
+          "count": 4,
+          "max": 9953,
+          "min": 7964
+        }
+      ],
+      "strata_mode": "candidate-spread",
+      "unique_accepted_candidates": 1000
+    },
+    {
+      "attempts": 1420,
+      "bucket": "complex",
+      "generator_grammar": "generator/grammars/cpp.json",
+      "generator_grammar_sha256": "bfb24b0b4218b7c0a4e8281a05f98d4ac78d19884fed625475db641302a086e2",
+      "length_limit": 10000,
+      "max_depth": 18,
+      "max_length": 9723,
+      "median_length": 131.5,
+      "min_depth": 1,
+      "min_length": 1,
+      "name": "cpp",
+      "output_path": "generator/input/cpp.txt",
+      "output_sha256": "ddf8ff56ae571a74c7eb27ea97845c7f6641a5b07551f6e271ab80443c75c1b4",
+      "rule_weighted_symbols": [],
+      "selected_count": 150,
+      "source_grammar": "grammars/cpp.json",
+      "strata": [
+        {
+          "count": 140,
+          "max": 1945,
+          "min": 1
+        },
+        {
+          "count": 8,
+          "max": 3890,
+          "min": 1946
+        },
+        {
+          "count": 1,
+          "max": 5835,
+          "min": 3891
+        },
+        {
+          "count": 0,
+          "max": 7779,
+          "min": 5836
+        },
+        {
+          "count": 1,
+          "max": 9723,
+          "min": 7780
+        }
+      ],
+      "strata_mode": "candidate-spread",
+      "unique_accepted_candidates": 1000
+    },
+    {
+      "attempts": 1078,
+      "bucket": "complex",
+      "generator_grammar": "generator/grammars/pascal.json",
+      "generator_grammar_sha256": "dc5d65a2384af498f8c18a35322889f5a835b9cd5d788f89b8ae7a651bbbc7a0",
+      "length_limit": 10000,
+      "max_depth": 18,
+      "max_length": 3231,
+      "median_length": 288.0,
+      "min_depth": 1,
+      "min_length": 17,
+      "name": "pascal",
+      "output_path": "generator/input/pascal.txt",
+      "output_sha256": "83f168f2b385b805bf9175da9dc3e0b0ab6cd504fa795d5195c6f53dfb08cc0b",
+      "rule_weighted_symbols": [],
+      "selected_count": 150,
+      "source_grammar": "grammars/pascal.json",
+      "strata": [
+        {
+          "count": 102,
+          "max": 659,
+          "min": 17
+        },
+        {
+          "count": 25,
+          "max": 1302,
+          "min": 660
+        },
+        {
+          "count": 13,
+          "max": 1945,
+          "min": 1303
+        },
+        {
+          "count": 8,
+          "max": 2588,
+          "min": 1946
+        },
+        {
+          "count": 2,
+          "max": 3231,
+          "min": 2589
+        }
+      ],
+      "strata_mode": "candidate-spread",
+      "unique_accepted_candidates": 1000
+    },
+    {
+      "attempts": 1078,
+      "bucket": "complex",
+      "generator_grammar": "generator/grammars/java.json",
+      "generator_grammar_sha256": "202046ecdcb3d946f240da80c835c88cb9d2746cdee55d419b680fe3b1454eca",
+      "length_limit": 10000,
+      "max_depth": 18,
+      "max_length": 4089,
+      "median_length": 239.5,
+      "min_depth": 1,
+      "min_length": 9,
+      "name": "java",
+      "output_path": "generator/input/java.txt",
+      "output_sha256": "6fa7d0ebb0edff5916b87579ea022e6104444bebfe98643a7eaacb8d68cb9222",
+      "rule_weighted_symbols": [],
+      "selected_count": 150,
+      "source_grammar": "grammars/jsl18.json",
+      "strata": [
+        {
+          "count": 123,
+          "max": 825,
+          "min": 9
+        },
+        {
+          "count": 19,
+          "max": 1641,
+          "min": 826
+        },
+        {
+          "count": 6,
+          "max": 2457,
+          "min": 1642
+        },
+        {
+          "count": 1,
+          "max": 3273,
+          "min": 2458
+        },
+        {
+          "count": 1,
+          "max": 4089,
+          "min": 3274
+        }
+      ],
+      "strata_mode": "candidate-spread",
+      "unique_accepted_candidates": 1000
+    },
+    {
+      "attempts": 1433,
+      "bucket": "complex",
+      "generator_grammar": "generator/grammars/html.json",
+      "generator_grammar_sha256": "c4993055fa942f73c27601a49bd6a0babcaddfbc7b07392f2e25a7d888d9f216",
+      "length_limit": 10000,
+      "max_depth": 18,
+      "max_length": 1476,
+      "median_length": 242.0,
+      "min_depth": 1,
+      "min_length": 54,
+      "name": "html",
+      "output_path": "generator/input/html.txt",
+      "output_sha256": "f7e6e62b9703efc314b15c92d1f1570a7e17b4f29a340dc80820a4e7bfd4df75",
+      "rule_weighted_symbols": [],
+      "selected_count": 150,
+      "source_grammar": "grammars/html.json",
+      "strata": [
+        {
+          "count": 94,
+          "max": 338,
+          "min": 54
+        },
+        {
+          "count": 32,
+          "max": 623,
+          "min": 339
+        },
+        {
+          "count": 16,
+          "max": 908,
+          "min": 624
+        },
+        {
+          "count": 6,
+          "max": 1192,
+          "min": 909
+        },
+        {
+          "count": 2,
+          "max": 1476,
+          "min": 1193
+        }
+      ],
+      "strata_mode": "candidate-spread",
+      "unique_accepted_candidates": 1000
+    },
+    {
+      "attempts": 1176,
+      "bucket": "complex",
+      "generator_grammar": "generator/grammars/css.json",
+      "generator_grammar_sha256": "2f1ce1dca64c7dc6c7a89027a47db6703dba47b2009616531b4868cdc7edf4d6",
+      "length_limit": 10000,
+      "max_depth": 18,
+      "max_length": 6889,
+      "median_length": 583.5,
+      "min_depth": 1,
+      "min_length": 3,
+      "name": "css",
+      "output_path": "generator/input/css.txt",
+      "output_sha256": "5f8cee43845695d7b784aeebb29f630bd4b62bc4756dcf523c8d1be193a314e5",
+      "rule_weighted_symbols": [],
+      "selected_count": 150,
+      "source_grammar": "grammars/css.json",
+      "strata": [
+        {
+          "count": 104,
+          "max": 1380,
+          "min": 3
+        },
+        {
+          "count": 25,
+          "max": 2758,
+          "min": 1381
+        },
+        {
+          "count": 12,
+          "max": 4135,
+          "min": 2759
+        },
+        {
+          "count": 6,
+          "max": 5512,
+          "min": 4136
+        },
+        {
+          "count": 3,
+          "max": 6889,
+          "min": 5513
+        }
+      ],
+      "strata_mode": "candidate-spread",
+      "unique_accepted_candidates": 1000
+    },
+    {
+      "attempts": 1013,
+      "bucket": "complex",
+      "generator_grammar": "generator/grammars/shell.json",
+      "generator_grammar_sha256": "8ed40a297add318725bc582fef000674a457d2a84391a1a793b879b3c2e3e9db",
+      "length_limit": 10000,
+      "max_depth": 18,
+      "max_length": 9859,
+      "median_length": 207.0,
+      "min_depth": 1,
+      "min_length": 1,
+      "name": "shell",
+      "output_path": "generator/input/shell.txt",
+      "output_sha256": "8e57382eacb5534ec260d6e3b48121c09aea51d4b53e796897c4f1a290944661",
+      "rule_weighted_symbols": [],
+      "selected_count": 150,
+      "source_grammar": "grammars/shell.json",
+      "strata": [
+        {
+          "count": 123,
+          "max": 1972,
+          "min": 1
+        },
+        {
+          "count": 14,
+          "max": 3944,
+          "min": 1973
+        },
+        {
+          "count": 7,
+          "max": 5916,
+          "min": 3945
+        },
+        {
+          "count": 3,
+          "max": 7888,
+          "min": 5917
+        },
+        {
+          "count": 3,
+          "max": 9859,
+          "min": 7889
+        }
+      ],
+      "strata_mode": "candidate-spread",
+      "unique_accepted_candidates": 1000
+    },
+    {
+      "attempts": 1167,
+      "bucket": "complex",
+      "generator_grammar": "generator/grammars/sql.json",
+      "generator_grammar_sha256": "f0e1d1c40cb586eca4d52eb52bb76320c86990701a77c24bb257caf2ca6890d0",
+      "length_limit": 10000,
+      "max_depth": 10,
+      "max_length": 6391,
+      "median_length": 59.5,
+      "min_depth": 1,
+      "min_length": 5,
+      "name": "sql",
+      "output_path": "generator/input/sql.txt",
+      "output_sha256": "6ec5b2bfffce515a18b3233d5284f0be0d08762b81b4258d9eb6d7e0a50f2bbb",
+      "rule_weighted_symbols": [],
+      "selected_count": 150,
+      "source_grammar": "grammars/sql.json",
+      "strata": [
+        {
+          "count": 143,
+          "max": 1282,
+          "min": 5
+        },
+        {
+          "count": 5,
+          "max": 2560,
+          "min": 1283
+        },
+        {
+          "count": 1,
+          "max": 3837,
+          "min": 2561
+        },
+        {
+          "count": 0,
+          "max": 5114,
+          "min": 3838
+        },
+        {
+          "count": 1,
+          "max": 6391,
+          "min": 5115
+        }
+      ],
+      "strata_mode": "candidate-spread",
+      "unique_accepted_candidates": 1000
+    }
+  ],
+  "max_attempts": 50000,
+  "max_depth": 30,
+  "min_depth": 1,
+  "seed": 20260709,
+  "simple_limit": 50000,
+  "strata": 5,
+  "target_count": 150
+}

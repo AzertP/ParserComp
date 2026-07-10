@@ -8,6 +8,7 @@ This is a highly optimized version of simplefuzzer that uses:
 """
 
 import random
+from collections import deque
 
 
 def is_terminal(v):
@@ -34,9 +35,10 @@ def modifiable(tree):
         return [name, [modifiable(c) for c in children]]
 
 
-def iter_tree_to_str(tree_):
+def iter_tree_to_str(tree_, max_length=None):
     tree = modifiable(tree_)
     expanded = []
+    expanded_length = 0
     to_expand = [tree]
     while to_expand:
         (key, children, *rest), *to_expand = to_expand
@@ -45,6 +47,9 @@ def iter_tree_to_str(tree_):
         else:
             assert not children
             expanded.append(key)
+            expanded_length += len(key)
+            if max_length is not None and expanded_length >= max_length:
+                raise RuntimeError(f"output length reached limit {max_length}")
     return ''.join(expanded)
 
 
@@ -144,11 +149,25 @@ class LimitFuzzer:
     Uses precomputed costs and cheap grammars for fast generation.
     """
 
-    def __init__(self, grammar, weights, bias_long=False, long_bias_factor=2.0):
+    def __init__(
+        self,
+        grammar,
+        weights=None,
+        *,
+        rule_weights=None,
+        rng=None,
+        bias_long=False,
+        long_bias_factor=2.0,
+    ):
         self.grammar = grammar
-        self.rule_weights = weights
+        if weights is not None and rule_weights is not None:
+            raise ValueError("pass either weights or rule_weights, not both")
+        self.rule_weights = rule_weights if rule_weights is not None else weights
+        self.rule_weights = self.rule_weights or {}
+        self.rng = rng or random
         self.bias_long = bias_long
         self.long_bias_factor = long_bias_factor
+        self._validate_rule_weights()
         print("Computing grammar costs...")
         self.cost = compute_cost_optimized(grammar)
         print("Precomputing cheap grammar...")
@@ -157,6 +176,16 @@ class LimitFuzzer:
             print(f"Precomputing expensive grammar (bias factor: {long_bias_factor})...")
             self._precompute_expensive_grammar()
         print("Fuzzer initialized.")
+
+    def _validate_rule_weights(self):
+        for key, weights in self.rule_weights.items():
+            if key not in self.grammar:
+                raise ValueError(f"rule-weights specified unknown symbol {key}")
+            if len(weights) != len(self.grammar[key]):
+                raise ValueError(
+                    f"rule-weights for {key} has {len(weights)} weights "
+                    f"but grammar has {len(self.grammar[key])} rules"
+                )
 
     def _precompute_cheap_grammar(self):
         """Precompute cheap grammar once during initialization."""
@@ -194,11 +223,6 @@ class LimitFuzzer:
         # User-specified rule probabilities take precedence
         if key in self.rule_weights:
             weights = self.rule_weights[key]
-            if len(weights) != len(self.grammar[key]):
-                raise ValueError(
-                    f"rule-weights for {key} has {len(weights)} weights "
-                    f"but grammar has {len(self.grammar[key])} rules"
-                )
             # If we're using a filtered grammar (cheap/expensive), map the
             # original weights onto the remaining rules.
             if len(rules) != len(self.grammar[key]):
@@ -207,15 +231,15 @@ class LimitFuzzer:
                     weights[original.index(rule)]
                     for rule in rules
                 ]
-            return random.choices(rules, weights=weights, k=1)[0]
+            return self.rng.choices(rules, weights=weights, k=1)[0]
 
         """Choose a rule with bias toward longer/more expensive productions."""
         if not self.bias_long or len(rules) == 1:
-            return random.choice(rules)
+            return self.rng.choice(rules)
         
         # If key is not in cost (terminal symbol), just use random choice
         if key not in self.cost:
-            return random.choice(rules)
+            return self.rng.choice(rules)
         
         # Calculate weights based on cost and length
         weights = []
@@ -231,9 +255,9 @@ class LimitFuzzer:
         # Weighted random choice
         total = sum(weights)
         if total == 0:
-            return random.choice(rules)
+            return self.rng.choice(rules)
         
-        r = random.uniform(0, total)
+        r = self.rng.uniform(0, total)
         cumsum = 0
         for rule, weight in zip(rules, weights):
             cumsum += weight
@@ -266,7 +290,7 @@ class LimitFuzzer:
                 return [t, []]
 
         root = [key, None]
-        queue = [(0, root)]
+        queue = deque([(0, root)])
         iterations = 0
         
         while queue:
@@ -274,16 +298,14 @@ class LimitFuzzer:
             
             # Safety check: prevent infinite loops
             if iterations > max_iterations:
-                print(f"Warning: Reached max iterations ({max_iterations}), stopping generation")
-                break
+                raise RuntimeError(f"max iterations exceeded {max_iterations}")
             
             # Safety check: prevent unbounded queue growth
             if len(queue) > max_queue_size:
-                print(f"Warning: Queue size exceeded {max_queue_size}, stopping generation")
-                break
+                raise RuntimeError(f"queue size exceeded {max_queue_size}")
             
             # Pop from front for BFS-like behavior
-            (depth, item), *queue = queue
+            depth, item = queue.popleft()
             key = item[0]
             
             if item[1] is not None:
@@ -311,14 +333,14 @@ class LimitFuzzer:
         
         return root
 
-    def iter_fuzz(self, key='<start>', max_depth=10):
+    def iter_fuzz(self, key='<start>', max_depth=10, max_length=None):
         """Fast iterative fuzzing that avoids stack depth issues."""
         self._s = self.iter_gen_key(key=key, max_depth=max_depth)
-        return iter_tree_to_str(self._s)
+        return iter_tree_to_str(self._s, max_length=max_length)
 
 if __name__ == '__main__':
     import json
     with open('grammars/json.json') as f:
         j = json.load(f)
-        lf = LimitFuzzer(j['rules'], j['rule-weights'])
+        lf = LimitFuzzer(j['rules'], rule_weights=j.get('rule-weights'))
         print(lf.fuzz(j['start']))

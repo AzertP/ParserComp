@@ -144,18 +144,9 @@ class LimitFuzzer:
     Uses precomputed costs and cheap grammars for fast generation.
     """
 
-    def __init__(
-        self,
-        grammar,
-        rule_weights=None,
-        rng=None,
-        bias_long=False,
-        long_bias_factor=2.0,
-    ):
+    def __init__(self, grammar, weights, bias_long=False, long_bias_factor=2.0):
         self.grammar = grammar
-        self.rng = rng or random
-        self.rule_weights = rule_weights or {}
-        self.validate_rule_weights(grammar, self.rule_weights)
+        self.rule_weights = weights
         self.bias_long = bias_long
         self.long_bias_factor = long_bias_factor
         print("Computing grammar costs...")
@@ -166,21 +157,6 @@ class LimitFuzzer:
             print(f"Precomputing expensive grammar (bias factor: {long_bias_factor})...")
             self._precompute_expensive_grammar()
         print("Fuzzer initialized.")
-
-    @staticmethod
-    def validate_rule_weights(grammar, rule_weights):
-        """Validate optional per-nonterminal generation weights."""
-        for key, weights in rule_weights.items():
-            if key not in grammar:
-                raise ValueError(f"rule weights provided for unknown nonterminal {key}")
-            if len(weights) != len(grammar[key]):
-                raise ValueError(
-                    f"rule weights for {key} have {len(weights)} entries; "
-                    f"expected {len(grammar[key])}"
-                )
-            for weight in weights:
-                if weight < 0:
-                    raise ValueError(f"rule weights for {key} must be non-negative")
 
     def _precompute_cheap_grammar(self):
         """Precompute cheap grammar once during initialization."""
@@ -215,29 +191,31 @@ class LimitFuzzer:
                 self.expensive_grammar[k] = rules
 
     def _weighted_choice(self, key, rules):
-        """Choose a rule with bias toward longer/more expensive productions."""
+        # User-specified rule probabilities take precedence
         if key in self.rule_weights:
-            weights_by_rule = {
-                tuple(rule): weight
-                for rule, weight in zip(self.grammar[key], self.rule_weights[key])
-            }
-            weights = [weights_by_rule.get(tuple(rule), 0.0) for rule in rules]
-            total = sum(weights)
-            if total > 0:
-                r = self.rng.uniform(0, total)
-                cumsum = 0
-                for rule, weight in zip(rules, weights):
-                    cumsum += weight
-                    if r <= cumsum:
-                        return rule
-                return rules[-1]
+            weights = self.rule_weights[key]
+            if len(weights) != len(self.grammar[key]):
+                raise ValueError(
+                    f"rule-weights for {key} has {len(weights)} weights "
+                    f"but grammar has {len(self.grammar[key])} rules"
+                )
+            # If we're using a filtered grammar (cheap/expensive), map the
+            # original weights onto the remaining rules.
+            if len(rules) != len(self.grammar[key]):
+                original = self.grammar[key]
+                weights = [
+                    weights[original.index(rule)]
+                    for rule in rules
+                ]
+            return random.choices(rules, weights=weights, k=1)[0]
 
+        """Choose a rule with bias toward longer/more expensive productions."""
         if not self.bias_long or len(rules) == 1:
-            return self.rng.choice(rules)
+            return random.choice(rules)
         
         # If key is not in cost (terminal symbol), just use random choice
         if key not in self.cost:
-            return self.rng.choice(rules)
+            return random.choice(rules)
         
         # Calculate weights based on cost and length
         weights = []
@@ -253,9 +231,9 @@ class LimitFuzzer:
         # Weighted random choice
         total = sum(weights)
         if total == 0:
-            return self.rng.choice(rules)
+            return random.choice(rules)
         
-        r = self.rng.uniform(0, total)
+        r = random.uniform(0, total)
         cumsum = 0
         for rule, weight in zip(rules, weights):
             cumsum += weight
@@ -296,15 +274,13 @@ class LimitFuzzer:
             
             # Safety check: prevent infinite loops
             if iterations > max_iterations:
-                raise RuntimeError(
-                    f"generation exceeded max iterations ({max_iterations})"
-                )
+                print(f"Warning: Reached max iterations ({max_iterations}), stopping generation")
+                break
             
             # Safety check: prevent unbounded queue growth
             if len(queue) > max_queue_size:
-                raise RuntimeError(
-                    f"generation exceeded queue size ({max_queue_size})"
-                )
+                print(f"Warning: Queue size exceeded {max_queue_size}, stopping generation")
+                break
             
             # Pop from front for BFS-like behavior
             (depth, item), *queue = queue
@@ -344,5 +320,5 @@ if __name__ == '__main__':
     import json
     with open('grammars/json.json') as f:
         j = json.load(f)
-        lf = LimitFuzzer(j['rules'])
+        lf = LimitFuzzer(j['rules'], j['rule-weights'])
         print(lf.fuzz(j['start']))

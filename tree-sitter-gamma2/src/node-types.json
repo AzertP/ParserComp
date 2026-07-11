@@ -1,0 +1,60 @@
+[
+  {
+    "type": "b_chain",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "b_chain",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "s",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "b_chain",
+          "named": true
+        },
+        {
+          "type": "s",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "source_file",
+    "named": true,
+    "root": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "s",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "a",
+    "named": false
+  },
+  {
+    "type": "b",
+    "named": false
+  }
+]

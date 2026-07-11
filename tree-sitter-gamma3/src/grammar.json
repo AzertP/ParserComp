@@ -1,0 +1,64 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/grammar.schema.json",
+  "name": "gamma3",
+  "rules": {
+    "source_file": {
+      "type": "SYMBOL",
+      "name": "s"
+    },
+    "s": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "s"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "s"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "s"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "s"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "s"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": "b"
+        }
+      ]
+    }
+  },
+  "extras": [
+    {
+      "type": "PATTERN",
+      "value": "\\s"
+    }
+  ],
+  "conflicts": [
+    [
+      "s"
+    ]
+  ],
+  "precedences": [],
+  "externals": [],
+  "inline": [],
+  "supertypes": []
+}

@@ -1,0 +1,37 @@
+[
+  {
+    "type": "s",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "s",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "source_file",
+    "named": true,
+    "root": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "s",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "b",
+    "named": false
+  }
+]

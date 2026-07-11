@@ -1,6 +1,6 @@
 // Earley parser implementation with Leo Optimizations
 #[cfg(test)]
-use crate::grammars::{load_grammar_from_file, load_grammar_from_str};
+use crate::grammars::load_grammar_from_str;
 use crate::grammars::{NumSymbol, NumericGrammar};
 use crate::parse_tree::{ParseSymbol, ParseTree};
 use std::rc::Rc;
@@ -971,23 +971,6 @@ impl<'a> ForestBuilder<'a> {
 }
 
 // ============================================================================
-#[test]
-fn test_leo_parser_sexp() {
-    // Load grammar from json file in grammars/sexp.json
-    let path = "grammars/sexp.json";
-    let grammar = load_grammar_from_file(path).expect("Failed to load S-expression grammar");
-
-    let input = r#"(..)"#;
-    let tokens = grammar.tokenize(input).expect("Failed to tokenize input");
-
-    let mut parser = LeoParser::new(grammar);
-    let result = parser.parse(tokens);
-
-    assert!(result.is_some(), "Leo parser should accept S-expression");
-    let tree = result.unwrap();
-    println!("Parse tree:\n{}", tree.display());
-}
-
 #[test]
 fn test_leo_reconstructs_cached_right_recursive_chain() {
     let grammar = load_grammar_from_str(

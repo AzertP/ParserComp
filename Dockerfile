@@ -1,10 +1,11 @@
 # Dockerfile — self-contained artifact for the parser comparison paper.
 #
 # Build:
+#   git submodule update --init --recursive
 #   docker build -t parser-comparison .
 #
-# Run the full reproduction pipeline:
-#   docker run --rm parser-comparison
+# Open an interactive shell in the prepared environment:
+#   docker run --rm -it parser-comparison
 #
 # Skip benchmarks and only regenerate plots from pre-computed results:
 #   docker run --rm parser-comparison bash reproduce.sh --skip-benchmark
@@ -38,5 +39,5 @@ RUN python3 -m pip install --break-system-packages --no-cache-dir -r requirement
 # Build the Rust project in release mode (so reviewers don't need to wait)
 RUN cargo build --release
 
-# Default: run the full reproduction pipeline
-CMD ["bash", "reproduce.sh"]
+# Default to a shell; users choose which benchmark or analysis command to run.
+CMD ["bash"]

@@ -31,8 +31,6 @@ plotter_legacy.py
 /lr_table
 /grammars_raw
 /Parser_manuscript
-ambi.json
-ambi_stress.txt
 test.c
 *.png
 

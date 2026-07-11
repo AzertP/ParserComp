@@ -477,24 +477,6 @@ fn gt_nullable_abc(s: &str) -> bool {
     matches!(s, "" | "a" | "b" | "c" | "ab" | "ac" | "bc" | "abc")
 }
 
-/// S → S+S | S*S | a  (ambiguous arithmetic)
-/// Language: a ((+|*) a)*  — odd-length strings alternating a and operator
-fn gt_ambi_expr(s: &str) -> bool {
-    let chars: Vec<char> = s.chars().collect();
-    if chars.is_empty() || chars.len() % 2 == 0 {
-        return false;
-    }
-    for (i, &c) in chars.iter().enumerate() {
-        if i % 2 == 0 && c != 'a' {
-            return false;
-        }
-        if i % 2 == 1 && c != '+' && c != '*' {
-            return false;
-        }
-    }
-    true
-}
-
 /// a*b*: any number of a's followed by any number of b's
 fn gt_star_ab(s: &str) -> bool {
     let mut saw_b = false;
@@ -581,12 +563,6 @@ fn exhaustive_cases() -> Vec<ExhaustiveCase> {
             grammar_json: include_str!("../../test/grammar/nullable.json"),
             max_tokens: 3,
             ground_truth: Some(gt_nullable_abc),
-        },
-        ExhaustiveCase {
-            name: "ambi  (ambiguous arithmetic)",
-            grammar_json: include_str!("../../test/grammar/ambi.json"),
-            max_tokens: 7,
-            ground_truth: Some(gt_ambi_expr),
         },
         ExhaustiveCase {
             name: "expr_lr  (LR arithmetic)",

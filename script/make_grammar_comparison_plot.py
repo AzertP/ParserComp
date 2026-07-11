@@ -165,7 +165,9 @@ def write_panel(
         r"  grid style={dashed, gray!30},",
         r"  tick label style={font=\small},",
         r"  label style={font=\small},",
-        r"  title style={font=\small\bfseries},",
+        r"  title style={font=\small\bfseries, at={(0.5,1)}, anchor=north,"
+        r"                 yshift=-2mm, fill=white, fill opacity=0.75,"
+        r"                 text opacity=1, inner sep=2pt},",
         r"  clip=true,",
     ]
     if add_legend:

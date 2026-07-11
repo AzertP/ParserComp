@@ -203,16 +203,40 @@ def fmt(values):
     return med_str + r"\,{\footnotesize$\pm$\," + std_str + "}"
 
 
+def main_and_suffix(formatted):
+    """Split a cell's formatted string into the plain number and the
+    trailing stderr suffix (which starts with '\\,{\\footnotesize')."""
+    marker = r"\,{\footnotesize"
+    if marker in formatted:
+        idx = formatted.index(marker)
+        return formatted[:idx], formatted[idx:]
+    return formatted, ""
+
+
 rows_out = []
+raws_out = []
 for grammar in GRAMMAR_SOURCES:
     for label, lo, hi in BUCKETS:
         bucket_data = raw[grammar][label]
         if not any(bucket_data.get(c) for c in OUTPUT_COLUMNS):
             continue
         row = {"Grammar": grammar, "Bucket": label}
+        raw_meds = {}
         for col in OUTPUT_COLUMNS:
-            row[col + "_ms"] = fmt(bucket_data.get(col, []))
+            vals = bucket_data.get(col, [])
+            formatted = fmt(vals)
+            row[col + "_ms"] = formatted
+            if formatted == EM:
+                raw_meds[col] = None
+            else:
+                # Best/worst is judged on the *displayed* (rounded) value,
+                # not the unrounded raw median: if two parsers round to
+                # the same printed number, there is no visible distinction
+                # to highlight, even if their raw medians differ slightly.
+                main, _ = main_and_suffix(formatted)
+                raw_meds[col] = float(main)
         rows_out.append(row)
+        raws_out.append(raw_meds)
 
 # ---------------------------------------------------------------------------
 # Write CSV
@@ -251,21 +275,17 @@ print(sep)
 # Write LaTeX table  ->  img/runtimeByBucket.tex
 # ---------------------------------------------------------------------------
 
-def cell(val):
-    return r"\multicolumn{1}{c}{---}" if val == EM else val
-
-
 # Grammar name -> parser-type group label (controls group separator rows)
 GRAMMAR_GROUPS = OrderedDict([
     ("TinyPascal",   "LL(1)"),
     ("S-Expr LL-1",  "LL(1)"),
     ("Expr LL-1",    "LL(1)"),
     ("JSON LL-1",    "LL(1)"),
-    ("JSON (rr)",    "LR(1), not LL(1)"),
-    ("JSON (lr)",    "LR(1), not LL(1)"),
-    ("Expr (lr)",    "LR(1), not LL(1)"),
-    ("Expr (rr)",    "LR(1), not LL(1)"),
-    ("TinyC LR-1",   "LR(1), not LL(1)"),
+    ("JSON (rr)",    "LR(1)"),
+    ("JSON (lr)",    "LR(1)"),
+    ("Expr (lr)",    "LR(1)"),
+    ("Expr (rr)",    "LR(1)"),
+    ("TinyC LR-1",   "LR(1)"),
     ("S-Expression", "General context-free"),
     ("TinyC",        "General context-free"),
     ("Bool",         "General context-free"),
@@ -281,55 +301,173 @@ GRAMMAR_GROUPS = OrderedDict([
     ("SQL",          "General context-free"),
 ])
 
+# Display name -> the \newcommand macro that should appear in the table
+# instead of the literal string (defined once in the main .tex file so
+# a grammar's display name can be tweaked in one place).
+GRAMMAR_MACROS = {
+    "TinyPascal":   r"\GTinyPascal",
+    "S-Expr LL-1":  r"\GSExprLLA",
+    "Expr LL-1":    r"\GExprLLA",
+    "JSON LL-1":    r"\GJSONLLA",
+    "JSON (rr)":    r"\GJSONRR",
+    "JSON (lr)":    r"\GJSONLR",
+    "Expr (lr)":    r"\GExprLR",
+    "Expr (rr)":    r"\GExprRR",
+    "TinyC LR-1":   r"\GTinyCLRA",
+    "S-Expression": r"\GSExpression",
+    "TinyC":        r"\GTinyC",
+    "Bool":         r"\GBool",
+    "Expr (ambig)": r"\GExprAmbig",
+    "JSON (ambig)": r"\GJSONAmbig",
+    "ANSI~C":       r"\GANSIC",
+    "ANSI C":       r"\GANSIC",
+    "Pascal":       r"\GPascal",
+    "Java":         r"\GJava",
+    "C++":          r"\GCPP",
+    "CSS":          r"\GCSS",
+    "HTML":         r"\GHTML",
+    "Shell":        r"\GShell",
+    "SQL":          r"\GSQL",
+}
 
-def write_tex_table(rows, out_tex):
-    groups = OrderedDict()
+
+def split_num(s):
+    """Split a plain formatted number like '15.3' or '356' into
+    (integer_part, fractional_part). fractional_part is '' if the
+    number has no decimal point."""
+    if "." in s:
+        i, f = s.split(".", 1)
+        return i, f
+    return s, ""
+
+
+def best_worst(raw_meds):
+    """Return (best_value, worst_value) among the present (non-None)
+    displayed values in a row, or (None, None) if there is no visible
+    distinction to highlight (no data present, or every present value
+    rounds to the same displayed number)."""
+    vals = [v for v in raw_meds.values() if v is not None]
+    if not vals:
+        return None, None
+    bv, wv = min(vals), max(vals)
+    if bv == wv:
+        return None, None
+    return bv, wv
+
+
+def render_cell(formatted, max_int, max_frac, is_best, is_worst):
+    if formatted == EM:
+        return "---"
+    main, suffix = main_and_suffix(formatted)
+    ip, fp = split_num(main)
+    pad_left = max_int - len(ip)
+    body = (r"\hphantom{" + "0" * pad_left + "}" if pad_left > 0 else "") + ip
+    if max_frac > 0:
+        if fp:
+            pad_right = max_frac - len(fp)
+            body += "." + fp
+            if pad_right > 0:
+                body += r"\hphantom{" + "0" * pad_right + "}"
+        else:
+            body += r"\hphantom{.}" + r"\hphantom{" + "0" * max_frac + "}"
+    body += suffix
+    if is_best:
+        return r"\best{" + body + "}"
+    if is_worst:
+        return r"\worst{" + body + "}"
+    return body
+
+
+def write_tex_table(rows, raws, out_tex):
+    # Group rows (and their parallel raw-median dicts) by grammar,
+    # preserving first-seen order.
+    grammar_rows = OrderedDict()
+    grammar_raws = OrderedDict()
+    for r, rw in zip(rows, raws):
+        grammar_rows.setdefault(r["Grammar"], []).append(r)
+        grammar_raws.setdefault(r["Grammar"], []).append(rw)
+
+    # Per-column max integer/fractional digit widths, computed across
+    # every present cell in the whole table, so that decimal points
+    # line up vertically within a column.
+    col_max_int = {c: 0 for c in OUTPUT_COLUMNS}
+    col_max_frac = {c: 0 for c in OUTPUT_COLUMNS}
     for r in rows:
-        groups.setdefault(r["Grammar"], []).append(r)
+        for c in OUTPUT_COLUMNS:
+            val = r[c + "_ms"]
+            if val == EM:
+                continue
+            main, _ = main_and_suffix(val)
+            ip, fp = split_num(main)
+            col_max_int[c] = max(col_max_int[c], len(ip))
+            col_max_frac[c] = max(col_max_frac[c], len(fp))
 
     lines = [
-        r"\small",
+        r"%\small",
         r"% Generated by make_runtime_table.py — do not edit by hand.",
         r"% Caption and label live in the main .tex file.",
-        r"\begin{tabular}{ll r r r r r r}",
-        r"  \toprule",
-        r"  \textbf{Grammar} & \textbf{Tokens}",
-        r"    & \multicolumn{2}{c}{\textbf{Deterministic (ms)}}",
-        r"    & \multicolumn{4}{c}{\textbf{Generalised (ms)}} \\",
-        r"  \cmidrule(lr){3-4} \cmidrule(l){5-8}",
-        r"  & & \textbf{LL(1)} & \textbf{LR(1)} & \textbf{Earley}"
+        r"\begin{tabular}{|p{1.5em}|l|l|l|l|l|l|l|l|}",
+        r"  \hline",
+        r"  & \multirow{2}{*}{\textbf{Grammar}} & \multirow{2}{*}{\textbf{Tokens}}",
+        r"    & \multicolumn{2}{c|}{\textbf{Deterministic (\millisecond)}}",
+        r"    & \multicolumn{4}{c|}{\textbf{Generalised (\millisecond)}} \\",
+        r"  & & & \textbf{LL(1)} & \textbf{LR(1)} & \textbf{Earley}"
         r" & \textbf{GLL} & \textbf{RNGLR} & \textbf{BRNGLR} \\",
-        r"  \midrule",
+        r"  \hline\hline",
     ]
 
-    grammar_list = list(groups.keys())
+    grammar_list = list(grammar_rows.keys())
     prev_grp = None
     for gi, grammar in enumerate(grammar_list):
         grp = GRAMMAR_GROUPS.get(grammar, "General context-free")
-        # Emit group header row at each group boundary
         if grp != prev_grp:
             if prev_grp is not None:
-                lines.append(r"  \midrule")
-            lines.append(
-                r"  \multicolumn{8}{@{\quad}l}{\textit{" + grp + r"}} \\"
+                lines.append(r"  \hline")
+            n_group_rows = sum(
+                len(grammar_rows[g]) for g in grammar_list
+                if GRAMMAR_GROUPS.get(g, "General context-free") == grp
             )
-            lines.append(r"  \midrule")
+            lines.append(
+                f"  % ======================= {grp}: "
+                f"{n_group_rows} rows ======================="
+            )
+            lines.append(
+                rf"  \multirow{{{n_group_rows}}}{{*}}"
+                rf"{{\rotatebox{{90}}{{\small {grp}}}}}"
+            )
             prev_grp = grp
 
-        g_rows = groups[grammar]
+        g_rows = grammar_rows[grammar]
+        g_raws = grammar_raws[grammar]
         n = len(g_rows)
-        for ri, r in enumerate(g_rows):
-            gram_cell = rf"\multirow{{{n}}}{{*}}{{{grammar}}}" if ri == 0 else ""
+        grammar_macro = GRAMMAR_MACROS.get(grammar, grammar)
+        for ri, (r, rw) in enumerate(zip(g_rows, g_raws)):
+            gram_cell = rf"\multirow{{{n}}}{{*}}{{{grammar_macro}}}" if ri == 0 else ""
+            bv, wv = best_worst(rw)
+            cells = []
+            for c in OUTPUT_COLUMNS:
+                val = r[c + "_ms"]
+                rv = rw.get(c)
+                is_b = rv is not None and bv is not None and rv == bv
+                is_w = (
+                    rv is not None and wv is not None and rv == wv
+                    and bv != wv
+                )
+                cells.append(
+                    render_cell(val, col_max_int[c], col_max_frac[c], is_b, is_w)
+                )
             lines.append(
-                f"  {gram_cell} & {r['Bucket']}"
-                f" & {cell(r['LL(1)_ms'])} & {cell(r['LR(1)_ms'])}"
-                f" & {cell(r['Earley_ms'])} & {cell(r['GLL_ms'])}"
-                f" & {cell(r['RNGLR_ms'])} & {cell(r['BRNGLR_ms'])} \\\\"
+                f"   & {gram_cell} & {r['Bucket']} & " + " & ".join(cells) + r" \\"
             )
-        if gi < len(grammar_list) - 1:
-            lines.append(r"  \midrule")
 
-    lines += [r"  \bottomrule", r"\end{tabular}"]
+        is_last_in_group = (
+            gi == len(grammar_list) - 1
+            or GRAMMAR_GROUPS.get(grammar_list[gi + 1], "General context-free") != grp
+        )
+        if not is_last_in_group:
+            lines.append(r"  \cline{2-9}")
+
+    lines += [r"  \hline", r"\end{tabular}"]
 
     os.makedirs(os.path.dirname(out_tex), exist_ok=True)
     with open(out_tex, "w") as fh:
@@ -338,4 +476,4 @@ def write_tex_table(rows, out_tex):
 
 
 OUTPUT_TEX = os.path.join(PROJECT_ROOT, "img", "runtimeByBucket.tex")
-write_tex_table(rows_out, OUTPUT_TEX)
+write_tex_table(rows_out, raws_out, OUTPUT_TEX)

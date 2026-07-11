@@ -29,11 +29,13 @@ Requires in preamble:
 
 Design notes
 ------------
-* One minipage per grammar (3 on first row, 2 on second).
+* Layout controlled by LAYOUT ("single_column", "two_column", or "minipage").
+* Grammars enabled/disabled per-entry via the include flag in GRAMMARS.
+* SUPPRESS_XLABEL_EXCEPT_LAST hides "Tokens" on all but the last panel.
 * x-axis: token count, log scale, capped at TOKEN_MAX.
 * y-axis: time (ms), log scale, per-grammar range (auto ymin/ymax).
 * Each parser: scatter markers + power-law regression line.
-* LL(1) shown only where available (TinyPascal, S-Expr LL-1).
+* LL(1) shown only where has_ll1=True (e.g. TinyPascal).
 * CYK and Valiant excluded — they blow up below 200 tokens and would
   compress the interesting region of the plot.
 """
@@ -45,7 +47,7 @@ import os
 import numpy as np
 
 # ---------------------------------------------------------------------------
-# Configuration
+# Configuration — edit these values to control layout and content
 # ---------------------------------------------------------------------------
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -54,13 +56,24 @@ OUTPUT_FILE  = os.path.join(PROJECT_ROOT, "img", "lrBaselineTime.tex")
 
 TOKEN_MAX = 30_000   # clip data to this token count
 
-# Grammar label -> (csv file, has_ll1)
+# Layout mode: "single_column" wraps each panel in \begin{figure}[H];
+#              "two_column" places panels two per row, side by side,
+#              via minipages (no inner floats);
+#              "minipage" uses the original 3-then-2 minipage layout.
+LAYOUT = "two_column"
+
+# Set to True to suppress the x-axis label ("Tokens") on every panel
+# except the last one — saves vertical space in single-column mode.
+SUPPRESS_XLABEL_EXCEPT_LAST = True
+
+# Grammar label -> (csv file, has_ll1, include)
+# Set include=False to skip a grammar without deleting the entry.
 GRAMMARS = [
-    ("TinyPascal",   "benchmark_tinypascal.csv", True),
-    ("S-Expr LL-1",  "benchmark_sexp_ll1.csv",   True),
-    ("Expr (lr)",    "benchmark_calc.csv",        False),
-    ("JSON (lr)",    "benchmark_json_lr.csv",     False),
-    ("TinyC LR-1",   "benchmark_tinyc_lr.csv",   False),
+    ("TinyPascal",   "benchmark_tinypascal.csv", True,  True),
+    ("S-Expr LL-1",  "benchmark_sexp_ll1.csv",   True,  False),   # omitted
+    ("Expr (lr)",    "benchmark_calc.csv",        False, True),
+    ("JSON (lr)",    "benchmark_json_lr.csv",     False, True),
+    ("TinyC LR-1",   "benchmark_tinyc_lr.csv",   False, True),
 ]
 
 # Parser display name -> (csv name, color, mark, line style)
@@ -135,8 +148,9 @@ def nice_log_lim(values: list[float], direction: str) -> float:
 # ---------------------------------------------------------------------------
 
 def write_panel(grammar_label: str, rows: list[dict],
-                has_ll1: bool, add_legend: bool) -> list[str]:
-    """Return lines for one minipage (tikzpicture + axis)."""
+                has_ll1: bool, add_legend: bool,
+                show_xlabel: bool = True) -> list[str]:
+    """Return lines for one panel (tikzpicture + axis)."""
 
     # Collect all y-values to determine axis limits
     all_y: list[float] = []
@@ -153,13 +167,15 @@ def write_panel(grammar_label: str, rows: list[dict],
     ymin_val  = nice_log_lim(all_y, "min")
     ymax_val  = nice_log_lim(all_y, "max")
 
+    xlabel_str = r"  xlabel={Tokens}," if show_xlabel else r"  xlabel={},"
+
     lines: list[str] = [
         r"\begin{tikzpicture}",
         r"\begin{axis}[",
         f"  title={{{grammar_label}}},",
         r"  width=\linewidth,",
         r"  height=5.5cm,",
-        r"  xlabel={Tokens},",
+        xlabel_str,
         r"  ylabel={Time (ms)},",
         r"  xmode=log,",
         r"  ymode=log,",
@@ -169,7 +185,9 @@ def write_panel(grammar_label: str, rows: list[dict],
         r"  grid style={dashed, gray!30},",
         r"  tick label style={font=\small},",
         r"  label style={font=\small},",
-        r"  title style={font=\small\bfseries},",
+        r"  title style={font=\small\bfseries, at={(0.5,1)}, anchor=north,"
+        r"                 yshift=-2mm, fill=white, fill opacity=0.75,"
+        r"                 text opacity=1, inner sep=2pt},",
         r"  clip=true,",
     ]
     if add_legend:
@@ -220,9 +238,13 @@ def write_panel(grammar_label: str, rows: list[dict],
 
 
 def main() -> None:
-    # Load all CSV data
+    # Filter to included grammars only
+    active = [(label, fname, has_ll1)
+              for label, fname, has_ll1, include in GRAMMARS if include]
+
+    # Load CSV data for active grammars
     grammar_rows: dict[str, list[dict]] = {}
-    for label, fname, _ in GRAMMARS:
+    for label, fname, _ in active:
         grammar_rows[label] = load_csv(fname)
 
     out: list[str] = [
@@ -230,41 +252,78 @@ def main() -> None:
         "% Caption and label live in the main .tex file.",
     ]
 
-    # Row 1: three grammars
-    row1 = GRAMMARS[:3]
-    # Row 2: two grammars (centred with \hspace)
-    row2 = GRAMMARS[3:]
+    if LAYOUT == "single_column":
+        # Each panel is a self-contained \begin{figure}[H]...\end{figure}
+        for i, (label, _, has_ll1) in enumerate(active):
+            add_legend = (i == 0)
+            show_xlabel = (not SUPPRESS_XLABEL_EXCEPT_LAST) or (i == len(active) - 1)
+            # Comment out the original minipage wrappers for reference
+            out += [
+                r"% \begin{minipage}[t]{0.32\linewidth}",
+                r"%   \centering",
+            ]
+            out.append(r"\begin{figure}[H]")
+            out += ["  " + l for l in write_panel(
+                label, grammar_rows[label], has_ll1, add_legend, show_xlabel)]
+            out += [r"\end{figure}", r"% \end{minipage}", ""]
+    elif LAYOUT == "two_column":
+        # Two panels per row, side by side via minipages (no inner floats,
+        # so this pair of panels shares a single outer float in the main
+        # .tex file).
+        minipage_width = "0.48"
+        n = len(active)
+        for row_start in range(0, n, 2):
+            row = active[row_start:row_start + 2]
+            is_last_row = (row_start + len(row)) >= n
+            for j, (label, _, has_ll1) in enumerate(row):
+                idx = row_start + j
+                add_legend = (idx == 0)
+                show_xlabel = is_last_row
+                out += [
+                    f"\\begin{{minipage}}[t]{{{minipage_width}\\linewidth}}",
+                    r"  \centering",
+                ]
+                out += ["  " + l for l in write_panel(
+                    label, grammar_rows[label], has_ll1,
+                    add_legend, show_xlabel)]
+                sep = r"\hfill" if j < len(row) - 1 else ""
+                out += [r"\end{minipage}", sep]
+            out.append(r"\par\vspace{4pt}")
+    else:
+        # Original minipage layout: 3 on row 1, remainder on row 2
+        row1 = active[:3]
+        row2 = active[3:]
+        minipage_width_3 = "0.32"
+        minipage_width_2 = "0.47"
 
-    minipage_width_3 = "0.32"
-    minipage_width_2 = "0.47"
+        for i, (label, _, has_ll1) in enumerate(row1):
+            add_legend = (i == 0)
+            show_xlabel = not SUPPRESS_XLABEL_EXCEPT_LAST
+            out += [
+                f"\\begin{{minipage}}[t]{{{minipage_width_3}\\linewidth}}",
+                r"  \centering",
+            ]
+            out += ["  " + l for l in write_panel(
+                label, grammar_rows[label], has_ll1, add_legend, show_xlabel)]
+            sep = r"\hfill" if i < len(row1) - 1 else ""
+            out += [r"\end{minipage}", sep]
 
-    # --- First row ---
-    for i, (label, _, has_ll1) in enumerate(row1):
-        add_legend = (i == 0)
-        out += [
-            f"\\begin{{minipage}}[t]{{{minipage_width_3}\\linewidth}}",
-            r"  \centering",
-        ]
-        out += ["  " + l for l in write_panel(
-            label, grammar_rows[label], has_ll1, add_legend)]
-        sep = r"\hfill" if i < len(row1) - 1 else ""
-        out += [r"\end{minipage}", sep]
+        out.append(r"\par\vspace{4pt}")
+        out.append(r"\hspace*{0.08\linewidth}")
 
-    # Spacing between rows
-    out.append(r"\par\vspace{4pt}")
+        for i, (label, _, has_ll1) in enumerate(row2):
+            is_last = (i == len(row2) - 1)
+            show_xlabel = (not SUPPRESS_XLABEL_EXCEPT_LAST) or is_last
+            out += [
+                f"\\begin{{minipage}}[t]{{{minipage_width_2}\\linewidth}}",
+                r"  \centering",
+            ]
+            out += ["  " + l for l in write_panel(
+                label, grammar_rows[label], has_ll1, False, show_xlabel)]
+            sep = r"\hfill" if not is_last else ""
+            out += [r"\end{minipage}", sep]
 
-    # --- Second row (centred) ---
-    out.append(r"\hspace*{0.08\linewidth}")
-    for i, (label, _, has_ll1) in enumerate(row2):
-        out += [
-            f"\\begin{{minipage}}[t]{{{minipage_width_2}\\linewidth}}",
-            r"  \centering",
-        ]
-        out += ["  " + l for l in write_panel(
-            label, grammar_rows[label], has_ll1, False)]
-        sep = r"\hfill" if i < len(row2) - 1 else ""
-        out += [r"\end{minipage}", sep]
-    out.append(r"\hspace*{0.08\linewidth}")
+        out.append(r"\hspace*{0.08\linewidth}")
 
     tex = "\n".join(out) + "\n"
     os.makedirs(os.path.dirname(OUTPUT_FILE), exist_ok=True)
@@ -274,7 +333,7 @@ def main() -> None:
 
     # Summary: fitted exponents
     print("\nFitted log-log exponents (LR-baseline grammars):")
-    for label, _, has_ll1 in GRAMMARS:
+    for label, _, has_ll1 in active:
         rows = grammar_rows[label]
         print(f"  {label}:")
         for display_name, csv_name, *_ in PARSERS:

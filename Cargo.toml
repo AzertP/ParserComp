@@ -13,3 +13,5 @@ memory-stats = "1.1"
 m4ri-rust = "0.4.0"
 tree-sitter = "0.24"
 tree-sitter-java = { path = "tree-sitter-java" }
+tree-sitter-gamma2 = { path = "tree-sitter-gamma2" }
+tree-sitter-gamma3 = { path = "tree-sitter-gamma3" }

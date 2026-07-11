@@ -114,7 +114,7 @@ benchmark does not construct or enumerate a complete ambiguity forest.
 
 | Parser | Algorithm | Key reference |
 |---|---|---|
-| **Earley / Earley-Leo** | Chart parsing (Earley 1970), with optional Leo right-recursion optimisation | Adapted from [Gopinath 2021](https://rahul.gopinath.org/post/2021/02/06/earley-parsing/) |
+| **Earley / Earley-Leo** | Chart parsing (Earley 1970), with optional Leo right-recursion optimisation | Adapted from [The Fuzzing Book](https://www.fuzzingbook.org/html/Parser.html) |
 | **GLL** | Graph-structured parsing | ["A Reference GLL Implementation"](https://doi.org/10.1145/3623476.3623521) — Johnstone 2023 |
 | **RNGLR** | Right-Nulled GLR | Economopoulos 2006 — [PhD dissertation](https://www.researchgate.net/publication/242287349_Generalised_LR_Parsing_Algorithms) |
 | **BRNGLR** | Binarised RNGLR | same |

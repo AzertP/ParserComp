@@ -1,4 +1,5 @@
-# Dockerfile — self-contained artifact for the parser comparison paper.
+# Dockerfile — containerized environment for building and benchmarking the
+# generalized parser implementations in this repository.
 #
 # Build:
 #   git submodule update --init --recursive
@@ -7,15 +8,9 @@
 # Open an interactive shell in the prepared environment:
 #   docker run --rm -it parser-comparison
 #
-# Skip benchmarks and only regenerate plots from pre-computed results:
-#   docker run --rm parser-comparison bash reproduce.sh --skip-benchmark
-#
-# Copy results out of the container:
-#   docker run --rm -v "$(pwd)/output:/output" parser-comparison \
-#       bash -c "bash reproduce.sh && cp -r results plot /output/"
-#
-# Interactive exploration:
-#   docker run --rm -it parser-comparison bash
+# Run the configured valid-input benchmarks and keep the raw CSV results:
+#   docker run --rm -v "$(pwd)/results:/artifact/results" parser-comparison \
+#       cargo run --release --bin benchmark_csv
 
 FROM rust:1.85-bookworm
 

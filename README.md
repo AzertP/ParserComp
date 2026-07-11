@@ -23,66 +23,45 @@ release binaries:
 cargo build --release
 ```
 
-### Select benchmark configurations
+### Configure benchmark selections
 
-The main valid-input driver is configured by the `CONFIGS` array in
+The valid-input driver is configured by the `CONFIGS` array in
 `src/bin/benchmark_csv.rs`. Uncomment the `GrammarConfig` entries that you want
 to run, and set each entry's `parsers` field to `ALL_PARSERS`, `FAST_PARSERS`,
 or a parser-name slice such as `&["Leo", "GLL"]`.
+
+Invalid-input benchmarks are configured separately by the `CONFIGS` array in
+`src/bin/benchmark_csv_invalid.rs`. Enable the configurations that correspond
+to the valid-input runs.
 
 Only enabled entries are run. Each enabled entry writes one CSV file, replacing
 an existing file with the same name, so copy any raw result that you need to
 preserve before rerunning it.
 
-### Run valid-input benchmarks
+See [Running a custom benchmark](#running-a-custom-benchmark) for the full
+`GrammarConfig` field reference and an example entry.
+
+### Run benchmarks
 
 ```bash
+# Valid-input benchmarks → results/benchmark_csv/benchmark_<config>.csv
 cargo run --release --bin benchmark_csv
-```
 
-Results are written to
-`results/benchmark_csv/benchmark_<configuration-name>.csv`.
-
-### Run invalid-input benchmarks
-
-Invalid-input benchmarks are configured separately by the `CONFIGS` array in
-`src/bin/benchmark_csv_invalid.rs`. Enable the configurations that correspond
-to the valid-input runs, then run:
-
-```bash
+# Invalid-input benchmarks → results/benchmark_csv_invalid/benchmark_<config>_invalid.csv
 cargo run --release --bin benchmark_csv_invalid
-```
 
-Results are written to
-`results/benchmark_csv_invalid/benchmark_<configuration-name>_invalid.csv`.
-
-The other benchmark drivers and their output locations are listed under
-[Benchmark Rust files](#benchmark-rust-files).
-
-### Run Tree-sitter comparisons
-
-To run the included `tree-sitter-java` submodule as a Java baseline, run:
-
-```bash
+# Java Tree-sitter baseline → results/benchmark_tree_sitter_java/benchmark_tree_sitter_java.csv
 cargo run --release --bin benchmark_tree_sitter_java
-```
 
-This writes
-`results/benchmark_tree_sitter_java/benchmark_tree_sitter_java.csv` over the same
-`input/code/Java/*.java` corpus used by the Java lexical benchmark.
-
-To benchmark only Tree-sitter on the `gamma2` and `gamma3` stress corpora, run:
-
-```bash
+# Tree-sitter gamma2/gamma3 stress → results/benchmark_tree_sitter_stress/benchmark_tree_sitter_<grammar>.csv
+# Pass -- --grammar gamma2 or -- --grammar gamma3 to run one grammar instead of both.
+# Tree-sitter resolves each ambiguous input to one concrete syntax tree; this
+# benchmark does not construct or enumerate a complete ambiguity forest.
 cargo run --release --bin benchmark_tree_sitter_stress
 ```
 
-The command runs both grammars by default. Pass `-- --grammar gamma2` or
-`-- --grammar gamma3` to run one grammar. Results are written to
-`results/benchmark_tree_sitter_stress/benchmark_tree_sitter_gamma2.csv` and
-`results/benchmark_tree_sitter_stress/benchmark_tree_sitter_gamma3.csv`.
-Tree-sitter resolves each ambiguous input to one concrete syntax tree; this
-benchmark does not construct or enumerate a complete ambiguity forest.
+The other benchmark drivers and their output locations are listed under
+[Benchmark Rust files](#benchmark-rust-files).
 
 ## Repository structure
 

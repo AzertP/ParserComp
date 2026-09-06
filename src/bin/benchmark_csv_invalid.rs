@@ -17,7 +17,8 @@ use parser_comparison::parsers::{cyk, earley_leo, gll, glr, valiant};
 use std::collections::HashSet;
 use std::fs::{self, File};
 use std::hint::black_box;
-use std::io::Write;
+use std::io::{Read, Write};
+use std::process::{Command, Stdio};
 use std::sync::{
     atomic::{AtomicBool, AtomicUsize, Ordering},
     Arc,
@@ -150,7 +151,7 @@ const CONFIGS: &[GrammarConfig] = &[
         generate_table: false,
         parsers: FAST_PARSERS,
     },
-    // // ----- Json LL(1) -----
+    // ----- Json LL(1) -----
     GrammarConfig {
         name: "json_ll1",
         grammar_path: "grammars/ll1_json.json",
@@ -273,10 +274,11 @@ const CONFIGS: &[GrammarConfig] = &[
 ];
 
 const WARMUP_ITERATIONS: u32 = 1;
-const MIN_ITERATIONS: u32 = 10;
-const MAX_ITERATIONS: u32 = 20;
-const TARGET_TIME: Duration = Duration::from_millis(500);
-const TIMEOUT_THRESHOLD: f64 = 1_000_000_000.0; // 1 seconds in ns
+const TIMED_ITERATIONS: u32 = 10;
+const PARSE_TIMEOUT: Duration = Duration::from_secs(1);
+const TIMEOUT_EXIT_CODE: i32 = 124;
+const PAIR_WORKER_ARG: &str = "--pair-worker";
+const WORKER_RESULT_PREFIX: &str = "WORKER_RESULT\t";
 const RESULT_DIR: &str = "results/benchmark_csv_invalid";
 
 fn output_path(config_name: &str) -> String {
@@ -343,6 +345,76 @@ impl BenchmarkResult {
             status: "TIMEOUT".to_string(),
         }
     }
+
+    fn from_csv_row(row: &str) -> Result<Self, String> {
+        let fields: Vec<&str> = row.split(',').collect();
+        if fields.len() != 10 {
+            return Err(format!(
+                "expected 10 worker result fields, found {}",
+                fields.len()
+            ));
+        }
+        Ok(BenchmarkResult {
+            parser: fields[0].to_string(),
+            input_length: fields[1]
+                .parse()
+                .map_err(|e| format!("invalid input length: {e}"))?,
+            token_count: fields[2]
+                .parse()
+                .map_err(|e| format!("invalid token count: {e}"))?,
+            median_time_ns: fields[3]
+                .parse()
+                .map_err(|e| format!("invalid median time: {e}"))?,
+            mad_ns: fields[4].parse().map_err(|e| format!("invalid MAD: {e}"))?,
+            peak_memory_bytes: fields[5]
+                .parse()
+                .map_err(|e| format!("invalid peak memory: {e}"))?,
+            iterations: fields[6]
+                .parse()
+                .map_err(|e| format!("invalid iteration count: {e}"))?,
+            recognized: fields[7]
+                .parse()
+                .map_err(|e| format!("invalid recognized flag: {e}"))?,
+            reject_correct: fields[8]
+                .parse()
+                .map_err(|e| format!("invalid rejection flag: {e}"))?,
+            status: fields[9].to_string(),
+        })
+    }
+}
+
+fn worker_result_from_output(
+    exit_code: Option<i32>,
+    stdout: &[u8],
+    parser_name: &str,
+    input_length: usize,
+    token_count: usize,
+) -> std::io::Result<BenchmarkResult> {
+    if exit_code == Some(TIMEOUT_EXIT_CODE) {
+        return Ok(BenchmarkResult::timeout(
+            parser_name,
+            input_length,
+            token_count,
+        ));
+    }
+    if exit_code != Some(0) {
+        return Err(std::io::Error::other(format!(
+            "benchmark worker exited with code {exit_code:?}"
+        )));
+    }
+    let output = std::str::from_utf8(stdout)
+        .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e))?;
+    let payload = output
+        .lines()
+        .find_map(|line| line.strip_prefix(WORKER_RESULT_PREFIX))
+        .ok_or_else(|| {
+            std::io::Error::new(
+                std::io::ErrorKind::InvalidData,
+                "benchmark worker produced no result row",
+            )
+        })?;
+    BenchmarkResult::from_csv_row(payload)
+        .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e))
 }
 
 // ============================================================================
@@ -350,7 +422,7 @@ impl BenchmarkResult {
 // ============================================================================
 
 /// Measure peak memory usage during parsing using a sampling thread
-fn measure_peak_memory<F>(mut parse_fn: F) -> usize
+fn measure_peak_memory_with_result<F>(mut parse_fn: F) -> (Option<ParseTree>, usize)
 where
     F: FnMut() -> Option<ParseTree>,
 {
@@ -373,7 +445,7 @@ where
     });
 
     // Run the parser (single iteration)
-    let _ = black_box(parse_fn());
+    let parse_result = black_box(parse_fn());
 
     // Stop sampler
     stop_signal.store(true, Ordering::Relaxed);
@@ -383,11 +455,28 @@ where
 
     // Return approximate delta (peak - start)
     // Note: This assumes single-threaded parser execution dominates memory usage
-    if peak > start_mem {
-        peak - start_mem
-    } else {
-        0
-    }
+    (parse_result, peak.saturating_sub(start_mem))
+}
+
+fn run_with_hard_timeout<T, F>(timeout: Duration, operation: F) -> (T, Duration)
+where
+    F: FnOnce() -> T,
+{
+    let (done_tx, done_rx) = std::sync::mpsc::channel();
+    let watchdog = thread::spawn(move || {
+        if matches!(
+            done_rx.recv_timeout(timeout),
+            Err(std::sync::mpsc::RecvTimeoutError::Timeout)
+        ) {
+            std::process::exit(TIMEOUT_EXIT_CODE);
+        }
+    });
+    let start = Instant::now();
+    let result = operation();
+    let elapsed = start.elapsed();
+    let _ = done_tx.send(());
+    watchdog.join().expect("timeout watchdog panicked");
+    (result, elapsed)
 }
 
 /// Measure a parsing function with statistical rigor
@@ -395,31 +484,10 @@ fn measure<F>(mut parse_fn: F) -> (f64, f64, u32)
 where
     F: FnMut() -> Option<ParseTree>,
 {
-    // Warmup
-    for _ in 0..WARMUP_ITERATIONS {
-        let _ = black_box(parse_fn());
-        // if let Some(tree) = result {
-        //     println!("{}", tree.display());
-        // }
-    }
-
-    let mut times: Vec<f64> = Vec::new();
-    let mut iterations = 0u32;
-
-    let start_measure = Instant::now();
-    loop {
-        if iterations >= MAX_ITERATIONS {
-            break;
-        }
-        if iterations >= MIN_ITERATIONS && start_measure.elapsed() >= TARGET_TIME {
-            break;
-        }
-
-        let start = Instant::now();
-        let _ = black_box(parse_fn());
-        let elapsed = start.elapsed().as_nanos() as f64;
-        times.push(elapsed);
-        iterations += 1;
+    let mut times: Vec<f64> = Vec::with_capacity(TIMED_ITERATIONS as usize);
+    for _ in 0..TIMED_ITERATIONS {
+        let (_, elapsed) = run_with_hard_timeout(PARSE_TIMEOUT, || black_box(parse_fn()));
+        times.push(elapsed.as_nanos() as f64);
     }
 
     if times.is_empty() {
@@ -445,19 +513,220 @@ where
         deviations[deviations.len() / 2]
     };
 
-    (median, mad, iterations)
+    (median, mad, times.len() as u32)
 }
 
 /// Check whether an invalid input is rejected in a single parse call.
 /// Returns (recognized, reject_correct).
-fn check_correctness<F>(mut parse_fn: F) -> (bool, bool)
+fn benchmark_parser<F>(
+    parser_name: &str,
+    input_length: usize,
+    token_count: usize,
+    mut parse_fn: F,
+) -> BenchmarkResult
 where
     F: FnMut() -> Option<ParseTree>,
 {
-    match parse_fn() {
+    let ((warmup_result, peak_memory_bytes), _) = run_with_hard_timeout(PARSE_TIMEOUT, || {
+        measure_peak_memory_with_result(&mut parse_fn)
+    });
+    let (recognized, reject_correct) = match warmup_result {
         Some(_) => (true, false),
         None => (false, true),
+    };
+    let (median_time_ns, mad_ns, iterations) = measure(parse_fn);
+    BenchmarkResult {
+        parser: parser_name.to_string(),
+        input_length,
+        token_count,
+        median_time_ns,
+        mad_ns,
+        peak_memory_bytes,
+        iterations,
+        recognized,
+        reject_correct,
+        status: "OK".to_string(),
     }
+}
+
+fn run_pair_worker(
+    config: &GrammarConfig,
+    parser_name: &str,
+    input: &str,
+) -> Result<BenchmarkResult, String> {
+    let grammar = grammars::load_grammar_from_file(config.grammar_path)
+        .map_err(|e| format!("failed to load grammar: {e}"))?;
+    let tokens = grammar
+        .tokenize(input)
+        .ok_or_else(|| "failed to tokenize worker input".to_string())?;
+    let input_length = input.len();
+    let token_count = tokens.len();
+
+    match parser_name {
+        "Earley" => {
+            let mut parser = earley::EarleyParser::new(grammar.clone());
+            Ok(benchmark_parser(
+                parser_name,
+                input_length,
+                token_count,
+                || parser.parse(tokens.clone()),
+            ))
+        }
+        "Leo" => {
+            let mut parser = earley_leo::LeoParser::new(grammar.clone());
+            Ok(benchmark_parser(
+                parser_name,
+                input_length,
+                token_count,
+                || parser.parse(tokens.clone()),
+            ))
+        }
+        "GLL" => {
+            let mut parser = gll::GLLParser::new(&grammar);
+            Ok(benchmark_parser(
+                parser_name,
+                input_length,
+                token_count,
+                || parser.parse_one(&tokens),
+            ))
+        }
+        "RNGLR" => {
+            let mut parser = glr::RnglrParser::import_table_from_csv(config.table_path)
+                .map_err(|e| format!("failed to load RNGLR table: {e}"))?;
+            parser.set_grammar(grammar.clone());
+            let ids: Vec<i32> = tokens.iter().map(|&token| (token + 1) as i32).collect();
+            Ok(benchmark_parser(
+                parser_name,
+                input_length,
+                token_count,
+                || parser.parse(&ids),
+            ))
+        }
+        "BRNGLR" => {
+            let mut parser = glr::BrnglrParser::import_table_from_csv(config.table_path)
+                .map_err(|e| format!("failed to load BRNGLR table: {e}"))?;
+            parser.set_grammar(grammar.clone());
+            let ids: Vec<i32> = tokens.iter().map(|&token| (token + 1) as i32).collect();
+            Ok(benchmark_parser(
+                parser_name,
+                input_length,
+                token_count,
+                || parser.parse(&ids),
+            ))
+        }
+        "CYK" => {
+            let cnf = grammar.to_cnf();
+            let ids = cnf.tokenize(input).unwrap_or_default();
+            Ok(benchmark_parser(
+                parser_name,
+                input_length,
+                token_count,
+                || cyk::parse(&cnf, &ids),
+            ))
+        }
+        "Valiant" => {
+            let cnf = grammar.to_cnf();
+            let ids = cnf.tokenize(input).unwrap_or_default();
+            Ok(benchmark_parser(
+                parser_name,
+                input_length,
+                token_count,
+                || valiant::parse(&cnf, &ids),
+            ))
+        }
+        "LL" => match std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            ll::LLParser::new(&grammar)
+        })) {
+            Ok(parser) => Ok(benchmark_parser(
+                parser_name,
+                input_length,
+                token_count,
+                || parser.parse(&tokens),
+            )),
+            Err(_) => Ok(BenchmarkResult::conflict(
+                parser_name,
+                input_length,
+                token_count,
+            )),
+        },
+        "LR" => match std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            lr::LRParser::from_csv(config.lr_table_path, &grammar)
+        })) {
+            Ok(Ok(parser)) => {
+                let ids: Vec<i32> = tokens.iter().map(|&token| (token + 1) as i32).collect();
+                Ok(benchmark_parser(
+                    parser_name,
+                    input_length,
+                    token_count,
+                    || parser.parse(&ids),
+                ))
+            }
+            Ok(Err(_)) | Err(_) => Ok(BenchmarkResult::conflict(
+                parser_name,
+                input_length,
+                token_count,
+            )),
+        },
+        _ => Err(format!("unknown parser: {parser_name}")),
+    }
+}
+
+fn pair_worker_main(args: &[String]) -> i32 {
+    if args.len() != 4 {
+        eprintln!("Usage: {} {PAIR_WORKER_ARG} <config> <parser>", args[0]);
+        return 2;
+    }
+    let Some(config) = CONFIGS.iter().find(|config| config.name == args[2]) else {
+        eprintln!("Unknown benchmark configuration: {}", args[2]);
+        return 2;
+    };
+    let mut input = String::new();
+    if let Err(error) = std::io::stdin().read_to_string(&mut input) {
+        eprintln!("Failed to read worker input: {error}");
+        return 2;
+    }
+    match run_pair_worker(config, &args[3], &input) {
+        Ok(result) => {
+            println!("{WORKER_RESULT_PREFIX}{}", result.to_csv_row());
+            0
+        }
+        Err(error) => {
+            eprintln!("Benchmark worker failed: {error}");
+            1
+        }
+    }
+}
+
+fn run_pair_in_worker(
+    config: &GrammarConfig,
+    parser_name: &str,
+    input: &str,
+    input_length: usize,
+    token_count: usize,
+) -> std::io::Result<BenchmarkResult> {
+    let mut child = Command::new(std::env::current_exe()?)
+        .args([PAIR_WORKER_ARG, config.name, parser_name])
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()?;
+    child
+        .stdin
+        .take()
+        .ok_or_else(|| std::io::Error::other("worker stdin was not piped"))?
+        .write_all(input.as_bytes())?;
+    let output = child.wait_with_output()?;
+    worker_result_from_output(
+        output.status.code(),
+        &output.stdout,
+        parser_name,
+        input_length,
+        token_count,
+    )
+    .map_err(|error| {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        std::io::Error::new(error.kind(), format!("{error}; worker stderr: {stderr}"))
+    })
 }
 
 // ============================================================================
@@ -483,8 +752,6 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
     // Load grammar
     let grammar =
         grammars::load_grammar_from_file(config.grammar_path).expect("Failed to load grammar");
-    let cnf_grammar = grammar.to_cnf();
-
     println!("✓ Grammar loaded.");
     // Setup GLR and LR tables
     if config.generate_table {
@@ -502,54 +769,7 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
     }
 
     println!("\n✓ Writing results to: {}", filename);
-    let mut rnglr = glr::RnglrParser::import_table_from_csv(config.table_path)
-        .expect("Failed to load RNGLR table");
-    let mut brnglr = glr::BrnglrParser::import_table_from_csv(config.table_path)
-        .expect("Failed to load BRNGLR table");
-    let mut gll_parser = gll::GLLParser::new(&grammar);
-    let mut earley = earley::EarleyParser::new(grammar.clone());
-    let mut leo = earley_leo::LeoParser::new(grammar.clone());
     let mut conflict_parsers: HashSet<String> = HashSet::new();
-
-    let ll_parser = if config.parsers.contains(&"LL") {
-        let grammar_clone = grammar.clone();
-        match std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-            ll::LLParser::new(&grammar_clone)
-        })) {
-            Ok(parser) => Some(parser),
-            Err(_) => {
-                eprintln!("    [CONFLICT] LL parser has grammar conflicts, marking as CONFLICT");
-                conflict_parsers.insert("LL".to_string());
-                None
-            }
-        }
-    } else {
-        None
-    };
-    let lr_parser = if config.parsers.contains(&"LR") {
-        let grammar_clone = grammar.clone();
-        let lr_table_path = config.lr_table_path.to_string();
-        match std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-            lr::LRParser::from_csv(&lr_table_path, &grammar_clone)
-        })) {
-            Ok(Ok(parser)) => Some(parser),
-            Ok(Err(e)) => {
-                eprintln!("    [ERROR] LR parser failed to load table: {}", e);
-                conflict_parsers.insert("LR".to_string());
-                None
-            }
-            Err(_) => {
-                eprintln!("    [CONFLICT] LR parser has grammar conflicts, marking as CONFLICT");
-                conflict_parsers.insert("LR".to_string());
-                None
-            }
-        }
-    } else {
-        None
-    };
-
-    rnglr.set_grammar(grammar.clone());
-    brnglr.set_grammar(grammar.clone());
 
     // Load inputs from all input files
     let mut all_input_lines: Vec<String> = Vec::new();
@@ -575,8 +795,6 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
         lines.last().map(|l| l.len()).unwrap_or(0)
     );
 
-    let mut failed_parsers: HashSet<String> = HashSet::new();
-
     for (idx, line) in lines.iter().enumerate() {
         let input_len = line.len();
 
@@ -589,9 +807,6 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
             }
         };
         let token_count = tokens.len();
-        let cnf_tokens = cnf_grammar.tokenize(line).unwrap_or_default();
-        let glr_tokens: Vec<i32> = tokens.iter().map(|&t| (t + 1) as i32).collect();
-
         println!(
             "\n  Input #{}: {} bytes, {} tokens",
             idx + 1,
@@ -612,193 +827,28 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
                 continue;
             }
 
-            // Handle timed-out parsers: write TIMEOUT row and skip
-            if failed_parsers.contains(*parser_name) {
-                let result = BenchmarkResult::timeout(parser_name, input_len, token_count);
+            let result = run_pair_in_worker(config, parser_name, line, input_len, token_count)?;
+
+            if result.status == "CONFLICT" {
+                conflict_parsers.insert(result.parser.clone());
                 println!(
-                    "    [TIMEOUT] {:8}: previously timed out, skipping",
-                    parser_name
+                    "    [CONFLICT] {:8}: grammar has conflicts, skipping",
+                    result.parser
                 );
                 writeln!(csv_file, "{}", result.to_csv_row())?;
                 csv_file.flush()?;
                 continue;
             }
 
-            let result = match *parser_name {
-                "Earley" => {
-                    let (recognized, reject_correct) =
-                        check_correctness(|| earley.parse(tokens.clone()));
-                    let peak_mem = measure_peak_memory(|| earley.parse(tokens.clone()));
-                    let (median, mad, iters) = measure(|| earley.parse(tokens.clone()));
-                    BenchmarkResult {
-                        parser: parser_name.to_string(),
-                        input_length: input_len,
-                        token_count,
-                        median_time_ns: median,
-                        mad_ns: mad,
-                        peak_memory_bytes: peak_mem,
-                        iterations: iters,
-                        recognized,
-                        reject_correct,
-                        status: "OK".to_string(),
-                    }
-                }
-                "Leo" => {
-                    let (recognized, reject_correct) =
-                        check_correctness(|| leo.parse(tokens.clone()));
-                    let peak_mem = measure_peak_memory(|| leo.parse(tokens.clone()));
-                    let (median, mad, iters) = measure(|| leo.parse(tokens.clone()));
-                    BenchmarkResult {
-                        parser: parser_name.to_string(),
-                        input_length: input_len,
-                        token_count,
-                        median_time_ns: median,
-                        mad_ns: mad,
-                        peak_memory_bytes: peak_mem,
-                        iterations: iters,
-                        recognized,
-                        reject_correct,
-                        status: "OK".to_string(),
-                    }
-                }
-                "GLL" => {
-                    let (recognized, reject_correct) =
-                        check_correctness(|| gll_parser.parse_one(&tokens));
-                    let peak_mem = measure_peak_memory(|| gll_parser.parse_one(&tokens));
-                    let (median, mad, iters) = measure(|| gll_parser.parse_one(&tokens));
-                    BenchmarkResult {
-                        parser: parser_name.to_string(),
-                        input_length: input_len,
-                        token_count,
-                        median_time_ns: median,
-                        mad_ns: mad,
-                        peak_memory_bytes: peak_mem,
-                        iterations: iters,
-                        recognized,
-                        reject_correct,
-                        status: "OK".to_string(),
-                    }
-                }
-                "RNGLR" => {
-                    let (recognized, reject_correct) =
-                        check_correctness(|| rnglr.parse(&glr_tokens));
-                    let peak_mem = measure_peak_memory(|| rnglr.parse(&glr_tokens));
-                    let (median, mad, iters) = measure(|| rnglr.parse(&glr_tokens));
-                    BenchmarkResult {
-                        parser: parser_name.to_string(),
-                        input_length: input_len,
-                        token_count,
-                        median_time_ns: median,
-                        mad_ns: mad,
-                        peak_memory_bytes: peak_mem,
-                        iterations: iters,
-                        recognized,
-                        reject_correct,
-                        status: "OK".to_string(),
-                    }
-                }
-                "BRNGLR" => {
-                    let (recognized, reject_correct) =
-                        check_correctness(|| brnglr.parse(&glr_tokens));
-                    let peak_mem = measure_peak_memory(|| brnglr.parse(&glr_tokens));
-                    let (median, mad, iters) = measure(|| brnglr.parse(&glr_tokens));
-                    BenchmarkResult {
-                        parser: parser_name.to_string(),
-                        input_length: input_len,
-                        token_count,
-                        median_time_ns: median,
-                        mad_ns: mad,
-                        peak_memory_bytes: peak_mem,
-                        iterations: iters,
-                        recognized,
-                        reject_correct,
-                        status: "OK".to_string(),
-                    }
-                }
-                "CYK" => {
-                    let (recognized, reject_correct) =
-                        check_correctness(|| cyk::parse(&cnf_grammar, &cnf_tokens));
-                    let peak_mem = measure_peak_memory(|| cyk::parse(&cnf_grammar, &cnf_tokens));
-                    let (median, mad, iters) = measure(|| cyk::parse(&cnf_grammar, &cnf_tokens));
-                    BenchmarkResult {
-                        parser: parser_name.to_string(),
-                        input_length: input_len,
-                        token_count,
-                        median_time_ns: median,
-                        mad_ns: mad,
-                        peak_memory_bytes: peak_mem,
-                        iterations: iters,
-                        recognized,
-                        reject_correct,
-                        status: "OK".to_string(),
-                    }
-                }
-                "Valiant" => {
-                    let (recognized, reject_correct) =
-                        check_correctness(|| valiant::parse(&cnf_grammar, &cnf_tokens));
-                    let peak_mem =
-                        measure_peak_memory(|| valiant::parse(&cnf_grammar, &cnf_tokens));
-                    let (median, mad, iters) =
-                        measure(|| valiant::parse(&cnf_grammar, &cnf_tokens));
-                    BenchmarkResult {
-                        parser: parser_name.to_string(),
-                        input_length: input_len,
-                        token_count,
-                        median_time_ns: median,
-                        mad_ns: mad,
-                        peak_memory_bytes: peak_mem,
-                        iterations: iters,
-                        recognized,
-                        reject_correct,
-                        status: "OK".to_string(),
-                    }
-                }
-                "LR" => {
-                    if let Some(parser) = &lr_parser {
-                        let (recognized, reject_correct) =
-                            check_correctness(|| parser.parse(&glr_tokens));
-                        let peak_mem = measure_peak_memory(|| parser.parse(&glr_tokens));
-                        let (median, mad, iters) = measure(|| parser.parse(&glr_tokens));
-                        BenchmarkResult {
-                            parser: parser_name.to_string(),
-                            input_length: input_len,
-                            token_count,
-                            median_time_ns: median,
-                            mad_ns: mad,
-                            peak_memory_bytes: peak_mem,
-                            iterations: iters,
-                            recognized,
-                            reject_correct,
-                            status: "OK".to_string(),
-                        }
-                    } else {
-                        continue; // conflict already handled above
-                    }
-                }
-                "LL" => {
-                    if let Some(parser) = &ll_parser {
-                        let (recognized, reject_correct) =
-                            check_correctness(|| parser.parse(&tokens));
-                        let peak_mem = measure_peak_memory(|| parser.parse(&tokens));
-                        let (median, mad, iters) = measure(|| parser.parse(&tokens));
-                        BenchmarkResult {
-                            parser: parser_name.to_string(),
-                            input_length: input_len,
-                            token_count,
-                            median_time_ns: median,
-                            mad_ns: mad,
-                            peak_memory_bytes: peak_mem,
-                            iterations: iters,
-                            recognized,
-                            reject_correct,
-                            status: "OK".to_string(),
-                        }
-                    } else {
-                        continue; // conflict already handled above
-                    }
-                }
-                _ => continue,
-            };
+            if result.status == "TIMEOUT" {
+                println!(
+                    "    [TIMEOUT] {:8}: invocation exceeded {:?}",
+                    result.parser, PARSE_TIMEOUT
+                );
+                writeln!(csv_file, "{}", result.to_csv_row())?;
+                csv_file.flush()?;
+                continue;
+            }
 
             let outcome_status = if result.recognized {
                 "ACCEPT"
@@ -832,15 +882,6 @@ fn run_benchmarks(config: &GrammarConfig) -> std::io::Result<()> {
             // Write result to CSV immediately
             writeln!(csv_file, "{}", result.to_csv_row())?;
             csv_file.flush()?; // Ensure data is written to disk immediately
-
-            // If parser took too long, mark it as failed for future iterations
-            if result.median_time_ns > TIMEOUT_THRESHOLD {
-                println!(
-                    "    [TIMEOUT] {} exceeded 1s threshold, skipping larger inputs",
-                    result.parser
-                );
-                failed_parsers.insert(result.parser);
-            }
         }
     }
 
@@ -853,9 +894,8 @@ fn run_main() {
     println!("Generating CSV data for rejection behavior vs input length\n");
     println!("Configuration:");
     println!("  Warmup iterations: {}", WARMUP_ITERATIONS);
-    println!("  Min iterations: {}", MIN_ITERATIONS);
-    println!("  Max iterations: {}", MAX_ITERATIONS);
-    println!("  Target time: {:?}", TARGET_TIME);
+    println!("  Timed iterations: {}", TIMED_ITERATIONS);
+    println!("  Per-invocation timeout: {:?}", PARSE_TIMEOUT);
     // println!("  Parsers: {:?}", PARSERS); // Parsers are now per-config
 
     for config in CONFIGS {
@@ -868,6 +908,17 @@ fn run_main() {
 }
 
 fn main() {
+    let args: Vec<String> = std::env::args().collect();
+    if args.get(1).map(String::as_str) == Some(PAIR_WORKER_ARG) {
+        let exit_code = std::thread::Builder::new()
+            .stack_size(128 * 1024 * 1024)
+            .spawn(move || pair_worker_main(&args))
+            .expect("Failed to spawn worker thread with larger stack")
+            .join()
+            .expect("Worker thread panicked");
+        std::process::exit(exit_code);
+    }
+
     // Use a larger stack size to handle deep recursion in parsers
     // Default stack is ~2MB, we use 128MB to handle complex grammars like CSS
     std::thread::Builder::new()
@@ -882,11 +933,63 @@ fn main() {
 mod tests {
     use super::*;
 
+    const TIMEOUT_CHILD_ENV: &str = "BENCHMARK_CSV_INVALID_TIMEOUT_CHILD";
+
     #[test]
     fn output_path_uses_benchmark_csv_invalid_result_folder() {
         assert_eq!(
             output_path("json"),
             "results/benchmark_csv_invalid/benchmark_json_invalid.csv"
         );
+    }
+
+    #[test]
+    fn measure_runs_exactly_ten_timed_iterations() {
+        let mut calls = 0;
+        let (_, _, iterations) = measure(|| {
+            calls += 1;
+            None
+        });
+
+        assert_eq!(iterations, 10);
+        assert_eq!(calls, 10);
+    }
+
+    #[test]
+    fn benchmark_pair_runs_one_warmup_and_ten_timed_iterations() {
+        let mut calls = 0;
+        let result = benchmark_parser("Test", 4, 2, || {
+            calls += 1;
+            None
+        });
+        assert_eq!(calls, 11);
+        assert_eq!(result.iterations, 10);
+        assert!(result.reject_correct);
+    }
+
+    #[test]
+    fn hard_timeout_terminates_worker_process() {
+        if std::env::var_os(TIMEOUT_CHILD_ENV).is_some() {
+            let _ = run_with_hard_timeout(Duration::from_millis(25), || {
+                thread::sleep(Duration::from_secs(5));
+            });
+            panic!("slow operation completed instead of timing out");
+        }
+        let started = Instant::now();
+        let status = Command::new(std::env::current_exe().unwrap())
+            .args(["--exact", "tests::hard_timeout_terminates_worker_process"])
+            .env(TIMEOUT_CHILD_ENV, "1")
+            .status()
+            .unwrap();
+        assert_eq!(status.code(), Some(TIMEOUT_EXIT_CODE));
+        assert!(started.elapsed() < Duration::from_secs(2));
+    }
+
+    #[test]
+    fn worker_exit_124_becomes_timeout_result() {
+        let result = worker_result_from_output(Some(124), b"", "Leo", 42, 17).unwrap();
+        assert_eq!(result.parser, "Leo");
+        assert_eq!(result.iterations, 0);
+        assert_eq!(result.status, "TIMEOUT");
     }
 }

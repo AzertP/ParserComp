@@ -17,11 +17,12 @@ use parser_comparison::parse_tree::ParseTree;
 use parser_comparison::parsers::glr::table_generator;
 use parser_comparison::parsers::{earley_leo, gll, glr};
 use serde::Deserialize;
-use std::collections::{BTreeMap, HashMap, HashSet};
+use std::collections::{BTreeMap, HashMap};
 use std::fs::{self, File};
 use std::hint::black_box;
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
+use std::process::Command;
 use std::sync::{
     atomic::{AtomicBool, AtomicUsize, Ordering},
     Arc,
@@ -95,10 +96,11 @@ const CONFIGS: &[RlcConfig] = &[
 // ============================================================================
 
 const WARMUP_ITERATIONS: u32 = 1;
-const MIN_ITERATIONS: u32 = 10;
-const MAX_ITERATIONS: u32 = 20;
-const TARGET_TIME: Duration = Duration::from_millis(500);
-const TIMEOUT_THRESHOLD: f64 = 1_000_000_000.0;
+const TIMED_ITERATIONS: u32 = 10;
+const PARSE_TIMEOUT: Duration = Duration::from_secs(1);
+const TIMEOUT_EXIT_CODE: i32 = 124;
+const PAIR_WORKER_ARG: &str = "--pair-worker";
+const WORKER_RESULT_PREFIX: &str = "WORKER_RESULT\t";
 const RESULT_DIR: &str = "results/benchmark_rlc";
 
 fn output_path(config_name: &str) -> String {
@@ -449,13 +451,102 @@ impl BenchmarkResult {
             conforms: conformance_for(expected_result, false, status),
         }
     }
+
+    fn from_csv_row(row: &str) -> Result<Self, String> {
+        let fields: Vec<&str> = row.split(',').collect();
+        if fields.len() != 16 {
+            return Err(format!(
+                "expected 16 worker result fields, found {}",
+                fields.len()
+            ));
+        }
+        let expected_result = ExpectedResult::parse(fields[14]);
+        let conforms = match fields[15] {
+            "true" => Some(true),
+            "false" => Some(false),
+            "" => None,
+            other => return Err(format!("invalid conformance flag: {other}")),
+        };
+        Ok(BenchmarkResult {
+            language: fields[0].to_string(),
+            corpus: fields[1].to_string(),
+            file: fields[2].to_string(),
+            bytes: fields[3]
+                .parse()
+                .map_err(|e| format!("invalid byte count: {e}"))?,
+            parser: fields[4].to_string(),
+            input_length: fields[5]
+                .parse()
+                .map_err(|e| format!("invalid input length: {e}"))?,
+            token_count: fields[6]
+                .parse()
+                .map_err(|e| format!("invalid token count: {e}"))?,
+            median_time_ns: fields[7]
+                .parse()
+                .map_err(|e| format!("invalid median time: {e}"))?,
+            mad_ns: fields[8].parse().map_err(|e| format!("invalid MAD: {e}"))?,
+            peak_memory_bytes: fields[9]
+                .parse()
+                .map_err(|e| format!("invalid peak memory: {e}"))?,
+            iterations: fields[10]
+                .parse()
+                .map_err(|e| format!("invalid iteration count: {e}"))?,
+            recognized: fields[11]
+                .parse()
+                .map_err(|e| format!("invalid recognized flag: {e}"))?,
+            parse_correct: fields[12]
+                .parse()
+                .map_err(|e| format!("invalid parse-correct flag: {e}"))?,
+            status: fields[13].to_string(),
+            expected_result,
+            conforms,
+        })
+    }
+}
+
+fn worker_result_from_output(
+    exit_code: Option<i32>,
+    stdout: &[u8],
+    cfg: &RlcConfig,
+    input: &InputCase,
+    parser_name: &str,
+) -> std::io::Result<BenchmarkResult> {
+    if exit_code == Some(TIMEOUT_EXIT_CODE) {
+        return Ok(BenchmarkResult::timeout(
+            cfg.name,
+            cfg.corpus,
+            &input.file,
+            input.bytes,
+            parser_name,
+            input.token_count,
+            input.expected_result,
+        ));
+    }
+    if exit_code != Some(0) {
+        return Err(std::io::Error::other(format!(
+            "benchmark worker exited with code {exit_code:?}"
+        )));
+    }
+    let output = std::str::from_utf8(stdout)
+        .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e))?;
+    let payload = output
+        .lines()
+        .find_map(|line| line.strip_prefix(WORKER_RESULT_PREFIX))
+        .ok_or_else(|| {
+            std::io::Error::new(
+                std::io::ErrorKind::InvalidData,
+                "benchmark worker produced no result row",
+            )
+        })?;
+    BenchmarkResult::from_csv_row(payload)
+        .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e))
 }
 
 // ============================================================================
 // Measurement functions
 // ============================================================================
 
-fn measure_peak_memory<F>(mut parse_fn: F) -> usize
+fn measure_peak_memory_with_result<F>(mut parse_fn: F) -> (Option<ParseTree>, usize)
 where
     F: FnMut() -> Option<ParseTree>,
 {
@@ -474,36 +565,43 @@ where
         }
     });
 
-    let _ = black_box(parse_fn());
+    let parse_result = black_box(parse_fn());
     stop_signal.store(true, Ordering::Relaxed);
     let _ = sampler.join();
 
     let peak = peak_mem.load(Ordering::Relaxed);
-    peak.saturating_sub(start_mem)
+    (parse_result, peak.saturating_sub(start_mem))
+}
+
+fn run_with_hard_timeout<T, F>(timeout: Duration, operation: F) -> (T, Duration)
+where
+    F: FnOnce() -> T,
+{
+    let (done_tx, done_rx) = std::sync::mpsc::channel();
+    let watchdog = thread::spawn(move || {
+        if matches!(
+            done_rx.recv_timeout(timeout),
+            Err(std::sync::mpsc::RecvTimeoutError::Timeout)
+        ) {
+            std::process::exit(TIMEOUT_EXIT_CODE);
+        }
+    });
+    let start = Instant::now();
+    let result = operation();
+    let elapsed = start.elapsed();
+    let _ = done_tx.send(());
+    watchdog.join().expect("timeout watchdog panicked");
+    (result, elapsed)
 }
 
 fn measure<F>(mut parse_fn: F) -> (f64, f64, u32)
 where
     F: FnMut() -> Option<ParseTree>,
 {
-    for _ in 0..WARMUP_ITERATIONS {
-        let _ = black_box(parse_fn());
-    }
-
-    let mut times: Vec<f64> = Vec::new();
-    let start_measure = Instant::now();
-
-    loop {
-        if times.len() as u32 >= MAX_ITERATIONS {
-            break;
-        }
-        if times.len() as u32 >= MIN_ITERATIONS && start_measure.elapsed() >= TARGET_TIME {
-            break;
-        }
-
-        let start = Instant::now();
-        let _ = black_box(parse_fn());
-        times.push(start.elapsed().as_nanos() as f64);
+    let mut times: Vec<f64> = Vec::with_capacity(TIMED_ITERATIONS as usize);
+    for _ in 0..TIMED_ITERATIONS {
+        let (_, elapsed) = run_with_hard_timeout(PARSE_TIMEOUT, || black_box(parse_fn()));
+        times.push(elapsed.as_nanos() as f64);
     }
 
     if times.is_empty() {
@@ -541,8 +639,12 @@ fn benchmark_parser<F>(
 where
     F: FnMut() -> Option<ParseTree>,
 {
-    if parse_fn().is_none() {
-        return BenchmarkResult::parse_fail(
+    let ((warmup_result, peak_mem), _) = run_with_hard_timeout(PARSE_TIMEOUT, || {
+        measure_peak_memory_with_result(&mut parse_fn)
+    });
+    let (median, mad, iters) = measure(&mut parse_fn);
+    if warmup_result.is_none() {
+        let mut result = BenchmarkResult::parse_fail(
             lang,
             corpus,
             file,
@@ -551,10 +653,13 @@ where
             token_count,
             expected_result,
         );
+        result.median_time_ns = median;
+        result.mad_ns = mad;
+        result.peak_memory_bytes = peak_mem;
+        result.iterations = iters;
+        return result;
     }
 
-    let peak_mem = measure_peak_memory(&mut parse_fn);
-    let (median, mad, iters) = measure(&mut parse_fn);
     let status = "OK";
     BenchmarkResult {
         language: lang.to_string(),
@@ -674,6 +779,128 @@ fn load_inputs(
     inputs
 }
 
+fn run_pair_worker(
+    cfg: &RlcConfig,
+    parser_name: &str,
+    file: &str,
+) -> Result<BenchmarkResult, String> {
+    let lexer =
+        Lexer::from_file(cfg.lexer_spec).map_err(|e| format!("failed to load lexer: {e}"))?;
+    let grammar = grammars::load_grammar_from_file(cfg.grammar_path)
+        .map_err(|e| format!("failed to load grammar: {e}"))?;
+    let expected_results = load_expected_results(RLC_MANIFEST_PATH);
+    let path = Path::new(cfg.input_dir).join(file);
+    let mut inputs = load_inputs(&[path], &lexer, &grammar, &expected_results, cfg.name);
+    let input = inputs
+        .pop()
+        .ok_or_else(|| format!("failed to load worker input {file}"))?;
+
+    match parser_name {
+        "Leo" => {
+            let mut parser = earley_leo::LeoParser::new(grammar.clone());
+            Ok(benchmark_parser(
+                cfg.name,
+                cfg.corpus,
+                &input.file,
+                input.bytes,
+                parser_name,
+                input.token_count,
+                input.expected_result,
+                || parser.parse(input.ids.clone()),
+            ))
+        }
+        "GLL" => {
+            let mut parser = gll::GLLParser::new(&grammar);
+            Ok(benchmark_parser(
+                cfg.name,
+                cfg.corpus,
+                &input.file,
+                input.bytes,
+                parser_name,
+                input.token_count,
+                input.expected_result,
+                || parser.parse_one(&input.ids),
+            ))
+        }
+        "RNGLR" => {
+            let mut parser = glr::RnglrParser::import_table_from_csv(cfg.table_path)
+                .map_err(|e| format!("failed to load RNGLR table: {e}"))?;
+            parser.set_grammar(grammar.clone());
+            Ok(benchmark_parser(
+                cfg.name,
+                cfg.corpus,
+                &input.file,
+                input.bytes,
+                parser_name,
+                input.token_count,
+                input.expected_result,
+                || parser.parse(&input.glr_ids),
+            ))
+        }
+        "BRNGLR" => {
+            let mut parser = glr::BrnglrParser::import_table_from_csv(cfg.table_path)
+                .map_err(|e| format!("failed to load BRNGLR table: {e}"))?;
+            parser.set_grammar(grammar.clone());
+            Ok(benchmark_parser(
+                cfg.name,
+                cfg.corpus,
+                &input.file,
+                input.bytes,
+                parser_name,
+                input.token_count,
+                input.expected_result,
+                || parser.parse(&input.glr_ids),
+            ))
+        }
+        _ => Err(format!("unknown parser: {parser_name}")),
+    }
+}
+
+fn pair_worker_main(args: &[String]) -> i32 {
+    if args.len() != 5 {
+        eprintln!(
+            "Usage: {} {PAIR_WORKER_ARG} <config> <parser> <file>",
+            args[0]
+        );
+        return 2;
+    }
+    let Some(cfg) = CONFIGS.iter().find(|cfg| cfg.name == args[2]) else {
+        eprintln!("Unknown benchmark configuration: {}", args[2]);
+        return 2;
+    };
+    match run_pair_worker(cfg, &args[3], &args[4]) {
+        Ok(result) => {
+            println!("{WORKER_RESULT_PREFIX}{}", result.to_csv_row());
+            0
+        }
+        Err(error) => {
+            eprintln!("Benchmark worker failed: {error}");
+            1
+        }
+    }
+}
+
+fn run_pair_in_worker(
+    cfg: &RlcConfig,
+    input: &InputCase,
+    parser_name: &str,
+) -> std::io::Result<BenchmarkResult> {
+    let output = Command::new(std::env::current_exe()?)
+        .args([PAIR_WORKER_ARG, cfg.name, parser_name, &input.file])
+        .output()?;
+    worker_result_from_output(
+        output.status.code(),
+        &output.stdout,
+        cfg,
+        input,
+        parser_name,
+    )
+    .map_err(|error| {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        std::io::Error::new(error.kind(), format!("{error}; worker stderr: {stderr}"))
+    })
+}
+
 // ============================================================================
 // Per-language benchmark
 // ============================================================================
@@ -713,15 +940,6 @@ fn run_config(
         println!("Skipping table generation (using existing table)...");
     }
 
-    let mut leo = earley_leo::LeoParser::new(grammar.clone());
-    let mut gll_parser = gll::GLLParser::new(&grammar);
-    let mut rnglr = glr::RnglrParser::import_table_from_csv(cfg.table_path)
-        .expect("Failed to load RNGLR table");
-    let mut brnglr = glr::BrnglrParser::import_table_from_csv(cfg.table_path)
-        .expect("Failed to load BRNGLR table");
-    rnglr.set_grammar(grammar.clone());
-    brnglr.set_grammar(grammar.clone());
-
     let files = collect_files(cfg.input_dir);
     if files.is_empty() {
         eprintln!("[SKIP] No RLC files found in {}.", cfg.input_dir);
@@ -753,7 +971,6 @@ fn run_config(
     )?;
     println!("\nWriting results to: {}", out_path);
 
-    let mut failed_parsers: HashSet<String> = HashSet::new();
     let mut conformance_summary = ConformanceSummary::default();
 
     for (idx, input) in inputs.iter().enumerate() {
@@ -767,69 +984,18 @@ fn run_config(
         );
 
         for &parser_name in cfg.parsers {
-            if failed_parsers.contains(parser_name) {
-                let result = BenchmarkResult::timeout(
-                    cfg.name,
-                    cfg.corpus,
-                    &input.file,
-                    input.bytes,
-                    parser_name,
-                    input.token_count,
-                    input.expected_result,
-                );
+            let result = run_pair_in_worker(cfg, input, parser_name)?;
+
+            if result.status == "TIMEOUT" {
                 println!(
-                    "    [TIMEOUT]  {:8}: previously timed out, skipping",
-                    parser_name
+                    "    [TIMEOUT] {:8}: invocation exceeded {:?}",
+                    result.parser, PARSE_TIMEOUT
                 );
                 writeln!(csv_file, "{}", result.to_csv_row())?;
                 csv_file.flush()?;
                 conformance_summary.record(&result);
                 continue;
             }
-
-            let result = match parser_name {
-                "Leo" => benchmark_parser(
-                    cfg.name,
-                    cfg.corpus,
-                    &input.file,
-                    input.bytes,
-                    "Leo",
-                    input.token_count,
-                    input.expected_result,
-                    || leo.parse(input.ids.clone()),
-                ),
-                "GLL" => benchmark_parser(
-                    cfg.name,
-                    cfg.corpus,
-                    &input.file,
-                    input.bytes,
-                    "GLL",
-                    input.token_count,
-                    input.expected_result,
-                    || gll_parser.parse_one(&input.ids),
-                ),
-                "RNGLR" => benchmark_parser(
-                    cfg.name,
-                    cfg.corpus,
-                    &input.file,
-                    input.bytes,
-                    "RNGLR",
-                    input.token_count,
-                    input.expected_result,
-                    || rnglr.parse(&input.glr_ids),
-                ),
-                "BRNGLR" => benchmark_parser(
-                    cfg.name,
-                    cfg.corpus,
-                    &input.file,
-                    input.bytes,
-                    "BRNGLR",
-                    input.token_count,
-                    input.expected_result,
-                    || brnglr.parse(&input.glr_ids),
-                ),
-                _ => continue,
-            };
 
             let recog_sym = if result.recognized { "R" } else { "x" };
             let parse_sym = if result.parse_correct { "P" } else { "x" };
@@ -866,15 +1032,6 @@ fn run_config(
             writeln!(csv_file, "{}", result.to_csv_row())?;
             csv_file.flush()?;
             conformance_summary.record(&result);
-
-            if result.median_time_ns > TIMEOUT_THRESHOLD {
-                println!(
-                    "    [TIMEOUT] {} exceeded {}s threshold; skipping subsequent files",
-                    result.parser,
-                    TIMEOUT_THRESHOLD as u64 / 1_000_000_000
-                );
-                failed_parsers.insert(result.parser.clone());
-            }
         }
     }
 
@@ -893,9 +1050,8 @@ fn run_main() {
     println!("Benchmarks Leo, GLL, RNGLR, and BRNGLR on input/rlc/<language>/ files\n");
     println!("Configuration:");
     println!("  Warmup iterations : {}", WARMUP_ITERATIONS);
-    println!("  Min iterations    : {}", MIN_ITERATIONS);
-    println!("  Max iterations    : {}", MAX_ITERATIONS);
-    println!("  Target time       : {:?}", TARGET_TIME);
+    println!("  Timed iterations  : {}", TIMED_ITERATIONS);
+    println!("  Per-invocation timeout: {:?}", PARSE_TIMEOUT);
 
     let expected_results = load_expected_results(RLC_MANIFEST_PATH);
     let mut overall_conformance = ConformanceSummary::default();
@@ -912,6 +1068,17 @@ fn run_main() {
 }
 
 fn main() {
+    let args: Vec<String> = std::env::args().collect();
+    if args.get(1).map(String::as_str) == Some(PAIR_WORKER_ARG) {
+        let exit_code = std::thread::Builder::new()
+            .stack_size(128 * 1024 * 1024)
+            .spawn(move || pair_worker_main(&args))
+            .expect("Failed to spawn worker thread with larger stack")
+            .join()
+            .expect("Worker thread panicked");
+        std::process::exit(exit_code);
+    }
+
     std::thread::Builder::new()
         .stack_size(128 * 1024 * 1024)
         .spawn(run_main)
@@ -924,12 +1091,83 @@ fn main() {
 mod tests {
     use super::*;
 
+    const TIMEOUT_CHILD_ENV: &str = "BENCHMARK_RLC_TIMEOUT_CHILD";
+
     #[test]
     fn output_path_uses_benchmark_rlc_result_folder() {
         assert_eq!(
             output_path("java"),
             "results/benchmark_rlc/benchmark_rlc_java.csv"
         );
+    }
+
+    #[test]
+    fn measure_runs_exactly_ten_timed_iterations() {
+        let mut calls = 0;
+        let (_, _, iterations) = measure(|| {
+            calls += 1;
+            None
+        });
+
+        assert_eq!(iterations, 10);
+        assert_eq!(calls, 10);
+    }
+
+    #[test]
+    fn hard_timeout_terminates_worker_process() {
+        if std::env::var_os(TIMEOUT_CHILD_ENV).is_some() {
+            let _ = run_with_hard_timeout(Duration::from_millis(25), || {
+                thread::sleep(Duration::from_secs(5));
+            });
+            panic!("slow operation completed instead of timing out");
+        }
+        let started = Instant::now();
+        let status = Command::new(std::env::current_exe().unwrap())
+            .args(["--exact", "tests::hard_timeout_terminates_worker_process"])
+            .env(TIMEOUT_CHILD_ENV, "1")
+            .status()
+            .unwrap();
+        assert_eq!(status.code(), Some(TIMEOUT_EXIT_CODE));
+        assert!(started.elapsed() < Duration::from_secs(2));
+    }
+
+    #[test]
+    fn worker_exit_124_becomes_timeout_result() {
+        let input = InputCase {
+            file: "A.java".to_string(),
+            input_path: "input/rlc/java/A.java".to_string(),
+            bytes: 42,
+            ids: vec![],
+            glr_ids: vec![],
+            token_count: 17,
+            expected_result: Some(ExpectedResult::Accept),
+        };
+        let result = worker_result_from_output(Some(124), b"", &CONFIGS[0], &input, "Leo").unwrap();
+        assert_eq!(result.parser, "Leo");
+        assert_eq!(result.iterations, 0);
+        assert_eq!(result.status, "TIMEOUT");
+        assert_eq!(result.conforms, None);
+    }
+
+    #[test]
+    fn parse_failure_still_runs_ten_timed_iterations() {
+        let mut calls = 0;
+        let result = benchmark_parser(
+            "test",
+            "corpus",
+            "input",
+            4,
+            "Test",
+            2,
+            Some(ExpectedResult::Reject),
+            || {
+                calls += 1;
+                None
+            },
+        );
+        assert_eq!(calls, 11);
+        assert_eq!(result.iterations, 10);
+        assert_eq!(result.status, "PARSE_FAIL");
     }
 
     #[test]

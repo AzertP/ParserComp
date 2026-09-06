@@ -102,10 +102,7 @@
       ["~"]
     ],
     "<characters>": [
-      ["<character>", "<characters_rest>"]
-    ],
-    "<characters_rest>": [
-      ["<characters>"],
+      ["<character>", "<characters>"],
       []
     ],
     "<digit>": [

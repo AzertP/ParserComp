@@ -134,6 +134,7 @@ name = "parser_comparison"
 version = "0.1.0"
 dependencies = [
  "csv",
+ "libc",
  "m4ri-rust",
  "memory-stats",
  "regex",

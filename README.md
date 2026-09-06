@@ -117,12 +117,14 @@ Additional `ll1_*` and `lr_*` grammar variants are used in the LL/LR baseline ex
 
 ## Benchmark methodology
 
-The benchmark driver (`src/bin/benchmark_csv.rs`) runs each parser on increasing-length input slices drawn from the corpus files.  For each (parser, input-length) pair it:
+The benchmark drivers run each parser/input pair in a separate worker process. For each pair, the driver:
 
 1. Performs one warmup iteration (excluded from timing).
-2. Runs between 10 and 20 timed iterations, stopping early if 500 ms of wall time have been accumulated.
+2. Runs 10 timed iterations, with a hard one-second limit on each parse invocation, including the warmup.
 3. Reports median time (ns) and median absolute deviation (MAD) over the timed iterations.
-4. Samples peak memory via a 1 ms polling thread.
+4. Samples peak memory during the warmup via a 1 ms polling thread, reporting the increase over the worker's initial memory usage.
+
+If an invocation exceeds the limit, the worker exits and the pair is recorded as `TIMEOUT`. Later inputs are still benchmarked independently.
 
 Raw results are written beneath `results/` in a directory specific to each
 benchmark driver. For example, the main driver writes

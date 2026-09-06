@@ -10,7 +10,8 @@ use std::env;
 use std::fs::{self, File};
 use std::hint::black_box;
 use std::io::Write;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
+use std::process::Command;
 use std::sync::{
     atomic::{AtomicBool, AtomicUsize, Ordering},
     Arc,
@@ -23,9 +24,11 @@ const RESULT_DIR: &str = "results/benchmark_tree_sitter_stress";
 const CSV_HEADER: &str = "language,size_category,file,bytes,parser,input_length,token_count,median_time_ns,mad_ns,peak_memory_bytes,iterations,recognized,parse_correct,status";
 
 const WARMUP_ITERATIONS: u32 = 1;
-const MIN_ITERATIONS: u32 = 10;
-const MAX_ITERATIONS: u32 = 20;
-const TARGET_TIME: Duration = Duration::from_millis(500);
+const TIMED_ITERATIONS: u32 = 10;
+const PARSE_TIMEOUT: Duration = Duration::from_secs(1);
+const TIMEOUT_EXIT_CODE: i32 = 124;
+const PAIR_WORKER_ARG: &str = "--pair-worker";
+const WORKER_RESULT_PREFIX: &str = "WORKER_RESULT\t";
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 enum GrammarChoice {
@@ -115,6 +118,113 @@ impl BenchmarkResult {
             self.status,
         )
     }
+
+    fn timeout(config: &StressConfig, input: &InputCase) -> Self {
+        BenchmarkResult {
+            language: config.name.to_string(),
+            size_category: input.size_category.clone(),
+            file: input.file.clone(),
+            bytes: input.bytes,
+            parser: "TreeSitter".to_string(),
+            input_length: input.token_count,
+            token_count: input.token_count,
+            median_time_ns: 0.0,
+            mad_ns: 0.0,
+            peak_memory_bytes: 0,
+            iterations: 0,
+            recognized: false,
+            parse_correct: false,
+            status: "TIMEOUT".to_string(),
+            error_nodes: 0,
+            missing_nodes: 0,
+        }
+    }
+
+    fn to_worker_row(&self) -> String {
+        format!(
+            "{},{},{}",
+            self.to_csv_row(),
+            self.error_nodes,
+            self.missing_nodes
+        )
+    }
+
+    fn from_worker_row(row: &str) -> Result<Self, String> {
+        let fields: Vec<&str> = row.split(',').collect();
+        if fields.len() != 16 {
+            return Err(format!(
+                "expected 16 worker result fields, found {}",
+                fields.len()
+            ));
+        }
+        Ok(BenchmarkResult {
+            language: fields[0].to_string(),
+            size_category: fields[1].to_string(),
+            file: fields[2].to_string(),
+            bytes: fields[3]
+                .parse()
+                .map_err(|e| format!("invalid byte count: {e}"))?,
+            parser: fields[4].to_string(),
+            input_length: fields[5]
+                .parse()
+                .map_err(|e| format!("invalid input length: {e}"))?,
+            token_count: fields[6]
+                .parse()
+                .map_err(|e| format!("invalid token count: {e}"))?,
+            median_time_ns: fields[7]
+                .parse()
+                .map_err(|e| format!("invalid median time: {e}"))?,
+            mad_ns: fields[8].parse().map_err(|e| format!("invalid MAD: {e}"))?,
+            peak_memory_bytes: fields[9]
+                .parse()
+                .map_err(|e| format!("invalid peak memory: {e}"))?,
+            iterations: fields[10]
+                .parse()
+                .map_err(|e| format!("invalid iteration count: {e}"))?,
+            recognized: fields[11]
+                .parse()
+                .map_err(|e| format!("invalid recognized flag: {e}"))?,
+            parse_correct: fields[12]
+                .parse()
+                .map_err(|e| format!("invalid parse-correct flag: {e}"))?,
+            status: fields[13].to_string(),
+            error_nodes: fields[14]
+                .parse()
+                .map_err(|e| format!("invalid error-node count: {e}"))?,
+            missing_nodes: fields[15]
+                .parse()
+                .map_err(|e| format!("invalid missing-node count: {e}"))?,
+        })
+    }
+}
+
+fn worker_result_from_output(
+    exit_code: Option<i32>,
+    stdout: &[u8],
+    config: &StressConfig,
+    input: &InputCase,
+) -> std::io::Result<BenchmarkResult> {
+    if exit_code == Some(TIMEOUT_EXIT_CODE) {
+        return Ok(BenchmarkResult::timeout(config, input));
+    }
+    if exit_code != Some(0) {
+        return Err(std::io::Error::other(format!(
+            "benchmark worker exited with code {exit_code:?}"
+        )));
+    }
+    let output = std::str::from_utf8(stdout)
+        .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e))?;
+    let payload = output
+        .lines()
+        .find_map(|line| line.strip_prefix(WORKER_RESULT_PREFIX))
+        .ok_or_else(|| {
+            std::io::Error::new(
+                std::io::ErrorKind::InvalidData,
+                "benchmark worker produced no result row",
+            )
+        })?;
+    BenchmarkResult::from_worker_row(payload)
+        .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e))
 }
 
 fn usage() -> &'static str {
@@ -274,9 +384,9 @@ fn parse_without_errors(parser: &mut Parser, source: &str) -> bool {
         .unwrap_or(false)
 }
 
-fn measure_peak_memory<F>(mut parse_fn: F) -> usize
+fn measure_peak_memory_with_result<T, F>(mut parse_fn: F) -> (T, usize)
 where
-    F: FnMut() -> bool,
+    F: FnMut() -> T,
 {
     let start_mem = memory_stats().map(|usage| usage.physical_mem).unwrap_or(0);
     let peak_mem = Arc::new(AtomicUsize::new(start_mem));
@@ -293,11 +403,35 @@ where
         }
     });
 
-    let _ = black_box(parse_fn());
+    let parse_result = black_box(parse_fn());
     stop_signal.store(true, Ordering::Relaxed);
     let _ = sampler.join();
 
-    peak_mem.load(Ordering::Relaxed).saturating_sub(start_mem)
+    (
+        parse_result,
+        peak_mem.load(Ordering::Relaxed).saturating_sub(start_mem),
+    )
+}
+
+fn run_with_hard_timeout<T, F>(timeout: Duration, operation: F) -> (T, Duration)
+where
+    F: FnOnce() -> T,
+{
+    let (done_tx, done_rx) = std::sync::mpsc::channel();
+    let watchdog = thread::spawn(move || {
+        if matches!(
+            done_rx.recv_timeout(timeout),
+            Err(std::sync::mpsc::RecvTimeoutError::Timeout)
+        ) {
+            std::process::exit(TIMEOUT_EXIT_CODE);
+        }
+    });
+    let start = Instant::now();
+    let result = operation();
+    let elapsed = start.elapsed();
+    let _ = done_tx.send(());
+    watchdog.join().expect("timeout watchdog panicked");
+    (result, elapsed)
 }
 
 fn median(values: &mut [f64]) -> f64 {
@@ -313,18 +447,10 @@ fn measure<F>(mut parse_fn: F) -> (f64, f64, u32)
 where
     F: FnMut() -> bool,
 {
-    for _ in 0..WARMUP_ITERATIONS {
-        let _ = black_box(parse_fn());
-    }
-
-    let measurement_start = Instant::now();
-    let mut times = Vec::new();
-    while times.len() < MAX_ITERATIONS as usize
-        && (times.len() < MIN_ITERATIONS as usize || measurement_start.elapsed() < TARGET_TIME)
-    {
-        let start = Instant::now();
-        let _ = black_box(parse_fn());
-        times.push(start.elapsed().as_nanos() as f64);
+    let mut times = Vec::with_capacity(TIMED_ITERATIONS as usize);
+    for _ in 0..TIMED_ITERATIONS {
+        let (_, elapsed) = run_with_hard_timeout(PARSE_TIMEOUT, || black_box(parse_fn()));
+        times.push(elapsed.as_nanos() as f64);
     }
 
     let sample_count = times.len() as u32;
@@ -342,8 +468,9 @@ fn benchmark_input(
     config: &StressConfig,
     input: &InputCase,
 ) -> BenchmarkResult {
-    let inspection = inspect_source(parser, &input.source);
-    let peak_memory_bytes = measure_peak_memory(|| parse_without_errors(parser, &input.source));
+    let ((inspection, peak_memory_bytes), _) = run_with_hard_timeout(PARSE_TIMEOUT, || {
+        measure_peak_memory_with_result(|| inspect_source(parser, &input.source))
+    });
     let (median_time_ns, mad_ns, iterations) =
         measure(|| parse_without_errors(parser, &input.source));
 
@@ -365,6 +492,58 @@ fn benchmark_input(
         error_nodes: inspection.error_nodes,
         missing_nodes: inspection.missing_nodes,
     }
+}
+
+fn config_named(name: &str) -> Option<&'static StressConfig> {
+    [&GAMMA2_CONFIG, &GAMMA3_CONFIG]
+        .into_iter()
+        .find(|config| config.name == name)
+}
+
+fn run_pair_worker(config: &StressConfig, file: &str) -> Result<BenchmarkResult, String> {
+    let path = Path::new(config.input_dir).join(file);
+    let mut inputs = load_inputs(&[path]).map_err(|e| format!("failed to load input: {e}"))?;
+    let input = inputs
+        .pop()
+        .ok_or_else(|| format!("failed to load worker input {file}"))?;
+    let mut parser = parser_for(config);
+    Ok(benchmark_input(&mut parser, config, &input))
+}
+
+fn pair_worker_main(args: &[String]) -> i32 {
+    if args.len() != 4 {
+        eprintln!("Usage: {} {PAIR_WORKER_ARG} <grammar> <file>", args[0]);
+        return 2;
+    }
+    let Some(config) = config_named(&args[2]) else {
+        eprintln!("Unknown stress grammar: {}", args[2]);
+        return 2;
+    };
+    match run_pair_worker(config, &args[3]) {
+        Ok(result) => {
+            println!("{WORKER_RESULT_PREFIX}{}", result.to_worker_row());
+            0
+        }
+        Err(error) => {
+            eprintln!("Benchmark worker failed: {error}");
+            1
+        }
+    }
+}
+
+fn run_pair_in_worker(
+    config: &StressConfig,
+    input: &InputCase,
+) -> std::io::Result<BenchmarkResult> {
+    let output = Command::new(std::env::current_exe()?)
+        .args([PAIR_WORKER_ARG, config.name, &input.file])
+        .output()?;
+    worker_result_from_output(output.status.code(), &output.stdout, config, input).map_err(
+        |error| {
+            let stderr = String::from_utf8_lossy(&output.stderr);
+            std::io::Error::new(error.kind(), format!("{error}; worker stderr: {stderr}"))
+        },
+    )
 }
 
 fn ensure_expected_accepts(grammar: &str, failure_count: usize) -> std::io::Result<()> {
@@ -398,11 +577,10 @@ fn run_config(config: &StressConfig) -> std::io::Result<()> {
         inputs.len(),
         config.input_dir
     );
-    let mut parser = parser_for(config);
     let mut recognition_failures = 0;
     for (index, input) in inputs.iter().enumerate() {
-        let result = benchmark_input(&mut parser, config, input);
-        if !result.recognized {
+        let result = run_pair_in_worker(config, input)?;
+        if !result.recognized && result.status != "TIMEOUT" {
             recognition_failures += 1;
         }
         println!(
@@ -429,6 +607,9 @@ fn run_main() -> std::io::Result<()> {
         .map_err(|error| std::io::Error::new(std::io::ErrorKind::InvalidInput, error))?;
     println!("Tree-sitter Stress Grammar Benchmark");
     println!("====================================");
+    println!("Warmup iterations: {}", WARMUP_ITERATIONS);
+    println!("Timed iterations: {}", TIMED_ITERATIONS);
+    println!("Per-invocation timeout: {:?}", PARSE_TIMEOUT);
     for config in selected_configs(&options) {
         run_config(config)?;
     }
@@ -436,6 +617,17 @@ fn run_main() -> std::io::Result<()> {
 }
 
 fn main() {
+    let args: Vec<String> = env::args().collect();
+    if args.get(1).map(String::as_str) == Some(PAIR_WORKER_ARG) {
+        let exit_code = thread::Builder::new()
+            .stack_size(128 * 1024 * 1024)
+            .spawn(move || pair_worker_main(&args))
+            .expect("Failed to spawn worker thread with larger stack")
+            .join()
+            .expect("Worker thread panicked");
+        std::process::exit(exit_code);
+    }
+
     let result = thread::Builder::new()
         .stack_size(128 * 1024 * 1024)
         .spawn(run_main)
@@ -453,6 +645,8 @@ fn main() {
 mod tests {
     use super::*;
 
+    const TIMEOUT_CHILD_ENV: &str = "BENCHMARK_TREE_SITTER_STRESS_TIMEOUT_CHILD";
+
     #[test]
     fn no_grammar_argument_selects_both_grammars() {
         let options = parse_args_from(["benchmark"]).unwrap();
@@ -463,6 +657,51 @@ mod tests {
                 .collect::<Vec<_>>(),
             vec!["gamma2", "gamma3"]
         );
+    }
+
+    #[test]
+    fn measure_runs_exactly_ten_timed_iterations() {
+        let mut calls = 0;
+        let (_, _, iterations) = measure(|| {
+            calls += 1;
+            true
+        });
+
+        assert_eq!(iterations, 10);
+        assert_eq!(calls, 10);
+    }
+
+    #[test]
+    fn hard_timeout_terminates_worker_process() {
+        if std::env::var_os(TIMEOUT_CHILD_ENV).is_some() {
+            let _ = run_with_hard_timeout(Duration::from_millis(25), || {
+                thread::sleep(Duration::from_secs(5));
+            });
+            panic!("slow operation completed instead of timing out");
+        }
+        let started = Instant::now();
+        let status = Command::new(std::env::current_exe().unwrap())
+            .args(["--exact", "tests::hard_timeout_terminates_worker_process"])
+            .env(TIMEOUT_CHILD_ENV, "1")
+            .status()
+            .unwrap();
+        assert_eq!(status.code(), Some(TIMEOUT_EXIT_CODE));
+        assert!(started.elapsed() < Duration::from_secs(2));
+    }
+
+    #[test]
+    fn worker_exit_124_becomes_timeout_result() {
+        let input = InputCase {
+            file: "b.001".to_string(),
+            size_category: "001".to_string(),
+            source: "b".to_string(),
+            bytes: 1,
+            token_count: 1,
+        };
+        let result = worker_result_from_output(Some(124), b"", &GAMMA2_CONFIG, &input).unwrap();
+        assert_eq!(result.parser, "TreeSitter");
+        assert_eq!(result.iterations, 0);
+        assert_eq!(result.status, "TIMEOUT");
     }
 
     #[test]

@@ -166,8 +166,6 @@ python3 script/combine_benchmark_csv.py
 ```
 
 
-A pre-rendered overview plot is available here: [allGrammarsGeneralTime.pdf](allGrammarsGeneralTime.pdf)
-
 ## Modify the test suite
 
 ### Adding new input strings

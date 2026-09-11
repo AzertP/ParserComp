@@ -1,6 +1,10 @@
 //! Tests for the grammars module - CNF transformations and grammar loading
 
 use super::*;
+use crate::lexer::{encode, Lexer};
+use crate::parsers::earley_leo::LeoParser;
+use crate::parsers::gll::GLLParser;
+use crate::parsers::glr::{BrnglrParser, RnglrParser};
 
 #[test]
 fn test_replace_terminal_symbols() {
@@ -660,4 +664,52 @@ fn test_to_cnf_complex() {
     }
 
     println!("\nComplex CNF validation passed!");
+}
+
+#[test]
+fn test_sml_rlc_dynamic_expressions_parse() {
+    let grammar = load_grammar_from_file("grammars/sml_tok.json")
+        .expect("Failed to load tokenized SML grammar");
+    let lexer =
+        Lexer::from_file("grammars/lexer/sml_regex.json").expect("Failed to load SML regex lexer");
+    let mut rnglr = RnglrParser::import_table_from_csv("table/sml_tok_glr_table.csv")
+        .expect("Failed to load SML RNGLR table");
+    let mut brnglr = BrnglrParser::import_table_from_csv("table/sml_tok_glr_table.csv")
+        .expect("Failed to load SML BRNGLR table");
+    rnglr.set_grammar(grammar.clone());
+    brnglr.set_grammar(grammar.clone());
+
+    for (source, accepted) in [
+        (include_str!("../input/rlc/sml/type_dynamic.sml"), true),
+        ("val x = #(1);", true),
+        ("val x = #(type d : int);", true),
+        ("val x = #1 (1, 2);", true),
+        ("val x = #(type d);", false),
+        ("val x = #(type : int);", false),
+        ("val x = #(1;", false),
+    ] {
+        let tokens = lexer.lex(source).expect("SML source should tokenize");
+        let ids = encode(&tokens, &grammar).expect("SML tokens should encode");
+        let glr_ids: Vec<i32> = ids.iter().map(|&id| (id + 1) as i32).collect();
+        assert_eq!(
+            LeoParser::new(grammar.clone()).parse(ids.clone()).is_some(),
+            accepted,
+            "Leo: {source:?}"
+        );
+        assert_eq!(
+            GLLParser::new(&grammar).parse(&ids).is_some(),
+            accepted,
+            "GLL: {source:?}"
+        );
+        assert_eq!(
+            rnglr.parse(&glr_ids).is_some(),
+            accepted,
+            "RNGLR: {source:?}"
+        );
+        assert_eq!(
+            brnglr.parse(&glr_ids).is_some(),
+            accepted,
+            "BRNGLR: {source:?}"
+        );
+    }
 }

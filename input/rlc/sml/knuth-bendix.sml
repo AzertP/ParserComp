@@ -480,6 +480,6 @@ case Group_order pair of Greater => true | _ => false
 ;
 in
 fun doit() = kb_complete greater [] Geom_rules handle Done => ()
-end
+end;
 use "utils/benchmark";
 test "knuth-bendix" 1 doit ();

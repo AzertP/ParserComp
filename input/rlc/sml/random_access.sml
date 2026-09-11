@@ -148,5 +148,5 @@ testSetPosStdErr = testSetPosStdErr,
 testStreamIO = testStreamIO,
 repeatTest = repeatTest}
 end
-end
+end;
 test();

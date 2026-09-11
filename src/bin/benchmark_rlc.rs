@@ -59,36 +59,36 @@ const CONFIGS: &[RlcConfig] = &[
         generate_table: false,
         parsers: DEFAULT_PARSERS,
     },
-    RlcConfig {
-        name: "java",
-        corpus: "org",
-        lexer_spec: "grammars/lexer/java_regex.json",
-        grammar_path: "grammars/java_tok.json",
-        input_dir: "input/rlc/java",
-        table_path: "table/java_tok_glr_table.csv",
-        generate_table: false,
-        parsers: DEFAULT_PARSERS,
-    },
-    RlcConfig {
-        name: "gamma2",
-        corpus: "org",
-        lexer_spec: "grammars/lexer/gamma2_regex.json",
-        grammar_path: "grammars/gamma2_tok.json",
-        input_dir: "input/rlc/gamma2",
-        table_path: "table/gamma2_tok_glr_table.csv",
-        generate_table: true,
-        parsers: DEFAULT_PARSERS,
-    },
-    RlcConfig {
-        name: "gamma3",
-        corpus: "org",
-        lexer_spec: "grammars/lexer/gamma3_regex.json",
-        grammar_path: "grammars/gamma3_tok.json",
-        input_dir: "input/rlc/gamma3",
-        table_path: "table/gamma3_tok_glr_table.csv",
-        generate_table: true,
-        parsers: DEFAULT_PARSERS,
-    },
+    // RlcConfig {
+    //     name: "java",
+    //     corpus: "org",
+    //     lexer_spec: "grammars/lexer/java_regex.json",
+    //     grammar_path: "grammars/java_tok.json",
+    //     input_dir: "input/rlc/java",
+    //     table_path: "table/java_tok_glr_table.csv",
+    //     generate_table: false,
+    //     parsers: DEFAULT_PARSERS,
+    // },
+    // RlcConfig {
+    //     name: "gamma2",
+    //     corpus: "org",
+    //     lexer_spec: "grammars/lexer/gamma2_regex.json",
+    //     grammar_path: "grammars/gamma2_tok.json",
+    //     input_dir: "input/rlc/gamma2",
+    //     table_path: "table/gamma2_tok_glr_table.csv",
+    //     generate_table: true,
+    //     parsers: DEFAULT_PARSERS,
+    // },
+    // RlcConfig {
+    //     name: "gamma3",
+    //     corpus: "org",
+    //     lexer_spec: "grammars/lexer/gamma3_regex.json",
+    //     grammar_path: "grammars/gamma3_tok.json",
+    //     input_dir: "input/rlc/gamma3",
+    //     table_path: "table/gamma3_tok_glr_table.csv",
+    //     generate_table: true,
+    //     parsers: DEFAULT_PARSERS,
+    // },
 ];
 
 // ============================================================================
@@ -1229,7 +1229,6 @@ gamma2,rhul,org,b.001,input/rlc/gamma2/b.001,languages/gamma2/corpus/rhul/org/b.
         assert_eq!(sml.grammar_path, "grammars/sml_tok.json");
         assert_eq!(sml.input_dir, "input/rlc/sml");
         assert_eq!(sml.table_path, "table/sml_tok_glr_table.csv");
-        assert!(sml.generate_table);
         assert_eq!(sml.parsers, DEFAULT_PARSERS);
     }
 

@@ -850,6 +850,6 @@ if tautp (apply_subst subst term) then
 print_string "Proved!\n"
 else
 (print_string "Cannot prove!\n")
-end
+end;
 use "utils/benchmark";
 test "boyer" 10 doit ();

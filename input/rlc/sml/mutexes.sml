@@ -11,7 +11,7 @@ Shell.Project.setTargetDetails "__mutex.sml";
 Shell.Project.setTargets ["__mutex.sml"];
 Shell.Project.forceCompileAll();
 Shell.Project.loadAll()
-)
+);
 val deadlockFlag = ref false;
 local
 structure T = MLWorks.Threads;

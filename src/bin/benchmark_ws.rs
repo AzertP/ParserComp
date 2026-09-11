@@ -7,10 +7,10 @@
 //! CYK and Valiant are excluded. Only Leo, GLL, RNGLR, BRNGLR, LL, LR are benchmarked.
 //!
 //! Usage:
-//!   cargo run --release --bin benchmark_code
+//!   cargo run --release --bin benchmark_ws
 //!
 //! Output:
-//!   Creates CSV files in results/benchmark_code/ with columns:
+//!   Creates CSV files in results/benchmark_ws/ with columns:
 //!   parser,input_length,token_count,median_time_ns,mad_ns,peak_memory_bytes,
 //!   iterations,recognized,parse_correct,status,source_file
 use memory_stats::memory_stats;
@@ -94,7 +94,7 @@ const PARSE_TIMEOUT: Duration = Duration::from_secs(1);
 const TIMEOUT_EXIT_CODE: i32 = 124;
 const PAIR_WORKER_ARG: &str = "--pair-worker";
 const WORKER_RESULT_PREFIX: &str = "WORKER_RESULT\t";
-const RESULT_DIR: &str = "results/benchmark_code";
+const RESULT_DIR: &str = "results/benchmark_ws";
 
 fn output_path(config_name: &str) -> String {
     format!("{}/benchmark_{}.csv", RESULT_DIR, config_name)
@@ -750,13 +750,13 @@ fn main() {
 mod tests {
     use super::*;
 
-    const TIMEOUT_CHILD_ENV: &str = "BENCHMARK_CODE_TIMEOUT_CHILD";
+    const TIMEOUT_CHILD_ENV: &str = "BENCHMARK_WS_TIMEOUT_CHILD";
 
     #[test]
-    fn output_path_uses_benchmark_code_result_folder() {
+    fn output_path_uses_benchmark_ws_result_folder() {
         assert_eq!(
             output_path("java_ws"),
-            "results/benchmark_code/benchmark_java_ws.csv"
+            "results/benchmark_ws/benchmark_java_ws.csv"
         );
     }
 

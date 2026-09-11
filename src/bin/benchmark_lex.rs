@@ -3,7 +3,7 @@
 //! For each language, discovers source files in `input/code/<Language>/`,
 //! lexes each one, and benchmarks Leo, GLL, RNGLR, and BRNGLR. RNGLR and
 //! BRNGLR use a CSV-backed GLR/LR table, matching the file-I/O path used by
-//! benchmark_csv.rs and benchmark_code.rs.
+//! benchmark_csv.rs and benchmark_ws.rs.
 //!
 //! Closely follows the structure and conventions of benchmark_csv.rs.
 //!

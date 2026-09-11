@@ -142,7 +142,7 @@ of `GrammarConfig` values in `src/bin/benchmark_csv.rs`.
 |---|---|---|
 | `src/bin/benchmark_csv.rs` | Main scannerless benchmarks over generated grammar corpora. | `results/benchmark_csv/benchmark_<grammar>.csv` |
 | `src/bin/benchmark_csv_invalid.rs` | Scannerless rejection benchmarks for generated invalid inputs. | `results/benchmark_csv_invalid/benchmark_<grammar>_invalid.csv` |
-| `src/bin/benchmark_code.rs` | Whole-file whitespace-aware source-code benchmarks. | `results/benchmark_code/benchmark_<language>.csv` |
+| `src/bin/benchmark_ws.rs` | Whole-file whitespace-aware source-code benchmarks. | `results/benchmark_ws/benchmark_<language>.csv` |
 | `src/bin/benchmark_lex.rs` | Lexer-first source-code benchmarks using tokenized grammars. | `results/benchmark_lex/benchmark_<language>.csv` |
 | `src/bin/benchmark_rlc.rs` | Benchmarks over referenceLanguageCorpora inputs. | `results/benchmark_rlc/benchmark_rlc_<language>.csv` |
 | `src/bin/benchmark_tree_sitter_java.rs` | Java comparison against tree-sitter-java. | `results/benchmark_tree_sitter_java/benchmark_tree_sitter_java.csv` |

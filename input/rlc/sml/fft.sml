@@ -190,6 +190,6 @@ fun doit() =
 let val np = ref 16
 in for(1,13,fn i => (test (!np); np := (!np)*2))
 end
-end
+end;
 use "utils/benchmark";
 test "fft" 1 doit ();

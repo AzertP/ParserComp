@@ -49,16 +49,16 @@ struct RlcConfig {
 }
 
 const CONFIGS: &[RlcConfig] = &[
-    // RlcConfig {
-    //     name: "sml",
-    //     corpus: "MLWorks",
-    //     lexer_spec: "grammars/lexer/sml_regex.json",
-    //     grammar_path: "grammars/sml_tok.json",
-    //     input_dir: "input/rlc/sml",
-    //     table_path: "table/sml_tok_glr_table.csv",
-    //     generate_table: false,
-    //     parsers: DEFAULT_PARSERS,
-    // },
+    RlcConfig {
+        name: "sml",
+        corpus: "MLWorks",
+        lexer_spec: "grammars/lexer/sml_regex.json",
+        grammar_path: "grammars/sml_tok.json",
+        input_dir: "input/rlc/sml",
+        table_path: "table/sml_tok_glr_table.csv",
+        generate_table: false,
+        parsers: DEFAULT_PARSERS,
+    },
     RlcConfig {
         name: "java",
         corpus: "org",
@@ -69,26 +69,26 @@ const CONFIGS: &[RlcConfig] = &[
         generate_table: false,
         parsers: DEFAULT_PARSERS,
     },
-    // RlcConfig {
-    //     name: "gamma2",
-    //     corpus: "org",
-    //     lexer_spec: "grammars/lexer/gamma2_regex.json",
-    //     grammar_path: "grammars/gamma2_tok.json",
-    //     input_dir: "input/rlc/gamma2",
-    //     table_path: "table/gamma2_tok_glr_table.csv",
-    //     generate_table: true,
-    //     parsers: DEFAULT_PARSERS,
-    // },
-    // RlcConfig {
-    //     name: "gamma3",
-    //     corpus: "org",
-    //     lexer_spec: "grammars/lexer/gamma3_regex.json",
-    //     grammar_path: "grammars/gamma3_tok.json",
-    //     input_dir: "input/rlc/gamma3",
-    //     table_path: "table/gamma3_tok_glr_table.csv",
-    //     generate_table: true,
-    //     parsers: DEFAULT_PARSERS,
-    // },
+    RlcConfig {
+        name: "gamma2",
+        corpus: "org",
+        lexer_spec: "grammars/lexer/gamma2_regex.json",
+        grammar_path: "grammars/gamma2_tok.json",
+        input_dir: "input/rlc/gamma2",
+        table_path: "table/gamma2_tok_glr_table.csv",
+        generate_table: true,
+        parsers: DEFAULT_PARSERS,
+    },
+    RlcConfig {
+        name: "gamma3",
+        corpus: "org",
+        lexer_spec: "grammars/lexer/gamma3_regex.json",
+        grammar_path: "grammars/gamma3_tok.json",
+        input_dir: "input/rlc/gamma3",
+        table_path: "table/gamma3_tok_glr_table.csv",
+        generate_table: true,
+        parsers: DEFAULT_PARSERS,
+    },
 ];
 
 // ============================================================================

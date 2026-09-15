@@ -46,7 +46,7 @@ OUTPUT_FILE  = os.path.join(PROJECT_ROOT, "img", "smallCykValiantTime.tex")
 
 # All grammars with CYK and Valiant data
 GRAMMARS = [
-    ("S-Expr",     "benchmark_sexp.csv"),
+    ("S-Expr LR-1", "benchmark_sexp.csv"),
     ("Calculator", "benchmark_calc.csv"),
     ("TinyC",      "benchmark_tinyc.csv"),
     ("JSON",       "benchmark_json.csv"),

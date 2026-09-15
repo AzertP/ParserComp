@@ -42,7 +42,7 @@ GRAMMARS = [
     ("JSON (rr)",     "benchmark_json.csv"),
     ("JSON (lr)",     "benchmark_json_lr.csv"),
     ("TinyC LR-1",    "benchmark_tinyc_lr.csv"),
-    ("S-Expression",  "benchmark_sexp.csv"),
+    ("S-Expr LR-1",   "benchmark_sexp.csv"),
     ("Bool",          "benchmark_bool.csv"),
     ("Expr (ambig)",  "benchmark_expr_ambi.csv"),
     ("JSON (ambig)",  "benchmark_json_ambi.csv"),

@@ -51,8 +51,8 @@ BENCHMARK_GRAMMARS = [
     ("JSON (rr)",           "json",            "Moderate",False, False,  True ),
     ("JSON (lr)",           "lr_json",         "Moderate",False, False,  True ),
     ("TinyC LR-1",         "lr_tinyc",        "Moderate",False, False,  True ),
+    ("S-Expr LR-1",         "sexp",            "Simple",  False, False,  True ),
     # ---- General context-free (neither LL(1) nor LR(1)) ----
-    ("S-Expression",        "sexp",            "Simple",  True,  False,  False),
     ("Bool",                "bool",            "Simple",  True,  False,  False),
     ("Expr (ambig)",           "expr_ambi",       "Simple",  True,  False,  False),
     ("JSON (ambig)",           "json_ambi",       "Moderate",True,  False,  False),
@@ -183,7 +183,7 @@ GRAMMAR_MACROS = {
     "Expr (lr)":    r"\GExprLR",
     "Expr (rr)":    r"\GExprRR",
     "TinyC LR-1":   r"\GTinyCLRA",
-    "S-Expression": r"\GSExpression",
+    "S-Expr LR-1":  r"\GSExpression",
     "TinyC":        r"\GTinyC",
     "Bool":         r"\GBool",
     "Expr (ambig)": r"\GExprAmbig",

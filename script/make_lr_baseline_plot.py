@@ -7,7 +7,7 @@ one per grammar, comparing LL(1)/LR(1) deterministic parsers against
 generalised parsers (Earley, GLL, RNGLR, BRNGLR).
 
 Grammars shown are the five with a known LR(1) baseline used in RQ2:
-    TinyPascal, S-Expr LL-1, Expr (lr), JSON (lr), TinyC LR-1
+    TinyPascal, S-Expr LR-1, Expr (lr), JSON (lr), TinyC LR-1
 
 Usage:
     python3 bin/make_lr_baseline_plot.py
@@ -70,7 +70,7 @@ SUPPRESS_XLABEL_EXCEPT_LAST = True
 # Set include=False to skip a grammar without deleting the entry.
 GRAMMARS = [
     ("TinyPascal",   "benchmark_tinypascal.csv", True,  True),
-    ("S-Expr LL-1",  "benchmark_sexp_ll1.csv",   True,  False),   # omitted
+    ("S-Expr LR-1",  "benchmark_sexp.csv",       False, True),
     ("Expr (lr)",    "benchmark_calc.csv",        False, True),
     ("JSON (lr)",    "benchmark_json_lr.csv",     False, True),
     ("TinyC LR-1",   "benchmark_tinyc_lr.csv",   False, True),

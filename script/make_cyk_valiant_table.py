@@ -38,7 +38,7 @@ BUCKETS = [
 # (display_name, csv_filename, group)
 GRAMMAR_SOURCES = [
     # --- Simple ---
-    ("S-Expression", "benchmark_sexp.csv",      "Simple"),
+    ("S-Expr LR-1",  "benchmark_sexp.csv",      "Simple"),
     ("Expr (lr)",    "benchmark_calc.csv",       "Simple"),
     ("Bool",         "benchmark_bool.csv",        "Simple"),
     ("Expr (ambig)", "benchmark_expr_ambi.csv",   "Simple"),
@@ -53,7 +53,7 @@ OUTPUT_COLUMNS = ["CYK", "Valiant", "Earley"]
 # instead of the literal string (defined once in the main .tex file so
 # a grammar's display name can be tweaked in one place).
 GRAMMAR_MACROS = {
-    "S-Expression": r"\GSExpression",
+    "S-Expr LR-1":  r"\GSExpression",
     "Expr (lr)":    r"\GExprLR",
     "Bool":         r"\GBool",
     "Expr (ambig)": r"\GExprAmbig",

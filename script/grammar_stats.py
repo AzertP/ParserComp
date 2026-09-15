@@ -162,7 +162,7 @@ GRAMMAR_META: dict[str, dict] = {
     "jsl18":            {"display": "Java",               "ll": False, "lr": False},
     "pascal":           {"display": "Pascal",             "ll": False, "lr": False},
     "ll1_tinypascal":   {"display": "TinyPascal LL(1)",   "ll": True,  "lr": True },
-    "sexp":             {"display": "S-Expression",       "ll": False, "lr": False},
+    "sexp":             {"display": "S-Expression LR(1)", "ll": False, "lr": True },
     "ll1_sexp":         {"display": "S-Expression LL(1)", "ll": True,  "lr": True },
     "shell":            {"display": "Shell",              "ll": False, "lr": False},
     "sql":              {"display": "SQL",                "ll": False, "lr": False},

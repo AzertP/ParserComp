@@ -22,6 +22,15 @@ pub enum ForestRef {
 /// CYK Parse Table: table[s][e] maps non-terminal -> list of (nt, children) derivations
 pub type CYKTable = Vec<Vec<HashMap<u32, ForestNode>>>;
 
+/// One witness for a nonterminal's derivation of a span.
+#[derive(Clone, Copy, Debug)]
+enum Backpointer {
+    Terminal(u32),
+    Binary { split: usize, left: u32, right: u32 },
+}
+
+type OneTreeTable = Vec<Vec<HashMap<u32, Backpointer>>>;
+
 pub struct CYKParser {
     pub cell_width: usize,
     pub grammar: NumericGrammar,
@@ -149,6 +158,84 @@ impl CYKParser {
         }
     }
 
+    /// Build a CNF chart retaining the first derivation for each nonterminal
+    /// in each span. Other nonterminals in that span must still be retained.
+    fn one_tree_chart(&self, text: &[u32]) -> OneTreeTable {
+        let length = text.len();
+        let mut table = vec![vec![HashMap::default(); length + 1]; length + 1];
+        for (s, &token) in text.iter().enumerate() {
+            for &(lhs, terminal) in &self.terminal_productions {
+                if token == terminal {
+                    table[s][s + 1]
+                        .entry(lhs)
+                        .or_insert(Backpointer::Terminal(token));
+                }
+            }
+        }
+        for span in 2..=length {
+            for s in 0..=length - span {
+                let end = s + span;
+                for split in s + 1..end {
+                    for &(lhs, (left, right)) in &self.nonterminal_productions {
+                        if table[s][split].contains_key(&left)
+                            && table[split][end].contains_key(&right)
+                        {
+                            table[s][end].entry(lhs).or_insert(Backpointer::Binary {
+                                split,
+                                left,
+                                right,
+                            });
+                        }
+                    }
+                }
+            }
+        }
+        table
+    }
+
+    fn one_tree(
+        &self,
+        table: &OneTreeTable,
+        start: usize,
+        end: usize,
+        nt: u32,
+    ) -> Option<ParseTree> {
+        let children = match *table[start][end].get(&nt)? {
+            Backpointer::Terminal(token) => vec![ParseTree::new(
+                ParseSymbol::Terminal(self.grammar.terminals.get_str(token)?.to_string()),
+                vec![],
+            )],
+            Backpointer::Binary { split, left, right } => vec![
+                self.one_tree(table, start, split, left)?,
+                self.one_tree(table, split, end, right)?,
+            ],
+        };
+        Some(ParseTree::new(
+            ParseSymbol::NonTerminal(self.grammar.non_terminal_str(nt)?.to_string()),
+            children,
+        ))
+    }
+
+    /// Parse a CNF token sequence, retaining one backpointer per span and
+    /// nonterminal instead of a forest of alternative derivations.
+    /// Returns the first tree in the same traversal order as `parse_on`.
+    pub fn parse_one_on(&self, text: &[u32], start_symbol: u32) -> Option<ParseTree> {
+        if text.is_empty() {
+            return (start_symbol == self.grammar.start && self.grammar.start_nullable).then(
+                || {
+                    ParseTree::new(
+                        ParseSymbol::NonTerminal(
+                            self.grammar.start_str().unwrap_or("S").to_string(),
+                        ),
+                        vec![],
+                    )
+                },
+            );
+        }
+        let table = self.one_tree_chart(text);
+        self.one_tree(&table, 0, text.len(), start_symbol)
+    }
+
     /// Main parsing function
     /// Returns a parse tree if successful, None otherwise
     pub fn parse_on(&self, text: &[u32], start_symbol: u32) -> Option<ParseTree> {
@@ -207,6 +294,13 @@ pub fn parse(grammar: &NumericGrammar, input: &[u32]) -> Option<ParseTree> {
     // Grammar should already be in CNF
     let parser: CYKParser = CYKParser::new(grammar.clone());
     return parser.parse_on(input, parser.grammar.start);
+}
+
+/// Parse an already-CNF grammar, retaining one backpointer per span/nonterminal.
+/// Parser construction and tree extraction are included in this call.
+pub fn parse_one(grammar: &NumericGrammar, input: &[u32]) -> Option<ParseTree> {
+    let parser = CYKParser::new(grammar.clone());
+    parser.parse_one_on(input, parser.grammar.start)
 }
 
 #[cfg(test)]
@@ -371,5 +465,146 @@ mod tests {
 
         assert!(result.is_none(), "Should reject 'a a'");
         println!("✓ Correctly rejected invalid input");
+    }
+}
+
+#[cfg(test)]
+mod one_tree_tests {
+    use super::*;
+    use crate::grammars::load_grammar_from_str;
+
+    fn parser(rules: &str) -> CYKParser {
+        let json = format!(r#"{{"name":"one-tree","start":"<S>","rules":{rules}}}"#);
+        CYKParser::new(load_grammar_from_str(&json).unwrap().to_cnf())
+    }
+
+    fn check_tree(grammar: &NumericGrammar, tree: &ParseTree) {
+        let ParseSymbol::NonTerminal(ref name) = tree.name else {
+            panic!("expected nonterminal node");
+        };
+        let lhs = grammar
+            .rules
+            .keys()
+            .copied()
+            .find(|&nt| grammar.non_terminal_str(nt) == Some(name.as_str()))
+            .unwrap();
+        if tree.children.is_empty() {
+            assert_eq!(lhs, grammar.start);
+            assert!(grammar.start_nullable);
+            return;
+        }
+        let rhs: Vec<_> = tree
+            .children
+            .iter()
+            .map(|child| match &child.name {
+                ParseSymbol::Terminal(t) => {
+                    assert!(child.children.is_empty());
+                    NumSymbol::Terminal(grammar.terminals.get_id(t).unwrap())
+                }
+                ParseSymbol::NonTerminal(n) => {
+                    check_tree(grammar, child);
+                    NumSymbol::NonTerminal(
+                        grammar
+                            .rules
+                            .keys()
+                            .copied()
+                            .find(|&nt| grammar.non_terminal_str(nt) == Some(n.as_str()))
+                            .unwrap(),
+                    )
+                }
+            })
+            .collect();
+        assert!(
+            grammar.rules[&lhs].contains(&rhs),
+            "invalid production: {tree:?}"
+        );
+    }
+
+    #[test]
+    fn one_tree_matches_forest_chart_and_first_tree() {
+        for rules in [
+            r#"{"<S>":[["<S>","<S>"],["a"],["b"]]}"#,
+            r#"{"<S>":[["<A>","<B>"],["<B>","<A>"]],"<A>":[["a"],["<A>","<A>"]],"<B>":[["b"],["<B>","<B>"]]}"#,
+            r#"{"<S>":[[],["<A>"]],"<A>":[["<S>"],["a","<S>","b"]]}"#,
+        ] {
+            let parser = parser(rules);
+            for n in 0..=6 {
+                for mask in 0..1usize << n {
+                    let input: String = (0..n)
+                        .map(|i| if mask & (1 << i) == 0 { 'a' } else { 'b' })
+                        .collect();
+                    let tokens = parser.grammar.tokenize(&input).unwrap();
+                    let single = parser.one_tree_chart(&tokens);
+                    let mut forest = parser.init_table(n);
+                    parser.parse_1(&tokens, n, &mut forest);
+                    for span in 2..=n {
+                        parser.parse_n(span, n, &mut forest);
+                    }
+                    for s in 0..=n {
+                        for end in 0..=n {
+                            assert_eq!(single[s][end].len(), forest[s][end].len());
+                            for nt in forest[s][end].keys() {
+                                assert!(
+                                    single[s][end].contains_key(nt),
+                                    "missing NT at {s}..{end}"
+                                );
+                            }
+                        }
+                    }
+                    let start = parser.grammar.start;
+                    let tree = parser.parse_one_on(&tokens, start);
+                    assert_eq!(tree, parser.parse_on(&tokens, start), "input {input:?}");
+                    assert_eq!(tree, parse_one(&parser.grammar, &tokens));
+                    if let Some(tree) = tree {
+                        assert_eq!(tree.to_flat_string(), input);
+                        check_tree(&parser.grammar, &tree);
+                    }
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn ambiguous_span_keeps_one_backpointer_per_nonterminal() {
+        let parser =
+            parser(r#"{"<S>":[["<S>","<S>"],["<A>","<A>"],["a"]],"<A>":[["<A>","<A>"],["a"]]}"#);
+        let tokens = parser.grammar.tokenize("aaaa").unwrap();
+        let mut forest = parser.init_table(4);
+        parser.parse_1(&tokens, 4, &mut forest);
+        for n in 2..=4 {
+            parser.parse_n(n, 4, &mut forest);
+        }
+        assert!(forest[0][4][&parser.grammar.start].len() > 1);
+        let single = parser.one_tree_chart(&tokens);
+        assert_eq!(single[0][4].len(), forest[0][4].len());
+        assert!(single[0][4].len() > 1, "retain all deriving nonterminals");
+        assert!(matches!(
+            single[0][4][&parser.grammar.start],
+            Backpointer::Binary { split: 1, .. }
+        ));
+    }
+
+    #[test]
+    fn one_tree_handles_empty_unknown_and_requested_start() {
+        let parser = parser(r#"{"<S>":[[],["<A>","<A>"]],"<A>":[["a"]]}"#);
+        assert!(parser.parse_one_on(&[], parser.grammar.start).is_some());
+        let other = *parser
+            .grammar
+            .rules
+            .keys()
+            .find(|&&nt| parser.grammar.non_terminal_str(nt) == Some("<A>"))
+            .unwrap();
+        assert!(parser.parse_one_on(&[], other).is_none());
+        let tokens = parser.grammar.tokenize("a").unwrap();
+        assert!(parser.parse_one_on(&tokens, other).is_some());
+        assert!(parser.parse_one_on(&tokens, parser.grammar.start).is_none());
+        assert!(parser
+            .parse_one_on(&[u32::MAX], parser.grammar.start)
+            .is_none());
+        assert!(parser.parse_one_on(&tokens, u32::MAX).is_none());
+        let nonnullable = self::parser(r#"{"<S>":[["a"]]}"#);
+        assert!(nonnullable
+            .parse_one_on(&[], nonnullable.grammar.start)
+            .is_none());
     }
 }

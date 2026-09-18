@@ -14,10 +14,8 @@
 
 FROM rust:1.85-bookworm
 
-# System dependencies: m4ri (for Valiant parser), Python 3, pkg-config
+# Python analysis dependencies; Valiant uses a pure Rust Boolean kernel.
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        libm4ri-dev \
-        pkg-config \
         python3 \
         python3-pip \
         python3-venv \

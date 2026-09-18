@@ -98,7 +98,7 @@ The other benchmark drivers and their output locations are listed under
 | **RNGLR** | Right-Nulled GLR | Economopoulos 2006 — [PhD dissertation](https://www.researchgate.net/publication/242287349_Generalised_LR_Parsing_Algorithms) |
 | **BRNGLR** | Binarised RNGLR | same |
 | **CYK** | Cocke–Younger–Kasami | standard CNF-based algorithm |
-| **Valiant** | Matrix multiplication | Valiant 1975, using m4ri for fast multiplication |
+| **Valiant** | Recursive block closure with Boolean Four Russians multiplication | Valiant 1975; ["Certified Context-Free Parsing"](https://doi.org/10.2168/LMCS-12(2:6)2016) - Bernardy and Jansson 2016 |
 | **LL** | LL(1) via GLL framework | standard implementation |
 | **LR** | LR(1) via GLR framework | standard implementation |
 

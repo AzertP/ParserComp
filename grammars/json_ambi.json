@@ -3,6 +3,7 @@
   "start": "<json>",
   "rules": {
     "<array>": [
+      ["[", "]"],
       ["[", "<elements>", "]"]
     ],
     "<character>": [
@@ -32,8 +33,7 @@
     ],
     "<elements>": [
       ["<value>"],
-      ["<elements>", ",", "<elements>"],
-      []
+      ["<elements>", ",", "<elements>"]
     ],
     "<exponent>": [
       ["e", "<sign>", "<digit>", "<digits>"],
@@ -57,8 +57,7 @@
     ],
     "<members>": [
       ["<pair>"],
-      ["<members>", ",", "<members>"],
-      []
+      ["<members>", ",", "<members>"]
     ],
     "<null>": [
       ["n", "u", "l", "l"]
@@ -67,6 +66,7 @@
       ["<integer>", "<fraction>", "<exponent>"]
     ],
     "<object>": [
+      ["{", "}"],
       ["{", "<members>", "}"]
     ],
     "<pair>": [

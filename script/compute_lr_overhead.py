@@ -7,27 +7,29 @@ relative to the LR(1) baseline, pooled across the five grammars that have
 a genuine LR(1) variant: JSON (rr), JSON (lr), Expr (lr), Expr (rr), and
 TinyC LR-1.
 
-For each grammar and each matched token count present in both the LR(1)
-CSV and a given generalized parser's CSV (status == OK on both sides), we
-compute the ratio (generalized median_time_ns / LR(1) median_time_ns).
+For each grammar, parser rows are paired with LR(1) rows in input order.
+The driver writes every parser for an input before moving to the next input,
+so this preserves distinct inputs that happen to have the same token count.
+The script verifies matching input and token lengths before computing each
+ratio. Both rows must be successful and pass the recorded correctness checks.
 Ratios are pooled across all five grammars and all matched token counts,
 then summarized by median, interquartile range, and maximum.
 
 This script is not wired into the Makefile (the numbers it produces are
 quoted directly in the RQ2/Discussion prose rather than a table), but it
-is kept here so the statistic is reproducible from the raw results/*.csv
+is kept here so the statistic is reproducible from the raw results/benchmark_csv/*.csv
 files rather than computed by hand.
 
 Usage:
-    python3 bin/compute_lr_overhead.py
+    python3 script/compute_lr_overhead.py
 """
 
 import csv
 import os
 import statistics
 
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-RESULTS_DIR = os.path.join(PROJECT_ROOT, "results")
+from artifact_paths import RESULT_ROOT
+RESULTS_DIR = os.path.join(RESULT_ROOT, "benchmark_csv")
 
 # Grammar label -> CSV file. These are the five grammars in the controlled
 # benchmark that have a genuine LR(1)-refactored variant (as opposed to
@@ -49,25 +51,52 @@ def load(fname):
         return list(csv.DictReader(fh))
 
 
+def successful(row):
+    return (
+        row.get("status", "OK") == "OK"
+        and row.get("recognized", "true") == "true"
+        and row.get("parse_correct", "true") == "true"
+    )
+
+
 def main():
     overall = {p: [] for p in PARSERS}
     for label, fname in FILES.items():
         rows = load(fname)
         by_parser = {}
         for r in rows:
-            if r.get("status", "OK") != "OK":
-                continue
-            by_parser.setdefault(r["parser"], {})[int(r["token_count"])] = \
-                float(r["median_time_ns"])
-        lr1 = by_parser.get("LR", {})
+            by_parser.setdefault(r["parser"], []).append(r)
+        lr1 = by_parser.get("LR", [])
         if not lr1:
             print(f"{label}: no LR(1) data, skipping")
             continue
         for p in PARSERS:
-            pd = by_parser.get(p, {})
-            for tok, t in pd.items():
-                if tok in lr1 and lr1[tok] > 0:
-                    overall[p].append(t / lr1[tok])
+            parser_rows = by_parser.get(p, [])
+            if len(parser_rows) != len(lr1):
+                raise ValueError(
+                    f"{label}: {p} has {len(parser_rows)} rows but LR has "
+                    f"{len(lr1)}"
+                )
+            for index, (candidate, baseline) in enumerate(
+                zip(parser_rows, lr1, strict=True)
+            ):
+                candidate_key = (
+                    candidate["input_length"], candidate["token_count"]
+                )
+                baseline_key = (
+                    baseline["input_length"], baseline["token_count"]
+                )
+                if candidate_key != baseline_key:
+                    raise ValueError(
+                        f"{label}: row {index} input mismatch for {p}: "
+                        f"{candidate_key} != {baseline_key}"
+                    )
+                if successful(candidate) and successful(baseline):
+                    baseline_time = float(baseline["median_time_ns"])
+                    if baseline_time > 0:
+                        overall[p].append(
+                            float(candidate["median_time_ns"]) / baseline_time
+                        )
 
     print(f"{'Parser':8s} {'n':>5s} {'median':>8s} {'IQR':>16s} {'max':>8s}")
     for p in PARSERS:

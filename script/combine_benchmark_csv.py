@@ -18,10 +18,10 @@ import csv
 from pathlib import Path
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_VALID_DIR = PROJECT_ROOT / "results" / "benchmark_csv"
-DEFAULT_INVALID_DIR = PROJECT_ROOT / "results" / "benchmark_csv_invalid"
-DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "results_comprehensive"
+from artifact_paths import RESULT_ROOT, COMBINED_DIR
+DEFAULT_VALID_DIR = RESULT_ROOT / "benchmark_csv"
+DEFAULT_INVALID_DIR = RESULT_ROOT / "benchmark_csv_invalid"
+DEFAULT_OUTPUT_DIR = COMBINED_DIR
 
 
 def output_name_for_invalid(path):

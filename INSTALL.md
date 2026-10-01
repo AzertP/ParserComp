@@ -1,67 +1,42 @@
-# Installation Guide
+# Installation
 
-## Option A — Docker (recommended)
+Run commands from the repository root.
 
-The Docker image captures the exact environment used for the paper.
+## Docker
+
+Requires Docker.
 
 ```bash
 git submodule update --init --recursive
 docker build -t parser-comparison .
+docker run --rm parser-comparison cargo test --release --locked --offline
 ```
 
-Open an interactive shell:
+Open a shell:
 
 ```bash
 docker run --rm -it parser-comparison
 ```
 
-Run a benchmark and write results to the host:
+## Native
+
+Requires Rust 1.85.0 via [rustup](https://rustup.rs), a C compiler, and Python
+3.10+ for analysis. No third-party Python packages are required.
 
 ```bash
-docker run --rm \
-    -v "$(pwd)/results:/artifact/results" \
-    parser-comparison \
-    cargo run --release --bin benchmark_csv
+git submodule update --init --recursive
+cargo build --release --locked
+cargo test --release --locked
 ```
 
----
+## Quick check
 
-## Option B — Native install
-
-### Prerequisites
-
-| Tool | Version | Notes |
-|---|---|---|
-| Rust (via rustup) | 1.85 stable | https://rustup.rs |
-| Python 3 | any recent 3.x | system package or https://python.org |
-| C compiler | platform default | required by the Tree-sitter grammars |
-
-### 1. Rust
+Run natively or inside the container:
 
 ```bash
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-source "$HOME/.cargo/env"
+target/release/parser_comparison --text '(1+2)*3' grammars/calc.json --char
 ```
 
-[rust-toolchain.toml](rust-toolchain.toml) pins the channel to `stable`, so `rustup` selects the correct toolchain automatically inside this directory.
+Expected output: `Parse succeeded`.
 
-### 2. Python packages
-
-```bash
-pip install -r requirements.txt
-```
-
-This installs `pandas`, `matplotlib`, and `numpy`.
-
-### 3. Build
-
-```bash
-cargo build --release
-```
-
-### 4. Verify
-
-```bash
-cargo build --release                  # exits 0
-python3 -c "import pandas, matplotlib, numpy; print('OK')"
-```
+See [README.md](README.md) for benchmarks and result generation.

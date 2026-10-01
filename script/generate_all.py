@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Regenerate every data-derived TeX artifact imported by the manuscript."""
+"""Regenerate TeX tables, plots, and CSV summaries from the bundled datasets."""
 
 import subprocess
 import sys

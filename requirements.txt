@@ -1,3 +1,2 @@
-pandas>=2.0
-matplotlib>=3.7
-numpy>=1.24
+# No third-party Python packages are required.
+# The generator and analysis scripts use the standard library and local modules.

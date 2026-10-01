@@ -165,6 +165,14 @@ their results with:
 python3 script/combine_benchmark_csv.py
 ```
 
+To also generate TeX tables and plots in `results/tex/` and CSV summaries in
+`results/analysis/`, run:
+
+```bash
+python3 script/generate_all.py
+```
+
+See [script/README.md](script/README.md) for details about the generated outputs.
 
 ## Modify the test suite
 

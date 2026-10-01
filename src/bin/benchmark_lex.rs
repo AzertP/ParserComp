@@ -108,7 +108,6 @@ const CONFIGS: &[LangConfig] = &[
         generate_table: false,
         parsers: DEFAULT_PARSERS,
     },
-    // Uncomment when lexer specs and tokenised grammars are ready:
     LangConfig {
         name: "cpp_tok",
         lexer_spec: "grammars/lexer/cpp_regex.json",
